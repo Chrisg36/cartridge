@@ -1,7 +1,6 @@
 let cachedToken = null;
 let tokenExpiry = 0;
 
-// Mapping personnalisé pour les plateformes principales si besoin
 const PLATFORMS_MAP = {
   6: "PC",
   167: "PS5",
@@ -37,19 +36,12 @@ const CORS = {
 };
 
 const LANG_MAP = {
-  fr: "french",
-  en: "english",
-  ja: "japanese",
-  de: "german",
-  es: "spanish",
-  zh: "chinese",
-  pt: "portuguese",
-  ko: "korean",
-  it: "italian"
+  fr: "french", en: "english", ja: "japanese", de: "german",
+  es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian"
 };
 
 const DATE_FIXES = {
-  305160: "2026-10-06", // Gears of War: E-Day
+  305160: "2026-10-06",
 };
 
 const hasDay = (h) =>
@@ -64,9 +56,7 @@ async function getToken(env) {
     `https://id.twitch.tv/oauth2/token?client_id=${env.CLIENT_ID.trim()}&client_secret=${env.CLIENT_SECRET.trim()}&grant_type=client_credentials`,
     { method: "POST" }
   );
-  if (!res.ok) {
-    throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`);
-  }
+  if (!res.ok) throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`);
   const data = await res.json();
   cachedToken = data.access_token;
   tokenExpiry = Date.now() + (data.expires_in - 600) * 1000;
@@ -194,8 +184,8 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    // Version V9 pour vider automatiquement le cache de ton Worker
-    const cacheKey = new Request(url.origin + "/v9" + url.search);
+    // Passé en v10 pour purger le cache
+    const cacheKey = new Request(url.origin + "/v10" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -209,8 +199,8 @@ export default {
       let tail;
 
       if (searchQuery) {
-        // Recherche globale sans filtre de plateforme restrictif
-        where += ` & release_dates != null & name ~ *"${searchQuery}"*`;
+        // Recherche ouverte sans restreindre sur la date ou la plateforme
+        where += ` & name ~ *"${searchQuery}"*`;
         tail = "limit 40;";
       } else {
         const [y, m] = month.split("-").map(Number);
@@ -231,27 +221,27 @@ export default {
       const games = [];
       for (const g of raw) {
         const byPlatform = {};
-        for (const r of g.release_dates || []) {
-          if (!r.date) continue;
+        const dates = g.release_dates || [];
+        
+        for (const r of dates) {
+          if (!searchQuery && !r.date) continue;
           if (!searchQuery && !platformIds.includes(r.platform)) continue;
           if (!searchQuery && (r.date < start || r.date >= end)) continue;
+
+          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
+          const rDate = r.date ? iso(r.date) : "Date inconnue";
           
-          // Récupère le nom officiel de la console envoyé par IGDB (ex: GameCube, Nintendo 64, etc.)
-          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || r.human || "Retro";
-          if (!byPlatform[platName] || r.date < byPlatform[platName].date) {
-            byPlatform[platName] = { platformName: platName, date: r.date, human: r.human || "" };
+          if (!byPlatform[platName]) {
+            byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
           }
         }
-        
-        let releases = Object.values(byPlatform)
-          .map((r) => ({
-            platform: r.platformName,
-            date: iso(r.date),
-            human: r.human,
-            exact: hasDay(r.human),
-          }))
-          .sort((a, b) => a.date.localeCompare(b.date));
-          
+
+        // Si c'est une recherche et qu'aucune date n'est valide dans le tableau, on prend au moins un enregistrement
+        let releases = Object.values(byPlatform);
+        if (!releases.length && searchQuery) {
+          releases = [{ platform: "Rétro", date: "Sortie Rétro", human: "", exact: false }];
+        }
+
         const fix = DATE_FIXES[g.id];
         if (fix) {
           if (!searchQuery && fix.slice(0, 7) !== month) continue;
@@ -270,14 +260,13 @@ export default {
           hypes: (g.hypes || 0) + (g.total_rating_count || 0),
           rating: g.rating || null,
           aggregated_rating: g.aggregated_rating || null,
-          timeToBeat: null,
           date: releases[0].date,
           releases,
         });
       }
 
       if (searchQuery) {
-        games.sort((a, b) => b.hypes - a.hypes || b.date.localeCompare(a.date));
+        games.sort((a, b) => b.hypes - a.hypes);
       } else {
         games.sort((a, b) => a.date.localeCompare(b.date) || b.hypes - a.hypes);
       }
