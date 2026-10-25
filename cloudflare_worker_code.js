@@ -67,7 +67,7 @@ export default {
 
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
 
-    const cacheKey = new Request(url.origin + "/v16" + url.search);
+    const cacheKey = new Request(url.origin + "/v17" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -75,9 +75,12 @@ export default {
       let queryBody = "";
 
       if (searchQuery) {
-        // Syntaxe officielle IGDB pour la recherche textuelle globale
+        // On isole les mots clés principaux pour interroger l'API avec souplesse
+        const cleanQuery = searchQuery.toLowerCase().replace(/\b(the|a|an|of)\b/g, "").trim();
+        const mainTerm = cleanQuery.split(" ").pop() || searchQuery;
+
         queryBody = `
-          search "${searchQuery}";
+          search "${mainTerm}";
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
           limit 40;
