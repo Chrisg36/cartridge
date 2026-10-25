@@ -1,7 +1,35 @@
 let cachedToken = null;
 let tokenExpiry = 0;
 
-const PLATFORMS = { 6: "PC", 167: "PS5", 169: "Xbox", 508: "Switch 2" };
+// Table complète des identifiants IGDB pour les consoles actuelles ET rétro
+const PLATFORMS = {
+  6: "PC",
+  167: "PS5",
+  48: "PS4",
+  9: "PS3",
+  8: "PS2",
+  7: "PlayStation",
+  169: "Xbox Series X|S",
+  11: "Xbox One",
+  12: "Xbox 360",
+  11: "Xbox",
+  130: "Nintendo Switch",
+  508: "Switch 2",
+  21: "GameCube",
+  4: "Nintendo 64",
+  19: "SNES",
+  18: "NES",
+  33: "Game Boy",
+  22: "Game Boy Color",
+  24: "Game Boy Advance",
+  20: "Nintendo DS",
+  37: "Nintendo 3DS",
+  23: "Dreamcast",
+  32: "Sega Saturn",
+  29: "Sega Mega Drive / Genesis",
+  64: "Sega Master System"
+};
+
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -9,7 +37,6 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// Dictionnaire de correspondance pour le modèle Cloudflare Workers AI (m2m100)
 const LANG_MAP = {
   fr: "french",
   en: "english",
@@ -22,7 +49,6 @@ const LANG_MAP = {
   it: "italian"
 };
 
-// Corrections manuelles : numéro IGDB du jeu -> vraie date de sortie (AAAA-MM-JJ)
 const DATE_FIXES = {
   305160: "2026-10-06", // Gears of War: E-Day
 };
@@ -93,7 +119,6 @@ function splitText(text, max = 400) {
   return chunks;
 }
 
-// Traduction multilingue du résumé d'un jeu par IA
 async function translateSummary(idParam, langParam, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
@@ -103,7 +128,6 @@ async function translateSummary(idParam, langParam, env, ctx) {
   const lang = (langParam || "fr").toLowerCase();
   const targetLang = LANG_MAP[lang] || "french";
 
-  // Clé de cache propre à l'ID du jeu ET à la langue demandée
   const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
   const hit = await cacheGet(key);
   if (hit) return hit;
@@ -113,7 +137,6 @@ async function translateSummary(idParam, langParam, env, ctx) {
     const text = raw[0] && raw[0].summary;
     if (!text) return Response.json({ id, summary: null }, { headers: CORS });
 
-    // Si la langue est l'anglais, pas besoin de traduire avec l'IA
     if (lang === "en") {
       const response = Response.json(
         { id, summary: text },
@@ -166,14 +189,15 @@ export default {
     const showAll = url.searchParams.get("all") === "1";
 
     if (platformParam && !FILTERS[platformParam]) {
-      return Response.json({ error: "platform doit valoir : pc, ps5, xbox ou switch2" }, { status: 400, headers: CORS });
+      return Response.json({ error: "platform invalide" }, { status: 400, headers: CORS });
     }
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
     if (!searchQuery && !/^\d{4}-\d{2}$/.test(month)) {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    const cacheKey = new Request(url.origin + "/v6" + url.search);
+    // V7 de la clé de cache pour rafraîchir les données des consoles rétro
+    const cacheKey = new Request(url.origin + "/v7" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -187,7 +211,7 @@ export default {
       let tail;
       if (searchQuery) {
         where += ` & release_dates != null & name ~ *"${searchQuery}"*`;
-        tail = "limit 30;";
+        tail = "limit 40;";
       } else {
         const [y, m] = month.split("-").map(Number);
         start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
@@ -200,7 +224,7 @@ export default {
 
       const raw = await igdb(env, `
         fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
-               release_dates.date, release_dates.platform, release_dates.human, genres;
+               release_dates.date, release_dates.platform, release_dates.human, genres.name;
         where ${where};
         ${tail}
       `);
@@ -209,20 +233,26 @@ export default {
       for (const g of raw) {
         const byPlatform = {};
         for (const r of g.release_dates || []) {
-          if (!r.date || !platformIds.includes(r.platform)) continue;
+          if (!r.date) continue;
+          // Si c'est une recherche, on inclut toutes les consoles reconnues
+          if (!searchQuery && !platformIds.includes(r.platform)) continue;
           if (!searchQuery && (r.date < start || r.date >= end)) continue;
+          
+          const platName = PLATFORMS[r.platform] || r.human || "Retro";
           if (!byPlatform[r.platform] || r.date < byPlatform[r.platform].date) {
-            byPlatform[r.platform] = { date: r.date, human: r.human || "" };
+            byPlatform[r.platform] = { platformName: platName, date: r.date, human: r.human || "" };
           }
         }
-        let releases = Object.entries(byPlatform)
-          .map(([id, r]) => ({
-            platform: PLATFORMS[id],
+        
+        let releases = Object.values(byPlatform)
+          .map((r) => ({
+            platform: r.platformName,
             date: iso(r.date),
             human: r.human,
             exact: hasDay(r.human),
           }))
           .sort((a, b) => a.date.localeCompare(b.date));
+          
         const fix = DATE_FIXES[g.id];
         if (fix) {
           if (!searchQuery && fix.slice(0, 7) !== month) continue;
@@ -230,11 +260,13 @@ export default {
         }
         if (!releases.length) continue;
 
+        const genreList = (g.genres || []).map(genre => genre.name);
+
         games.push({
           id: g.id,
           name: g.name,
           summary: g.summary || null,
-          genres: g.genres || [],
+          genres: genreList,
           cover: `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg`,
           hypes: (g.hypes || 0) + (g.total_rating_count || 0),
           rating: g.rating || null,
