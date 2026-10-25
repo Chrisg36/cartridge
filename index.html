@@ -2066,16 +2066,23 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
+  // 🏷️ Ajout de la catégorie / genre du jeu
+  const categoryText = it.g.category || it.g.genre || "Jeu Vidéo / Action";
+  const categoryBadge = el("p", "m", `🏷️ Catégorie : ${categoryText}`);
+  categoryBadge.style.fontWeight = "700";
+  categoryBadge.style.color = "var(--acc)";
+  categoryBadge.style.marginTop = "4px";
+
   const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
   const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
   companyInfo.style.whiteSpace = "pre-line";
-  companyInfo.style.marginTop = "8px";
+  companyInfo.style.marginTop = "6px";
 
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
   const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
 
-  p.replaceChildren(img, el("h2", "", it.g.name), companyInfo, d, cta, favCta);
+  p.replaceChildren(img, el("h2", "", it.g.name), categoryBadge, companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
