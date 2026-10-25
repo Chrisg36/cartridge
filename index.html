@@ -939,34 +939,129 @@ function openCollectionShelf() {
   const p = $("#panel");
   p.className = "panel";
   p.replaceChildren();
-
-  p.append(el("h2", "", "📚 Ma Vitrine / Étagère Géante"));
-  p.append(el("p", "m", `Total collectionné : ${myCollection.length} jaquettes`));
+  
+  // En-tête de la vitrine
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h2 style="font-family:'Orbitron',sans-serif; margin-bottom:2px; color:var(--acc);">🏛️ Vitrine de Collection</h2>
+    <p class="m" style="margin-bottom:12px;">Total possédé : <b>${myCollection.length}</b> jaquette${myCollection.length > 1 ? 's' : ''}</p>
+  `;
+  p.append(headerDiv);
 
   if (myCollection.length === 0) {
-    p.append(el("p", "msg", "Votre collection est vide ! Ouvrez un pack mystère dans la boutique."));
+    const emptyMsg = el("div", "msg");
+    emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique 🪙";
+    p.append(emptyMsg);
   } else {
-    const grid = el("div", "collection-shelf-grid");
-    for (const item of myCollection) {
-      const card = el("div", "collection-item-card");
-      const img = el("img"); img.src = item.cover; img.loading = "lazy";
-      const title = el("div", "collection-item-title", item.name);
-      card.append(img, title);
-      grid.append(card);
+    // Conteneur principal de la grande bibliothèque / vitrine
+    const shelfContainer = el("div");
+    shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; margin-top:8px; max-height:55vh; overflow-y:auto; padding-right:4px;";
+
+    // Découpage des jeux par rangées de 3 ou 4 pour faire de vraies étagères
+    const itemsPerRow = 3;
+    for (let i = 0; i < myCollection.length; i += itemsPerRow) {
+      const rowItems = myCollection.slice(i, i + itemsPerRow);
+
+      // Structure d'une étagère en bois avec effet de profondeur
+      const woodenShelf = el("div");
+      woodenShelf.style.cssText = `
+        background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
+        border: 1px solid #3d2f24;
+        border-radius: 10px;
+        padding: 14px 10px 4px;
+        position: relative;
+        box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.4);
+      `;
+
+      // Les jeux posés sur l'étagère
+      const gamesRow = el("div");
+      gamesRow.style.cssText = "display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:flex-end;";
+
+      for (const item of rowItems) {
+        const gameBox = el("div");
+        gameBox.style.cssText = `
+          background: var(--card);
+          border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+          border-radius: 8px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+          transition: transform 0.2s ease;
+          cursor: pointer;
+        `;
+        
+        // Effet au surcroit / clic
+        gameBox.addEventListener("click", () => {
+          playThemeSound(theme);
+          // Ouvre les détails du jeu si on clique sur sa jaquette dans la vitrine
+          openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
+        });
+
+        const img = el("img");
+        img.src = item.cover;
+        img.loading = "lazy";
+        img.style.cssText = "width:100%; aspect-ratio:3/4; object-fit:cover; display:block;";
+
+        const spine = el("div");
+        spine.style.cssText = `
+          font-size: 8px;
+          font-weight: 800;
+          text-transform: uppercase;
+          width: 100%;
+          text-align: center;
+          background: rgba(0,0,0,0.85);
+          color: #fff;
+          padding: 4px 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        `;
+        spine.textContent = item.name;
+
+        gameBox.append(img, spine);
+        gamesRow.append(gameBox);
+      }
+
+      woodenShelf.append(gamesRow);
+
+      // Planche de bois physique de l'étagère en bas
+      const plankBoard = el("div");
+      plankBoard.style.cssText = `
+        height: 10px;
+        background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
+        margin: 6px -10px -4px -10px;
+        border-radius: 0 0 8px 8px;
+        border-top: 1px solid #5a4434;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.9);
+      `;
+      woodenShelf.append(plankBoard);
+
+      shelfContainer.append(woodenShelf);
     }
-    p.append(grid);
+
+    p.append(shelfContainer);
   }
 
-  const backShop = el("button", "cta", "← Retour Boutique");
-  backShop.style.marginTop = "16px";
+  // Boutons de navigation du bas de la modale
+  const btnGroup = el("div");
+  btnGroup.style.cssText = "display:flex; gap:8px; margin-top:14px;";
+
+  const backShop = el("button", "cta", "← Boutique");
+  backShop.style.flex = "1";
   backShop.addEventListener("click", () => openShopModal());
-  p.append(backShop);
 
   const close = el("button", "close", t('close'));
+  close.style.flex = "1";
+  close.style.margin = "0";
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-  p.append(close);
-}
 
+  btnGroup.append(backShop, close);
+  p.append(btnGroup);
+
+  $("#sheet").classList.add("on");
+}
 document.addEventListener("DOMContentLoaded", () => {
   const shopBtn = $("#shopBtn");
   if (shopBtn) shopBtn.addEventListener("click", openShopModal);
