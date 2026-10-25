@@ -566,7 +566,6 @@
     position: relative;
     box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.5);
   }
-  /* Planche de l'étagère en relief en bas */
   .wooden-shelf::after {
     content: ''; position: absolute; bottom: -8px; left: -4px; right: -4px; height: 8px;
     background: linear-gradient(90deg, #2a221b, #4a3b2e, #2a221b);
@@ -744,6 +743,7 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
+        <!-- 🕹️ FLÈCHES RÉTRO GÉOMÉTRIQUES -->
         <button class="chip" id="prev" aria-label="Mois précédent">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M15 5L8 12L15 19"/></svg>
         </button>
@@ -890,7 +890,6 @@ function triggerRandomPackDraw(type) {
   p.append(backBtn);
 }
 
-// 🏛️ AFFICHAGE DE LA VRAIE VITRINE DE JEUX VIDÉO (PAR ÉTAGÈRES)
 function openCollectionShelf() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -904,12 +903,9 @@ function openCollectionShelf() {
     p.append(el("p", "msg", "Votre vitrine est vide ! Ouvrez des packs dans la boutique."));
   } else {
     const container = el("div", "gaming-shelf-container");
-    
-    // Découpage par étagères de 4 jeux max pour un rendu bibliothèque réaliste
     const itemsPerShelf = 4;
     for (let i = 0; i < myCollection.length; i += itemsPerShelf) {
       const shelfSlice = myCollection.slice(i, i + itemsPerShelf);
-      
       const woodenShelf = el("div", "wooden-shelf");
       const shelfRow = el("div", "shelf-games-row");
 
@@ -1290,13 +1286,14 @@ let showFavoritesOnly = false;
 
 function isFavorite(id) { return favorites.includes(id); }
 
-// 🪙 CORRECTION BUG POINTS : On ne donne des points QUE si le jeu n'était PAS déjà dans les favoris
+// 🪙 CORRECTION SÉCURISÉE DES POINTS : On vérifie si le jeu était favori AVANT l'action
 function toggleFavorite(id) {
-  if (isFavorite(id)) { 
+  const wasFav = isFavorite(id);
+  if (wasFav) { 
     favorites = favorites.filter(favId => favId !== id); 
   } else { 
     favorites.push(id); 
-    addCoins(10); // +10 crédits uniquement à l'ajout
+    addCoins(10); // +10 crédits uniquement s'il n'était PAS déjà en favori
   }
   try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
   playThemeSound(theme);
