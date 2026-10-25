@@ -10,7 +10,6 @@ const PLATFORM_NAMES = {
   20: "Nintendo DS", 37: "Nintendo 3DS", 23: "Dreamcast", 32: "Saturn",
   29: "Mega Drive", 64: "Master System",
 };
-
 // Plateformes affichées dans la liste mensuelle
 const MONTH_PLATFORMS = [6, 167, 169, 508];
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
@@ -54,7 +53,6 @@ async function getToken(env) {
 async function cacheGet(key) {
   try { return await caches.default.match(key); } catch (e) { return undefined; }
 }
-
 function cachePut(ctx, key, response) {
   try { ctx.waitUntil(caches.default.put(key, response).catch(() => {})); } catch (e) {}
 }
@@ -74,7 +72,7 @@ async function igdb(env, query) {
   return res.json();
 }
 
-// Une sortie IGDB -> { id, name } de plateforme
+// Une sortie IGDB -> { id, name } de plateforme (l'IGDB renvoie un nombre ou un objet)
 function platformOf(r) {
   const p = r.platform;
   const id = p && typeof p === "object" ? p.id : p;
@@ -82,31 +80,9 @@ function platformOf(r) {
   return { id, name };
 }
 
-// Transforme les jeux IGDB en liste propre pour l'application avec genres traduits en français
+// Transforme les jeux IGDB en liste propre pour l'application
 function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
   const games = [];
-  
-  // Dictionnaire de traduction des genres IGDB en français
-  const GENRE_TRANSLATIONS = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
-  };
-
   for (const g of raw || []) {
     const byPlatform = {};
     for (const r of g.release_dates || []) {
@@ -114,7 +90,7 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       const { id, name } = platformOf(r);
       if (!name) continue;
       if (allowedIds && !allowedIds.includes(id)) continue;
-      if (start && (r.date < start || r.date >= end)) continue;
+      if (start && (r.date < start || r.date >= end)) continue; // seulement le mois demandé
       if (!byPlatform[name] || r.date < byPlatform[name].date) {
         byPlatform[name] = { date: r.date, human: r.human || "" };
       }
@@ -133,8 +109,9 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       if (!searchMode && fix.slice(0, 7) !== month) continue;
       releases = releases.map((r) => ({ ...r, date: fix, exact: true }));
     }
-    if (!releases.length) continue;
+    if (!releases.length) continue; // pas de date connue : on n'invente rien
 
+    // Extraction du Développeur et de l'Éditeur depuis involved_companies
     const developers = [];
     const publishers = [];
     if (g.involved_companies) {
@@ -146,19 +123,15 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       }
     }
 
-    // Extraction et traduction propre des genres
-    const rawGenres = (g.genres || []).map((x) => x.name).filter(Boolean);
-    const genres = rawGenres.map(genre => GENRE_TRANSLATIONS[genre] || genre);
-
     games.push({
       id: g.id,
       name: g.name,
       summary: g.summary || null,
       developer: developers.join(", ") || null,
       publisher: publishers.join(", ") || null,
-      genres: genres.length > 0 ? genres : ["Action"],
+      genres: (g.genres || []).map((x) => x.name),
       cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
-      hypes: (g.hypes || 0) + (g.total_rating_count || 0),
+      hypes: (g.hypes || 0) + (g.total_rating_count || 0), // score de popularité
       rating: g.rating || null,
       aggregated_rating: g.aggregated_rating || null,
       date: releases[0].date,
@@ -168,7 +141,7 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
   return games;
 }
 
-// Découpe un texte en morceaux
+// Découpe un texte en morceaux de 400 caractères maximum, à la fin d'une phrase
 function splitText(text, max = 400) {
   const sentences = text.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/);
   const chunks = [];
@@ -190,8 +163,10 @@ function splitText(text, max = 400) {
   return chunks;
 }
 
+// Langues de traduction (code de la page -> nom attendu par le modèle)
 const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
 
+// Traduction du résumé d'un jeu (anglais -> langue choisie)
 async function translateSummary(idParam, lang, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
