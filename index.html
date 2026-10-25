@@ -550,6 +550,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Désactivé",
     langLabel: "Langue de l'interface",
     retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
+    resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
     shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
@@ -594,6 +595,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT OFF",
     langLabel: "Interface Language",
     retroLabel: "🕰️ Time Capsule (Time Travel)",
+    resetCurrentMonth: "📅 Back to current month",
     close: "Close",
     shareTitle: "Share my month",
     shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
@@ -638,6 +640,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT オフ",
     langLabel: "表示言語",
     retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
+    resetCurrentMonth: "📅 今月に戻る",
     close: "閉じる",
     shareTitle: "今月の予定を共有",
     shareDesc: "このメッセージをコピーしてSNSに送信できます:",
@@ -682,6 +685,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Aus",
     langLabel: "Sprache",
     retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
+    resetCurrentMonth: "📅 Zum aktuellen Monat",
     close: "Schließen",
     shareTitle: "Meinen Monat teilen",
     shareDesc: "Kopiere diese Nachricht und teile sie auf Discord oder WhatsApp:",
@@ -726,6 +730,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Desactivado",
     langLabel: "Idioma de la interfaz",
     retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
+    resetCurrentMonth: "📅 Volver al mes actual",
     close: "Cerrar",
     shareTitle: "Compartir mi mes",
     shareDesc: "Copia este mensaje y compártelo en Discord o WhatsApp:",
@@ -770,6 +775,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT 已关闭",
     langLabel: "界面语言",
     retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
+    resetCurrentMonth: "📅 返回当前月份",
     close: "关闭",
     shareTitle: "分享我的发售表",
     shareDesc: "复制此消息并直接分享到社交平台：",
@@ -814,6 +820,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Desligado",
     langLabel: "Idioma da interface",
     retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
+    resetCurrentMonth: "📅 Voltar ao mês atual",
     close: "Fechar",
     shareTitle: "Compartilhar meu mês",
     shareDesc: "Copie e compartilhe esta mensagem no Discord ou WhatsApp:",
@@ -858,6 +865,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT 끄기",
     langLabel: "인터페이스 언어",
     retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
+    resetCurrentMonth: "📅 이번 달로 돌아가기",
     close: "닫기",
     shareTitle: "내 일정 공유하기",
     shareDesc: "이 메시지를 복사하여 메신저나 디스코드에 공유하세요:",
@@ -902,6 +910,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Disattivo",
     langLabel: "Lingua dell'interfaccia",
     retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
+    resetCurrentMonth: "📅 Torna al mese corrente",
     close: "Chiudi",
     shareTitle: "Condividi il mio mese",
     shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
@@ -1824,6 +1833,16 @@ function openSettings() {
     retroGroup.append(b);
   });
   p.append(retroGroup);
+
+  const resetCurrentBtn = el("button", "cta", t('resetCurrentMonth'));
+  resetCurrentBtn.style.marginTop = "12px";
+  resetCurrentBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    ym = new Date().toISOString().slice(0, 7);
+    load();
+    closeSheet();
+  });
+  p.append(resetCurrentBtn);
 
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
