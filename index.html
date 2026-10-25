@@ -1411,7 +1411,7 @@ function t(key, param) {
 
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
-
+let showFavoritesOnly = false;
 let isToggling = false;
 
 function toggleFavorite(rawId) {
