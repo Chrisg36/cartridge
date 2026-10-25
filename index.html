@@ -763,7 +763,7 @@ const LANG_NAMES = {
 
 const WORLD_CONSOLES = [
   { 
-    name: "Nintendo Switch 2", brand: "Nintendo", year: "2025/2026", bg: "#ff3b30", code: "SWITCH 2", 
+    name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#ff3b30", code: "SWITCH 2", 
     cpu: "NVIDIA Tegra personnalisé (Architecture Ampere / Ada)", gpu: "Ray Tracing matériel & DLSS", 
     sales: "Lancement générationnel majeur", impact: "L'évolution ultime du concept hybride de Nintendo, taillée pour le jeu haute fidélité en mode portable et salon grâce au DLSS.",
     desc: "Successeure très attendue de la console hybride à succès de Nintendo, la Switch 2 repousse les frontières techniques du jeu nomade en intégrant des technologies de pointe comme le support du DLSS de NVIDIA pour des performances visuelles spectaculaires." 
@@ -949,7 +949,7 @@ const WORLD_CONSOLES = [
   { 
     name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
     cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
-    sales: "Est. 3 millions d'exemplaires", impact: "La first console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
+    sales: "Est. 3 millions d'exemplaires", impact: "La première console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
     desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
   },
   { 
@@ -1360,12 +1360,10 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
-      // Filtrage exact ou inclusif de la console sélectionnée dans la liste des sorties du jeu
       rel = g.releases.filter((r) => {
         const plat = r.platform.toLowerCase();
         const filt = currentFilter.toLowerCase();
         
-        // Gestion des cas spécifiques pour éviter les confusions (ex: PS1 vs PS5 ou Game Boy vs Game Boy Advance)
         if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
         if (filt === "playstation 4" || filt === "ps4") return plat === "playstation 4" || plat === "ps4";
         if (filt === "playstation 3" || filt === "ps3") return plat === "playstation 3" || plat === "ps3";
@@ -1846,6 +1844,20 @@ function renderPlatformDropdown() {
 $("#platformSelect").addEventListener("change", (e) => {
   playThemeSound(theme);
   currentFilter = e.target.value;
+  
+  // Capsule temporelle automatique : si on choisit une console du musée, on ajuste l'année automatiquement
+  const foundConsole = WORLD_CONSOLES.find(c => c.name === currentFilter);
+  if (foundConsole && foundConsole.year) {
+    // Extrait l'année de lancement (ex: "1990" depuis "1990")
+    const origYear = foundConsole.year.split('/')[0].trim();
+    if (!isNaN(origYear)) {
+      const currentMonthPart = ym.split("-")[1] || "01";
+      ym = `${origYear}-${currentMonthPart}`;
+      load();
+      return;
+    }
+  }
+  
   render();
 });
 
