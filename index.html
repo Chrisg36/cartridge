@@ -207,9 +207,62 @@
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+
+  /* --- SPLASH SCREEN iOS --- */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background-color: var(--bg);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  #splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .splash-logo {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--acc);
+    font-family: var(--font);
+    background: rgba(255, 122, 69, 0.1);
+    padding: 20px 28px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(255, 122, 69, 0.2);
+    border: 1px solid rgba(255, 122, 69, 0.3);
+  }
+
+  .splash-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--acc);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 </style>
 </head>
 <body>
+
+<!-- Écran de chargement iOS (Splash Screen) -->
+<div id="splash">
+  <div class="splash-logo">CR</div>
+  <div class="splash-spinner"></div>
+</div>
+
 <main>
   <header>
     <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
@@ -753,6 +806,13 @@ function updateStaticTexts() {
   $("#search").placeholder = t('searchPlaceholder');
 }
 
+function hideSplash() {
+  const splash = document.getElementById("splash");
+  if (splash) {
+    splash.classList.add("hidden");
+  }
+}
+
 async function load() {
   updateStaticTexts();
   $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
@@ -765,10 +825,12 @@ async function load() {
       cache[ym] = data;
     } catch (e) {
       $("#list").replaceChildren(el("p", "msg", t('netError')));
+      hideSplash();
       return;
     }
   }
   render();
+  setTimeout(hideSplash, 500);
 }
 
 async function searchGlobal(query) {
