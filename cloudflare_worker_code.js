@@ -16,11 +16,6 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-const LANG_MAP = {
-  fr: "french", en: "english", ja: "japanese", de: "german",
-  es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian"
-};
-
 async function getToken(env) {
   if (!env.CLIENT_ID || !env.CLIENT_SECRET) {
     throw new Error("CLIENT_ID ou CLIENT_SECRET manquant.");
@@ -72,7 +67,8 @@ export default {
 
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
 
-    const cacheKey = new Request(url.origin + "/v13" + url.search);
+    // Passage en v14 pour purger les caches précédents
+    const cacheKey = new Request(url.origin + "/v14" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -80,11 +76,11 @@ export default {
       let queryBody = "";
 
       if (searchQuery) {
-        // Utilisation de l'opérateur 'name ~ *...*' qui fonctionne à tous les coups
+        // Utilisation de la commande 'search' officielle d'IGDB
         queryBody = `
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
-          where name ~ *"${searchQuery}"*;
+          search "${searchQuery}";
           limit 40;
         `;
       } else {
@@ -108,7 +104,7 @@ export default {
         const byPlatform = {};
         for (const r of (g.release_dates || [])) {
           const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
-          const rDate = r.date ? iso(r.date) : "2002-12-13"; // Date par défaut si absente
+          const rDate = r.date ? iso(r.date) : "2002-12-13";
           if (!byPlatform[platName]) {
             byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
           }
