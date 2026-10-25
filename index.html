@@ -244,11 +244,38 @@
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
   #sheet.on { display: flex; }
+  
+  /* --- PANNEAU DES RÉGLAGES AVEC MOTIF DE CIRCUIT IMPRIMÉ (PCB) EN FILIGRANE --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
     box-shadow: 0 -10px 40px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--acc) 20%, transparent); 
+    position: relative;
   }
+  
+  .panel.settings-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--acc) 12% , transparent) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--acc) 8% , transparent) 0, transparent 40%),
+      linear-gradient(90deg, color-mix(in srgb, var(--acc) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(0deg, color-mix(in srgb, var(--acc) 6%, transparent) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+    background-position: 0 0, 0 0, -2px -2px, -2px -2px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.85;
+    border-radius: 28px 28px 0 0;
+  }
+
+  /* S'assurer que le contenu du panneau reste au-dessus du fond PCB */
+  .panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
@@ -1197,7 +1224,6 @@ function playThemeSound(th) {
     const now = ac.currentTime;
 
     if (th === "gamecube") {
-      // Jingle emblématique GameCube : arpège joyeux marimbas/synthé (Sol - Mi - Do - Sol aigu)
       const notes = [392.00, 329.63, 261.63, 523.25];
       notes.forEach((freq, idx) => {
         const osc = ac.createOscillator();
@@ -1213,7 +1239,6 @@ function playThemeSound(th) {
         osc.stop(startTime + 0.25);
       });
     } else if (th === "dreamcast") {
-      // Jingle Dreamcast : glissando futuriste spatial (effet laser / montée douce)
       const osc = ac.createOscillator();
       const gain = ac.createGain();
       osc.connect(gain);
@@ -1581,6 +1606,7 @@ $("#viewModeBtn").addEventListener("click", () => {
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
+  p.className = "panel";
   p.replaceChildren();
 
   p.append(el("h2", "", t('vitrineTitle')));
@@ -1616,6 +1642,7 @@ function openConsoleVitrine() {
 function openConsoleDetail(consoleItem) {
   playThemeSound(theme);
   const p = $("#panel");
+  p.className = "panel";
   p.replaceChildren();
 
   const banner = el("div", "console-mockup-banner");
@@ -1651,6 +1678,7 @@ $("#vitrineBtn").addEventListener("click", openConsoleVitrine);
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
+  p.className = "panel";
   const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   const allGames = cache[ym] || [];
   const favGames = allGames.filter(g => isFavorite(g.id));
@@ -1688,6 +1716,7 @@ $("#shareBtn").addEventListener("click", openShareModal);
 
 async function openSheet(it) {
   const p = $("#panel");
+  p.className = "panel";
   const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -1738,6 +1767,7 @@ async function openSheet(it) {
 }
 
 function closeSheet() { $("#sheet").classList.remove("on"); }
+$("#sheet").classList.remove("on");
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 
@@ -1796,6 +1826,7 @@ theme = applyTheme(theme);
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
+  p.className = "panel settings-panel";
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
