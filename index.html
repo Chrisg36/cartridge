@@ -261,7 +261,7 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES AVEC SILHOUETTES PRO & DÉTAILLÉES --- */
+  /* --- VITRINE DES CONSOLES AVEC VRAIES PHOTOS OFFICIELLES --- */
   .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
   @media(min-width: 500px) { .vitrine-grid { grid-template-columns: repeat(3, 1fr); } }
   .console-vitrine-card {
@@ -271,12 +271,11 @@
   }
   .console-vitrine-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--acc); box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent); }
   .console-photo-container {
-    width: 100%; height: 95px; border-radius: 10px; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;
-    overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative;
+    width: 100%; height: 90px; border-radius: 10px; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid rgba(255,255,255,0.1); padding: 4px;
   }
-  .console-vitrine-card:hover .console-graphic-hw { transform: scale(1.08); }
-  .console-graphic-hw { transition: transform 0.3s ease; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7)); }
-
+  .console-photo { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+  .console-vitrine-card:hover .console-photo { transform: scale(1.1); }
   .console-info-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
   .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .console-vitrine-card span { font-size: 11px; color: var(--mut); font-weight: 700; }
@@ -285,7 +284,7 @@
     background: color-mix(in srgb, var(--acc) 15%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 2;
   }
 
-  /* --- BANNIÈRE HD DANS LE DÉTAIL --- */
+  /* --- WIDGET PHOTO HD DANS LE DÉTAIL --- */
   .console-mockup-banner {
     width: 100%; height: 220px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
     flex-direction: column; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
@@ -294,72 +293,10 @@
   .console-mockup-banner::before {
     content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none; z-index: 2;
   }
-  .console-title-badge { margin-top: 14px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); position: relative; z-index: 3; }
+  .console-banner-photo { max-width: 85%; max-height: 120px; object-fit: contain; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.8)); position: relative; z-index: 3; transition: transform 0.4s ease; }
+  .console-mockup-banner:hover .console-banner-photo { transform: scale(1.06); }
+  .console-title-badge { margin-top: 10px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); position: relative; z-index: 3; }
   .console-subtitle-info { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); position: relative; z-index: 3; }
-
-  /* REPRODUCTIONS VECTORIELLES ULTRA-FIDÈLES DE CHAQUE MACHINE */
-  .hw-ps5 { width: 44px; height: 80px; background: #f8fafc; border-radius: 10px 10px 4px 4px; position: relative; display: flex; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-  .hw-ps5::before { content: ''; position: absolute; inset: 0 14px; background: #09090b; border-radius: 3px; }
-
-  .hw-ps4 { width: 95px; height: 35px; background: #222629; border-radius: 4px; position: relative; transform: skewX(-6deg); border-bottom: 4px solid #111; }
-  .hw-ps3 { width: 95px; height: 42px; background: #1a1a1a; border-radius: 20px 20px 6px 6px; position: relative; border-bottom: 4px solid #000; }
-  .hw-ps2 { width: 90px; height: 38px; background: #111318; border-radius: 3px; position: relative; border: 1px solid #3a3f4b; }
-  .hw-ps2::before { content: ''; position: absolute; bottom: 5px; left: 12px; width: 30px; height: 3px; background: #00a0e9; border-radius: 2px; }
-
-  .hw-ps1 { width: 95px; height: 48px; background: #c8c9ce; border-radius: 6px 6px 8px 8px; position: relative; border-bottom: 4px solid #8e9096; }
-  .hw-ps1::before { content: ''; position: absolute; top: 8px; left: 22px; width: 50px; height: 32px; background: #b2b4bc; border-radius: 4px; border: 1px solid #8e9096; }
-
-  .hw-psvita { width: 90px; height: 44px; background: #18181b; border-radius: 12px; position: relative; border: 2px solid #27272a; display: flex; align-items: center; justify-content: center; }
-  .hw-psvita::before { content: ''; width: 54px; height: 30px; background: #050505; border-radius: 3px; border: 1px solid #3f3f46; }
-
-  .hw-psp { width: 95px; height: 42px; background: #27272a; border-radius: 14px; position: relative; border: 2px solid #3f3f46; }
-  .hw-switch { width: 105px; height: 44px; background: #18181b; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; padding: 0 1px; border: 1.5px solid #27272a; }
-  .hw-switch-l { width: 14px; height: 38px; background: #e60012; border-radius: 6px 2px 2px 6px; }
-  .hw-switch-screen { width: 73px; height: 38px; background: #050505; border-radius: 2px; }
-  .hw-switch-r { width: 14px; height: 38px; background: #00bcd4; border-radius: 2px 6px 6px 2px; }
-
-  .hw-wiiu { width: 95px; height: 44px; background: #e2e8f0; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; }
-  .hw-wiiu::before { content: ''; width: 65px; height: 30px; background: #0f172a; border-radius: 4px; }
-
-  .hw-wii { width: 45px; height: 85px; background: #f8fafc; border-radius: 6px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
-  .hw-gamecube { width: 75px; height: 75px; background: #6747ed; border-radius: 12px; position: relative; box-shadow: inset 0 4px 8px rgba(255,255,255,0.2); }
-  .hw-gamecube::before { content: ''; position: absolute; top: 16px; left: 16px; width: 43px; height: 43px; border-radius: 50%; background: #4c28bc; }
-
-  .hw-n64 { width: 85px; height: 55px; background: #4a4556; border-radius: 16px 16px 6px 6px; position: relative; border-bottom: 5px solid #231f20; }
-  .hw-n64::before { content: ''; position: absolute; top: 8px; left: 20px; width: 45px; height: 22px; background: #f5b201; border-radius: 4px; }
-
-  .hw-snes { width: 95px; height: 45px; background: #dcdedf; border-radius: 6px; position: relative; border-bottom: 5px solid #adb5bd; }
-  .hw-snes::before { content: ''; position: absolute; top: 10px; left: 10px; width: 38px; height: 18px; background: #4b5563; border-radius: 3px; }
-
-  .hw-nes { width: 100px; height: 42px; background: #6b7280; border-radius: 4px; position: relative; border-bottom: 5px solid #374151; display: flex; align-items: center; justify-content: center; }
-  .hw-nes::before { content: ''; width: 55px; height: 26px; background: #1f2937; border-radius: 3px; }
-
-  .hw-3ds { width: 85px; height: 45px; background: #ce181e; border-radius: 8px; position: relative; border: 2px solid #990000; }
-  .hw-ds { width: 85px; height: 45px; background: #00bcd4; border-radius: 8px; position: relative; border: 2px solid #008394; }
-  .hw-gba { width: 95px; height: 38px; background: #3f51b5; border-radius: 10px; position: relative; }
-  .hw-gbc { width: 55px; height: 85px; background: #9c27b0; border-radius: 6px 6px 12px 12px; position: relative; }
-  .hw-gb { width: 55px; height: 90px; background: #c2c9d6; border-radius: 6px 6px 12px 12px; position: relative; border-bottom: 6px solid #8e99a8; display: flex; flex-direction: column; align-items: center; padding-top: 8px; gap: 6px; }
-  .hw-gb-screen { width: 36px; height: 28px; background: #485543; border-radius: 2px; }
-
-  .hw-dreamcast { width: 90px; height: 45px; background: #f1f5f9; border-radius: 8px; position: relative; border-bottom: 5px solid #cbd5e1; display: flex; align-items: center; justify-content: center; }
-  .hw-dreamcast::before { content: ''; width: 26px; height: 26px; border-radius: 50%; border: 3px solid #ff6600; background: #fff; }
-
-  .hw-saturn { width: 95px; height: 42px; background: #334155; border-radius: 6px; position: relative; border-bottom: 5px solid #0f172a; }
-  .hw-megadrive { width: 95px; height: 42px; background: #111318; border-radius: 8px; position: relative; border-bottom: 5px solid #000; border-top: 2px solid #ff0033; }
-  .hw-mastersystem { width: 95px; height: 42px; background: #dc2626; border-radius: 6px; position: relative; border-bottom: 5px solid #991b1b; }
-  .hw-gamegear { width: 95px; height: 42px; background: #0284c7; border-radius: 10px; position: relative; border: 2px solid #0369a1; }
-
-  .hw-xboxseries { width: 50px; height: 85px; background: #18181b; border-radius: 10px; position: relative; border: 2px solid #107c10; }
-  .hw-xboxone { width: 95px; height: 42px; background: #111318; border-radius: 6px; position: relative; border: 2px solid #107c10; }
-  .hw-xbox360 { width: 85px; height: 75px; background: #e2e8f0; border-radius: 12px; position: relative; border: 2px solid #5c9e00; }
-  .hw-xbox { width: 85px; height: 75px; background: #0f172a; border-radius: 14px; position: relative; border: 2px solid #107c10; display: flex; align-items: center; justify-content: center; }
-  .hw-xbox::before { content: ''; width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle, #107c10 0%, #000 85%); }
-
-  .hw-atari { width: 100px; height: 42px; background: #5c3a21; border-radius: 4px; position: relative; border-top: 6px solid #1c1917; border-bottom: 4px solid #292524; }
-  .hw-c64 { width: 95px; height: 60px; background: #e2e8f0; border-radius: 6px; position: relative; border-bottom: 6px solid #cbd5e1; display: flex; align-items: center; justify-content: center; }
-  .hw-c64::before { content: ''; width: 75px; height: 36px; background: #0f172a; border-radius: 3px; }
-  .hw-neogeo { width: 95px; height: 45px; background: #b91c1c; border-radius: 6px; position: relative; border-bottom: 5px solid #7f1d1d; }
-  .hw-pcengine { width: 75px; height: 50px; background: #475569; border-radius: 10px; position: relative; border-bottom: 5px solid #1e293b; }
 
   .share-textarea { width: 100%; height: 140px; background: var(--cov); color: var(--txt); border: 0; border-radius: var(--radius); padding: 12px; font-family: var(--font); font-size: 14px; font-weight: 600; resize: none; outline: none; margin-top: 10px; }
 
@@ -603,7 +540,7 @@ const TRANSLATIONS = {
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
-    vitrineDesc: "Clique sur n'importe quelle console pour découvrir son design et son histoire :",
+    vitrineDesc: "Clique sur n'importe quelle console pour découvrir sa photo officielle et son histoire :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -647,54 +584,373 @@ const TRANSLATIONS = {
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
     vitrineTitle: "🏛️ World Console & Micro Museum",
-    vitrineDesc: "Click on any console to discover its authentic design and history:",
+    vitrineDesc: "Click on any console to discover its official photo and history:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
     yesterday: "Yesterday",
     daysAgo: (d) => `${d} days ago`
+  },
+  ja: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 ゲームを検索（全年代）...",
+    all: "すべて",
+    favorites: "❤️ お気に入り",
+    noGamesSearch: "該当するゲームが見つかりませんでした。",
+    noGamesFav: "今月のお気に入りはありません。",
+    noGamesFilter: "この条件に一致するゲームはありません。",
+    loading: "読み込み中…",
+    searchDb: "データベース全体を検索中... 🔍",
+    netError: "読み込めませんでした。config.jsのURLを確認してください。",
+    searchError: "検索中にエラーが発生しました。",
+    settingsTitle: "設定",
+    themeLabel: "テーマ & レトロコンソール",
+    soundLabel: "効果音",
+    soundOn: "🔊 サウンド ON",
+    soundOff: "🔇 サウンド OFF",
+    crtLabel: "CRT走査線エフェクト",
+    crtOn: "📺 CRT オン",
+    crtOff: "🖥️ CRT オフ",
+    langLabel: "表示言語",
+    retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
+    close: "閉じる",
+    shareTitle: "今月の予定を共有",
+    shareDesc: "このメッセージをコピーしてSNSに送信できます:",
+    noFavShare: "お気に入りがまだありません！ハート ❤️ を追加してください。",
+    shareFooter: "✨ ゲーム発売アプリから共有されました！",
+    copyBtn: "📋 テキストをコピー",
+    copiedBtn: "✅ コピーしました！",
+    calendarBtn: "カレンダーに追加",
+    favAdd: "🤍 お気に入りに追加",
+    favRemove: "❤️ お気に入りから削除",
+    trailerBtn: "🎥 YouTubeで予告編を見る",
+    hltbBtn: "⏱️ クリア時間をチェック (HowLongToBeat)",
+    summaryLabel: "概要",
+    summaryLoading: "AIで概要を翻訳中… ⏳",
+    vitrineTitle: "🏛️ 世界のコンソール・パソコン博物館",
+    vitrineDesc: "コンソールをクリックして公式写真と詳細を確認：",
+    today: "今日",
+    tomorrow: "明日",
+    inDays: (d) => `${d}日後`,
+    yesterday: "昨日",
+    daysAgo: (d) => `${d}日前`
+  },
+  de: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
+    all: "Alle",
+    favorites: "❤️ Favoriten",
+    noGamesSearch: "Keine Spiele für diese Suche gefunden.",
+    noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
+    noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
+    loading: "Laden…",
+    searchDb: "Durchsuche die Datenbank... 🔍",
+    netError: "Fehler beim Laden. Überprüfe die Worker-URL in config.js.",
+    searchError: "Fehler bei der Suche.",
+    settingsTitle: "Einstellungen",
+    themeLabel: "Designs & Retro-Konsolen",
+    soundLabel: "Soundeffekte",
+    soundOn: "🔊 Ton an",
+    soundOff: "🔇 Ton aus",
+    crtLabel: "CRT-Scanlines-Effekt",
+    crtOn: "📺 CRT An",
+    crtOff: "🖥️ CRT Aus",
+    langLabel: "Sprache",
+    retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
+    close: "Schließen",
+    shareTitle: "Meinen Monat teilen",
+    shareDesc: "Kopiere diese Nachricht und teile sie auf Discord oder WhatsApp:",
+    noFavShare: "Noch keine Favoriten! Füge Herzen ❤️ hinzu.",
+    shareFooter: "✨ Geteilt über meine Spiele-App!",
+    copyBtn: "📋 Text kopieren",
+    copiedBtn: "✅ Kopiert!",
+    calendarBtn: "Zum Kalender hinzufügen",
+    favAdd: "🤍 Zu Favoriten hinzufügen",
+    favRemove: "❤️ Aus Favoriten entfernen",
+    trailerBtn: "🎥 Trailer auf YouTube ansehen",
+    hltbBtn: "⏱️ Spielzeit prüfen (HowLongToBeat)",
+    summaryLabel: "Zusammenfassung",
+    summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
+    vitrineTitle: "🏛️ Welt-Konsolen- und Computer-Museum",
+    vitrineDesc: "Klicke auf eine Konsole, um das offizielle Foto zu sehen:",
+    today: "Heute",
+    tomorrow: "Morgen",
+    inDays: (d) => `In ${d} Tagen`,
+    yesterday: "Gestern",
+    daysAgo: (d) => `Vor ${d} Tagen`
+  },
+  es: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
+    all: "Todos",
+    favorites: "❤️ Favoritos",
+    noGamesSearch: "No se encontraron juegos para esta búsqueda.",
+    noGamesFav: "No hay favoritos este mes.",
+    noGamesFilter: "No hay lanzamientos para este filtro este mes.",
+    loading: "Cargando…",
+    searchDb: "Buscando en toda la base de datos... 🔍",
+    netError: "Error al cargar. Comprueba la URL en config.js.",
+    searchError: "Error en la búsqueda.",
+    settingsTitle: "Ajustes",
+    themeLabel: "Temas y Consolas Retro",
+    soundLabel: "Efectos de sonido",
+    soundOn: "🔊 Sonido activado",
+    soundOff: "🔇 Sonido desactivado",
+    crtLabel: "Efecto de líneas CRT",
+    crtOn: "📺 CRT Activado",
+    crtOff: "🖥️ CRT Desactivado",
+    langLabel: "Idioma de la interfaz",
+    retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
+    close: "Cerrar",
+    shareTitle: "Compartir mi mes",
+    shareDesc: "Copia este mensaje y compártelo en Discord o WhatsApp:",
+    noFavShare: "¡Sin favoritos todavía! Añade corazones ❤️.",
+    shareFooter: "✨ ¡Compartido desde mi app de juegos!",
+    copyBtn: "📋 Copiar texto",
+    copiedBtn: "✅ ¡Copiado!",
+    calendarBtn: "Añadir al calendario",
+    favAdd: "🤍 Añadir a favoritos",
+    favRemove: "❤️ Quitar de favoritos",
+    trailerBtn: "🎥 Ver tráiler en YouTube",
+    hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
+    summaryLabel: "Resumen",
+    summaryLoading: "Traduciendo resumen con IA… ⏳",
+    vitrineTitle: "🏛️ Museo Mundial de Consolas y Micros",
+    vitrineDesc: "Haz clic en cualquier consola para ver su foto oficial:",
+    today: "Hoy",
+    tomorrow: "Mañana",
+    inDays: (d) => `En ${d} días`,
+    yesterday: "Ayer",
+    daysAgo: (d) => `Hace ${d} días`
+  },
+  zh: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
+    all: "全部",
+    favorites: "❤️ 收藏",
+    noGamesSearch: "未找到相关游戏。",
+    noGamesFav: "本月暂无收藏游戏。",
+    noGamesFilter: "本月暂无符合该筛选条件的游戏。",
+    loading: "加载中…",
+    searchDb: "正在搜索整个数据库... 🔍",
+    netError: "加载失败，请检查 config.js 中的 Worker 地址。",
+    searchError: "搜索出错。",
+    settingsTitle: "设置",
+    themeLabel: "主题与复古主机",
+    soundLabel: "音效设置",
+    soundOn: "🔊 开启音效",
+    soundOff: "🔇 关闭音效",
+    crtLabel: "CRT 显像管 scanlines 效果",
+    crtOn: "📺 CRT 已开启",
+    crtOff: "🖥️ CRT 已关闭",
+    langLabel: "界面语言",
+    retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
+    close: "关闭",
+    shareTitle: "分享我的发售表",
+    shareDesc: "复制此消息并直接分享到社交平台：",
+    noFavShare: "暂无收藏！快给游戏点个红心 ❤️ 吧。",
+    shareFooter: "✨ 来自我的游戏发售日历应用！",
+    copyBtn: "📋 复制文本",
+    copiedBtn: "✅ 已复制到剪贴板！",
+    calendarBtn: "添加到日历",
+    favAdd: "🤍 添加到收藏",
+    favRemove: "❤️ 取消收藏",
+    trailerBtn: "🎥 在 YouTube 查看预告片",
+    hltbBtn: "⏱️ 查看通关时长 (HowLongToBeat)",
+    summaryLabel: "简介",
+    summaryLoading: "AI 正在翻译简介… ⏳",
+    vitrineTitle: "🏛️ 世界主机与微型机博物馆",
+    vitrineDesc: "点击任意主机即可查看高清官方照片与详细资料：",
+    today: "今天",
+    tomorrow: "明天",
+    inDays: (d) => `${d} 天后`,
+    yesterday: "昨天",
+    daysAgo: (d) => `${d} 天前`
+  },
+  pt: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
+    all: "Todos",
+    favorites: "❤️ Favoritos",
+    noGamesSearch: "Nenhum jogo encontrado para esta busca.",
+    noGamesFav: "Nenhum favorito este mês.",
+    noGamesFilter: "Nenhum lançamento para este filtro este mês.",
+    loading: "Carregando…",
+    searchDb: "Pesquisando em todo o banco de dados... 🔍",
+    netError: "Erro ao carregar. Verifique a URL do Worker em config.js.",
+    searchError: "Erro na pesquisa.",
+    settingsTitle: "Configurações",
+    themeLabel: "Temas e Consoles Retro",
+    soundLabel: "Efeitos sonoros",
+    soundOn: "🔊 Som ligado",
+    soundOff: "🔇 Som desligado",
+    crtLabel: "Efeito CRT Scanlines",
+    crtOn: "📺 CRT Ligado",
+    crtOff: "🖥️ CRT Desligado",
+    langLabel: "Idioma da interface",
+    retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
+    close: "Fechar",
+    shareTitle: "Compartilhar meu mês",
+    shareDesc: "Copie e compartilhe esta mensagem no Discord ou WhatsApp:",
+    noFavShare: "Sem favoritos ainda! Adicione corações ❤️.",
+    shareFooter: "✨ Compartilhado do meu app de jogos!",
+    copyBtn: "📋 Copiar texto",
+    copiedBtn: "✅ Copiado!",
+    calendarBtn: "Adicionar ao calendário",
+    favAdd: "🤍 Adicionar aos favoritos",
+    favRemove: "❤️ Remover dos favoritos",
+    trailerBtn: "🎥 Assistir trailer no YouTube",
+    hltbBtn: "⏱️ Ver duração (HowLongToBeat)",
+    summaryLabel: "Resumo",
+    summaryLoading: "Traduzindo resumo com IA… ⏳",
+    vitrineTitle: "🏛️ Museu Mundial de Consoles e Micros",
+    vitrineDesc: "Clique em qualquer console para ver sua foto oficial:",
+    today: "Hoje",
+    tomorrow: "Amanhã",
+    inDays: (d) => `Em ${d} dias`,
+    yesterday: "Ontem",
+    daysAgo: (d) => `Há ${d} dias`
+  },
+  ko: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
+    all: "전체",
+    favorites: "❤️ 즐겨찾기",
+    noGamesSearch: "검색 결과가 없습니다.",
+    noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
+    noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
+    loading: "로딩 중…",
+    searchDb: "전체 데이터베이스 검색 중... 🔍",
+    netError: "불러오지 못했습니다. config.js의 Worker 주소를 확인하세요.",
+    searchError: "검색 중 오류 발생.",
+    settingsTitle: "설정",
+    themeLabel: "테마 및 레트로 콘솔",
+    soundLabel: "효과음",
+    soundOn: "🔊 사운드 켜기",
+    soundOff: "🔇 사운드 끄기",
+    crtLabel: "CRT 스캔라인 효과",
+    crtOn: "📺 CRT 켜기",
+    crtOff: "🖥️ CRT 끄기",
+    langLabel: "인터페이스 언어",
+    retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
+    close: "닫기",
+    shareTitle: "내 일정 공유하기",
+    shareDesc: "이 메시지를 복사하여 메신저나 디스코드에 공유하세요:",
+    noFavShare: "아직 즐겨찾기가 없습니다! 하트 ❤️를 추가해보세요.",
+    shareFooter: "✨ 게임 출시 앱에서 공유됨!",
+    copyBtn: "📋 텍스트 복사",
+    copiedBtn: "✅ 복사되었습니다!",
+    calendarBtn: "캘린더에 추가",
+    favAdd: "🤍 즐겨찾기에 추가",
+    favRemove: "❤️ 즐겨찾기에서 제거",
+    trailerBtn: "🎥 YouTube에서 트레일러 보기",
+    hltbBtn: "⏱️ 플레이 시간 확인 (HowLongToBeat)",
+    summaryLabel: "개요",
+    summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
+    vitrineTitle: "🏛️ 세계 콘솔 및 마이크로컴퓨터 박물관",
+    vitrineDesc: "콘솔을 클릭하여 공식 실물 사진을 확인하세요:",
+    today: "오늘",
+    tomorrow: "내일",
+    inDays: (d) => `${d}일 후`,
+    yesterday: "어제",
+    daysAgo: (d) => `${d}일 전`
+  },
+  it: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
+    all: "Tutti",
+    favorites: "❤️ Preferiti",
+    noGamesSearch: "Nessun gioco trovato.",
+    noGamesFav: "Nessun preferito questo mese.",
+    noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
+    loading: "Caricamento…",
+    searchDb: "Ricerca nell'intero database... 🔍",
+    netError: "Impossibile caricare. Controlla l'URL in config.js.",
+    searchError: "Errore durante la ricerca.",
+    settingsTitle: "Impostazioni",
+    themeLabel: "Temi e Console Retro",
+    soundLabel: "Effetti sonori",
+    soundOn: "🔊 Audio attivo",
+    soundOff: "🔇 Audio disattivato",
+    crtLabel: "Effetto Scanlines CRT",
+    crtOn: "📺 CRT Attivo",
+    crtOff: "🖥️ CRT Disattivo",
+    langLabel: "Lingua dell'interfaccia",
+    retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
+    close: "Chiudi",
+    shareTitle: "Condividi il mio mese",
+    shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
+    noFavShare: "Nessun preferito per ora! Aggiungi cuori ❤️.",
+    shareFooter: "✨ Condiviso dalla mia app de giochi!",
+    copyBtn: "📋 Copia testo",
+    copiedBtn: "✅ Copiato!",
+    calendarBtn: "Aggiungi ai preferiti",
+    favAdd: "🤍 Aggiungi ai preferiti",
+    favRemove: "❤️ Rimuovi dai preferiti",
+    trailerBtn: "🎥 Guarda il trailer su YouTube",
+    hltbBtn: "⏱️ Controlla durata (HowLongToBeat)",
+    summaryLabel: "Sommario",
+    summaryLoading: "Traduzione del sommario con IA in corso… ⏳",
+    today: "Oggi",
+    tomorrow: "Domani",
+    inDays: (d) => `Tra ${d} giorni`,
+    yesterday: "Ieri",
+    daysAgo: (d) => `Giorni fa`
   }
 };
 
-const LANG_NAMES = { fr: "🇫🇷 Français", en: "🇬🇧 English" };
+const LANG_NAMES = {
+  fr: "🇫🇷 Français",
+  en: "🇬🇧 English",
+  ja: "🇯🇵 日本語",
+  de: "🇩🇪 Deutsch",
+  es: "🇪🇸 Español",
+  zh: "🇨🇳 中文",
+  pt: "🇧🇷 Português",
+  ko: "🇰🇷 한국어",
+  it: "🇮🇹 Italiano"
+};
 
 const WORLD_CONSOLES = [
-  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", type: "ps5", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
-  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", type: "ps4", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
-  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", type: "ps3", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
-  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", type: "ps2", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
-  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", type: "ps1", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
-  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", type: "psvita", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
-  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", type: "psp", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
+  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
+  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/PlayStation_4_and_Controller.png", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
+  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", img: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Sony-PlayStation-3-2001-C-Right.png", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
+  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PS2-Back.png", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
+  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", img: "https://upload.wikimedia.org/wikipedia/commons/9/95/PSX-Console-wController.png", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
+  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/PlayStation_Vita_Wi-Fi_model.png", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
+  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/PSP-1000.png", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
 
-  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", type: "switch", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
-  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", type: "wiiu", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
-  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", type: "wii", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
-  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", type: "gamecube", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
-  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", type: "n64", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire." },
-  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", type: "snes", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
-  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", type: "nes", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
-  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", type: "3ds", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
-  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", type: "ds", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
-  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", type: "gba", desc: "La Super NES miniature dans la poche." },
-  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", type: "gbc", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
-  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", type: "gb", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
+  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Nintendo_Switch_console_and_Joy-Cons.png", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
+  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wii_U_Console_and_Gamepad.png", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
+  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Wii_Console.png", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
+  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/GameCube-Set.png", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Nintendo-64-Console-Set.png", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire (GoldenEye, Mario Kart 64)." },
+  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", img: "https://upload.wikimedia.org/wikipedia/commons/3/37/SNES-Mod-US.png", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
+  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", img: "https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.png", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
+  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Nintendo_3DS_Cosmo_Black.png", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
+  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Nintendo_DS_Rumble_Pak.png", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
+  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Game_Boy_Advance_purple.png", desc: "La Super NES miniature dans la poche." },
+  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Game_Boy_Color.png", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
+  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", img: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Game-Boy-Na.png", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
 
-  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", type: "dreamcast", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
-  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", type: "saturn", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
-  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", type: "megadrive", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
-  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", type: "mastersystem", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
-  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", type: "gamegear", desc: "La console portable couleur rétroéclairée de SEGA." },
+  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Sega-Dreamcast-Set.png", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
+  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", img: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Sega-Saturn-Console-Set.png", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
+  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", img: "https://upload.wikimedia.org/wikipedia/commons/3/38/Sega-Mega-Drive-1-Console-Set.png", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
+  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", img: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sega-Master-System-Set.png", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
+  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Sega-Game-Gear-V1.png", desc: "La console portable couleur rétroéclairée de SEGA." },
 
-  { name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", type: "xboxseries", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
-  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", type: "xboxone", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
-  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", type: "xbox360", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
-  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", type: "xbox", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
+  { name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Xbox_Series_X_and_Controller.png", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
+  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Xbox_One_Console.png", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
+  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", img: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox-360-Console-Set.png", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
+  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox-Console-Set.png", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
 
-  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", type: "atari", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
-  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", type: "c64", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
-  { name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#b91c1c", type: "neogeo", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
-  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569", type: "pcengine", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." }
+  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", img: "https://upload.wikimedia.org/wikipedia/commons/2/22/Atari-Jaguar-Console-Set.png", desc: "La première console 64-bits autoproclamée de l'histoire." },
+  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", img: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Atari-Lynx-1.png", desc: "La première console portable couleur au format paysager." },
+  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", img: "https://upload.wikimedia.org/wikipedia/commons/1/18/Atari-2600-Wood-4Sw-Set.png", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
+
+  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Commodore_64_Computer_and_peripherals.png", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
+  { name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#b91c1c", img: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Neo-Geo-AES-Console-Set.png", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
+  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569", img: "https://upload.wikimedia.org/wikipedia/commons/7/77/PC-Engine-Console.png", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." }
 ];
 
 let currentLang = "fr";
@@ -734,14 +990,26 @@ function playThemeSound(themeKey) {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(523.25, now);
-    osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
-    gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc.start(now); osc.stop(now + 0.2);
+    const modernThemes = ["dark", "light", "midnight", "forest", "violet", "ruby"];
+
+    if (modernThemes.includes(themeKey)) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    }
   } catch (e) {}
 }
 
@@ -756,14 +1024,20 @@ function getPlatformBadgeClass(plat) {
   if (p.includes("xbox one")) return "badge-xboxone";
   if (p.includes("xbox")) return "badge-xbox";
   if (p.includes("switch")) return "badge-switch2";
-  if (p.includes("gamecube")) return "badge-gamecube";
-  if (p.includes("n64")) return "badge-n64";
-  if (p.includes("snes")) return "badge-snes";
-  if (p.includes("nes")) return "badge-nes";
-  if (p.includes("game boy")) return "badge-gb";
+  if (p.includes("gamecube") || p.includes("game cube")) return "badge-gamecube";
+  if (p.includes("nintendo 64") || p.includes("n64")) return "badge-n64";
+  if (p.includes("super nintendo") || p.includes("snes")) return "badge-snes";
+  if (p.includes("nes") || p.includes("nintendo entertainment system")) return "badge-nes";
+  if (p.includes("game boy advance") || p.includes("gba")) return "badge-gba";
+  if (p.includes("game boy color") || p.includes("gbc")) return "badge-gbc";
+  if (p.includes("game boy") || p.includes("gb")) return "badge-gb";
+  if (p.includes("3ds")) return "badge-3ds";
+  if (p.includes("ds")) return "badge-ds";
   if (p.includes("dreamcast")) return "badge-dreamcast";
   if (p.includes("saturn")) return "badge-saturn";
-  if (p.includes("mega drive")) return "badge-megadrive";
+  if (p.includes("mega drive") || p.includes("genesis")) return "badge-megadrive";
+  if (p.includes("master system")) return "badge-mastersystem";
+  if (p.includes("pc") || p.includes("win")) return "badge-pc";
   return "badge-default";
 }
 
@@ -995,7 +1269,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE INTERACTIF AVEC VRAIS DESIGNS GARANTIS --- */
+/* --- MUSÉE INTERACTIF AVEC VRAIES PHOTOS OFFICIELLES --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1010,8 +1284,22 @@ function openConsoleVitrine() {
     const brandTag = el("span", "console-brand-tag", consoleItem.brand);
     
     const photoBox = el("div", "console-photo-container");
-    const hw = el("div", `console-graphic-hw hw-${consoleItem.type}`);
-    photoBox.append(hw);
+    const img = el("img", "console-photo");
+    img.src = consoleItem.img;
+    img.alt = consoleItem.name;
+    img.loading = "lazy";
+    // En cas d'erreur de chargement d'une image distante, on bascule sur un affichage propre par nom
+    img.onerror = function() {
+      this.style.display = 'none';
+      if (!photoBox.querySelector('.fallback-txt')) {
+        const fallback = el("span", "fallback-txt", consoleItem.name);
+        fallback.style.fontSize = "11px";
+        fallback.style.fontWeight = "800";
+        fallback.style.color = "var(--txt)";
+        photoBox.append(fallback);
+      }
+    };
+    photoBox.append(img);
 
     const infoGroup = el("div", "console-info-group");
     const name = el("b", "", consoleItem.name);
@@ -1039,15 +1327,16 @@ function openConsoleDetail(consoleItem) {
   const banner = el("div", "console-mockup-banner");
   banner.style.background = consoleItem.bg;
 
-  const bannerHw = el("div", `console-graphic-hw hw-${consoleItem.type}`);
-  bannerHw.style.transform = "scale(1.8)";
-  bannerHw.style.margin = "10px 0";
+  const bannerImg = el("img", "console-banner-photo");
+  bannerImg.src = consoleItem.img;
+  bannerImg.alt = consoleItem.name;
+  bannerImg.onerror = function() { this.style.display = 'none'; };
 
   const titleBadge = el("div", "console-title-badge", consoleItem.name);
   const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
-  banner.append(bannerHw, titleBadge, subInfo);
+  banner.append(bannerImg, titleBadge, subInfo);
 
-  const descTitle = el("h2", "", "Design & Histoire");
+  const descTitle = el("h2", "", "Histoire & Hardware");
   const descText = el("p", "", consoleItem.desc);
 
   const backBtn = el("button", "cta", "← Retour au Musée");
