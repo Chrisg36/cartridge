@@ -91,50 +91,59 @@
     overflow-x: hidden;
   }
 
-  /* --- ARRIÈRE-PLAN PERMANENT DE CARTOUCHES (SUBTIL ET ÉLÉGANT) --- */
+  /* --- ARRIÈRE-PLAN AVEC CARTOUCHES HAUTE FINITION ET RELIEF 3D --- */
   .app-bg-cartridges {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.04;
+    opacity: 0.08; /* Légèrement ajusté pour mettre en valeur les reflets 3D */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
-    gap: 60px;
+    gap: 70px;
     padding: 20px;
-    transform: rotate(-8deg) scale(1.15);
+    transform: rotate(-10deg) scale(1.2);
   }
 
   .app-bg-cartridges .bg-cartridge {
-    width: 50px;
-    height: 70px;
-    background: var(--txt);
-    border-radius: 8px 8px 4px 4px;
+    width: 60px;
+    height: 84px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(0,0,0,0.4));
+    border: 1.5px solid var(--acc);
+    border-radius: 10px 10px 4px 4px;
     position: relative;
-    animation: floatAppCartridge 12s infinite ease-in-out alternate;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+    animation: floatAppCartridge 14s infinite ease-in-out alternate;
   }
 
+  /* L'étiquette texturée au milieu de la cartouche d'arrière-plan */
   .app-bg-cartridges .bg-cartridge::before {
     content: '';
     position: absolute;
-    top: 6px; left: 8px; right: 8px; height: 22px;
-    background: var(--bg); border-radius: 4px;
+    top: 8px; left: 8px; right: 8px; height: 32px;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
   }
 
+  /* Les contacts dorés (pins) en bas de la cartouche 3D */
   .app-bg-cartridges .bg-cartridge::after {
     content: '';
     position: absolute;
-    bottom: 5px; left: 10px; right: 10px; height: 8px;
-    background: var(--acc); border-radius: 2px;
+    bottom: 6px; left: 12px; right: 12px; height: 10px;
+    background: linear-gradient(90deg, #D4AF37, #FFD700, #B8860B, #FFD700, #D4AF37);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
   }
 
-  .app-bg-cartridges .bg-cartridge:nth-child(even) { animation-duration: 16s; animation-delay: -3s; }
-  .app-bg-cartridges .bg-cartridge:nth-child(3n) { animation-duration: 10s; animation-delay: -5s; }
+  .app-bg-cartridges .bg-cartridge:nth-child(even) { animation-duration: 18s; animation-delay: -4s; }
+  .app-bg-cartridges .bg-cartridge:nth-child(3n) { animation-duration: 11s; animation-delay: -6s; }
 
   @keyframes floatAppCartridge {
-    0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-25px) rotate(6deg); }
+    0% { transform: translateY(0px) rotate(0deg) scale(1); }
+    100% { transform: translateY(-30px) rotate(8deg) scale(1.03); }
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
@@ -474,7 +483,7 @@
 </head>
 <body>
 
-<!-- Décor discret de cartouches en arrière-plan principal -->
+<!-- Décor en arrière-plan avec cartouches 3D haute finition -->
 <div class="app-bg-cartridges">
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
