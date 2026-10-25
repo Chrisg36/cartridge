@@ -1844,6 +1844,7 @@ function openShareModal() {
 $("#shareBtn").addEventListener("click", openShareModal);
 
 async function openSheet(it) {
+  playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
   const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
@@ -1857,10 +1858,17 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
+  // Affichage du Développeur et de l'Éditeur
+  const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
+  const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
+  const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
+  companyInfo.style.whiteSpace = "pre-line";
+  companyInfo.style.marginTop = "8px";
+
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
   const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
 
-  p.replaceChildren(img, el("h2", "", it.g.name), d, cta, favCta);
+  p.replaceChildren(img, el("h2", "", it.g.name), companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
