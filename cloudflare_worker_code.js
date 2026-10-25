@@ -164,7 +164,7 @@ export default {
     }
 
     // Version V11 pour forcer le nettoyage du cache
-    const cacheKey = new Request(url.origin + "/v11" + url.search);
+    const cacheKey = new Request(url.origin + "/v12" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
