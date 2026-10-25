@@ -12,7 +12,6 @@ const PLATFORMS = {
   169: "Xbox Series X|S",
   11: "Xbox One",
   12: "Xbox 360",
-  11: "Xbox",
   130: "Nintendo Switch",
   508: "Switch 2",
   21: "GameCube",
@@ -186,7 +185,6 @@ export default {
     let month = url.searchParams.get("month");
     const searchQuery = (url.searchParams.get("search") || "").replace(/["\\;]/g, "").trim();
     const platformParam = url.searchParams.get("platform");
-    const showAll = url.searchParams.get("all") === "1";
 
     if (platformParam && !FILTERS[platformParam]) {
       return Response.json({ error: "platform invalide" }, { status: 400, headers: CORS });
@@ -196,8 +194,8 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    // V7 de la clé de cache pour rafraîchir les données des consoles rétro
-    const cacheKey = new Request(url.origin + "/v7" + url.search);
+    // Passé en v8 pour invalider le cache précédent et forcer le rechargement
+    const cacheKey = new Request(url.origin + "/v8" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -207,7 +205,7 @@ export default {
         : Object.keys(PLATFORMS).map(Number);
 
       let start = 0, end = 0;
-      let where = "game_type = (0,8,9,11) & cover != null";
+      let where = "cover != null";
       let tail;
       if (searchQuery) {
         where += ` & release_dates != null & name ~ *"${searchQuery}"*`;
@@ -218,7 +216,6 @@ export default {
         end = Math.floor(Date.UTC(y, m, 1) / 1000);
         where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`;
         where += ` & release_dates.platform = (${platformIds.join(",")})`;
-        if (!showAll) where += " & (hypes > 0 | total_rating_count >= 5)";
         tail = "limit 500;";
       }
 
@@ -234,7 +231,6 @@ export default {
         const byPlatform = {};
         for (const r of g.release_dates || []) {
           if (!r.date) continue;
-          // Si c'est une recherche, on inclut toutes les consoles reconnues
           if (!searchQuery && !platformIds.includes(r.platform)) continue;
           if (!searchQuery && (r.date < start || r.date >= end)) continue;
           
