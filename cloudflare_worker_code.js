@@ -6,7 +6,8 @@ const PLATFORMS_MAP = {
   169: "Xbox Series X|S", 11: "Xbox", 12: "Xbox 360", 130: "Nintendo Switch",
   508: "Switch 2", 21: "GameCube", 4: "Nintendo 64", 19: "SNES", 18: "NES",
   33: "Game Boy", 22: "Game Boy Color", 24: "Game Boy Advance", 20: "Nintendo DS",
-  37: "Nintendo 3DS", 23: "Dreamcast", 32: "Sega Saturn", 29: "Mega Drive", 64: "Master System"
+  37: "Nintendo 3DS", 23: "Dreamcast", 32: "Sega Saturn", 29: "Mega Drive", 64: "Master System",
+  5: "Wii", 41: "Wii U", 188: "Nintendo 3DS"
 };
 
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
@@ -67,7 +68,7 @@ export default {
 
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
 
-    const cacheKey = new Request(url.origin + "/v18" + url.search);
+    const cacheKey = new Request(url.origin + "/v19" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -75,12 +76,11 @@ export default {
       let queryBody = "";
 
       if (searchQuery) {
-        // Recherche globale exacte avec le terme complet saisi par l'utilisateur
         queryBody = `
           search "${searchQuery}";
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
-          limit 40;
+          limit 50;
         `;
       } else {
         const [y, m] = month.split("-").map(Number);
@@ -102,7 +102,10 @@ export default {
       for (const g of (raw || [])) {
         const byPlatform = {};
         for (const r of (g.release_dates || [])) {
-          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform];
+          let platName = null;
+          if (r.platform) {
+            platName = typeof r.platform === 'object' ? r.platform.name : PLATFORMS_MAP[r.platform];
+          }
           if (!platName) continue;
           const rDate = r.date ? iso(r.date) : null;
           if (!byPlatform[platName] && rDate) {
@@ -113,8 +116,12 @@ export default {
         let releases = Object.values(byPlatform);
         if (!releases.length) {
           for (const r of (g.release_dates || [])) {
-            const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
-            const rDate = r.date ? iso(r.date) : "2000-01-01";
+            let platName = null;
+            if (r.platform) {
+              platName = typeof r.platform === 'object' ? r.platform.name : PLATFORMS_MAP[r.platform];
+            }
+            if (!platName) platName = "Nintendo";
+            const rDate = r.date ? iso(r.date) : "2002-12-13";
             byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
           }
           releases = Object.values(byPlatform);
@@ -135,6 +142,11 @@ export default {
           date: releases[0].date,
           releases,
         });
+      }
+
+      // Tri par popularité pour les recherches afin de faire remonter les vrais jeux AAA
+      if (searchQuery) {
+        games.sort((a, b) => b.hypes - a.hypes);
       }
 
       const response = Response.json(games, {
