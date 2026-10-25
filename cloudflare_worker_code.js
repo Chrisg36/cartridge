@@ -149,8 +149,11 @@ function splitText(text, max = 400) {
   return chunks;
 }
 
-// Traduction du résumé d'un jeu (anglais -> français)
-async function translateSummary(idParam, env, ctx) {
+// Langues de traduction (code de la page -> nom attendu par le modèle)
+const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
+
+// Traduction du résumé d'un jeu (anglais -> langue choisie)
+async function translateSummary(idParam, lang, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
     return Response.json({ error: "id invalide" }, { status: 400, headers: CORS });
@@ -161,19 +164,20 @@ async function translateSummary(idParam, env, ctx) {
       { status: 500, headers: CORS }
     );
   }
-  const key = new Request(`https://sorties-jeux.cache/tr/${id}`);
+  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
   const hit = await cacheGet(key);
   if (hit) return hit;
   try {
     const raw = await igdb(env, `fields summary; where id = ${id};`);
     const text = raw[0] && raw[0].summary;
     if (!text) return Response.json({ id, summary: null }, { headers: CORS });
+    if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS });
     const out = [];
     for (const chunk of splitText(text)) {
       const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
         text: chunk,
         source_lang: "english",
-        target_lang: "french",
+        target_lang: TARGET_LANGS[lang] || "french",
       });
       out.push(r.translated_text);
     }
@@ -194,7 +198,7 @@ export default {
     const url = new URL(request.url);
 
     if (url.searchParams.has("translate")) {
-      return translateSummary(url.searchParams.get("translate"), env, ctx);
+      return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
     }
 
     let month = url.searchParams.get("month");
@@ -210,7 +214,7 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    const cacheKey = new Request(url.origin + "/v20" + url.search);
+    const cacheKey = new Request(url.origin + "/v21" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -219,30 +223,47 @@ export default {
 
       if (searchQuery) {
         // ----- Recherche : tous les jeux, y compris rétro, toutes plateformes connues -----
-        const fields = `fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id, genres.name,
-                        release_dates.date, release_dates.platform.name, release_dates.human;`;
+        // 1) on récupère un grand lot de candidats (les jeux de fans sont nombreux)
+        // 2) on garde les plus populaires et ceux dont le nom contient tous les mots
+        // 3) on demande les détails de ces jeux seulement
         const words = searchQuery.split(/\s+/).filter(Boolean).slice(0, 5);
         const contains = words.map((w) => `name ~ *"${w}"*`).join(" & ");
+        const poolFields = "fields name, hypes, total_rating_count;";
         const attempts = [
-          `search "${searchQuery}"; ${fields} where game_type = ${GAME_TYPES}; limit 50;`,
-          `${fields} where ${contains} & game_type = ${GAME_TYPES}; limit 50;`,
-          `search "${searchQuery}"; ${fields} limit 50;`,
+          `search "${searchQuery}"; ${poolFields} where game_type = ${GAME_TYPES}; limit 500;`,
+          `${poolFields} where ${contains} & game_type = ${GAME_TYPES}; limit 500;`,
+          `search "${searchQuery}"; ${poolFields} limit 500;`,
         ];
-        let raw = [];
+        let pool = [];
         for (const q of attempts) {
-          raw = await igdb(env, q);
-          if (raw && raw.length) break;
+          pool = await igdb(env, q);
+          if (pool && pool.length) break;
+        }
+        const lowerWords = words.map((w) => w.toLowerCase());
+        const poolScore = (g) => {
+          const n = (g.name || "").toLowerCase();
+          return (lowerWords.every((w) => n.includes(w)) ? 1e6 : 0) + (g.hypes || 0) + (g.total_rating_count || 0);
+        };
+        const topIds = pool.sort((a, b) => poolScore(b) - poolScore(a)).slice(0, 40).map((g) => g.id);
+        let raw = [];
+        if (topIds.length) {
+          raw = await igdb(env, `
+            fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id, genres.name,
+                   release_dates.date, release_dates.platform.name, release_dates.human;
+            where id = (${topIds.join(",")});
+            limit 50;
+          `);
         }
         games = buildGames(raw, { allowedIds: null, searchMode: true });
-        const q = searchQuery.toLowerCase();
-        const score = (g) => (g.name.toLowerCase().includes(q) ? 1e6 : 0) + g.hypes;
-        games.sort((a, b) => score(b) - score(a));
+        const gameScore = (g) => (lowerWords.every((w) => g.name.toLowerCase().includes(w)) ? 1e6 : 0) + g.hypes;
+        games.sort((a, b) => gameScore(b) - gameScore(a));
       } else {
         // ----- Liste d'un mois : sorties sur PC, PS5, Xbox, Switch 2 -----
         const [y, m] = month.split("-").map(Number);
         const start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
         const end = Math.floor(Date.UTC(y, m, 1) / 1000);
-        const platformIds = platformParam ? [FILTERS[platformParam]] : MONTH_PLATFORMS;
+        // Avant PS5 / Switch 2 (fin 2020), on affiche toutes les plateformes connues
+        const platformIds = platformParam ? [FILTERS[platformParam]] : (month < "2020-11" ? Object.keys(PLATFORM_NAMES).map(Number) : MONTH_PLATFORMS);
 
         let where = `game_type = ${GAME_TYPES} & cover != null`;
         where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`;
