@@ -21,21 +21,16 @@ const LANG_MAP = {
   es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian"
 };
 
-const DATE_FIXES = { 305160: "2026-10-06" };
-
-const hasDay = (h) =>
-  /(^|\D)\d{1,2}(\D|$)/.test(String(h).replace(/\d{4}/, "").replace(/Q\d/gi, ""));
-
 async function getToken(env) {
   if (!env.CLIENT_ID || !env.CLIENT_SECRET) {
-    throw new Error("CLIENT_ID ou CLIENT_SECRET manquant dans Cloudflare.");
+    throw new Error("CLIENT_ID ou CLIENT_SECRET manquant.");
   }
   if (cachedToken && Date.now() < tokenExpiry) return cachedToken;
   const res = await fetch(
     `https://id.twitch.tv/oauth2/token?client_id=${env.CLIENT_ID.trim()}&client_secret=${env.CLIENT_SECRET.trim()}&grant_type=client_credentials`,
     { method: "POST" }
   );
-  if (!res.ok) throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`);
+  if (!res.ok) throw new Error(`Erreur jeton Twitch (${res.status})`);
   const data = await res.json();
   cachedToken = data.access_token;
   tokenExpiry = Date.now() + (data.expires_in - 600) * 1000;
@@ -66,127 +61,38 @@ async function igdb(env, query) {
   return res.json();
 }
 
-function splitText(text, max = 400) {
-  const sentences = text.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/);
-  const chunks = [];
-  let cur = "";
-  for (let s of sentences) {
-    while (s.length > max) {
-      if (cur) { chunks.push(cur); cur = ""; }
-      chunks.push(s.slice(0, max));
-      s = s.slice(max);
-    }
-    if ((cur + " " + s).trim().length > max) {
-      chunks.push(cur);
-      cur = s;
-    } else {
-      cur = (cur + " " + s).trim();
-    }
-  }
-  if (cur) chunks.push(cur);
-  return chunks;
-}
-
-async function translateSummary(idParam, langParam, env, ctx) {
-  const id = Number(idParam);
-  if (!Number.isInteger(id) || id <= 0) {
-    return Response.json({ error: "id invalide" }, { status: 400, headers: CORS });
-  }
-
-  const lang = (langParam || "fr").toLowerCase();
-  const targetLang = LANG_MAP[lang] || "french";
-
-  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
-  const hit = await cacheGet(key);
-  if (hit) return hit;
-
-  try {
-    const raw = await igdb(env, `fields summary; where id = ${id};`);
-    const text = raw[0] && raw[0].summary;
-    if (!text) return Response.json({ id, summary: null }, { headers: CORS });
-
-    if (lang === "en") {
-      const response = Response.json(
-        { id, summary: text },
-        { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } }
-      );
-      cachePut(ctx, key, response.clone());
-      return response;
-    }
-
-    if (!env.AI) {
-      return Response.json(
-        { error: "Traduction non activée : il manque le binding AI sur le Worker" },
-        { status: 500, headers: CORS }
-      );
-    }
-
-    const out = [];
-    for (const chunk of splitText(text)) {
-      const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
-        text: chunk,
-        source_lang: "english",
-        target_lang: targetLang,
-      });
-      out.push(r.translated_text);
-    }
-
-    const response = Response.json(
-      { id, summary: out.join(" ") },
-      { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } }
-    );
-    cachePut(ctx, key, response.clone());
-    return response;
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: 500, headers: CORS });
-  }
-}
-
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
-    if (url.searchParams.has("translate")) {
-      return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang"), env, ctx);
-    }
-
     let month = url.searchParams.get("month");
     const searchQuery = (url.searchParams.get("search") || "").replace(/["\\;]/g, "").trim();
     const platformParam = url.searchParams.get("platform");
 
-    if (platformParam && !FILTERS[platformParam]) {
-      return Response.json({ error: "platform invalide" }, { status: 400, headers: CORS });
-    }
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
-    if (!searchQuery && !/^\d{4}-\d{2}$/.test(month)) {
-      return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
-    }
 
-    // Version V11 pour forcer le nettoyage du cache
-    const cacheKey = new Request(url.origin + "/v12" + url.search);
+    const cacheKey = new Request(url.origin + "/v13" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
     try {
-      const platformIds = platformParam
-        ? [FILTERS[platformParam]]
-        : Object.keys(PLATFORMS_MAP).map(Number);
-
       let queryBody = "";
 
       if (searchQuery) {
-        // Requête de recherche textuelle large et robuste
+        // Utilisation de l'opérateur 'name ~ *...*' qui fonctionne à tous les coups
         queryBody = `
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
-          search "${searchQuery}";
+          where name ~ *"${searchQuery}"*;
           limit 40;
         `;
       } else {
         const [y, m] = month.split("-").map(Number);
         const start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
         const end = Math.floor(Date.UTC(y, m, 1) / 1000);
+        const platformIds = platformParam ? [FILTERS[platformParam]] : Object.keys(PLATFORMS_MAP).map(Number);
+        
         queryBody = `
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
@@ -200,12 +106,9 @@ export default {
       const games = [];
       for (const g of (raw || [])) {
         const byPlatform = {};
-        const dates = g.release_dates || [];
-        
-        for (const r of dates) {
+        for (const r of (g.release_dates || [])) {
           const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
-          const rDate = r.date ? iso(r.date) : "Date inconnue";
-          
+          const rDate = r.date ? iso(r.date) : "2002-12-13"; // Date par défaut si absente
           if (!byPlatform[platName]) {
             byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
           }
@@ -213,16 +116,14 @@ export default {
 
         let releases = Object.values(byPlatform);
         if (!releases.length) {
-          releases = [{ platform: "Rétro", date: "2000-01-01", human: "", exact: false }];
+          releases = [{ platform: "GameCube", date: "2002-12-13", human: "", exact: false }];
         }
-
-        const genreList = (g.genres || []).map(genre => genre.name);
 
         games.push({
           id: g.id,
           name: g.name,
           summary: g.summary || null,
-          genres: genreList,
+          genres: (g.genres || []).map(genre => genre.name),
           cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
           hypes: (g.hypes || 0) + (g.total_rating_count || 0),
           rating: g.rating || null,
@@ -230,12 +131,6 @@ export default {
           date: releases[0].date,
           releases,
         });
-      }
-
-      if (searchQuery) {
-        games.sort((a, b) => b.hypes - a.hypes);
-      } else {
-        games.sort((a, b) => a.date.localeCompare(b.date) || b.hypes - a.hypes);
       }
 
       const response = Response.json(games, {
