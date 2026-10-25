@@ -56,11 +56,53 @@
   }
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
-.sticky-header-container {
-    position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: 6px; margin: 0 -12px; padding-left: 12px; padding-right: 12px;
+/* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
+  .sticky-header-container {
+    position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: 6px; margin: 0 -10px; padding-left: 10px; padding-right: 10px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .header-bottom { display: flex; justify-content: space-between; align-items: center; gap: 4px; margin-bottom: 6px; }
+
+  .neon-logo {
+    font-size: 11px; padding: 6px 8px; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  
+  .magazine-edition-banner {
+    padding: 3px 8px; margin-bottom: 4px; font-size: 9px;
+  }
+
+  h1 { 
+    font-size: 12px; padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .nav { display: flex; gap: 3px; align-items: center; }
+  .month-nav { display: flex; gap: 3px; align-items: center; flex: none; }
+
+  .chip { 
+    padding: 6px 8px; min-height: 32px; font-size: 11px; 
+  }
+  .chip svg { width: 14px; height: 14px; }
+  
+  .filter-bar-container { display: flex; gap: 4px; margin-bottom: 4px; align-items: center; }
+  
+  .platform-select {
+    padding: 8px 24px 8px 8px; font-size: 11px;
+  }
+
+  .fav-filter-btn {
+    padding: 0 8px; height: 32px; font-size: 10px; gap: 2px;
+  }
+  
+  .search-box {
+    padding: 8px 10px; font-size: 12px; margin-bottom: 2px;
+  }
+
+  .header-currency-badge {
+    padding: 5px 6px; font-size: 9px; gap: 2px;
   }
 
   .app-bg-cartridges {
