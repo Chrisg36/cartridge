@@ -56,10 +56,11 @@
   }
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
+  /* 🍏 CORRECTION DE LA ZONE DE SÉCURITÉ IOS (ENCOCHE / DYNAMIC ISLAND) */
   .sticky-header-container {
     position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 85%, transparent);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: 12px; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+    padding-top: max(20px, env(safe-area-inset-top)); padding-bottom: 12px; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
@@ -100,7 +101,7 @@
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: env(safe-area-inset-top); }
   .header-bottom { display: flex; justify-content: space-between; align-items: center; }
 
   .neon-logo {
@@ -742,7 +743,7 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
-        <!-- 🕹️ FLÈCHES GÉOMÉTRIQUES FORCÉES ET VISIBLES -->
+        <!-- 🕹️ FLÈCHES RÉTRO GÉOMÉTRIQUES -->
         <button class="chip" id="prev" aria-label="Mois précédent">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M15 5L8 12L15 19"/></svg>
         </button>
@@ -1285,11 +1286,10 @@ let showFavoritesOnly = false;
 
 function isFavorite(id) { return favorites.includes(id); }
 
-// 🛡️ ANTI-SPAM ET SÉCURISATION TOTALE DES POINTS
 let isToggling = false;
 
 function toggleFavorite(id) {
-  if (isToggling) return; // Ignore le spam instantanément
+  if (isToggling) return;
   isToggling = true;
 
   const wasFav = favorites.includes(id);
@@ -1297,14 +1297,14 @@ function toggleFavorite(id) {
     favorites = favorites.filter(favId => favId !== id); 
   } else { 
     favorites.push(id); 
-    addCoins(10); // +10 crédits une seule et unique fois à l'ajout
+    addCoins(10);
   }
   
   try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
   playThemeSound(theme);
   render();
 
-  setTimeout(() => { isToggling = false; }, 150); // Déverrouille après 150ms
+  setTimeout(() => { isToggling = false; }, 150);
 }
 
 let soundEnabled = true;
