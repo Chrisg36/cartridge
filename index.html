@@ -487,20 +487,69 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent); letter-spacing: 0.5px;
   }
 
-  .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+  /* ⚙️ DESIGN ÉPURÉ DES RÉGLAGES */
+  .settings-section {
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  .settings-section-title {
+    font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--acc);
+    margin-bottom: 10px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
+  }
+  .settings-grid-options {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  }
+  .settings-select-clean {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--cov) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
+    color: var(--txt);
+    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+  }
 
-  /* Grille de thèmes compacte pour le menu Réglages */
+  /* Grille de thèmes ultra-compacte et élégante */
   .themes-grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
   }
-  @media(min-width: 450px) {
-    .themes-grid-container { grid-template-columns: repeat(3, 1fr); }
+  .theme-mini-btn {
+    background: var(--cov);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--txt);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .theme-mini-btn:hover { border-color: var(--acc); }
+  .theme-mini-btn[aria-pressed="true"] {
+    background: var(--acc);
+    color: var(--on);
+    box-shadow: 0 0 10px var(--acc);
   }
 
-  /* 📦 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
+  /* 🪙 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
   .header-currency-badge {
     display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
     border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
@@ -706,7 +755,6 @@
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
-// 🪙 SYSTÈMES DE CRÉDITS ET COLLECTION DE JAQUETTES
 let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
 let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
 let lastDailyClaim = localStorage.getItem("lastDailyClaim") || "";
@@ -887,11 +935,11 @@ const TRANSLATIONS = {
     soundLabel: "Effets sonores",
     soundOn: "🔊 Son activé",
     soundOff: "🔇 Son coupé",
-    crtLabel: "Effet Écran Cathodique (CRT Scanlines)",
-    crtOn: "📺 CRT Activé",
-    crtOff: "🖥️ CRT Désactivé",
+    crtLabel: "Effet Écran Cathodique (CRT)",
+    crtOn: "📺 Activé",
+    crtOff: "🖥️ Désactivé",
     langLabel: "Langue de l'interface",
-    retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
+    retroLabel: "🕰️ Capsule Temporelle",
     resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
@@ -899,7 +947,7 @@ const TRANSLATIONS = {
     noFavShare: "Aucun favori pour l'instant ! Ajoute des cœurs ❤️ sur tes jeux.",
     shareFooter: "✨ Partagé depuis mon appli de sorties de jeux !",
     copyBtn: "📋 Copier le texte",
-    copiedBtn: "✅ Copié ! Prêt à coller sur Messenger ou Discord",
+    copiedBtn: "✅ Copié ! Prêt à coller",
     calendarBtn: "Ajouter au calendrier",
     favAdd: "🤍 Ajouter aux favoris",
     favRemove: "❤️ Retirer des favoris",
@@ -933,10 +981,10 @@ const TRANSLATIONS = {
     soundOn: "🔊 Sound ON",
     soundOff: "🔇 Sound OFF",
     crtLabel: "CRT Scanlines Effect",
-    crtOn: "📺 CRT ON",
-    crtOff: "🖥️ CRT OFF",
+    crtOn: "📺 ON",
+    crtOff: "🖥️ OFF",
     langLabel: "Interface Language",
-    retroLabel: "🕰️ Time Capsule (Time Travel)",
+    retroLabel: "🕰️ Time Capsule",
     resetCurrentMonth: "📅 Back to current month",
     close: "Close",
     shareTitle: "Share my month",
@@ -944,7 +992,7 @@ const TRANSLATIONS = {
     noFavShare: "No favorites yet! Add hearts ❤️ to your games.",
     shareFooter: "✨ Shared from my game releases app!",
     copyBtn: "📋 Copy text",
-    copiedBtn: "✅ Copied! Ready to paste",
+    copiedBtn: "✅ Copied!",
     calendarBtn: "Add to calendar",
     favAdd: "🤍 Add to favorites",
     favRemove: "❤️ Remove from favorites",
@@ -1933,6 +1981,7 @@ let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
+// ⚙️ RÉGLAGES ÉPURÉS ET MIEUX RANGÉS
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1940,35 +1989,40 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  p.append(el("p", "m", t('themeLabel')));
+  // Section 1 : Thèmes & Consoles Rétro (Grille compacte)
+  const secTheme = el("div", "settings-section");
+  secTheme.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
   const themesGrid = el("div", "themes-grid-container");
   for (const [key, [label, , acc]] of Object.entries(THEMES)) {
-    const b = el("button", "chip", label);
-    b.style.width = "100%";
-    b.style.justifyContent = "flex-start";
+    const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      themesGrid.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+      themesGrid.querySelectorAll(".theme-mini-btn").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
     });
     themesGrid.append(b);
   }
-  p.append(themesGrid);
+  secTheme.append(themesGrid);
+  p.append(secTheme);
 
-  p.append(el("p", "m", t('soundLabel')));
+  // Section 2 : Préférences Audio & Affichage (Côte à côte)
+  const secPrefs = el("div", "settings-section");
+  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
+  const prefsGrid = el("div", "settings-grid-options");
+  
   const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.style.margin = "0";
   soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
     soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
     if (soundEnabled) playThemeSound(theme);
   });
-  p.append(soundBtn);
 
-  p.append(el("p", "m", t('crtLabel')));
   const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.style.margin = "0";
   crtBtn.addEventListener("click", () => {
     crtEnabled = !crtEnabled;
     try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
@@ -1976,27 +2030,38 @@ function openSettings() {
     crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
     playThemeSound(theme);
   });
-  p.append(crtBtn);
 
-  p.append(el("p", "m", t('langLabel')));
-  const langGrid = el("div", "lang-grid");
+  prefsGrid.append(soundBtn, crtBtn);
+  secPrefs.append(prefsGrid);
+  p.append(secPrefs);
+
+  // Section 3 : Langue (Menu déroulant épuré)
+  const secLang = el("div", "settings-section");
+  secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
+  const langSelect = el("select", "settings-select-clean");
   Object.entries(LANG_NAMES).forEach(([code, label]) => {
-    const b = el("button", "chip", label);
-    b.style.width = "100%";
-    if (code === currentLang) b.setAttribute("aria-pressed", "true");
-    b.addEventListener("click", () => {
-      playThemeSound(theme); currentLang = code;
-      try { localStorage.setItem("lang", currentLang); } catch (e) {}
-      load(); openSettings();  
-    });
-    langGrid.append(b);
+    const opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = label;
+    if (code === currentLang) opt.selected = true;
+    langSelect.append(opt);
   });
-  p.append(langGrid);
+  langSelect.addEventListener("change", (e) => {
+    playThemeSound(theme);
+    currentLang = e.target.value;
+    try { localStorage.setItem("lang", currentLang); } catch (e) {}
+    load(); openSettings();
+  });
+  secLang.append(langSelect);
+  p.append(secLang);
 
-  p.append(el("p", "m", t('retroLabel')));
+  // Section 4 : Capsule Temporelle
+  const secTime = el("div", "settings-section");
+  secTime.append(el("div", "settings-section-title", t('retroLabel')));
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
-  [[-1, "Année dernière"], [-5, "Il y a 5 ans"], [-10, "Il y a 10 ans"], [-20, "Il y a 20 ans"]].forEach(([years, label]) => {
+  [[-1, "-1 An"], [-5, "-5 Ans"], [-10, "-10 Ans"], [-20, "-20 Ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
+    b.style.flex = "1";
     b.addEventListener("click", () => {
       playThemeSound(theme);
       const [y, m] = ym.split("-").map(Number);
@@ -2005,17 +2070,18 @@ function openSettings() {
     });
     retroGroup.append(b);
   });
-  p.append(retroGroup);
+  secTime.append(retroGroup);
 
-  const resetCurrentBtn = el("button", "cta", t('resetCurrentMonth'));
-  resetCurrentBtn.style.marginTop = "12px";
+  const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
+  resetCurrentBtn.style.marginTop = "8px";
   resetCurrentBtn.addEventListener("click", () => {
     playThemeSound(theme);
     ym = new Date().toISOString().slice(0, 7);
     load();
     closeSheet();
   });
-  p.append(resetCurrentBtn);
+  secTime.append(resetCurrentBtn);
+  p.append(secTime);
 
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -2108,7 +2174,6 @@ $("#search").addEventListener("input", (e) => {
 $("#prev").addEventListener("click", () => shiftMonth(-1));
 $("#next").addEventListener("click", () => shiftMonth(1));
 
-// 🚀 Sécurité anti-cache : Force le remplacement direct des flèches par le style pixel rétro géométrique
 document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
