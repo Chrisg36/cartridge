@@ -245,7 +245,7 @@
   }
   #sheet.on { display: flex; }
   
-  /* --- PANNEAU DES RÉGLAGES AVEC MOTIF CIRCUIT IMPRIMÉ (PCB) --- */
+  /* --- PANNEAU DES RÉGLAGES & MODALES --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
@@ -273,7 +273,20 @@
 
   .panel > * { position: relative; z-index: 1; }
 
-  .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
+  /* CORRECTION DU CADRAGE DE L'IMAGE DE FICHE DE JEU (iOS & NAVIGATEUR) */
+  .panel .big { 
+    width: 100%; 
+    aspect-ratio: 16 / 9; 
+    max-height: 260px;
+    object-fit: cover; 
+    object-position: center;
+    border-radius: var(--radius); 
+    background: var(--cov); 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    display: block;
+  }
+
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
   .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; transition: filter 0.2s; box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 50%, transparent); }
@@ -1261,7 +1274,6 @@ function playThemeSound(th) {
     const now = ac.currentTime;
 
     if (th === "gamecube") {
-      // GameCube : Arpège aigu distinctif (La - Mi - Fa# - Ré)
       [880, 659.25, 740, 587.33].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1273,7 +1285,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.2);
       });
     } else if (th === "ps1") {
-      // PS1 : Accord grave profond puis nappe cristalline
       [130.81, 261.63, 523.25, 659.25].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1285,7 +1296,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.3);
       });
     } else if (th === "gameboy") {
-      // Game Boy : Le double bip 8-bit classique d'allumage
       [440, 880].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1297,7 +1307,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.18);
       });
     } else if (th === "dreamcast") {
-      // Dreamcast : Glissando mélodieux et futuriste
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sine";
@@ -1307,7 +1316,6 @@ function playThemeSound(th) {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
       osc.start(now); osc.stop(now + 0.32);
     } else if (th === "n64") {
-      // Nintendo 64 : Gamme montante joyeuse
       [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1319,7 +1327,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.15);
       });
     } else if (th === "nes") {
-      // NES : Séquence carrée 8-bit héroïque
       [330, 440, 659.25].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1331,7 +1338,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.16);
       });
     } else if (th === "snes") {
-      // Super Nintendo : Accord riche et harmonieux 16-bits
       [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1343,7 +1349,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.25);
       });
     } else if (th === "arcade") {
-      // Arcade : Jingle punchy style borne d'arcade / insérer une pièce
       [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1355,7 +1360,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.14);
       });
     } else if (th === "atari") {
-      // Atari : Son brut analogique vintage 2600
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sawtooth";
@@ -1365,7 +1369,6 @@ function playThemeSound(th) {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
       osc.start(now); osc.stop(now + 0.2);
     } else if (th === "dos") {
-      // MS-DOS : Bip système terminal brut
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "square";
@@ -1374,7 +1377,6 @@ function playThemeSound(th) {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
       osc.start(now); osc.stop(now + 0.08);
     } else if (th === "megadrive") {
-      // Mega Drive : Son FM synthétiseur percutant
       [261.63, 392, 523.25].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1386,7 +1388,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.18);
       });
     } else if (th === "midnight") {
-      // Thème Minuit : Nappe synthétiseur spatiale et douce
       [220, 329.63, 440].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1398,7 +1399,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.3);
       });
     } else if (th === "forest") {
-      // Thème Forêt : Notes organiques douces
       [349.23, 440, 523.25].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1410,7 +1410,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.22);
       });
     } else if (th === "violet") {
-      // Thème Violet : Effet magique mystique
       [440, 554.37, 659.25, 880].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1422,7 +1421,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.2);
       });
     } else if (th === "ruby") {
-      // Thème Rubis : Sonnerie chaleureuse et dynamique
       [329.63, 493.88, 587.33].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1434,7 +1432,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.2);
       });
     } else if (th === "light") {
-      // Thème Clair : Jingle lumineux et aérien
       [587.33, 739.99, 880].forEach((freq, idx) => {
         const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
@@ -1446,7 +1443,6 @@ function playThemeSound(th) {
         osc.start(startTime); osc.stop(startTime + 0.18);
       });
     } else {
-      // Thème Sombre par défaut : Séquence moderne épurée
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sine";
@@ -1858,7 +1854,6 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // Affichage du Développeur et de l'Éditeur
   const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
   const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
