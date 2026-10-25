@@ -1412,28 +1412,32 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-let showFavoritesOnly = false;
-
-function isFavorite(id) { return favorites.includes(id); }
 let isToggling = false;
 
-function toggleFavorite(id) {
+function toggleFavorite(rawId) {
   if (isToggling) return;
   isToggling = true;
 
-  const wasFav = favorites.includes(id);
+  // On force l'ID en nombre pour éviter les bugs de type (texte vs nombre)
+  const id = Number(rawId);
+  
+  // On convertit tous les favoris enregistrés en nombres
+  let currentFavs = favorites.map(Number);
+  const wasFav = currentFavs.includes(id);
+
   if (wasFav) { 
-    favorites = favorites.filter(favId => favId !== id); 
+    // Si c'est déjà un favori, on l'enlève (AUCUN POINT GAINÉ)
+    favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    favorites.push(id); 
-    addCoins(10); // Bonus de 10 crédits pour le premier ajout
+    // Si ce n'y était PAS, on l'ajoute et on donne les points UNE SEULE FOIS
+    currentFavs.push(id);
+    favorites = currentFavs;
+    addCoins(10); 
   }
   
   try { 
     localStorage.setItem("favorites", JSON.stringify(favorites)); 
-  } catch (e) {
-    console.error("Erreur de sauvegarde dans le localStorage :", e);
-  }
+  } catch (e) {}
 
   playThemeSound(theme);
   render();
