@@ -98,7 +98,7 @@
   .nav { display: flex; gap: 8px; }
   .chip { border: 0; border-radius: var(--radius); padding: 10px 16px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
   
   .search-box {
     width: 100%;
@@ -115,6 +115,22 @@
     font-weight: 600;
   }
   .search-box::placeholder { color: var(--mut); }
+
+  /* Style pour le sélecteur de genre additionnel */
+  select#genreFilter {
+    background: var(--card);
+    color: var(--txt);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    min-height: 44px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    outline: none;
+    flex: none;
+  }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
   .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
@@ -184,10 +200,14 @@
       <button class="chip" id="next" aria-label="Mois suivant">›</button>
     </div>
   </header>
+  
+  <!-- Barre de filtres (Plateformes + Bouton Hype + Sélecteur de Genre) -->
   <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
+  
   <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
   <div id="list"></div>
 </main>
+
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -197,6 +217,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
     all: "Tous",
     favorites: "❤️ Favoris",
+    hypeFilter: "🔥 Les plus attendus",
+    allGenres: "Tous les genres",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
     noGamesFilter: "Aucune sortie pour ce filtre ce mois-ci.",
@@ -236,6 +258,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Search any game (all years)...",
     all: "All",
     favorites: "❤️ Favorites",
+    hypeFilter: "🔥 Most Hype",
+    allGenres: "All genres",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
     noGamesFilter: "No releases for this filter this month.",
@@ -275,6 +299,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 ゲームを検索（全年代）...",
     all: "すべて",
     favorites: "❤️ お気に入り",
+    hypeFilter: "🔥 注目作",
+    allGenres: "すべてのジャンル",
     noGamesSearch: "該当するゲームが見つかりませんでした。",
     noGamesFav: "今月のお気に入りはありません。",
     noGamesFilter: "この条件に一致するゲームはありません。",
@@ -314,6 +340,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
     all: "Alle",
     favorites: "❤️ Favoriten",
+    hypeFilter: "🔥 Meist erwartet",
+    allGenres: "Alle Genres",
     noGamesSearch: "Keine Spiele für diese Suche gefunden.",
     noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
     noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
@@ -353,6 +381,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
+    hypeFilter: "🔥 Más esperados",
+    allGenres: "Todos los géneros",
     noGamesSearch: "No se encontraron juegos para esta búsqueda.",
     noGamesFav: "No hay favoritos este mes.",
     noGamesFilter: "No hay lanzamientos para este filtro este mes.",
@@ -392,6 +422,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
     all: "全部",
     favorites: "❤️ 收藏",
+    hypeFilter: "🔥 最受期待",
+    allGenres: "所有类型",
     noGamesSearch: "未找到相关游戏。",
     noGamesFav: "本月暂无收藏游戏。",
     noGamesFilter: "本月暂无符合该筛选条件的游戏。",
@@ -431,6 +463,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
+    hypeFilter: "🔥 Mais esperados",
+    allGenres: "Todos os gêneros",
     noGamesSearch: "Nenhum jogo encontrado para esta busca.",
     noGamesFav: "Nenhum favorito este mês.",
     noGamesFilter: "Nenhum lançamento para este filtro este mês.",
@@ -470,6 +504,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
     all: "전체",
     favorites: "❤️ 즐겨찾기",
+    hypeFilter: "🔥 기대작",
+    allGenres: "모든 장르",
     noGamesSearch: "검색 결과가 없습니다.",
     noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
     noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
@@ -509,6 +545,8 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
     all: "Tutti",
     favorites: "❤️ Preferiti",
+    hypeFilter: "🔥 Più attesi",
+    allGenres: "Tutti i generi",
     noGamesSearch: "Nessun gioco trovato.",
     noGamesFav: "Nessun preferito questo mese.",
     noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
@@ -716,466 +754,42 @@ function playThemeSound(themeKey) {
   } catch (e) {}
 }
 
+// Variables d'état pour les filtres Hype et Genre
+let currentHypeFilter = false;
+let currentGenreFilter = "all";
+
 function renderPlatforms(releases) {
   if (!releases) return '';
-  const platforms = [...new Set(releases.map(r => r.platform))];
-  return platforms.map(plat => {
-    let badgeClass = "badge-pc"; 
-    const pLower = plat.toLowerCase();
-    if (pLower.includes("ps5")) badgeClass = "badge-ps5";
-    else if (pLower.includes("xbox")) badgeClass = "badge-xbox";
-    else if (pLower.includes("switch")) badgeClass = "badge-switch2";
-    return `<span class="platform-badge ${badgeClass}">${plat}</span>`;
-  }).join('');
+  const platforms = [...new Set(releases.flatMap(r => r.platforms || []))];
+  // On inclut les puces de plateforme, le bouton Hype et le selecteur de genre
+  let html = `<button class="chip" data-platform="all" aria-pressed="${currentPlatform === 'all' && !currentHypeFilter}">${t('all')}</button>`;
+  html += `<button class="chip" data-platform="fav" aria-pressed="${currentPlatform === 'fav'}">${t('favorites')}</button>`;
+  html += `<button class="chip" data-platform="hype" aria-pressed="${currentHypeFilter}">${t('hypeFilter')}</button>`;
+  
+  platforms.forEach(p => {
+    html += `<button class="chip" data-platform="${p}" aria-pressed="${currentPlatform === p && !currentHypeFilter}">${p}</button>`;
+  });
+
+  // Ajout du menu déroulant des genres à la fin de la barre
+  html += `
+    <select id="genreFilter" onchange="changeGenre(this.value)">
+      <option value="all">${t('allGenres')}</option>
+      <option value="RPG" ${currentGenreFilter === 'RPG' ? 'selected' : ''}>RPG</option>
+      <option value="Action" ${currentGenreFilter === 'Action' ? 'selected' : ''}>Action</option>
+      <option value="Adventure" ${currentGenreFilter === 'Adventure' ? 'selected' : ''}>Adventure</option>
+      <option value="Shooter" ${currentGenreFilter === 'Shooter' ? 'selected' : ''}>Shooter</option>
+      <option value="Strategy" ${currentGenreFilter === 'Strategy' ? 'selected' : ''}>Strategy</option>
+    </select>
+  `;
+
+  return html;
 }
 
-function renderHypeBadge(game) {
-  if (!game.hypes || game.hypes < 5) return '';
-  return `<span class="score-badge" style="background: rgba(255, 107, 53, 0.15); color: var(--acc);">🔥 ${game.hypes}</span>`;
-}
-
-function renderTimeBadge(dateStr) {
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const releaseDate = new Date(dateStr + "T00:00:00Z"); releaseDate.setHours(0, 0, 0, 0);
-  const diffDays = Math.round((releaseDate - today) / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return `<span class="time-badge badge-today">${t('today')}</span>`;
-  if (diffDays === 1) return `<span class="time-badge">${t('tomorrow')}</span>`;
-  if (diffDays > 1 && diffDays <= 7) return `<span class="time-badge">${t('inDays', diffDays)}</span>`;
-  if (diffDays === -1) return `<span class="time-badge">${t('yesterday')}</span>`;
-  if (diffDays < -1 && diffDays >= -7) return `<span class="time-badge">${t('daysAgo', Math.abs(diffDays))}</span>`;
-  return '';
-}
-
-function renderScoreBadge(game) {
-  const scoreRaw = game.aggregated_rating || game.rating;
-  if (!scoreRaw) return '';
-  const score = Math.round(scoreRaw);
-  let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
-  return `<span class="score-badge ${scoreClass}">★ ${score}</span>`;
-}
-
-const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
-const cache = {};
-let ym = new Date().toISOString().slice(0, 7);
-let filter = "Tous";
-let searchQuery = "";
-let searchResults = null;
-
-const $ = (s) => document.querySelector(s);
-const el = (tag, cls, text) => {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text != null) e.textContent = text;
-  return e;
-};
-const utc = (d) => new Date(d + "T00:00:00Z");
-const fmtDay = (d) => utc(d).toLocaleDateString(currentLang, { weekday: "long", day: "numeric", timeZone: "UTC" });
-const fmtFull = (d) => utc(d).toLocaleDateString(currentLang, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-
-function shiftMonth(delta) {
+function changeGenre(genre) {
+  currentGenreFilter = genre;
   playThemeSound(theme);
-  const [y, m] = ym.split("-").map(Number);
-  ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
-  load();
-}
-
-function updateStaticTexts() {
-  $("#sub-title").textContent = t('subTitle');
-  $("#search").placeholder = t('searchPlaceholder');
-  const chipsElements = $("#chips").children;
-  if (chipsElements.length >= 2) {
-    chipsElements[0].textContent = t('all');
-    chipsElements[1].textContent = t('favorites');
-  }
-}
-
-async function load() {
-  updateStaticTexts();
-  $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  if (!cache[ym]) {
-    $("#list").replaceChildren(el("p", "msg", t('loading')));
-    try {
-      const res = await fetch(`${API}/?month=${ym}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur du serveur");
-      cache[ym] = data;
-    } catch (e) {
-      $("#list").replaceChildren(el("p", "msg", t('netError')));
-      return;
-    }
-  }
   render();
 }
-
-async function searchGlobal(query) {
-  if (!query || query.length < 2) {
-    searchResults = null;
-    render();
-    return;
-  }
-  $("#list").replaceChildren(el("p", "msg", t('searchDb')));
-  try {
-    const res = await fetch(`${API}/?search=${encodeURIComponent(query)}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Erreur");
-    searchResults = data;
-    render();
-  } catch (e) {
-    $("#list").replaceChildren(el("p", "msg", t('searchError')));
-  }
-}
-
-function itemsFor(games) {
-  const out = [];
-  for (const g of games) {
-    if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
-    const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
-    if (!rel.length) continue;
-    out.push({ g, rel, date: rel[0].date });
-  }
-  return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
-}
-
-function render() {
-  let gamesToDisplay = searchQuery ? (searchResults || []) : (cache[ym] || []);
-  const items = itemsFor(gamesToDisplay);
-  const list = $("#list");
-  
-  if (!items.length) {
-    let msgText = searchQuery ? t('noGamesSearch') : (filter === "❤️ Favoris" ? t('noGamesFav') : t('noGamesFilter'));
-    list.replaceChildren(el("p", "msg", msgText));
-    return;
-  }
-  const frag = document.createDocumentFragment();
-  let last = "";
-  for (const it of items) {
-    const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
-    if (headerText !== last) {
-      frag.append(el("p", "day", headerText));
-      last = headerText;
-    }
-    frag.append(row(it));
-  }
-  list.replaceChildren(frag);
-}
-
-function row(it) {
-  const r = el("div", "row");
-  const open = el("button", "open");
-  const img = el("img", "cov");
-  img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
-  const tDiv = el("div", "t");
-  
-  const platformSpan = el("span", "m");
-  platformSpan.innerHTML = renderPlatforms(it.rel) + renderHypeBadge(it.g) + renderScoreBadge(it.g) + renderTimeBadge(it.date);
-  tDiv.append(el("b", "", it.g.name), platformSpan);
-
-  open.append(img, tDiv);
-  open.addEventListener("click", () => {
-    playThemeSound(theme);
-    openSheet(it);
-  });
-
-  const actions = el("div", "actions");
-  const favBtn = el("button", "btn-icon" + (isFavorite(it.g.id) ? " fav-active" : ""));
-  favBtn.innerHTML = isFavorite(it.g.id)
-    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#FF4757" stroke="#FF4757" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
-    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-  favBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFavorite(it.g.id); });
-
-  const add = el("button", "btn-icon add");
-  add.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
-  add.addEventListener("click", (e) => { 
-    e.stopPropagation(); 
-    playThemeSound(theme);
-    addToCalendar(it); 
-  });
-
-  actions.append(favBtn, add);
-  r.append(open, actions);
-  return r;
-}
-
-function openShareModal() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  
-  const allGames = cache[ym] || [];
-  const favGames = allGames.filter(g => isFavorite(g.id));
-
-  let shareText = `🎮 Mes jeux favoris de ${monthName} :\n`;
-  if (favGames.length === 0) {
-    shareText += t('noFavShare') + "\n";
-  } else {
-    for (const g of favGames) {
-      const plats = [...new Set(g.releases.map(r => r.platform))].join(", ");
-      shareText += `• ${g.name} (${plats})\n`;
-    }
-  }
-  shareText += "\n" + t('shareFooter');
-
-  const textarea = el("textarea", "share-textarea");
-  textarea.value = shareText;
-  textarea.readOnly = true;
-
-  const copyBtn = el("button", "cta", t('copyBtn'));
-  copyBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    navigator.clipboard.writeText(textarea.value).then(() => {
-      copyBtn.textContent = t('copiedBtn');
-      setTimeout(() => { copyBtn.textContent = t('copyBtn'); }, 3000);
-    });
-  });
-
-  const close = el("button", "close", t('close'));
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
-
-  p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
-  $("#sheet").classList.add("on");
-}
-$("#shareBtn").addEventListener("click", openShareModal);
-
-async function openSheet(it) {
-  const p = $("#panel");
-  const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
-  const close = el("button", "close", t('close')); 
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
-  
-  const cta = el("button", "cta", t('calendarBtn'));
-  cta.addEventListener("click", () => {
-    playThemeSound(theme);
-    addToCalendar(it);
-  });
-
-  const favCta = el("button", "cta-sec");
-  favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
-  favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
-
-  const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
-  const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
-
-  p.replaceChildren(img, el("h2", "", it.g.name), d, cta, favCta);
-
-  const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
-  const trailerBtn = el("a", "cta-sec");
-  trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
-  trailerBtn.style.textDecoration = "none"; trailerBtn.style.marginTop = "8px";
-  trailerBtn.innerHTML = t('trailerBtn');
-  trailerBtn.addEventListener("click", () => playThemeSound(theme));
-  p.append(trailerBtn);
-
-  const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
-  const hltbBtn = el("a", "cta-sec");
-  hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
-  hltbBtn.style.textDecoration = "none"; hltbBtn.style.marginTop = "8px";
-  hltbBtn.innerHTML = t('hltbBtn');
-  hltbBtn.addEventListener("click", () => playThemeSound(theme));
-  p.append(hltbBtn);
-
-  if (it.g.summary) {
-    const label = el("p", "m", t('summaryLabel')); label.style.marginTop = "16px";
-    const summaryEl = el("p", "", t('summaryLoading'));
-    summaryEl.style.opacity = "0.7";
-    p.append(label, summaryEl);
-    $("#sheet").classList.add("on");
-
-    try {
-      const res = await fetch(`${API}/?translate=${it.g.id}&lang=${currentLang}`);
-      const data = await res.json();
-      summaryEl.style.opacity = "1";
-      summaryEl.textContent = data.summary || it.g.summary;
-    } catch (e) {
-      summaryEl.style.opacity = "1";
-      summaryEl.textContent = it.g.summary;
-    }
-  } else {
-    $("#sheet").classList.add("on");
-  }
-  p.append(close);
-}
-
-function closeSheet() { $("#sheet").classList.remove("on"); }
-$("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
-
-const icsEsc = (s) => String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
-function addToCalendar(it) {
-  const day = it.date.replace(/-/g, "");
-  const next = new Date(utc(it.date).getTime() + 864e5).toISOString().slice(0, 10).replace(/-/g, "");
-  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const lines = [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sorties Jeux//FR", "BEGIN:VEVENT",
-    `UID:${it.g.id}-${day}@sorties-jeux`, `DTSTAMP:${stamp}`,
-    `DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${next}`,
-    `SUMMARY:${icsEsc("Sortie : " + it.g.name)}`,
-    `DESCRIPTION:${icsEsc(it.rel.map((r) => r.platform).join(", "))}`,
-    "BEGIN:VALARM", "TRIGGER:PT9H", "ACTION:DISPLAY", "DESCRIPTION:Sortie aujourd’hui", "END:VALARM",
-    "END:VEVENT", "END:VCALENDAR",
-  ];
-  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = it.g.name.replace(/[^\w]+/g, "-").slice(0, 40) + ".ics";
-  document.body.append(a);
-  a.click();
-  a.remove();
-}
-
-const THEMES = {
-  dark: ["Sombre", "#111318", "#FF7A45"],
-  light: ["Clair", "#F6F7F9", "#C2410C"],
-  midnight: ["Minuit", "#0B1020", "#5CA8FF"],
-  forest: ["Forêt", "#0E1511", "#4ADE80"],
-  violet: ["Violet", "#130F1E", "#B794FF"],
-  ruby: ["Rubis", "#170D10", "#FF5C7A"],
-  gameboy: ["Game Boy", "#0f1f0f", "#8BAC0F"],
-  nes: ["NES Classic", "#121214", "#E52521"],
-  snes: ["Super Nintendo", "#16151d", "#6b5cd5"],
-  ps1: ["PlayStation 1", "#1a1e29", "#0070D1"],
-  n64: ["Nintendo 64", "#120b1f", "#f5b201"],
-  dreamcast: ["Dreamcast", "#eceef2", "#ff6600"],
-  gamecube: ["GameCube", "#110e1b", "#6747ed"],
-  arcade: ["Arcade 90s", "#0d0614", "#00FFFF"],
-  atari: ["Atari 2600", "#1a120b", "#FF7700"],
-  dos: ["MS-DOS", "#000000", "#00FF00"],
-  megadrive: ["Mega Drive", "#060914", "#FF0033"]
-};
-
-function applyTheme(th) {
-  if (!THEMES[th]) th = "dark";
-  document.documentElement.dataset.theme = th;
-  $("#themeMeta").content = THEMES[th][1];
-  playThemeSound(th);
-  return th;
-}
-let theme = "dark";
-try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
-theme = applyTheme(theme);
-
-function openSettings() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  p.replaceChildren(); 
-
-  p.append(el("h2", "", t('settingsTitle')));
-
-  // Section Thèmes & Consoles Rétro
-  p.append(el("p", "m", t('themeLabel')));
-  const group = el("div", "chips"); group.style.flexWrap = "wrap";
-  for (const [key, [label, , acc]] of Object.entries(THEMES)) {
-    const b = el("button", "chip", label);
-    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
-    b.setAttribute("aria-pressed", String(key === theme));
-    b.addEventListener("click", () => {
-      theme = applyTheme(key);
-      try { localStorage.setItem("theme", theme); } catch (e) {}
-      group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
-    });
-    group.append(b);
-  }
-  p.append(group);
-
-  // Section Paramètre Sonore (ON/OFF)
-  p.append(el("p", "m", t('soundLabel')));
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
-  soundBtn.addEventListener("click", () => {
-    soundEnabled = !soundEnabled;
-    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
-    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
-    if (soundEnabled) playThemeSound(theme);
-  });
-  p.append(soundBtn);
-
-  // Section Langues
-  p.append(el("p", "m", t('langLabel')));
-  const langGrid = el("div", "lang-grid");
-  Object.entries(LANG_NAMES).forEach(([code, label]) => {
-    const b = el("button", "chip", label);
-    if (code === currentLang) b.setAttribute("aria-pressed", "true");
-    b.addEventListener("click", () => {
-      playThemeSound(theme);
-      currentLang = code;
-      try { localStorage.setItem("lang", currentLang); } catch (e) {}
-      load();          
-      openSettings();  
-    });
-    langGrid.append(b);
-  });
-  p.append(langGrid);
-
-  // Section Capsule Temporelle (Mode Rétro)
-  p.append(el("p", "m", t('retroLabel')));
-  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
-  [
-    [-1, "Année dernière"],
-    [-5, "Il y a 5 ans"],
-    [-10, "Il y a 10 ans"],
-    [-20, "Il y a 20 ans"]
-  ].forEach(([years, label]) => {
-    const b = el("button", "chip", label);
-    b.addEventListener("click", () => {
-      playThemeSound(theme);
-      const [y, m] = ym.split("-").map(Number);
-      const targetYear = y + years;
-      ym = `${targetYear}-${String(m).padStart(2, "0")}`;
-      load();
-      closeSheet();
-    });
-    retroGroup.append(b);
-  });
-  p.append(retroGroup);
-
-  const close = el("button", "close", t('close')); 
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
-  p.append(close);
-
-  $("#sheet").classList.add("on");
-}
-$("#settings").addEventListener("click", openSettings);
-
-const chips = $("#chips");
-for (const f of FILTERS) {
-  let label = f;
-  if (f === "Tous") label = t('all');
-  if (f === "❤️ Favoris") label = t('favorites');
-  const b = el("button", "chip", label);
-  b.setAttribute("aria-pressed", String(f === filter));
-  b.addEventListener("click", () => {
-    playThemeSound(theme);
-    filter = f;
-    chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.textContent === b.textContent)));
-    render();
-  });
-  chips.append(b);
-}
-
-let searchTimeout;
-$("#search").addEventListener("input", (e) => {
-  searchQuery = e.target.value.trim();
-  clearTimeout(searchTimeout);
-  if (!searchQuery) {
-    searchResults = null;
-    render();
-    return;
-  }
-  searchTimeout = setTimeout(() => {
-    searchGlobal(searchQuery);
-  }, 400);
-});
-
-$("#prev").addEventListener("click", () => shiftMonth(-1));
-$("#next").addEventListener("click", () => shiftMonth(1));
-load();
 </script>
 </body>
 </html>
