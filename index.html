@@ -142,7 +142,6 @@
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
   .chip[aria-pressed="true"] svg { color: var(--on); }
   
-  /* --- BARRE DE FILTRE : MENU DÉROULANT + BOUTON FAVORIS SÉPARÉ --- */
   .filter-bar-container { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
   
   .platform-select {
@@ -301,7 +300,6 @@
   }
   #sheet.on { display: flex; }
   
-  /* --- PANNEAU DES RÉGLAGES & MODALES --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
@@ -353,7 +351,6 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES : GROUPES PAR CONSTRUCTEUR & CARTES 3D --- */
   .constructor-section { margin-bottom: 24px; }
   .constructor-title { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 900; color: var(--acc); text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 10px 4px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
 
@@ -644,7 +641,6 @@
       </div>
     </div>
 
-    <!-- SÉLECTEUR DÉROULANT DES CONSOLES + BOUTON FAVORIS SÉPARÉ -->
     <div class="filter-bar-container">
       <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
       <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
@@ -953,7 +949,7 @@ const WORLD_CONSOLES = [
   { 
     name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
     cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
-    sales: "Est. 3 millions d'exemplaires", impact: "La première console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
+    sales: "Est. 3 millions d'exemplaires", impact: "La first console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
     desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
   },
   { 
@@ -1364,7 +1360,22 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
-      rel = g.releases.filter((r) => r.platform.toLowerCase().includes(currentFilter.toLowerCase()) || currentFilter.toLowerCase().includes(r.platform.toLowerCase()));
+      // Filtrage exact ou inclusif de la console sélectionnée dans la liste des sorties du jeu
+      rel = g.releases.filter((r) => {
+        const plat = r.platform.toLowerCase();
+        const filt = currentFilter.toLowerCase();
+        
+        // Gestion des cas spécifiques pour éviter les confusions (ex: PS1 vs PS5 ou Game Boy vs Game Boy Advance)
+        if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
+        if (filt === "playstation 4" || filt === "ps4") return plat === "playstation 4" || plat === "ps4";
+        if (filt === "playstation 3" || filt === "ps3") return plat === "playstation 3" || plat === "ps3";
+        if (filt === "playstation 2" || filt === "ps2") return plat === "playstation 2" || plat === "ps2";
+        if (filt === "playstation" || filt === "ps1") return plat === "playstation" || plat === "ps1";
+        if (filt === "game cube" || filt === "gamecube") return plat.includes("gamecube") || plat.includes("game cube");
+        if (filt === "game boy" || filt === "gb") return plat === "game boy" || plat === "gb";
+        
+        return plat.includes(filt) || filt.includes(plat);
+      });
     }
     if (!rel.length) continue;
     out.push({ g, rel, date: rel[0].date });
