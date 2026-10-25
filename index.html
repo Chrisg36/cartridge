@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Cartridge">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="config.js"></script>
-<!-- Police Rajdhani pour un style moderne/tech/gaming -->
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Police Rajdhani et Orbitron pour un style moderne/tech/gaming -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Cartridge</title>
 <style>
   /* --- THÈMES MODERNES --- */
@@ -346,16 +346,66 @@
   }
 
   .splash-container {
-    display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 2;
-    animation: pulseGlow 2s infinite ease-in-out;
+    display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 2;
+    animation: pulseGlow 2.5s infinite ease-in-out;
   }
-  .splash-logo {
-    font-size: 52px; font-weight: 900; letter-spacing: 6px; color: var(--acc);
-    font-family: var(--font); background: rgba(255, 122, 69, 0.12);
-    padding: 22px 32px; border-radius: 24px;
-    box-shadow: 0 0 35px rgba(255, 122, 69, 0.25);
-    border: 1.5px solid rgba(255, 122, 69, 0.4);
+
+  /* --- NOUVEAU LOGO CR PRO (BADGE GAMING EN VERRE DÉPOLI & PUCE DORÉE) --- */
+  .splash-logo-pro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    border: 1.5px solid rgba(255, 122, 69, 0.5);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 122, 69, 0.2);
+    overflow: hidden;
   }
+
+  /* Reflet brillant métallique */
+  .splash-logo-pro::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: rotate(30deg);
+  }
+
+  .splash-logo-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 46px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--txt);
+    background: linear-gradient(180deg, #FFFFFF 30%, var(--acc) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(255, 122, 69, 0.4));
+  }
+
+  /* Puce dorée de cartouche sous le logo */
+  .splash-chip-pins {
+    display: flex;
+    gap: 4px;
+    margin-top: -2px;
+  }
+
+  .splash-chip-pin {
+    width: 6px;
+    height: 10px;
+    background: linear-gradient(180deg, #FFD700, #B8860B);
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  }
+
   .splash-cartridges { display: flex; gap: 12px; height: 38px; align-items: flex-end; }
   .cartridge {
     width: 24px; height: 34px; background: var(--card);
@@ -397,7 +447,16 @@
     <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
   </div>
   <div class="splash-container">
-    <div class="splash-logo">CR</div>
+    <!-- Logo CR re-travaillé façon Badge Pro -->
+    <div class="splash-logo-pro">
+      <div class="splash-logo-text">CR</div>
+      <div class="splash-chip-pins">
+        <div class="splash-chip-pin"></div>
+        <div class="splash-chip-pin"></div>
+        <div class="splash-chip-pin"></div>
+        <div class="splash-chip-pin"></div>
+      </div>
+    </div>
     <div class="splash-cartridges">
       <div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div>
     </div>
