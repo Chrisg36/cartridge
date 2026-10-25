@@ -208,7 +208,7 @@
   .score-low { background: #EF4444; color: #450A0A; }
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
-  /* --- SPLASH SCREEN iOS --- */
+  /* --- SPLASH SCREEN iOS AMÉLIORÉ (CR + CARTOUCHES) --- */
   #splash {
     position: fixed;
     inset: 0;
@@ -218,8 +218,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+    gap: 24px;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
   }
 
   #splash.hidden {
@@ -228,39 +228,87 @@
     pointer-events: none;
   }
 
+  .splash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+
   .splash-logo {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 6px;
     color: var(--acc);
     font-family: var(--font);
-    background: rgba(255, 122, 69, 0.1);
-    padding: 20px 28px;
-    border-radius: 20px;
-    box-shadow: 0 0 25px rgba(255, 122, 69, 0.2);
-    border: 1px solid rgba(255, 122, 69, 0.3);
+    background: rgba(255, 122, 69, 0.12);
+    padding: 22px 32px;
+    border-radius: 24px;
+    box-shadow: 0 0 35px rgba(255, 122, 69, 0.25);
+    border: 1.5px solid rgba(255, 122, 69, 0.4);
   }
 
-  .splash-spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: var(--acc);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+  /* Cartouches de jeux animées en bas du logo */
+  .splash-cartridges {
+    display: flex;
+    gap: 10px;
+    height: 36px;
+    align-items: flex-end;
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  .cartridge {
+    width: 22px;
+    height: 32px;
+    background: var(--card);
+    border: 2px solid var(--acc);
+    border-radius: 4px 4px 2px 2px;
+    position: relative;
+    animation: bounceCartridge 1.2s infinite ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  /* Poignée / étiquette de la cartouche */
+  .cartridge::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+    height: 12px;
+    background: var(--cov);
+    border-radius: 2px;
+  }
+
+  .cartridge:nth-child(1) { animation-delay: 0s; }
+  .cartridge:nth-child(2) { animation-delay: 0.2s; }
+  .cartridge:nth-child(3) { animation-delay: 0.4s; }
+  .cartridge:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes bounceCartridge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); background: var(--acc); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
   }
 </style>
 </head>
 <body>
 
-<!-- Écran de chargement iOS (Splash Screen) -->
+<!-- Écran de chargement iOS (Splash Screen avec Cartouches) -->
 <div id="splash">
-  <div class="splash-logo">CR</div>
-  <div class="splash-spinner"></div>
+  <div class="splash-container">
+    <div class="splash-logo">CR</div>
+    <div class="splash-cartridges">
+      <div class="cartridge"></div>
+      <div class="cartridge"></div>
+      <div class="cartridge"></div>
+      <div class="cartridge"></div>
+    </div>
+  </div>
 </div>
 
 <main>
@@ -830,7 +878,8 @@ async function load() {
     }
   }
   render();
-  setTimeout(hideSplash, 500);
+  // Temps de chargement légèrement prolongé à 1200ms pour apprécier l'animation des cartouches
+  setTimeout(hideSplash, 1200);
 }
 
 async function searchGlobal(query) {
