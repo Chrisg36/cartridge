@@ -1802,6 +1802,8 @@ async function searchGlobal(query) {
   }
 }
 
+let currentGenreFilter = "Tous"; // 🏷️ À déclarer avec tes autres variables globales (comme currentFilter)
+
 function itemsFor(games) {
   const out = [];
   for (const g of games) {
@@ -1825,6 +1827,34 @@ function itemsFor(games) {
       });
     }
     if (!rel.length) continue;
+
+    // 🏷️ FILTRE PAR GENRE / STYLE (Ajouté ici)
+    if (currentGenreFilter !== "Tous") {
+      const GENRE_FR = {
+        "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
+        "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
+        "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
+        "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
+        "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade"
+      };
+
+      let genresRaw = g.genres || g.genre || g.category || ["Action"];
+      let gameGenres = [];
+      if (Array.isArray(genresRaw)) {
+        gameGenres = genresRaw.map(genreObj => {
+          const name = typeof genreObj === 'object' ? (genreObj.name || '') : genreObj;
+          return GENRE_FR[name] || name;
+        });
+      } else if (typeof genresRaw === 'string') {
+        gameGenres = [GENRE_FR[genresRaw] || genresRaw];
+      }
+
+      const matchGenre = gameGenres.some(genreStr => 
+        genreStr.toLowerCase().includes(currentGenreFilter.toLowerCase())
+      );
+      if (!matchGenre) continue;
+    }
+
     out.push({ g, rel, date: rel[0].date });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
