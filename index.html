@@ -98,7 +98,7 @@
   .nav { display: flex; gap: 8px; }
   .chip { border: 0; border-radius: var(--radius); padding: 10px 16px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
   
   .search-box {
     width: 100%;
@@ -115,6 +115,22 @@
     font-weight: 600;
   }
   .search-box::placeholder { color: var(--mut); }
+
+  /* Style pour le sélecteur de genre */
+  select#genreFilter {
+    background: var(--card);
+    color: var(--txt);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    min-height: 44px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    outline: none;
+    flex: none;
+  }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
   .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
@@ -197,6 +213,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
     all: "Tous",
     favorites: "❤️ Favoris",
+    allGenres: "🎮 Toutes les catégories",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
     noGamesFilter: "Aucune sortie pour ce filtre ce mois-ci.",
@@ -236,6 +253,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Search any game (all years)...",
     all: "All",
     favorites: "❤️ Favorites",
+    allGenres: "🎮 All categories",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
     noGamesFilter: "No releases for this filter this month.",
@@ -275,6 +293,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 ゲームを検索（全年代）...",
     all: "すべて",
     favorites: "❤️ お気に入り",
+    allGenres: "🎮 すべてのカテゴリー",
     noGamesSearch: "該当するゲームが見つかりませんでした。",
     noGamesFav: "今月のお気に入りはありません。",
     noGamesFilter: "この条件に一致するゲームはありません。",
@@ -314,6 +333,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
     all: "Alle",
     favorites: "❤️ Favoriten",
+    allGenres: "🎮 Alle Kategorien",
     noGamesSearch: "Keine Spiele für diese Suche gefunden.",
     noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
     noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
@@ -353,6 +373,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
+    allGenres: "🎮 Todas las categorías",
     noGamesSearch: "No se encontraron juegos para esta búsqueda.",
     noGamesFav: "No hay favoritos este mes.",
     noGamesFilter: "No hay lanzamientos para este filtro este mes.",
@@ -392,6 +413,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
     all: "全部",
     favorites: "❤️ 收藏",
+    allGenres: "🎮 所有分类",
     noGamesSearch: "未找到相关游戏。",
     noGamesFav: "本月暂无收藏游戏。",
     noGamesFilter: "本月暂无符合该筛选条件的游戏。",
@@ -431,6 +453,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
+    allGenres: "🎮 Todas as categorias",
     noGamesSearch: "Nenhum jogo encontrado para esta busca.",
     noGamesFav: "Nenhum favorito este mês.",
     noGamesFilter: "Nenhum lançamento para este filtro este mês.",
@@ -470,6 +493,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
     all: "전체",
     favorites: "❤️ 즐겨찾기",
+    allGenres: "🎮 모든 카테고리",
     noGamesSearch: "검색 결과가 없습니다.",
     noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
     noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
@@ -509,6 +533,7 @@ const TRANSLATIONS = {
     searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
     all: "Tutti",
     favorites: "❤️ Preferiti",
+    allGenres: "🎮 Tutte le categorie",
     noGamesSearch: "Nessun gioco trovato.",
     noGamesFav: "Nessun preferito questo mese.",
     noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
@@ -758,6 +783,7 @@ const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
 const cache = {};
 let ym = new Date().toISOString().slice(0, 7);
 let filter = "Tous";
+let currentGenreFilter = "all";
 let searchQuery = "";
 let searchResults = null;
 
@@ -782,11 +808,6 @@ function shiftMonth(delta) {
 function updateStaticTexts() {
   $("#sub-title").textContent = t('subTitle');
   $("#search").placeholder = t('searchPlaceholder');
-  const chipsElements = $("#chips").children;
-  if (chipsElements.length >= 2) {
-    chipsElements[0].textContent = t('all');
-    chipsElements[1].textContent = t('favorites');
-  }
 }
 
 async function load() {
@@ -829,6 +850,14 @@ function itemsFor(games) {
   const out = [];
   for (const g of games) {
     if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
+    
+    // Filtrage par Catégorie/Genre si séléctionné
+    if (currentGenreFilter !== "all") {
+      if (!g.genres || !g.genres.some(genre => genre.toLowerCase().includes(currentGenreFilter.toLowerCase()))) {
+        continue;
+      }
+    }
+
     const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
     if (!rel.length) continue;
     out.push({ g, rel, date: rel[0].date });
@@ -1144,20 +1173,52 @@ function openSettings() {
 $("#settings").addEventListener("click", openSettings);
 
 const chips = $("#chips");
-for (const f of FILTERS) {
-  let label = f;
-  if (f === "Tous") label = t('all');
-  if (f === "❤️ Favoris") label = t('favorites');
-  const b = el("button", "chip", label);
-  b.setAttribute("aria-pressed", String(f === filter));
-  b.addEventListener("click", () => {
+
+// Construction de la barre de filtres (Boutons plateformes + Menu déroulant des catégories)
+function renderChipsBar() {
+  chips.replaceChildren();
+  
+  // 1. Boutons classiques (Tous, Favoris, Consoles)
+  for (const f of FILTERS) {
+    let label = f;
+    if (f === "Tous") label = t('all');
+    if (f === "❤️ Favoris") label = t('favorites');
+    const b = el("button", "chip", label);
+    b.setAttribute("aria-pressed", String(f === filter));
+    b.addEventListener("click", () => {
+      playThemeSound(theme);
+      filter = f;
+      renderChipsBar();
+      render();
+    });
+    chips.append(b);
+  }
+
+  // 2. Menu déroulant des Catégories / Genres demandés
+  const select = document.createElement("select");
+  select.id = "genreFilter";
+  select.innerHTML = `
+    <option value="all">${t('allGenres')}</option>
+    <option value="FPS" ${currentGenreFilter === 'FPS' ? 'selected' : ''}>🎯 FPS</option>
+    <option value="Horror" ${currentGenreFilter === 'Horror' ? 'selected' : ''}>😱 Horreur</option>
+    <option value="Indie" ${currentGenreFilter === 'Indie' ? 'selected' : ''}>💡 Indé</option>
+    <option value="Adventure" ${currentGenreFilter === 'Adventure' ? 'selected' : ''}>🗺️ Aventure</option>
+    <option value="Action" ${currentGenreFilter === 'Action' ? 'selected' : ''}>⚔️ Action</option>
+    <option value="Sport" ${currentGenreFilter === 'Sport' ? 'selected' : ''}>⚽ Sport</option>
+    <option value="Strategy" ${currentGenreFilter === 'Strategy' ? 'selected' : ''}>♟️ Stratégie</option>
+    <option value="Simulator" ${currentGenreFilter === 'Simulator' ? 'selected' : ''}>✈️ Simulation</option>
+    <option value="Racing" ${currentGenreFilter === 'Racing' ? 'selected' : ''}>🏎️ Course</option>
+    <option value="RPG" ${currentGenreFilter === 'RPG' ? 'selected' : ''}>🛡️ RPG</option>
+  `;
+  select.addEventListener("change", (e) => {
     playThemeSound(theme);
-    filter = f;
-    chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.textContent === b.textContent)));
+    currentGenreFilter = e.target.value;
     render();
   });
-  chips.append(b);
+  chips.append(select);
 }
+
+renderChipsBar();
 
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
