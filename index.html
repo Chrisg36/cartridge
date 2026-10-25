@@ -116,7 +116,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* --- ARRIÈRE-PLAN AVEC MULTIPLES CARTOUCHES VARIÉES (Game Boy, Switch, N64, Standard) --- */
+  /* --- ARRIÈRE-PLAN AVEC MULTIPLES CARTOUCHES VARIÉES --- */
   .app-bg-cartridges {
     position: fixed;
     inset: -50px;
@@ -161,7 +161,7 @@
     box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
   }
 
-  /* Style Game Boy (plus carré, encoche distinctive en haut à droite) */
+  /* Style Game Boy */
   .bg-cartridge.gameboy-cart {
     width: 58px;
     height: 64px;
@@ -171,7 +171,7 @@
     top: 6px; height: 26px;
   }
 
-  /* Style Nintendo 64 (large, trapézoïdale) */
+  /* Style Nintendo 64 */
   .bg-cartridge.n64-cart {
     width: 66px;
     height: 70px;
@@ -180,7 +180,7 @@
     border-color: #f5b201;
   }
 
-  /* Style Nintendo Switch (petite cartouche fine et arrondie) */
+  /* Style Nintendo Switch */
   .bg-cartridge.switch-cart {
     width: 44px;
     height: 60px;
@@ -592,45 +592,18 @@
   }
   #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
+  /* --- FOND SPLASH ÉGALEMENT ENRICHI AVEC TOUS LES STYLES DE CARTOUCHES --- */
   .splash-bg-grid {
     position: absolute;
-    inset: -20px;
+    inset: -50px;
     pointer-events: none;
     opacity: 0.12;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
     gap: 40px;
     padding: 20px;
-    transform: rotate(-10deg) scale(1.2);
-  }
-  .splash-bg-grid .bg-cartridge {
-    width: 40px;
-    height: 56px;
-    background: var(--card);
-    border: 2px solid var(--acc);
-    border-radius: 6px 6px 3px 3px;
-    position: relative;
-    animation: floatBgCartridge 6s infinite ease-in-out alternate;
-  }
-  .splash-bg-grid .bg-cartridge::before {
-    content: '';
-    position: absolute;
-    top: 4px; left: 6px; right: 6px; height: 18px;
-    background: var(--acc); border-radius: 3px; opacity: 0.6;
-  }
-  .splash-bg-grid .bg-cartridge::after {
-    content: '';
-    position: absolute;
-    bottom: 4px; left: 8px; right: 8px; height: 8px;
-    background: #d4af37; border-radius: 2px;
-  }
-  .splash-bg-grid .bg-cartridge:nth-child(even) { animation-duration: 8s; animation-delay: -2s; }
-  .splash-bg-grid .bg-cartridge:nth-child(3n) { animation-duration: 5s; animation-delay: -1s; }
-
-  @keyframes floatBgCartridge {
-    0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-20px) rotate(5deg); }
+    transform: rotate(-12deg) scale(1.3);
   }
 
   .splash-container {
@@ -748,13 +721,38 @@
   <div class="bg-cartridge"></div>
 </div>
 
-<!-- Écran de chargement initial (Splash Screen avec temps de chargement bien visible à 1200ms) -->
+<!-- Écran de chargement initial (Splash Screen avec fond harmonisé) -->
 <div id="splash">
   <div class="splash-bg-grid">
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge n64-cart"></div>
+
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
+
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge"></div>
+
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
   </div>
   <div class="splash-container">
     <div class="splash-logo-pro">
