@@ -31,7 +31,7 @@
   [data-theme="dos"] { color-scheme: dark; --bg: #000000; --card: #050d05; --cov: #0a1f0a; --txt: #00ff00; --mut: #008800; --acc: #00ff66; --on: #000000; --pattern: linear-gradient(rgba(0, 255, 0, 0.03) 50%, rgba(0, 0, 0, 0.5) 50%); background-size: 100% 3px; --font: 'Share Tech Mono', monospace; --radius: 0px; }
   [data-theme="megadrive"] { color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff; --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px; --font: 'Orbitron', sans-serif; --radius: 10px; }
 
-  .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
   [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="light"] .platform-select, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box, [data-theme="dreamcast"] .platform-select { box-shadow: 0 0 0 1px #D8DCE6; }
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -489,6 +489,50 @@
 
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
+  /* Grille de thèmes compacte pour le menu Réglages */
+  .themes-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+  @media(min-width: 450px) {
+    .themes-grid-container { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* 📦 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
+  .header-currency-badge {
+    display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
+    border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
+    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; color: var(--acc); cursor: pointer;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); transition: transform 0.2s ease;
+  }
+  .header-currency-badge:hover { transform: scale(1.05); }
+
+  .collection-shelf-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;
+  }
+  @media(min-width: 500px) { .collection-shelf-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .collection-item-card {
+    background: var(--card); border: 2px solid var(--acc); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+    animation: fadeInList 0.3s ease;
+  }
+  .collection-item-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+  .collection-item-title {
+    font-size: 9px; font-weight: 800; text-transform: uppercase; width: 100%; text-align: center;
+    background: rgba(0,0,0,0.85); color: #fff; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .shop-banner {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 30%, var(--card)), var(--card));
+    border: 2px solid var(--acc); border-radius: var(--radius); padding: 18px; text-align: center;
+    margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
+  }
+  .shop-banner h3 { font-family: 'Orbitron', sans-serif; margin: 0 0 6px; font-size: 18px; color: var(--acc); text-shadow: 0 0 8px var(--acc); }
+
   #splash {
     position: fixed; inset: 0; background-color: var(--bg); z-index: 9999; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 24px; overflow: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
@@ -611,6 +655,11 @@
     <div class="header-top">
       <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
       <div class="nav">
+        <!-- 🪙 BOUTON PORTEFEUILLE / CRÉDITS & BOUTIQUE -->
+        <button class="header-currency-badge" id="shopBtn" title="Boutique & Collection de Jaquettes">
+          🪙 <span id="userCoins">100</span>
+        </button>
+        <!-- 🏛️ BOUTON VITRINE DES CONSOLES -->
         <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Musée des Consoles & Ordinateurs">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M8 10v4"></path><circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle></svg>
         </button>
@@ -632,7 +681,7 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
-        <!-- 🕹️ FLÈCHES RÉTRO À ANGLES DROITS CORRIGÉES -->
+        <!-- 🕹️ FLÈCHES RÉTRO FORCÉES EN SVG PIXEL / ANGLE DROIT -->
         <button class="chip" id="prev" aria-label="Mois précédent">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
         </button>
@@ -650,17 +699,180 @@
       </button>
     </div>
 
-    <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+    <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
   </div>
   <div id="list"></div>
 </main>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
+// 🪙 SYSTÈMES DE CRÉDITS ET COLLECTION DE JAQUETTES
+let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
+let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
+let lastDailyClaim = localStorage.getItem("lastDailyClaim") || "";
+
+function updateCoinsUI() {
+  const badge = $("#userCoins");
+  if (badge) badge.textContent = userCoins;
+  try { localStorage.setItem("userCoins", userCoins); } catch (e) {}
+}
+
+function addCoins(amount) {
+  userCoins += amount;
+  updateCoinsUI();
+}
+
+function checkDailyReward() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (lastDailyClaim !== todayStr) {
+    addCoins(50);
+    lastDailyClaim = todayStr;
+    try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
+    setTimeout(() => {
+      alert("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
+    }, 1000);
+  }
+}
+
+function openShopModal() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  p.append(el("h2", "", "🎁 Boutique & Vitrine Géante"));
+  p.append(el("p", "m", `Mes crédits disponibles : ${userCoins} 🪙 | Jaquettes possédées : ${myCollection.length}`));
+
+  const banner = el("div", "shop-banner");
+  banner.innerHTML = `
+    <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
+    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+  `;
+
+  const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
+  drawFreeBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem("lastFreePackDate") === todayStr) {
+      alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
+      return;
+    }
+    localStorage.setItem("lastFreePackDate", todayStr);
+    triggerRandomPackDraw("Gratuit");
+  });
+
+  const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
+  drawPaidBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (userCoins < 50) {
+      alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou revenez demain.");
+      return;
+    }
+    userCoins -= 50;
+    updateCoinsUI();
+    triggerRandomPackDraw("Acheté");
+  });
+
+  const viewShelfBtn = el("button", "cta-sec", "📚 Voir ma Vitrine / Étagère de Jaquettes");
+  viewShelfBtn.style.marginTop = "10px";
+  viewShelfBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    openCollectionShelf();
+  });
+
+  banner.append(drawFreeBtn, drawPaidBtn, viewShelfBtn);
+  p.append(banner);
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
+
+  $("#sheet").classList.add("on");
+}
+
+function triggerRandomPackDraw(type) {
+  const allLoadedGames = [];
+  Object.values(cache).forEach(monthList => {
+    if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
+  });
+  
+  if (allLoadedGames.length === 0) {
+    allLoadedGames.push(
+      { id: 9991, name: "The Legend of Zelda: Ocarina of Time", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png" },
+      { id: 9992, name: "Super Mario 64", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1w5w.png" },
+      { id: 9993, name: "Grand Theft Auto V", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1qc4.png" },
+      { id: 9994, name: "Cyberpunk 2077", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.png" }
+    );
+  }
+
+  const randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
+  if (!myCollection.some(item => item.id === randomGame.id)) {
+    myCollection.push(randomGame);
+    try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
+  }
+
+  const p = $("#panel");
+  p.replaceChildren();
+  p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
+  p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
+
+  const cardPreview = el("div", "collection-item-card");
+  cardPreview.style.maxWidth = "160px";
+  cardPreview.style.margin = "16px auto";
+  const img = el("img"); img.src = randomGame.cover;
+  const title = el("div", "collection-item-title", randomGame.name);
+  cardPreview.append(img, title);
+  p.append(cardPreview);
+
+  const backBtn = el("button", "cta", "← Retour à la Boutique");
+  backBtn.addEventListener("click", () => openShopModal());
+  p.append(backBtn);
+}
+
+function openCollectionShelf() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  p.append(el("h2", "", "📚 Ma Vitrine / Étagère Géante"));
+  p.append(el("p", "m", `Total collectionné : ${myCollection.length} jaquettes`));
+
+  if (myCollection.length === 0) {
+    p.append(el("p", "msg", "Votre collection est vide ! Ouvrez un pack mystère dans la boutique."));
+  } else {
+    const grid = el("div", "collection-shelf-grid");
+    for (const item of myCollection) {
+      const card = el("div", "collection-item-card");
+      const img = el("img"); img.src = item.cover; img.loading = "lazy";
+      const title = el("div", "collection-item-title", item.name);
+      card.append(img, title);
+      grid.append(card);
+    }
+    p.append(grid);
+  }
+
+  const backShop = el("button", "cta", "← Retour Boutique");
+  backShop.style.marginTop = "16px";
+  backShop.addEventListener("click", () => openShopModal());
+  p.append(backShop);
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const shopBtn = $("#shopBtn");
+  if (shopBtn) shopBtn.addEventListener("click", openShopModal);
+  updateCoinsUI();
+  checkDailyReward();
+});
+
 const TRANSLATIONS = {
   fr: {
     subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
+    searchPlaceholder: "🕹️ Rechercher n'importe quel jeu...",
     all: "✨ Tous les jeux",
     favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
@@ -705,7 +917,7 @@ const TRANSLATIONS = {
   },
   en: {
     subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "🔍 Search any game (all years)...",
+    searchPlaceholder: "🕹️ Search any game...",
     all: "✨ All Games",
     favorites: "❤️ My Favorites",
     noGamesSearch: "No games found for this search.",
@@ -950,7 +1162,7 @@ const WORLD_CONSOLES = [
   { 
     name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
     cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
-    sales: "Est. 3 millions d'exemplaires", impact: "La première console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
+    sales: "Est. 3 millions d'exemplaires", impact: "La première portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
     desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
   },
   { 
@@ -1005,7 +1217,10 @@ let showFavoritesOnly = false;
 function isFavorite(id) { return favorites.includes(id); }
 function toggleFavorite(id) {
   if (isFavorite(id)) { favorites = favorites.filter(favId => favId !== id); }
-  else { favorites.push(id); }
+  else { 
+    favorites.push(id); 
+    addCoins(10);
+  }
   try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
   playThemeSound(theme);
   render();
@@ -1726,19 +1941,21 @@ function openSettings() {
   p.append(el("h2", "", t('settingsTitle')));
 
   p.append(el("p", "m", t('themeLabel')));
-  const group = el("div", "chips"); group.style.flexWrap = "wrap";
+  const themesGrid = el("div", "themes-grid-container");
   for (const [key, [label, , acc]] of Object.entries(THEMES)) {
     const b = el("button", "chip", label);
+    b.style.width = "100%";
+    b.style.justifyContent = "flex-start";
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+      themesGrid.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
     });
-    group.append(b);
+    themesGrid.append(b);
   }
-  p.append(group);
+  p.append(themesGrid);
 
   p.append(el("p", "m", t('soundLabel')));
   const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
@@ -1765,6 +1982,7 @@ function openSettings() {
   const langGrid = el("div", "lang-grid");
   Object.entries(LANG_NAMES).forEach(([code, label]) => {
     const b = el("button", "chip", label);
+    b.style.width = "100%";
     if (code === currentLang) b.setAttribute("aria-pressed", "true");
     b.addEventListener("click", () => {
       playThemeSound(theme); currentLang = code;
@@ -1848,7 +2066,7 @@ $("#platformSelect").addEventListener("change", (e) => {
   
   const foundConsole = WORLD_CONSOLES.find(c => c.name === currentFilter);
   if (foundConsole && foundConsole.year) {
-    const origYear = foundConsole.year.split('/')[0].trim();
+    const origYear = foundConsole.year.year || foundConsole.year.split('/')[0].trim();
     if (!isNaN(origYear)) {
       const currentMonthPart = ym.split("-")[1] || "01";
       ym = `${origYear}-${currentMonthPart}`;
@@ -1889,6 +2107,15 @@ $("#search").addEventListener("input", (e) => {
 
 $("#prev").addEventListener("click", () => shiftMonth(-1));
 $("#next").addEventListener("click", () => shiftMonth(1));
+
+// 🚀 Sécurité anti-cache : Force le remplacement direct des flèches par le style pixel rétro géométrique
+document.addEventListener("DOMContentLoaded", () => {
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  if (prevBtn) prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`;
+  if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
+});
+
 load();
 </script>
 </body>
