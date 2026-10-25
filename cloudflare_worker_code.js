@@ -2,30 +2,11 @@ let cachedToken = null;
 let tokenExpiry = 0;
 
 const PLATFORMS_MAP = {
-  6: "PC",
-  167: "PS5",
-  48: "PS4",
-  9: "PS3",
-  8: "PS2",
-  7: "PlayStation",
-  169: "Xbox Series X|S",
-  11: "Xbox",
-  12: "Xbox 360",
-  130: "Nintendo Switch",
-  508: "Switch 2",
-  21: "GameCube",
-  4: "Nintendo 64",
-  19: "SNES",
-  18: "NES",
-  33: "Game Boy",
-  22: "Game Boy Color",
-  24: "Game Boy Advance",
-  20: "Nintendo DS",
-  37: "Nintendo 3DS",
-  23: "Dreamcast",
-  32: "Sega Saturn",
-  29: "Sega Mega Drive / Genesis",
-  64: "Sega Master System"
+  6: "PC", 167: "PS5", 48: "PS4", 9: "PS3", 8: "PS2", 7: "PlayStation",
+  169: "Xbox Series X|S", 11: "Xbox", 12: "Xbox 360", 130: "Nintendo Switch",
+  508: "Switch 2", 21: "GameCube", 4: "Nintendo 64", 19: "SNES", 18: "NES",
+  33: "Game Boy", 22: "Game Boy Color", 24: "Game Boy Advance", 20: "Nintendo DS",
+  37: "Nintendo 3DS", 23: "Dreamcast", 32: "Sega Saturn", 29: "Mega Drive", 64: "Master System"
 };
 
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
@@ -40,9 +21,7 @@ const LANG_MAP = {
   es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian"
 };
 
-const DATE_FIXES = {
-  305160: "2026-10-06",
-};
+const DATE_FIXES = { 305160: "2026-10-06" };
 
 const hasDay = (h) =>
   /(^|\D)\d{1,2}(\D|$)/.test(String(h).replace(/\d{4}/, "").replace(/Q\d/gi, ""));
@@ -184,8 +163,8 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    // Passé en v10 pour purger le cache
-    const cacheKey = new Request(url.origin + "/v10" + url.search);
+    // Version V11 pour forcer le nettoyage du cache
+    const cacheKey = new Request(url.origin + "/v11" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -194,40 +173,36 @@ export default {
         ? [FILTERS[platformParam]]
         : Object.keys(PLATFORMS_MAP).map(Number);
 
-      let start = 0, end = 0;
-      let where = "cover != null";
-      let tail;
+      let queryBody = "";
 
       if (searchQuery) {
-        // Recherche ouverte sans restreindre sur la date ou la plateforme
-        where += ` & name ~ *"${searchQuery}"*`;
-        tail = "limit 40;";
+        // Requête de recherche textuelle large et robuste
+        queryBody = `
+          fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
+                 release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
+          search "${searchQuery}";
+          limit 40;
+        `;
       } else {
         const [y, m] = month.split("-").map(Number);
-        start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
-        end = Math.floor(Date.UTC(y, m, 1) / 1000);
-        where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`;
-        where += ` & release_dates.platform = (${platformIds.join(",")})`;
-        tail = "limit 500;";
+        const start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
+        const end = Math.floor(Date.UTC(y, m, 1) / 1000);
+        queryBody = `
+          fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
+                 release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
+          where release_dates.date >= ${start} & release_dates.date < ${end} & release_dates.platform = (${platformIds.join(",")}) & cover != null;
+          limit 500;
+        `;
       }
 
-      const raw = await igdb(env, `
-        fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
-               release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
-        where ${where};
-        ${tail}
-      `);
+      const raw = await igdb(env, queryBody);
 
       const games = [];
-      for (const g of raw) {
+      for (const g of (raw || [])) {
         const byPlatform = {};
         const dates = g.release_dates || [];
         
         for (const r of dates) {
-          if (!searchQuery && !r.date) continue;
-          if (!searchQuery && !platformIds.includes(r.platform)) continue;
-          if (!searchQuery && (r.date < start || r.date >= end)) continue;
-
           const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
           const rDate = r.date ? iso(r.date) : "Date inconnue";
           
@@ -236,18 +211,10 @@ export default {
           }
         }
 
-        // Si c'est une recherche et qu'aucune date n'est valide dans le tableau, on prend au moins un enregistrement
         let releases = Object.values(byPlatform);
-        if (!releases.length && searchQuery) {
-          releases = [{ platform: "Rétro", date: "Sortie Rétro", human: "", exact: false }];
+        if (!releases.length) {
+          releases = [{ platform: "Rétro", date: "2000-01-01", human: "", exact: false }];
         }
-
-        const fix = DATE_FIXES[g.id];
-        if (fix) {
-          if (!searchQuery && fix.slice(0, 7) !== month) continue;
-          releases = releases.map((r) => ({ ...r, date: fix, exact: true }));
-        }
-        if (!releases.length) continue;
 
         const genreList = (g.genres || []).map(genre => genre.name);
 
