@@ -116,7 +116,6 @@
   }
   .search-box::placeholder { color: var(--mut); }
 
-  /* Style pour le sélecteur de genre */
   select#genreFilter {
     background: var(--card);
     color: var(--txt);
@@ -851,11 +850,15 @@ function itemsFor(games) {
   for (const g of games) {
     if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
     
-    // Filtrage par Catégorie/Genre si séléctionné
+    // Filtrage intelligent par catégorie / mots-clés dans le nom ou le résumé du jeu
     if (currentGenreFilter !== "all") {
-      if (!g.genres || !g.genres.some(genre => genre.toLowerCase().includes(currentGenreFilter.toLowerCase()))) {
-        continue;
-      }
+      const gName = (g.name || "").toLowerCase();
+      const gSummary = (g.summary || "").toLowerCase();
+      const gGenres = Array.isArray(g.genres) ? g.genres.join(" ").toLowerCase() : "";
+      const searchCat = currentGenreFilter.toLowerCase();
+      
+      const match = gName.includes(searchCat) || gSummary.includes(searchCat) || gGenres.includes(searchCat);
+      if (!match) continue;
     }
 
     const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
@@ -1174,11 +1177,9 @@ $("#settings").addEventListener("click", openSettings);
 
 const chips = $("#chips");
 
-// Construction de la barre de filtres (Boutons plateformes + Menu déroulant des catégories)
 function renderChipsBar() {
   chips.replaceChildren();
   
-  // 1. Boutons classiques (Tous, Favoris, Consoles)
   for (const f of FILTERS) {
     let label = f;
     if (f === "Tous") label = t('all');
@@ -1194,7 +1195,6 @@ function renderChipsBar() {
     chips.append(b);
   }
 
-  // 2. Menu déroulant des Catégories / Genres demandés
   const select = document.createElement("select");
   select.id = "genreFilter";
   select.innerHTML = `
