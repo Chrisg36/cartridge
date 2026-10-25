@@ -245,7 +245,7 @@
   }
   #sheet.on { display: flex; }
   
-  /* --- PANNEAU DES RÉGLAGES AVEC MOTIF DE CIRCUIT IMPRIMÉ (PCB) EN FILIGRANE --- */
+  /* --- VRAI MOTIF DE CIRCUIT IMPRIMÉ (PCB) EN FILIGRANE POUR LES RÉGLAGES --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
@@ -258,15 +258,19 @@
     position: absolute;
     inset: 0;
     background-image: 
-      radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--acc) 12% , transparent) 0, transparent 40%),
-      radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--acc) 8% , transparent) 0, transparent 40%),
-      linear-gradient(90deg, color-mix(in srgb, var(--acc) 6%, transparent) 1px, transparent 1px),
-      linear-gradient(0deg, color-mix(in srgb, var(--acc) 6%, transparent) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
-    background-position: 0 0, 0 0, -2px -2px, -2px -2px;
+      /* Pastilles de connexion (vias) */
+      radial-gradient(circle, color-mix(in srgb, var(--acc) 35%, transparent) 2px, transparent 2.5px),
+      /* Pistes obliques à 45° */
+      linear-gradient(45deg, color-mix(in srgb, var(--acc) 18%, transparent) 1.5px, transparent 1.5px),
+      linear-gradient(-45deg, color-mix(in srgb, var(--acc) 18%, transparent) 1.5px, transparent 1.5px),
+      /* Pistes horizontales et verticales */
+      linear-gradient(0deg, color-mix(in srgb, var(--acc) 12%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--acc) 12%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px, 32px 32px, 16px 16px, 16px 16px;
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.85;
+    opacity: 0.7;
     border-radius: 28px 28px 0 0;
   }
 
