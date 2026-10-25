@@ -487,7 +487,6 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent); letter-spacing: 0.5px;
   }
 
-  /* ⚙️ DESIGN ÉPURÉ DES RÉGLAGES */
   .settings-section {
     background: var(--card);
     border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
@@ -519,7 +518,6 @@
     cursor: pointer;
   }
 
-  /* Grille de thèmes ultra-compacte et élégante */
   .themes-grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -549,7 +547,6 @@
     box-shadow: 0 0 10px var(--acc);
   }
 
-  /* 🪙 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
   .header-currency-badge {
     display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
     border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
@@ -704,11 +701,9 @@
     <div class="header-top">
       <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
       <div class="nav">
-        <!-- 🪙 BOUTON PORTEFEUILLE / CRÉDITS & BOUTIQUE -->
         <button class="header-currency-badge" id="shopBtn" title="Boutique & Collection de Jaquettes">
           🪙 <span id="userCoins">100</span>
         </button>
-        <!-- 🏛️ BOUTON VITRINE DES CONSOLES -->
         <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Musée des Consoles & Ordinateurs">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M8 10v4"></path><circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle></svg>
         </button>
@@ -730,12 +725,12 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
-        <!-- 🕹️ FLÈCHES RÉTRO FORCÉES EN SVG PIXEL / ANGLE DROIT -->
+        <!-- 🕹️ FLÈCHES RÉTRO GÉOMÉTRIQUES PARFAITES -->
         <button class="chip" id="prev" aria-label="Mois précédent">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M15 5L8 12L15 19"/></svg>
         </button>
         <button class="chip" id="next" aria-label="Mois suivant">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M9 5L16 12L9 19"/></svg>
         </button>
       </div>
     </div>
@@ -1981,7 +1976,6 @@ let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
-// ⚙️ RÉGLAGES ÉPURÉS ET MIEUX RANGÉS
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1989,7 +1983,6 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  // Section 1 : Thèmes & Consoles Rétro (Grille compacte)
   const secTheme = el("div", "settings-section");
   secTheme.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
   const themesGrid = el("div", "themes-grid-container");
@@ -2007,7 +2000,6 @@ function openSettings() {
   secTheme.append(themesGrid);
   p.append(secTheme);
 
-  // Section 2 : Préférences Audio & Affichage (Côte à côte)
   const secPrefs = el("div", "settings-section");
   secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
   const prefsGrid = el("div", "settings-grid-options");
@@ -2035,7 +2027,6 @@ function openSettings() {
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
-  // Section 3 : Langue (Menu déroulant épuré)
   const secLang = el("div", "settings-section");
   secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
   const langSelect = el("select", "settings-select-clean");
@@ -2055,7 +2046,6 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
-  // Section 4 : Capsule Temporelle
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", t('retroLabel')));
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
@@ -2177,8 +2167,8 @@ $("#next").addEventListener("click", () => shiftMonth(1));
 document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
-  if (prevBtn) prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`;
-  if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
+  if (prevBtn) prevBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M15 5L8 12L15 19"/></svg>`;
+  if (nextBtn) nextBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M9 5L16 12L9 19"/></svg>`;
 });
 
 load();
