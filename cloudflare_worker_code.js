@@ -111,10 +111,24 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
     }
     if (!releases.length) continue; // pas de date connue : on n'invente rien
 
+    // Extraction du Développeur et de l'Éditeur depuis involved_companies
+    const developers = [];
+    const publishers = [];
+    if (g.involved_companies) {
+      for (const ic of g.involved_companies) {
+        if (ic.company && ic.company.name) {
+          if (ic.developer) developers.push(ic.company.name);
+          if (ic.publisher) publishers.push(ic.company.name);
+        }
+      }
+    }
+
     games.push({
       id: g.id,
       name: g.name,
       summary: g.summary || null,
+      developer: developers.join(", ") || null,
+      publisher: publishers.join(", ") || null,
       genres: (g.genres || []).map((x) => x.name),
       cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
       hypes: (g.hypes || 0) + (g.total_rating_count || 0), // score de popularité
@@ -214,7 +228,7 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    const cacheKey = new Request(url.origin + "/v21" + url.search);
+    const cacheKey = new Request(url.origin + "/v22" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -222,10 +236,6 @@ export default {
       let games;
 
       if (searchQuery) {
-        // ----- Recherche : tous les jeux, y compris rétro, toutes plateformes connues -----
-        // 1) on récupère un grand lot de candidats (les jeux de fans sont nombreux)
-        // 2) on garde les plus populaires et ceux dont le nom contient tous les mots
-        // 3) on demande les détails de ces jeux seulement
         const words = searchQuery.split(/\s+/).filter(Boolean).slice(0, 5);
         const contains = words.map((w) => `name ~ *"${w}"*`).join(" & ");
         const poolFields = "fields name, hypes, total_rating_count;";
@@ -249,7 +259,8 @@ export default {
         if (topIds.length) {
           raw = await igdb(env, `
             fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id, genres.name,
-                   release_dates.date, release_dates.platform.name, release_dates.human;
+                   release_dates.date, release_dates.platform.name, release_dates.human,
+                   involved_companies.company.name, involved_companies.developer, involved_companies.publisher;
             where id = (${topIds.join(",")});
             limit 50;
           `);
@@ -258,22 +269,20 @@ export default {
         const gameScore = (g) => (lowerWords.every((w) => g.name.toLowerCase().includes(w)) ? 1e6 : 0) + g.hypes;
         games.sort((a, b) => gameScore(b) - gameScore(a));
       } else {
-        // ----- Liste d'un mois : sorties sur PC, PS5, Xbox, Switch 2 -----
         const [y, m] = month.split("-").map(Number);
         const start = Math.floor(Date.UTC(y, m - 1, 1) / 1000);
         const end = Math.floor(Date.UTC(y, m, 1) / 1000);
-        // Avant PS5 / Switch 2 (fin 2020), on affiche toutes les plateformes connues
         const platformIds = platformParam ? [FILTERS[platformParam]] : (month < "2020-11" ? Object.keys(PLATFORM_NAMES).map(Number) : MONTH_PLATFORMS);
 
         let where = `game_type = ${GAME_TYPES} & cover != null`;
         where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`;
         where += ` & release_dates.platform = (${platformIds.join(",")})`;
-        // Jeux populaires : très attendus, déjà notés, ou remakes / remasters (ex. Ocarina of Time)
         if (!showAll) where += " & (hypes > 0 | total_rating_count >= 5 | game_type = (8,9))";
 
         const raw = await igdb(env, `
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id, genres.name,
-                 release_dates.date, release_dates.platform, release_dates.human;
+                 release_dates.date, release_dates.platform, release_dates.human,
+                 involved_companies.company.name, involved_companies.developer, involved_companies.publisher;
           where ${where};
           limit 500;
         `);
