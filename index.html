@@ -924,7 +924,7 @@ const WORLD_CONSOLES = [
   { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wii_U_Console_and_Gamepad.png", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
   { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Wii_Console.png", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
   { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/GameCube-Set.png", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
-  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Nintendo-64-Console-Set.png", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire (GoldenEye, Mario Kart 64)." },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Nintendo-64-Console-Set.png", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire." },
   { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", img: "https://upload.wikimedia.org/wikipedia/commons/3/37/SNES-Mod-US.png", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
   { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", img: "https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.png", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
   { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Nintendo_3DS_Cosmo_Black.png", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
@@ -985,30 +985,105 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-function playThemeSound(themeKey) {
+/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX --- */
+function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const now = audioCtx.currentTime;
-    const modernThemes = ["dark", "light", "midnight", "forest", "violet", "ruby"];
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ac.currentTime;
 
-    if (modernThemes.includes(themeKey)) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(audioCtx.destination);
+    if (th === "gameboy") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.08);
+      osc.frequency.setValueAtTime(783.99, now + 0.16);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (th === "nes") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.setValueAtTime(440, now + 0.07);
+      osc.frequency.setValueAtTime(554, now + 0.14);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now); osc.stop(now + 0.22);
+    } else if (th === "snes") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.18);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (th === "ps1") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(261.63, now);
+      osc.frequency.setValueAtTime(392.00, now + 0.1);
+      osc.frequency.setValueAtTime(523.25, now + 0.2);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now); osc.stop(now + 0.35);
+    } else if (th === "n64") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now); osc.stop(now + 0.22);
+    } else if (th === "arcade") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(900, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (th === "atari") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.setValueAtTime(250, now + 0.08);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (th === "dos") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (th === "megadrive") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.setValueAtTime(440, now + 0.1);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sine";
       osc.frequency.setValueAtTime(523.25, now);
       osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
-      gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
       osc.start(now); osc.stop(now + 0.2);
-    } else {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.type = "square";
-      osc.frequency.setValueAtTime(440, now);
-      gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      osc.start(now); osc.stop(now + 0.15);
     }
   } catch (e) {}
 }
@@ -1269,7 +1344,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE INTERACTIF AVEC VRAIES PHOTOS OFFICIELLES --- */
+/* --- MUSÉE DES CONSOLES --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1288,7 +1363,6 @@ function openConsoleVitrine() {
     img.src = consoleItem.img;
     img.alt = consoleItem.name;
     img.loading = "lazy";
-    // En cas d'erreur de chargement d'une image distante, on bascule sur un affichage propre par nom
     img.onerror = function() {
       this.style.display = 'none';
       if (!photoBox.querySelector('.fallback-txt')) {
