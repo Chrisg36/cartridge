@@ -32,7 +32,7 @@
   [data-theme="megadrive"] { color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff; --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px; --font: 'Orbitron', sans-serif; --radius: 10px; }
 
   .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
-  [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-container, [data-theme="light"] .platform-select, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-container, [data-theme="dreamcast"] .platform-select { box-shadow: 0 0 0 1px #D8DCE6; }
+  [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="light"] .platform-select, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box, [data-theme="dreamcast"] .platform-select { box-shadow: 0 0 0 1px #D8DCE6; }
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
@@ -199,17 +199,8 @@
     box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
   }
 
-  .search-container {
-    position: relative; width: 100%; margin-top: 6px; margin-bottom: 2px;
-  }
-  .search-icon-pro {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    width: 22px; height: 22px; background: linear-gradient(135deg, var(--card), var(--cov));
-    border: 1.5px solid var(--acc); border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    color: var(--acc); box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 40%, transparent); pointer-events: none;
-  }
   .search-box {
-    width: 100%; padding: 12px 16px 12px 46px; border: 0; border-radius: var(--radius);
+    width: 100%; padding: 12px 16px; margin-top: 6px; margin-bottom: 2px; border: 0; border-radius: var(--radius);
     background: var(--card); color: var(--txt); font-size: 16px; outline: none; font-family: var(--font); font-weight: 600;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); transition: box-shadow 0.2s ease;
   }
@@ -246,29 +237,8 @@
   .row:hover .open::after { opacity: 1; transform: translateX(0); animation: arcadeCursorBlink 0.8s infinite alternate; }
   @keyframes arcadeCursorBlink { 0% { opacity: 0.4; } 100% { opacity: 1; } }
 
-  .cov-container { position: relative; width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); overflow: hidden; flex: none; background: var(--cov); display: flex; align-items: center; justify-content: center; }
+  .cov-container { position: relative; width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); overflow: hidden; flex: none; background: var(--cov); }
   .cov { width: 100%; height: 100%; object-fit: cover; }
-  
-  /* Badge pro de substitution (cartouche / circuit) pour les jeux sans image */
-  .game-fallback-badge {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 100%; height: 100%; background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 25%, var(--card)), var(--cov));
-    border: 1.5px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: calc(var(--radius) - 4px);
-    position: relative; overflow: hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
-  }
-  .game-fallback-badge::before {
-    content: ''; position: absolute; top: 4px; left: 4px; right: 4px; height: 14px;
-    background: var(--card); border-radius: 3px; border: 1px solid rgba(255,255,255,0.1);
-  }
-  .game-fallback-badge::after {
-    content: ''; position: absolute; bottom: 4px; left: 8px; right: 8px; height: 5px;
-    background: linear-gradient(90deg, #D4AF37, #FFD700, #D4AF37); border-radius: 2px; box-shadow: 0 0 4px rgba(255,215,0,0.5);
-  }
-  .game-fallback-logo {
-    font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 900; color: var(--acc);
-    text-shadow: 0 0 6px var(--acc); z-index: 2; margin-top: 2px; letter-spacing: 1px;
-  }
-
   .cov-container::after {
     content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.15) 100%);
     opacity: 0; transition: opacity 0.3s ease; mix-blend-mode: overlay; pointer-events: none;
@@ -296,7 +266,7 @@
   .grid-card.is-hyped { border-color: color-mix(in srgb, var(--acc) 50%, transparent); animation: hypeGlowPulse 2.5s infinite alternate ease-in-out; }
   .grid-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 22px color-mix(in srgb, var(--acc) 40%, transparent); border-color: color-mix(in srgb, var(--acc) 60%, transparent); }
   .grid-card:active { transform: scale(0.95); }
-  .grid-cov-container { position: relative; width: 100%; aspect-ratio: 3/4; background: var(--cov); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .grid-cov-container { position: relative; width: 100%; aspect-ratio: 3/4; background: var(--cov); overflow: hidden; }
   .grid-cov { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   .grid-card:hover .grid-cov { transform: scale(1.06); }
   .grid-info { padding: 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between; position: relative; z-index: 1; }
@@ -356,22 +326,6 @@
   }
 
   .panel > * { position: relative; z-index: 1; }
-
-  .settings-section {
-    background: var(--card); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-    border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  }
-  .settings-section-title {
-    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; color: var(--acc);
-    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
-  }
-  .settings-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .settings-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .settings-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  
-  .settings-section .chip { padding: 8px 10px; min-height: 38px; font-size: 12px; width: 100%; justify-content: center; }
-  .settings-section .cta-sec { min-height: 42px; font-size: 13px; margin-top: 6px; margin-bottom: 0; }
 
   .panel .big { 
     width: 100%; 
@@ -533,13 +487,40 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent); letter-spacing: 0.5px;
   }
 
-  /* Style des icônes de flèches rétro pour le changement de mois */
-  .retro-arrow-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; background: color-mix(in srgb, var(--acc) 20%, var(--cov));
-    border: 1px solid color-mix(in srgb, var(--acc) 60%, transparent); border-radius: 4px;
-    color: var(--acc); box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 30%, transparent);
+  .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+
+  /* 📦 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
+  .header-currency-badge {
+    display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
+    border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
+    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; color: var(--acc); cursor: pointer;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); transition: transform 0.2s ease;
   }
+  .header-currency-badge:hover { transform: scale(1.05); }
+
+  .collection-shelf-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;
+  }
+  @media(min-width: 500px) { .collection-shelf-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .collection-item-card {
+    background: var(--card); border: 2px solid var(--acc); border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+    animation: fadeInList 0.3s ease;
+  }
+  .collection-item-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+  .collection-item-title {
+    font-size: 9px; font-weight: 800; text-transform: uppercase; width: 100%; text-align: center;
+    background: rgba(0,0,0,0.85); color: #fff; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .shop-banner {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 30%, var(--card)), var(--card));
+    border: 2px solid var(--acc); border-radius: var(--radius); padding: 18px; text-align: center;
+    margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
+  }
+  .shop-banner h3 { font-family: 'Orbitron', sans-serif; margin: 0 0 6px; font-size: 18px; color: var(--acc); text-shadow: 0 0 8px var(--acc); }
 
   #splash {
     position: fixed; inset: 0; background-color: var(--bg); z-index: 9999; display: flex; flex-direction: column;
@@ -663,6 +644,11 @@
     <div class="header-top">
       <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
       <div class="nav">
+        <!-- 🪙 BOUTON PORTEFEUILLE / CRÉDITS & BOUTIQUE -->
+        <button class="header-currency-badge" id="shopBtn" title="Boutique & Collection de Jaquettes">
+          🪙 <span id="userCoins">100</span>
+        </button>
+        <!-- 🏛️ BOUTON VITRINE DES CONSOLES -->
         <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Musée des Consoles & Ordinateurs">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M8 10v4"></path><circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle></svg>
         </button>
@@ -684,16 +670,11 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
-        <!-- Flèches rétro pour le changement de mois[cite: 8] -->
         <button class="chip" id="prev" aria-label="Mois précédent">
-          <span class="retro-arrow-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
         <button class="chip" id="next" aria-label="Mois suivant">
-          <span class="retro-arrow-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     </div>
@@ -706,23 +687,184 @@
       </button>
     </div>
 
-    <div class="search-container">
-      <div class="search-icon-pro">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-      <input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu (toutes années)...">
-    </div>
+    <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
   </div>
   <div id="list"></div>
 </main>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
+// 🪙 SYSTÈMES DE CRÉDITS ET COLLECTION DE JAQUETTES
+let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
+let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
+let lastDailyClaim = localStorage.getItem("lastDailyClaim") || "";
+
+function updateCoinsUI() {
+  const badge = $("#userCoins");
+  if (badge) badge.textContent = userCoins;
+  try { localStorage.setItem("userCoins", userCoins); } catch (e) {}
+}
+
+function addCoins(amount) {
+  userCoins += amount;
+  updateCoinsUI();
+}
+
+function checkDailyReward() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (lastDailyClaim !== todayStr) {
+    // Bonus de connexion journalière !
+    addCoins(50);
+    lastDailyClaim = todayStr;
+    try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
+    setTimeout(() => {
+      alert("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
+    }, 1000);
+  }
+}
+
+function openShopModal() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  p.append(el("h2", "", "🎁 Boutique & Vitrine Géante"));
+  p.append(el("p", "m", `Mes crédits disponibles : ${userCoins} 🪙 | Jaquettes possédées : ${myCollection.length}`));
+
+  const banner = el("div", "shop-banner");
+  banner.innerHTML = `
+    <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
+    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+  `;
+
+  const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
+  drawFreeBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem("lastFreePackDate") === todayStr) {
+      alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
+      return;
+    }
+    localStorage.setItem("lastFreePackDate", todayStr);
+    triggerRandomPackDraw("Gratuit");
+  });
+
+  const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
+  drawPaidBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (userCoins < 50) {
+      alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou revenez demain.");
+      return;
+    }
+    userCoins -= 50;
+    updateCoinsUI();
+    triggerRandomPackDraw("Acheté");
+  });
+
+  const viewShelfBtn = el("button", "cta-sec", "📚 Voir ma Vitrine / Étagère de Jaquettes");
+  viewShelfBtn.style.marginTop = "10px";
+  viewShelfBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    openCollectionShelf();
+  });
+
+  banner.append(drawFreeBtn, drawPaidBtn, viewShelfBtn);
+  p.append(banner);
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
+
+  $("#sheet").classList.add("on");
+}
+
+function triggerRandomPackDraw(type) {
+  // Liste de jeux de secours ou issus du cache actuel pour le tirage au sort
+  const allLoadedGames = [];
+  Object.values(cache).forEach(monthList => {
+    if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
+  });
+  
+  if (allLoadedGames.length === 0) {
+    // Jeux par défaut si cache vide
+    allLoadedGames.push(
+      { id: 9991, name: "The Legend of Zelda: Ocarina of Time", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png" },
+      { id: 9992, name: "Super Mario 64", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1w5w.png" },
+      { id: 9993, name: "Grand Theft Auto V", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1qc4.png" },
+      { id: 9994, name: "Cyberpunk 2077", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.png" }
+    );
+  }
+
+  const randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
+  if (!myCollection.some(item => item.id === randomGame.id)) {
+    myCollection.push(randomGame);
+    try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
+  }
+
+  const p = $("#panel");
+  p.replaceChildren();
+  p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
+  p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
+
+  const cardPreview = el("div", "collection-item-card");
+  cardPreview.style.maxWidth = "160px";
+  cardPreview.style.margin = "16px auto";
+  const img = el("img"); img.src = randomGame.cover;
+  const title = el("div", "collection-item-title", randomGame.name);
+  cardPreview.append(img, title);
+  p.append(cardPreview);
+
+  const backBtn = el("button", "cta", "← Retour à la Boutique");
+  backBtn.addEventListener("click", () => openShopModal());
+  p.append(backBtn);
+}
+
+function openCollectionShelf() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  p.append(el("h2", "", "📚 Ma Vitrine / Étagère Géante"));
+  p.append(el("p", "m", `Total collectionné : ${myCollection.length} jaquettes`));
+
+  if (myCollection.length === 0) {
+    p.append(el("p", "msg", "Votre collection est vide ! Ouvrez un pack mystère dans la boutique."));
+  } else {
+    const grid = el("div", "collection-shelf-grid");
+    for (const item of myCollection) {
+      const card = el("div", "collection-item-card");
+      const img = el("img"); img.src = item.cover; img.loading = "lazy";
+      const title = el("div", "collection-item-title", item.name);
+      card.append(img, title);
+      grid.append(card);
+    }
+    p.append(grid);
+  }
+
+  const backShop = el("button", "cta", "← Retour Boutique");
+  backShop.style.marginTop = "16px";
+  backShop.addEventListener("click", () => openShopModal());
+  p.append(backShop);
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const shopBtn = $("#shopBtn");
+  if (shopBtn) shopBtn.addEventListener("click", openShopModal);
+  updateCoinsUI();
+  checkDailyReward();
+});
+// Fin des ajouts crédits & collection
 const TRANSLATIONS = {
   fr: {
     subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "Rechercher n'importe quel jeu (toutes années)...",
-    all: "Tous les jeux", // Le rendu du select insèrera le logo pro dynamiquement
+    searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
+    all: "✨ Tous les jeux",
     favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
@@ -736,11 +878,11 @@ const TRANSLATIONS = {
     soundLabel: "Effets sonores",
     soundOn: "🔊 Son activé",
     soundOff: "🔇 Son coupé",
-    crtLabel: "Effet Écran Cathodique",
+    crtLabel: "Effet Écran Cathodique (CRT Scanlines)",
     crtOn: "📺 CRT Activé",
     crtOff: "🖥️ CRT Désactivé",
     langLabel: "Langue de l'interface",
-    retroLabel: "Capsule Temporelle",
+    retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
     resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
@@ -766,8 +908,8 @@ const TRANSLATIONS = {
   },
   en: {
     subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "Search any game (all years)...",
-    all: "All Games",
+    searchPlaceholder: "🔍 Search any game (all years)...",
+    all: "✨ All Games",
     favorites: "❤️ My Favorites",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
@@ -785,7 +927,7 @@ const TRANSLATIONS = {
     crtOn: "📺 CRT ON",
     crtOff: "🖥️ CRT OFF",
     langLabel: "Interface Language",
-    retroLabel: "Time Capsule",
+    retroLabel: "🕰️ Time Capsule (Time Travel)",
     resetCurrentMonth: "📅 Back to current month",
     close: "Close",
     shareTitle: "Share my month",
@@ -812,15 +954,15 @@ const TRANSLATIONS = {
 };
 
 const LANG_NAMES = {
-  fr: "🇫🇷 FR",
-  en: "🇬🇧 EN",
-  ja: "🇯🇵 JA",
-  de: "🇩🇪 DE",
-  es: "🇪🇸 ES",
-  zh: "🇨🇳 ZH",
-  pt: "🇧🇷 PT",
-  ko: "🇰🇷 KO",
-  it: "🇮🇹 IT"
+  fr: "🇫🇷 Français",
+  en: "🇬🇧 English",
+  ja: "🇯🇵 日本語",
+  de: "🇩🇪 Deutsch",
+  es: "🇪🇸 Español",
+  zh: "🇨🇳 中文",
+  pt: "🇧🇷 Português",
+  ko: "🇰🇷 한국어",
+  it: "🇮🇹 Italiano"
 };
 
 const WORLD_CONSOLES = [
@@ -1066,7 +1208,11 @@ let showFavoritesOnly = false;
 function isFavorite(id) { return favorites.includes(id); }
 function toggleFavorite(id) {
   if (isFavorite(id)) { favorites = favorites.filter(favId => favId !== id); }
-  else { favorites.push(id); }
+  else { 
+    favorites.push(id); 
+    // 🪙 Bonus de crédits lors de l'ajout en favori !
+    addCoins(10);
+  }
   try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
   playThemeSound(theme);
   render();
@@ -1323,16 +1469,6 @@ function renderScoreBadge(game) {
   return `<span class="score-badge ${scoreClass}">META ★ ${score}</span>`;
 }
 
-function createGameFallbackCover() {
-  const badge = document.createElement("div");
-  badge.className = "game-fallback-badge";
-  const logo = document.createElement("div");
-  logo.className = "game-fallback-logo";
-  logo.textContent = "CR";
-  badge.appendChild(logo);
-  return badge;
-}
-
 let currentFilter = "Tous";
 let ym = new Date().toISOString().slice(0, 7);
 let searchQuery = "";
@@ -1367,7 +1503,6 @@ function updateStaticTexts() {
   } else {
     viewBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
   }
-  renderPlatformDropdown();
 }
 
 function hideSplash() {
@@ -1476,13 +1611,7 @@ function render() {
       card.addEventListener("click", () => { playThemeSound(theme); openSheet(it); });
 
       const covContainer = el("div", "grid-cov-container");
-      if (it.g.cover) {
-        const img = el("img", "grid-cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy";
-        img.onerror = () => { covContainer.replaceChildren(createGameFallbackCover()); };
-        covContainer.append(img);
-      } else {
-        covContainer.append(createGameFallbackCover());
-      }
+      const img = el("img", "grid-cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy";
 
       const favBtn = el("button", "grid-fav-btn" + (isFavorite(it.g.id) ? " fav-active" : ""));
       favBtn.innerHTML = isFavorite(it.g.id)
@@ -1490,7 +1619,7 @@ function render() {
         : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
       favBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFavorite(it.g.id); });
 
-      covContainer.append(favBtn);
+      covContainer.append(img, favBtn);
       const info = el("div", "grid-info");
       const title = el("h3", "grid-title", it.g.name);
       const meta = el("div", "grid-meta");
@@ -1519,13 +1648,8 @@ function row(it) {
   const open = el("button", "open");
   
   const covContainer = el("div", "cov-container");
-  if (it.g.cover) {
-    const img = el("img", "cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
-    img.onerror = () => { covContainer.replaceChildren(createGameFallbackCover()); };
-    covContainer.append(img);
-  } else {
-    covContainer.append(createGameFallbackCover());
-  }
+  const img = el("img", "cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
+  covContainer.append(img);
 
   const tDiv = el("div", "t");
   const platformSpan = el("span", "m");
@@ -1650,7 +1774,6 @@ function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
-  p.replaceChildren();
   const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   const allGames = cache[ym] || [];
   const favGames = allGames.filter(g => isFavorite(g.id));
@@ -1681,7 +1804,7 @@ function openShareModal() {
   const close = el("button", "close", t('close'));
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
 
-  p.append(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
+  p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
   $("#sheet").classList.add("on");
 }
 $("#shareBtn").addEventListener("click", openShareModal);
@@ -1690,24 +1813,7 @@ async function openSheet(it) {
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
-  p.replaceChildren(); // Réinitialise complètement le panneau à chaque ouverture pour éviter l'empilement
-
-  if (it.g.cover) {
-    const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
-    img.onerror = () => {
-      const fallback = el("div", "big");
-      fallback.style.display = "flex"; fallback.style.alignItems = "center"; fallback.style.justifyContent = "center";
-      fallback.append(createGameFallbackCover());
-      img.replaceWith(fallback);
-    };
-    p.append(img);
-  } else {
-    const fallback = el("div", "big");
-    fallback.style.display = "flex"; fallback.style.alignItems = "center"; fallback.style.justifyContent = "center";
-    fallback.append(createGameFallbackCover());
-    p.append(fallback);
-  }
-
+  const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
   
@@ -1727,7 +1833,7 @@ async function openSheet(it) {
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
   const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
 
-  p.append(el("h2", "", it.g.name), companyInfo, d, cta, favCta);
+  p.replaceChildren(img, el("h2", "", it.g.name), companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
@@ -1826,9 +1932,8 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  const s1 = el("div", "settings-section");
-  s1.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
-  const group = el("div", "settings-grid-3");
+  p.append(el("p", "m", t('themeLabel')));
+  const group = el("div", "chips"); group.style.flexWrap = "wrap";
   for (const [key, [label, , acc]] of Object.entries(THEMES)) {
     const b = el("button", "chip", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
@@ -1840,42 +1945,31 @@ function openSettings() {
     });
     group.append(b);
   }
-  s1.append(group);
-  p.append(s1);
+  p.append(group);
 
-  const s2 = el("div", "settings-section");
-  s2.append(el("div", "settings-section-title", "⚙️ Audio & Vidéo"));
-  const avGrid = el("div", "settings-grid-2");
-  
-  const soundBtn = el("button", "chip", soundEnabled ? t('soundOn') : t('soundOff'));
-  soundBtn.setAttribute("aria-pressed", String(soundEnabled));
+  p.append(el("p", "m", t('soundLabel')));
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
   soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
     soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
-    soundBtn.setAttribute("aria-pressed", String(soundEnabled));
     if (soundEnabled) playThemeSound(theme);
   });
+  p.append(soundBtn);
 
-  const crtBtn = el("button", "chip", crtEnabled ? t('crtOn') : t('crtOff'));
-  crtBtn.setAttribute("aria-pressed", String(crtEnabled));
+  p.append(el("p", "m", t('crtLabel')));
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
   crtBtn.addEventListener("click", () => {
     crtEnabled = !crtEnabled;
     try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
     document.body.classList.toggle("crt-enabled", crtEnabled);
     crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
-    crtBtn.setAttribute("aria-pressed", String(crtEnabled));
     playThemeSound(theme);
   });
+  p.append(crtBtn);
 
-  avGrid.append(soundBtn, crtBtn);
-  s2.append(avGrid);
-  p.append(s2);
-
-  const s3 = el("div", "settings-section");
-  s3.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
-  const langGrid = el("div");
-  langGrid.className = "settings-grid-4";
+  p.append(el("p", "m", t('langLabel')));
+  const langGrid = el("div", "lang-grid");
   Object.entries(LANG_NAMES).forEach(([code, label]) => {
     const b = el("button", "chip", label);
     if (code === currentLang) b.setAttribute("aria-pressed", "true");
@@ -1886,12 +1980,10 @@ function openSettings() {
     });
     langGrid.append(b);
   });
-  s3.append(langGrid);
-  p.append(s3);
+  p.append(langGrid);
 
-  const s4 = el("div", "settings-section");
-  s4.append(el("div", "settings-section-title", "🕰️ " + t('retroLabel')));
-  const retroGrid = el("div", "settings-grid-2");
+  p.append(el("p", "m", t('retroLabel')));
+  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
   [[-1, "Année dernière"], [-5, "Il y a 5 ans"], [-10, "Il y a 10 ans"], [-20, "Il y a 20 ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
     b.addEventListener("click", () => {
@@ -1900,19 +1992,19 @@ function openSettings() {
       ym = `${y + years}-${String(m).padStart(2, "0")}`;
       load(); closeSheet();
     });
-    retroGrid.append(b);
+    retroGroup.append(b);
   });
-  s4.append(retroGrid);
+  p.append(retroGroup);
 
-  const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
+  const resetCurrentBtn = el("button", "cta", t('resetCurrentMonth'));
+  resetCurrentBtn.style.marginTop = "12px";
   resetCurrentBtn.addEventListener("click", () => {
     playThemeSound(theme);
     ym = new Date().toISOString().slice(0, 7);
     load();
     closeSheet();
   });
-  s4.append(resetCurrentBtn);
-  p.append(s4);
+  p.append(resetCurrentBtn);
 
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -1928,8 +2020,7 @@ function renderPlatformDropdown() {
 
   const optAll = document.createElement("option");
   optAll.value = "Tous";
-  // Intégration du logo pro avec le texte "Tous les jeux" dans le menu déroulant
-  optAll.innerHTML = "✨ Tous les jeux"; 
+  optAll.textContent = t('all');
   select.append(optAll);
 
   const groups = {};
