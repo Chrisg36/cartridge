@@ -801,6 +801,7 @@ async function searchGlobal(query) {
 function itemsFor(games) {
   const out = [];
   for (const g of (games || [])) {
+    // Si une recherche textuelle est active, on affiche TOUS les jeux trouvés sans aucun filtre strict de mois ou de favoris
     if (!searchQuery) {
       if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
       
@@ -822,7 +823,7 @@ function itemsFor(games) {
     const dateVal = (validRel[0] && validRel[0].date) || g.date || "2000-01-01";
     out.push({ g, rel: validRel, date: dateVal });
   }
-  return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
+  return out.sort((a, b) => b.g.hypes - a.g.hypes || a.date.localeCompare(b.date));
 }
 
 function render() {
