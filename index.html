@@ -142,6 +142,7 @@
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
   .chip[aria-pressed="true"] svg { color: var(--on); }
   
+  /* --- BARRE DE FILTRE : MENU DÉROULANT + BOUTON FAVORIS SÉPARÉ --- */
   .filter-bar-container { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
   
   .platform-select {
@@ -300,6 +301,7 @@
   }
   #sheet.on { display: flex; }
   
+  /* --- PANNEAU DES RÉGLAGES & MODALES --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
@@ -351,6 +353,7 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
+  /* --- VITRINE DES CONSOLES : GROUPES PAR CONSTRUCTEUR & CARTES 3D --- */
   .constructor-section { margin-bottom: 24px; }
   .constructor-title { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 900; color: var(--acc); text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 10px 4px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
 
@@ -641,6 +644,7 @@
       </div>
     </div>
 
+    <!-- SÉLECTEUR DÉROULANT DES CONSOLES + BOUTON FAVORIS SÉPARÉ -->
     <div class="filter-bar-container">
       <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
       <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
@@ -663,11 +667,11 @@ const TRANSLATIONS = {
     all: "✨ Tous les jeux",
     favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
-    noGamesFav: "Aucun jeu dans vos favoris.",
-    noGamesFilter: "Aucun jeu trouvé pour cette console dans la base.",
+    noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
+    noGamesFilter: "Aucune sortie pour cette console ce mois-ci.",
     loading: "Chargement…",
     searchDb: "Recherche dans toute la base de données... 🔍",
-    netError: "Impossible de charger les jeux. Vérifie l’adresse du Worker dans config.js.",
+    netError: "Impossible de charger les sorties. Vérifie l’adresse du Worker dans config.js.",
     searchError: "Erreur lors de la recherche.",
     settingsTitle: "Réglages",
     themeLabel: "Thèmes & Consoles Rétro",
@@ -681,12 +685,12 @@ const TRANSLATIONS = {
     retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
     resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
-    shareTitle: "Partager",
-    shareDesc: "Copie ce message et colle-le directement :",
-    noFavShare: "Aucun favori pour l'instant !",
-    shareFooter: "✨ Partagé depuis mon appli de jeux !",
+    shareTitle: "Partager mon mois",
+    shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
+    noFavShare: "Aucun favori pour l'instant ! Ajoute des cœurs ❤️ sur tes jeux.",
+    shareFooter: "✨ Partagé depuis mon appli de sorties de jeux !",
     copyBtn: "📋 Copier le texte",
-    copiedBtn: "✅ Copié !",
+    copiedBtn: "✅ Copié ! Prêt à coller sur Messenger ou Discord",
     calendarBtn: "Ajouter au calendrier",
     favAdd: "🤍 Ajouter aux favoris",
     favRemove: "❤️ Retirer des favoris",
@@ -708,11 +712,11 @@ const TRANSLATIONS = {
     all: "✨ All Games",
     favorites: "❤️ My Favorites",
     noGamesSearch: "No games found for this search.",
-    noGamesFav: "No games in your favorites.",
-    noGamesFilter: "No games found for this console.",
+    noGamesFav: "No games in your favorites this month.",
+    noGamesFilter: "No releases for this console this month.",
     loading: "Loading...",
     searchDb: "Searching entire database... 🔍",
-    netError: "Unable to load. Check Worker URL in config.js.",
+    netError: "Unable to load releases. Check Worker URL in config.js.",
     searchError: "Error during search.",
     settingsTitle: "Settings",
     themeLabel: "Themes & Retro Consoles",
@@ -726,12 +730,12 @@ const TRANSLATIONS = {
     retroLabel: "🕰️ Time Capsule (Time Travel)",
     resetCurrentMonth: "📅 Back to current month",
     close: "Close",
-    shareTitle: "Share",
-    shareDesc: "Copy and paste this message:",
-    noFavShare: "No favorites yet!",
-    shareFooter: "✨ Shared from my game app!",
+    shareTitle: "Share my month",
+    shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
+    noFavShare: "No favorites yet! Add hearts ❤️ to your games.",
+    shareFooter: "✨ Shared from my game releases app!",
     copyBtn: "📋 Copy text",
-    copiedBtn: "✅ Copied!",
+    copiedBtn: "✅ Copied! Ready to paste",
     calendarBtn: "Add to calendar",
     favAdd: "🤍 Add to favorites",
     favRemove: "❤️ Remove from favorites",
@@ -762,46 +766,221 @@ const LANG_NAMES = {
 };
 
 const WORLD_CONSOLES = [
-  { name: "Nintendo Switch 2", brand: "Nintendo", year: "2025/2026", bg: "#ff3b30", code: "SWITCH 2", cpu: "NVIDIA Tegra personnalisé", gpu: "DLSS", sales: "Lancement", impact: "Hybride haute fidélité", desc: "Successeure de la Switch." },
-  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", code: "SWITCH", cpu: "NVIDIA Tegra X1", gpu: "Maxwell", sales: "140M+", impact: "Concept hybride parfait", desc: "Le triomphe de Nintendo." },
-  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", code: "WII U", cpu: "IBM PowerPC", gpu: "AMD Radeon", sales: "13.5M", impact: "Précurseur tablette", desc: "Pionnier HD." },
-  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#94a3b8", code: "WII", cpu: "Broadway", gpu: "Hollywood", sales: "101M", impact: "Contrôle de mouvement", desc: "Phénomène familial." },
-  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", code: "GC", cpu: "Gekko 485 MHz", gpu: "ATI Flipper", sales: "21.7M", impact: "Ergonomie légendaire", desc: "La cube violette iconique." },
-  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", code: "N64", cpu: "NEC VR4300", gpu: "SGI Reality", sales: "32.9M", impact: "Pionnier 3D", desc: "Révolution spatiale." },
-  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#8b5cf6", code: "SNES", cpu: "Ricoh 5A22", gpu: "Mode 7", sales: "49M", impact: "Sommet 16-bits", desc: "L'âge d'or de la 2D." },
-  { name: "NES", brand: "Nintendo", year: "1983", bg: "#ef4444", code: "NES", cpu: "Ricoh 2A03", gpu: "PPU", sales: "61M", impact: "Sauveur de l'industrie", desc: "Le début de la légende." },
-  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#dc2626", code: "3DS", cpu: "Dual ARM11", gpu: "PICA200", sales: "75M", impact: "3D relief sans lunettes", desc: "Incontournable portable." },
-  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#06b6d4", code: "DS", cpu: "ARM9 + ARM7", gpu: "Moteur 3D", sales: "154M", impact: "Double écran tactile", desc: "Succès planétaire." },
-  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#6366f1", code: "GBA", cpu: "ARM7TDMI", gpu: "2D intégrée", sales: "81M", impact: "SNES de poche", desc: "Paradis pixel-art." },
-  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#a855f7", code: "GBC", cpu: "Sharp 8-bit", gpu: "Couleur", sales: "118M", impact: "Couleur portable", desc: "Pokémon Or et Argent." },
-  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#84cc16", code: "GB", cpu: "Sharp 4.19 MHz", gpu: "LCD monochrome", sales: "118M", impact: "Autonomie et Tetris", desc: "Le monolithe gris." },
+  { 
+    name: "Nintendo Switch 2", brand: "Nintendo", year: "2025/2026", bg: "#ff3b30", code: "SWITCH 2", 
+    cpu: "NVIDIA Tegra personnalisé (Architecture Ampere / Ada)", gpu: "Ray Tracing matériel & DLSS", 
+    sales: "Lancement générationnel majeur", impact: "L'évolution ultime du concept hybride de Nintendo, taillée pour le jeu haute fidélité en mode portable et salon grâce au DLSS.",
+    desc: "Successeure très attendue de la console hybride à succès de Nintendo, la Switch 2 repousse les frontières techniques du jeu nomade en intégrant des technologies de pointe comme le support du DLSS de NVIDIA pour des performances visuelles spectaculaires." 
+  },
+  { 
+    name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", code: "SWITCH", 
+    cpu: "NVIDIA Tegra X1 personnalisé", gpu: "Architecture NVIDIA Maxwell", 
+    sales: "140+ millions d'exemplaires", impact: "Le concept hybride parfait combinant console de salon et portable avec des Joy-Con détachables.",
+    desc: "Véritable triomphe après l'échec de la Wii U, la Switch a réuni les marchés de salon et portable en un seul appareil, propulsée par des chefs-d'œuvre historiques comme The Legend of Zelda: Breath of the Wild et Super Mario Odyssey." 
+  },
+  { 
+    name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", code: "WII U", 
+    cpu: "IBM PowerPC 'Espresso' 3 cœurs", gpu: "AMD Radeon 'Latte'", 
+    sales: "13.56 millions d'exemplaires", impact: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo.",
+    desc: "Malgré un échec commercial dû à un manque de clarté dans son marketing, la Wii U a posé les bases conceptuelles de la Switch et offert des pépites acclamées (Mario Kart 8, Super Mario 3D World) qui ont été portées plus tard avec succès." 
+  },
+  { 
+    name: "Wii", brand: "Nintendo", year: "2006", bg: "#94a3b8", code: "WII", 
+    cpu: "IBM PowerPC 'Broadway' (729 MHz)", gpu: "ATI 'Hollywood'", 
+    sales: "101.63 millions d'exemplaires", impact: "Phénomène sociologique mondial ayant ouvert le jeu vidéo à un public familial et intergénérationnel grâce au contrôle de mouvement.",
+    desc: "En misant sur le gameplay par mouvements de la Wiimote plutôt que sur la puissance brute en haute définition, Nintendo a conquis les grands-parents, les enfants et les joueurs occasionnels avec Wii Sports." 
+  },
+  { 
+    name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", code: "GC", 
+    cpu: "IBM PowerPC 'Gekko' (485 MHz)", gpu: "ATI 'Flipper' (162 MHz)", 
+    sales: "21.74 millions d'exemplaires", impact: "La cube violette iconique aux mini-disques optiques, robuste et dotée d'une ergonomie de manette légendaire.",
+    desc: "Malgré des ventes en retrait face à la PS2, la GameCube a marqué les esprits par sa robustesse, sa poignée de transport et des créations intemporelles de Nintendo (Super Smash Bros. Melee, Metroid Prime, Resident Evil 4)." 
+  },
+  { 
+    name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", code: "N64", 
+    cpu: "NEC VR4300 64-bit (93.3 MHz)", gpu: "Silicon Graphics Reality Coprocessor", 
+    sales: "32.93 millions d'exemplaires", impact: "Pionnier absolu de la 3D en relief avec stick analogique et multijoueur local révolutionnaire (GoldenEye, Mario Kart 64).",
+    desc: "La N64 a redéfini le jeu en 3D grâce à Super Mario 64 et The Legend of Zelda: Ocarina of Time. Son design de manette à trois branches et ses 4 ports manettes ont inventé le vrai multijoueur de salon." 
+  },
+  { 
+    name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#8b5cf6", code: "SNES", 
+    cpu: "Ricoh 5A22 16-bit (3.58 MHz)", gpu: "Coprocesseur graphique Mode 7", 
+    sales: "49.10 millions d'exemplaires", impact: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle (Mode 7, puces spéciales).",
+    desc: "La SNES est considérée par beaucoup comme l'âge d'or du jeu vidéo traditionnel, avec des RPGs et des jeux de plateforme légendaires (Chrono Trigger, Super Mario World, Super Metroid, Donkey Kong Country)." 
+  },
+  { 
+    name: "NES", brand: "Nintendo", year: "1983", bg: "#ef4444", code: "NES", 
+    cpu: "Ricoh 2A03 8-bit (1.79 MHz)", gpu: "Picture Processing Unit (PPU)", 
+    sales: "61.91 millions d'exemplaires", impact: "Le sauveur de l'industrie vidéoludique après le krach de 1983 et créateur de la culture des mascottes.",
+    desc: "La Famicom au Japon et la NES en Occident ont redéfini les règles du jeu vidéo moderne avec des cartouches interchangeables, un pad rectangulaire iconique et la naissance de Super Mario Bros." 
+  },
+  { 
+    name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#dc2626", code: "3DS", 
+    cpu: "Dual-core ARM11 + Core Cortex-A9", gpu: "DMP PICA200", 
+    sales: "75.94 millions d'exemplaires", impact: "La première console portable stéréoscopique affichant de la 3D relief sans lunettes.",
+    desc: "Portée par une ludothèque gigantesque et la rétrocompatibilité DS, la 3DS a su corriger un lancement difficile pour devenir un incontournable du jeu nomade (Pokemon X/Y, Fire Emblem Awakening, Animal Crossing)." 
+  },
+  { 
+    name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#06b6d4", code: "DS", 
+    cpu: "ARM9 + ARM7 dual-core", gpu: "Moteur 3D matérialisé matériellement", 
+    sales: "154.02 millions d'exemplaires", impact: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade et conquis un public de non-joueurs.",
+    desc: "L'un des plus grands succès commerciaux de l'histoire du jeu vidéo, la DS a introduit le tactile accessible, le micro intégré et des concepts originaux comme Nintendogs ou le Programme d'entraînement cérébral du Dr Kawashima." 
+  },
+  { 
+    name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#6366f1", code: "GBA", 
+    cpu: "ARM7TDMI 32-bit (16.8 MHz)", gpu: "Processeur graphique 2D intégré", 
+    sales: "81.51 millions d'exemplaires", impact: "La puissance d'une Super Nintendo dans la poche avec un format paysage ergonomique et coloré.",
+    desc: "Véritable paradis de la 2D pixel-art, la GBA a accueilli les meilleures adaptations de classiques rétro ainsi que des chefs-d'œuvre originaux (Metroid Fusion, Pokémon Rubis/Saphir, The Legend of Zelda: The Minish Cap)." 
+  },
+  { 
+    name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#a855f7", code: "GBC", 
+    cpu: "Sharp LR35902 8-bit boosté", gpu: "Processeur graphique couleur", 
+    sales: "118.69 millions d'exemplaires (combiné GB/GBC)", impact: "L'arrivée salvatrice et colorée de la couleur sur la console portable la plus célèbre de la planète.",
+    desc: "Rétrocompatible avec toute la ludothèque de la Game Boy originale tout en affichant une palette de 32 000 couleurs, elle a abrité le raz-de-marée mondial Pokémon Or et Argent." 
+  },
+  { 
+    name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#84cc16", code: "GB", 
+    cpu: "Sharp LR35902 8-bit (4.19 MHz)", gpu: "Écran LCD matrice monochrome 4 nuances", 
+    sales: "118.69 millions d'exemplaires", impact: "Le monolithe gris indestructible qui a conquis le monde entier grâce à l'autonomie légendaire et Tetris.",
+    desc: "Lancée en 1989, la Game Boy a surclassé toutes ses concurrentes techniques grâce à une robustesse légendaire, une consommation de piles minime et le pack-in légendaire de Tetris." 
+  },
 
-  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", cpu: "AMD Zen 2", gpu: "RDNA 2", sales: "55M+", impact: "SSD ultra-rapide", desc: "Génération 9." },
-  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", code: "PS4", cpu: "AMD Jaguar", gpu: "Radeon GCN", sales: "117M", impact: "Blockbusters solo", desc: "Roi de la 8e gen." },
-  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#2563eb", code: "PS3", cpu: "Cell", gpu: "RSX", sales: "87M", impact: "Jeu en HD & Blu-ray", desc: "Pionnier multimédia." },
-  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#0284c7", code: "PS2", cpu: "Emotion Engine", gpu: "Graphics Synthesizer", sales: "155M+", impact: "Record absolu & DVD", desc: "La reine de l'histoire." },
-  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#475569", code: "PS1", cpu: "R3000A", gpu: "Geometry Engine", sales: "102M", impact: "Transition vers la 3D", desc: "Le coup de maître de Sony." },
-  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0ea5e9", code: "PS VITA", cpu: "ARM Cortex-A9", gpu: "PowerVR SGX", sales: "15M", impact: "OLED & double stick", desc: "Bijou portable." },
-  { name: "PSP", brand: "Sony", year: "2004", bg: "#38bdf8", code: "PSP", cpu: "MIPS R4000", gpu: "Graphics Synthesizer", sales: "82M", impact: "Graphismes de salon en nomade", desc: "Multimédia portable." },
+  { 
+    name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", 
+    cpu: "AMD Zen 2 (8 cœurs @ 3.5 GHz)", gpu: "AMD RDNA 2 (10.28 TFLOPs)", 
+    sales: "Plus de 55 millions d'exemplaires", impact: "Révolution du stockage SSD ultra-rapide sans temps de chargement et immersion totale grâce au retour haptique de la manette DualSense.",
+    desc: "Lancée en novembre 2020, la PlayStation 5 marque l'entrée de Sony dans la neuvième génération. Elle se distingue par son design futuriste bicolore et son architecture axée sur la suppression totale des temps de chargement grâce à un SSD propriétaire ultra-rapide." 
+  },
+  { 
+    name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", code: "PS4", 
+    cpu: "AMD Jaguar 8 cœurs 1.6 GHz", gpu: "AMD Radeon GCN (1.84 TFLOPs)", 
+    sales: "117 millions d'exemplaires", impact: "Le mastodonte incontesté de la 8e génération, roi absolu des blockbusters narratifs et des expériences cinématographiques solo.",
+    desc: "Sortie fin 2013, la PS4 a dominé sa génération grâce à un positionnement gaming pur et dur, une architecture x86 facile à programmer pour les studios et un catalogue de jeux exclusifs légendaires (God of War, Uncharted 4, Bloodborne)." 
+  },
+  { 
+    name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#2563eb", code: "PS3", 
+    cpu: "Processeur Cell Broadband Engine", gpu: "NVIDIA RSX Reality Synthesizer", 
+    sales: "87.4 millions d'exemplaires", impact: "Pionnière du jeu en HD, intégration du lecteur Blu-ray et gratuité du service en ligne PlayStation Network à ses débuts.",
+    desc: "La PS3 a connu un démarrage difficile en raison de la complexité de son processeur Cell, mais elle s'est rattrapée de manière spectaculaire avec des exclusivités cultes (The Last of Us, Uncharted, Metal Gear Solid 4) et l'adoption massive du format Blu-ray." 
+  },
+  { 
+    name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#0284c7", code: "PS2", 
+    cpu: "Emotion Engine 294 MHz", gpu: "Graphics Synthesizer", 
+    sales: "155+ millions d'exemplaires (Record absolu)", impact: "La console la plus vendue de l'histoire, reine incontestée de la rétrocompatibilité et démocratisation du DVD de salon.",
+    desc: "Véritable rouleau kompresseur de l'industrie, la PS2 a profité de sa compatibilité avec les jeux de la première PlayStation et du lecteur DVD intégré pour s'imposer dans tous les foyers de la planète pendant plus d'une décennie." 
+  },
+  { 
+    name: "PlayStation", brand: "Sony", year: "1994", bg: "#475569", code: "PS1", 
+    cpu: "R3000A 32-bit RISC (33.86 MHz)", gpu: "Geometry Engine (360k polygones/sec)", 
+    sales: "102.4 millions d'exemplaires", impact: "Le coup de maître absolu de Sony qui a fait basculer l'industrie du jeu vidéo de la 2D vers la 3D sur CD-ROM.",
+    desc: "Née d'un partenariat avorté avec Nintendo pour un lecteur CD, la première PlayStation a redéfini la culture pop des années 90 en s'adressant à un public plus âgé et branché (Tekken, Gran Turismo, Final Fantasy VII)." 
+  },
+  { 
+    name: "PS Vita", brand: "Sony", year: "2011", bg: "#0ea5e9", code: "PS VITA", 
+    cpu: "ARM Cortex-A9 MPCore (4 cœurs)", gpu: "PowerVR SGX543MP4+", 
+    sales: "Est. 15 millions d'exemplaires", impact: "Bijou technologique portable doté de doubles joysticks analogiques et d'un écran tactile OLED somptueux.",
+    desc: "Malgré un succès commercial en deçà des attentes face aux smartphones, la PS Vita reste chérie par les connaisseurs pour sa ludothèque indépendante, ses jeux japonais et sa puissance technique inégalée en format de poche." 
+  },
+  { 
+    name: "PSP", brand: "Sony", year: "2004", bg: "#38bdf8", code: "PSP", 
+    cpu: "MIPS R4000 (333 MHz)", gpu: "Sony Graphics Synthesizer", 
+    sales: "82 millions d'exemplaires", impact: "La première grande concurrente sérieuse de Nintendo sur le marché portable avec des graphismes dignes de la PS2.",
+    desc: "La PlayStation Portable a séduit les joueurs nomades grâce à son grand écran panoramique, ses capacités multimédias (films sur disque UMD, MP3) et des hits inoubliables (Monster Hunter, Crisis Core, GTA Liberty City Stories)." 
+  },
 
-  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#f97316", code: "DC", cpu: "Hitachi SH-4", gpu: "PowerVR2", sales: "9.1M", impact: "Jeu en ligne intégré", desc: "Avant-gardiste." },
-  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#475569", code: "SATURN", cpu: "Hitachi SH-2", gpu: "Double VDP", sales: "9.2M", impact: "Reine de l'arcade 2D", desc: "Trésor japonais." },
-  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#f43f5e", code: "MD", cpu: "Motorola 68000", gpu: "VDP Arcade", sales: "30.7M", impact: "Blast Processing & Sonic", desc: "L'ère rebelle." },
-  { name: "Master System", brand: "SEGA", year: "1985", bg: "#b91c1c", code: "SMS", cpu: "Zilog Z80", gpu: "VDP SEGA", sales: "13M", impact: "Rivale historique NES", desc: "Classique européen." },
-  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", code: "GG", cpu: "Zilog Z80", gpu: "Couleur", sales: "10.6M", impact: "Mega Drive de poche", desc: "Écran couleur rétroéclairé." },
+  { 
+    name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#f97316", code: "DC", 
+    cpu: "Hitachi SH-4 32-bit RISC (200 MHz)", gpu: "NEC PowerVR2 CLX2", 
+    sales: "9.13 millions d'exemplaires", impact: "La console avant-gardiste de SEGA, pionnière du jeu en ligne sur console avec modem intégré et arcade à la maison.",
+    desc: "Dernière console de SEGA, la Dreamcast était une merveille technologique en avance sur son temps. Elle a proposé des jeux d'arcade parfaits (Soulcalibur, Crazy Taxi, Shenmue) et une carte mémoire munie d'un écran LCD (VMU)." 
+  },
+  { 
+    name: "Saturn", brand: "SEGA", year: "1994", bg: "#475569", code: "SATURN", 
+    cpu: "Architecture double processeur Hitachi SH-2", gpu: "Double VDP (Video Display Processor)", 
+    sales: "9.26 millions d'exemplaires", impact: "Une bête de course absolue en 2D et reine des conversions d'arcade mythiques de SEGA.",
+    desc: "Très appréciée au Japon pour ses jeux de combat 2D et ses RPGs, la Saturn reste célèbre pour sa complexité d'architecture matérielle qui a rendu son développement difficile en Occident face à la PlayStation." 
+  },
+  { 
+    name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#f43f5e", code: "MD", 
+    cpu: "Motorola 68000 16/32-bit (7.67 MHz)", gpu: "Processeur graphique VDP dérivé arcade", 
+    sales: "30.75 millions d'exemplaires", impact: "L'ère rebelle du 'Blast Processing' et de Sonic le Hérisson qui a tenu tête à Nintendo.",
+    desc: "Symbole de la culture pop des années 90 avec son slogan agressif 'SEGA does what Nintendon't', la Mega Drive a marqué les esprits par sa vitesse d'action, ses musiques FM Yamaha et des licences cultes (Streets of Rage, Golden Axe)." 
+  },
+  { 
+    name: "Master System", brand: "SEGA", year: "1985", bg: "#b91c1c", code: "SMS", 
+    cpu: "Zilog Z80 8-bit (4 MHz)", gpu: "SEGA VDP personnalisé", 
+    sales: "13 millions d'exemplaires", impact: "La rivale historique de la NES, extrêmement populaire en Europe et au Brésil.",
+    desc: "Dotée de graphismes aux couleurs plus chatoyantes et d'une ludothèque arcade solide (Alex Kidd, Phantasy Star, Wonder Boy), la Master System a ouvert la voie à l'âge d'or de SEGA." 
+  },
+  { 
+    name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", code: "GG", 
+    cpu: "Zilog Z80 8-bit (3.58 MHz)", gpu: "Processeur couleur 4096 teintes", 
+    sales: "10.62 millions d'exemplaires", impact: "La réponse portable couleur et rétroéclairée de SEGA à la Game Boy monochrome.",
+    desc: "Véritable petit téléviseur de poche (via tuner optionnel), la Game Gear offrait les sensations de la Mega Drive en nomade, malgré une consommation de piles redoutable." 
+  },
 
-  { name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", code: "XSX", cpu: "AMD Zen 2", gpu: "RDNA 2", sales: "28M+", impact: "Game Pass & 4K", desc: "Puissance brute." },
-  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#16a34a", code: "XONE", cpu: "AMD Jaguar", gpu: "Radeon GCN", sales: "58M", impact: "Divertissement salon", desc: "Hub multimédia." },
-  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#22c55e", code: "X360", cpu: "Xenon", gpu: "ATI Xenos", sales: "84M", impact: "Xbox Live & Succès", desc: "Âge d'or de la HD." },
-  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#15803d", code: "XBOX", cpu: "Pentium III", gpu: "NVIDIA NV20", sales: "24M", impact: "Disque dur & Halo", desc: "Arrivée fracassante." },
+  { 
+    name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", code: "XSX", 
+    cpu: "AMD Zen 2 8 cœurs @ 3.8 GHz", gpu: "AMD RDNA 2 (12 TFLOPs)", 
+    sales: "Est. 28+ millions d'exemplaires", impact: "Puissance brute de calcul, service Xbox Game Pass révolutionnaire et rétrocompatibilité totale.",
+    desc: "La tour surpuissante de Microsoft conçue pour le jeu en 4K native à haute fréquence d'images, combinée au service d'abonnement Xbox Game Pass qui redéfinit l'accès aux jeux vidéo." 
+  },
+  { 
+    name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#16a34a", code: "XONE", 
+    cpu: "AMD Jaguar 8 cœurs", gpu: "AMD Radeon GCN", 
+    sales: "Est. 58 millions d'exemplaires", impact: "Le centre de divertissement multimédia et pionnier du jeu cloud et du cloud gaming.",
+    desc: "Conçue à l'origine comme un hub multimédia total pour le salon, la Xbox One a pivoté vers une machine 100% dédiée aux joueurs, introduisant le Xbox Game Pass et les manettes Elite." 
+  },
+  { 
+    name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#22c55e", code: "X360", 
+    cpu: "IBM PowerPC Xenon 3 cœurs (3.2 GHz)", gpu: "ATI Xenos", 
+    sales: "84 millions d'exemplaires", impact: "La reine absolue de la génération HD, du jeu en ligne sur le Xbox Live et des succès de Gears of War / Halo 3.",
+    desc: "La Xbox 360 a marqué les esprits par son avance d'un an sur la concurrence, la création des succès (Achievements), un écosystème multijoueur parfait et une ludothèque occidentale majeure." 
+  },
+  { 
+    name: "Xbox", brand: "Microsoft", year: "2001", bg: "#15803d", code: "XBOX", 
+    cpu: "Intel Pentium III personnalisé (733 MHz)", gpu: "NVIDIA NV20 (233 MHz)", 
+    sales: "24 millions d'exemplaires", impact: "L'arrivée fracassante de Microsoft dans le monde des consoles avec un disque dur intégré et Halo: Combat Evolved.",
+    desc: "Pionnière du jeu en ligne sur console avec le service Xbox Live et dotée d'une architecture proche d'un PC, la première Xbox a imposé Microsoft comme un acteur incontournable de l'industrie." 
+  },
 
-  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#a8a29e", code: "JAGUAR", cpu: "Tom + Jerry", gpu: "Multitâche", sales: "250k", impact: "Pionnier 64-bits", desc: "Architecture atypique." },
-  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", cpu: "16-bit", gpu: "Zoom matériel", sales: "3M", impact: "Couleur & rétroéclairé", desc: "Ambidextre." },
-  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#d97706", code: "2600", cpu: "MOS 6507", gpu: "TIA", sales: "30M", impact: "Cartouches interchangeables", desc: "Ancêtre moderne." },
+  { 
+    name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#a8a29e", code: "JAGUAR", 
+    cpu: "Processeur Tom 32-bit + Jerry 32-bit", gpu: "Processeur graphique multitâche", 
+    sales: "Est. 250 000 exemplaires", impact: "La première console présentée comme '64-bits' de l'histoire du jeu vidéo.",
+    desc: "Dernière tentative majeure d'Atari sur le marché des consoles de salon, la Jaguar est entrée dans la légende pour son architecture atypique et sa manette au pavé numérique original." 
+  },
+  { 
+    name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
+    cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
+    sales: "Est. 3 millions d'exemplaires", impact: "La première console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
+    desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
+  },
+  { 
+    name: "Atari 2600", brand: "Atari", year: "1977", bg: "#d97706", code: "2600", 
+    cpu: "MOS Technology 6507 (1.19 MHz)", gpu: "TIA (Television Interface Adapter)", 
+    sales: "30 millions d'exemplaires", impact: "La pionnière absolue qui a popularisé le système de cartouches interchangeables et lancé l'âge d'or des arcades à la maison.",
+    desc: "Véritable ancêtre de toutes nos consoles modernes, l'Atari 2600 a démocratisé le jeu vidéo dans les foyers du monde entier avec des monuments comme Space Invaders et Pac-Man." 
+  },
 
-  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#0d9488", code: "C64", cpu: "MOS 6510", gpu: "VIC-II", sales: "17M+", impact: "Micro-ordinateur roi", desc: "Culture demo & SID." },
-  { name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#dc2626", code: "NEO-GEO", cpu: "Motorola 68000", gpu: "Arcade 2D", sales: "1M", impact: "L'arcade à la maison", desc: "Rolls-Royce du jeu." },
-  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#64748b", code: "PCE", cpu: "HuC6280", gpu: "16-bit", sales: "10M", impact: "Format HuCard & CD", desc: "Pulsion arcade." }
+  { 
+    name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#0d9488", code: "C64", 
+    cpu: "MOS Technology 6510 (1.02 MHz)", gpu: "VIC-II (16 couleurs, sprites matériels)", 
+    sales: "17+ millions d'exemplaires (Record Guinness)", impact: "L'ordinateur personnel le plus vendu de tous les temps, berceau de la culture démo et des musiques SID.",
+    desc: "Légende absolue de l'informatique familiale des années 80, le C64 a initié des millions de passionnés à la programmation BASIC et à la création musicale sur puce audio SID." 
+  },
+  { 
+    name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#dc2626", code: "NEO-GEO", 
+    cpu: "Motorola 68000 (12 MHz) + Z80 (4 MHz)", gpu: "Processeur 2D ultra-puissant spécial arcade", 
+    sales: "Est. 1 million d'exemplaires", impact: "La Rolls-Royce absolue de l'arcade à la maison avec des cartouches géantes et une 2D surpuissante sans compromis.",
+    desc: "Offrant exactement la même expérience que les bornes d'arcade des salles enfumées, la Neo-Geo s'adressait aux passionnés fortunés avec des jeux de combat légendaires (King of Fighters, Metal Slug, Samurai Shodown)." 
+  },
+  { 
+    name: "PC Engine", brand: "NEC", year: "1987", bg: "#64748b", code: "PCE", 
+    cpu: "HuC6280 8-bit (7.16 MHz)", gpu: "Double moteur graphique 16-bit", 
+    sales: "10 millions d'exemplaires", impact: "La console miniature au format carte de crédit (HuCard) pionnière du lecteur CD-ROM.",
+    desc: "Phénomène de design et de puissance au Japon, la PC Engine a régalé les amateurs de jeux d'action et de shoot'em up fulgurants (R-Type, Castlevania Rondo of Blood)." 
+  }
 ];
 
 let currentLang = "fr";
@@ -843,14 +1022,186 @@ function playThemeSound(th) {
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
-    const osc = ac.createOscillator(); const gain = ac.createGain();
-    osc.connect(gain); gain.connect(ac.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(523.25, now);
-    osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
-    gain.gain.setValueAtTime(0.08, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc.start(now); osc.stop(now + 0.2);
+
+    if (th === "gamecube") {
+      [880, 659.25, 740, 587.33].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.08);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.1, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "ps1") {
+      [130.81, 261.63, 523.25, 659.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = idx < 2 ? "sawtooth" : "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        osc.start(startTime); osc.stop(startTime + 0.3);
+      });
+    } else if (th === "gameboy") {
+      [440, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.09, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "dreamcast") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(329.63, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+      osc.start(now); osc.stop(now + 0.32);
+    } else if (th === "n64") {
+      [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+        osc.start(startTime); osc.stop(startTime + 0.15);
+      });
+    } else if (th === "nes") {
+      [330, 440, 659.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
+        osc.start(startTime); osc.stop(startTime + 0.16);
+      });
+    } else if (th === "snes") {
+      [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+        osc.start(startTime); osc.stop(startTime + 0.25);
+      });
+    } else if (th === "arcade") {
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
+        osc.start(startTime); osc.stop(startTime + 0.14);
+      });
+    } else if (th === "atari") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.linearRampToValueAtTime(450, now + 0.15);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (th === "dos") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (th === "megadrive") {
+      [261.63, 392, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "midnight") {
+      [220, 329.63, 440].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        osc.start(startTime); osc.stop(startTime + 0.3);
+      });
+    } else if (th === "forest") {
+      [349.23, 440, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.08);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
+        osc.start(startTime); osc.stop(startTime + 0.22);
+      });
+    } else if (th === "violet") {
+      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "ruby") {
+      [329.63, 493.88, 587.33].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "light") {
+      [587.33, 739.99, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    }
   } catch (e) {}
 }
 
@@ -895,7 +1246,6 @@ function renderHypeBadge(game) {
 }
 
 function renderTimeBadge(dateStr) {
-  if (!dateStr) return '';
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const releaseDate = new Date(dateStr + "T00:00:00Z"); releaseDate.setHours(0, 0, 0, 0);
   const diffDays = Math.round((releaseDate - today) / (1000 * 60 * 60 * 24));
@@ -919,7 +1269,6 @@ let currentFilter = "Tous";
 let ym = new Date().toISOString().slice(0, 7);
 let searchQuery = "";
 let searchResults = null;
-let platformResults = null; // Stocke les jeux chargés pour une console spécifique
 
 const $ = (s) => document.querySelector(s);
 const el = (tag, cls, text) => {
@@ -938,7 +1287,6 @@ function shiftMonth(delta) {
   setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
   const [y, m] = ym.split("-").map(Number);
   ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
-  platformResults = null; // Réinitialise la recherche console si on change de mois
   load();
 }
 
@@ -994,23 +1342,6 @@ async function load() {
   setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
-async function loadPlatformGames(platformName) {
-  renderShimmerLoader();
-  const startTime = Date.now();
-  try {
-    // Interroge le worker avec le paramètre de plateforme pour récupérer l'historique complet
-    const res = await fetch(`${API}/?platform=${encodeURIComponent(platformName)}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Erreur");
-    platformResults = data;
-    setTimeout(() => render(), Math.max(0, 600 - (Date.now() - startTime)));
-  } catch (e) {
-    // Fallback de secours si le worker distant ne gère pas encore explicitement ?platform=, on cherche via le filtre local du mois
-    platformResults = [];
-    setTimeout(() => render(), Math.max(0, 600 - (Date.now() - startTime)));
-  }
-}
-
 async function searchGlobal(query) {
   if (!query || query.length < 2) { searchResults = null; render(); return; }
   renderShimmerLoader();
@@ -1035,24 +1366,16 @@ function itemsFor(games) {
     if (currentFilter !== "Tous") {
       rel = g.releases.filter((r) => r.platform.toLowerCase().includes(currentFilter.toLowerCase()) || currentFilter.toLowerCase().includes(r.platform.toLowerCase()));
     }
-    if (!rel.length && currentFilter !== "Tous" && platformResults === null) continue;
-    out.push({ g, rel: rel.length ? rel : g.releases, date: (rel.length ? rel[0].date : (g.releases[0] ? g.releases[0].date : ym + "-01")) });
+    if (!rel.length) continue;
+    out.push({ g, rel, date: rel[0].date });
   }
-  return out.sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.g.hypes - a.g.hypes);
+  return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
 }
 
 const cache = {};
 
 function render() {
-  let gamesToDisplay = [];
-  if (searchQuery) {
-    gamesToDisplay = searchResults || [];
-  } else if (currentFilter !== "Tous" && platformResults !== null) {
-    gamesToDisplay = platformResults;
-  } else {
-    gamesToDisplay = cache[ym] || [];
-  }
-
+  let gamesToDisplay = searchQuery ? (searchResults || []) : (cache[ym] || []);
   const items = itemsFor(gamesToDisplay);
   const list = $("#list");
   
@@ -1095,7 +1418,7 @@ function render() {
 
   let last = "";
   for (const it of items) {
-    const headerText = (searchQuery || currentFilter !== "Tous") ? (it.date ? fmtFull(it.date) : "Classique") : fmtDay(it.date);
+    const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
     if (headerText !== last) { frag.append(el("p", "day", headerText)); last = headerText; }
     frag.append(row(it));
   }
@@ -1169,6 +1492,7 @@ function openConsoleVitrine() {
       card.style.setProperty('--console-color', consoleItem.bg);
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+      
       const photoBox = el("div", "console-photo-container");
       const badge = el("div", "console-icon-badge", consoleItem.code);
       photoBox.append(badge);
@@ -1179,13 +1503,7 @@ function openConsoleVitrine() {
       infoGroup.append(name, year);
 
       card.append(brandTag, photoBox, infoGroup);
-      card.addEventListener("click", () => { 
-        playThemeSound(theme); 
-        closeSheet();
-        currentFilter = consoleItem.name;
-        $("#platformSelect").value = currentFilter;
-        loadPlatformGames(currentFilter);
-      });
+      card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
       grid.append(card);
     }
     section.append(grid);
@@ -1199,16 +1517,51 @@ function openConsoleVitrine() {
   $("#sheet").classList.add("on");
 }
 
+function openConsoleDetail(consoleItem) {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  const banner = el("div", "console-mockup-banner");
+  banner.style.background = consoleItem.bg;
+
+  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
+  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
+  
+  const specsGrid = el("div", "console-specs-grid");
+  specsGrid.innerHTML = `
+    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
+    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
+    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
+    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
+  `;
+  
+  banner.append(neonTitle, subInfo, specsGrid);
+
+  const storyBox = el("div", "console-story-box");
+  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
+
+  const backBtn = el("button", "cta", "← Retour au Musée");
+  backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
+
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+
+  p.append(banner, storyBox, backBtn, closeBtn);
+}
+
 $("#vitrineBtn").addEventListener("click", openConsoleVitrine);
 
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
+  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   const allGames = cache[ym] || [];
   const favGames = allGames.filter(g => isFavorite(g.id));
 
-  let shareText = `🎮 Mes jeux favoris :\n`;
+  let shareText = `🎮 Mes jeux favoris de ${monthName} :\n`;
   if (favGames.length === 0) {
     shareText += t('noFavShare') + "\n";
   } else {
@@ -1305,15 +1658,16 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet
 
 const icsEsc = (s) => String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
 function addToCalendar(it) {
-  const day = (it.date || new Date().toISOString().slice(0, 10)).replace(/-/g, "");
-  const next = day;
+  const day = it.date.replace(/-/g, "");
+  const next = new Date(utc(it.date).getTime() + 864e5).toISOString().slice(0, 10).replace(/-/g, "");
   const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const lines = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sorties Jeux//FR", "BEGIN:VEVENT",
     `UID:${it.g.id}-${day}@sorties-jeux`, `DTSTAMP:${stamp}`,
     `DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${next}`,
-    `SUMMARY:${icsEsc("Jeu : " + it.g.name)}`,
+    `SUMMARY:${icsEsc("Sortie : " + it.g.name)}`,
     `DESCRIPTION:${icsEsc(it.rel.map((r) => r.platform).join(", "))}`,
+    "BEGIN:VALARM", "TRIGGER:PT9H", "ACTION:DISPLAY", "DESCRIPTION:Sortie aujourd’hui", "END:VALARM",
     "END:VEVENT", "END:VCALENDAR",
   ];
   const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
@@ -1377,7 +1731,7 @@ function openSettings() {
   p.append(group);
 
   p.append(el("p", "m", t('soundLabel')));
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn'] : t('soundOff'));
   soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
@@ -1410,6 +1764,30 @@ function openSettings() {
     langGrid.append(b);
   });
   p.append(langGrid);
+
+  p.append(el("p", "m", t('retroLabel')));
+  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
+  [[-1, "Année dernière"], [-5, "Il y a 5 ans"], [-10, "Il y a 10 ans"], [-20, "Il y a 20 ans"]].forEach(([years, label]) => {
+    const b = el("button", "chip", label);
+    b.addEventListener("click", () => {
+      playThemeSound(theme);
+      const [y, m] = ym.split("-").map(Number);
+      ym = `${y + years}-${String(m).padStart(2, "0")}`;
+      load(); closeSheet();
+    });
+    retroGroup.append(b);
+  });
+  p.append(retroGroup);
+
+  const resetCurrentBtn = el("button", "cta", t('resetCurrentMonth'));
+  resetCurrentBtn.style.marginTop = "12px";
+  resetCurrentBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    ym = new Date().toISOString().slice(0, 7);
+    load();
+    closeSheet();
+  });
+  p.append(resetCurrentBtn);
 
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -1457,14 +1835,7 @@ function renderPlatformDropdown() {
 $("#platformSelect").addEventListener("change", (e) => {
   playThemeSound(theme);
   currentFilter = e.target.value;
-  searchQuery = "";
-  $("#search.value") = "";
-  if (currentFilter === "Tous") {
-    platformResults = null;
-    render();
-  } else {
-    loadPlatformGames(currentFilter);
-  }
+  render();
 });
 
 const favFilterBtn = $("#favFilterBtn");
