@@ -285,59 +285,56 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES : CARTES DESIGN 3D PROFONDEUR & RELIEF PRO --- */
+  /* --- VITRINE DES CONSOLES : CARTES RÉTRO COLORÉES EN RELIEF 3D --- */
   .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 14px; }
   @media(min-width: 500px) { .vitrine-grid { grid-template-columns: repeat(3, 1fr); } }
   
   .console-vitrine-card {
-    background: linear-gradient(145deg, color-mix(in srgb, var(--card) 90%, #000), var(--card));
-    border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--console-color, var(--card)) 25%, var(--card)), var(--card));
+    border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
     border-radius: calc(var(--radius) + 2px);
     padding: 14px 10px;
     display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
     position: relative; overflow: hidden;
-    /* Effet de relief 3D prononcé (ombrages multiples + lueur interne subtile) */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -2px 5px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -2px 6px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease;
   }
   
-  /* Ligne lumineuse de reflet style verre/métal brossé sur le haut de la carte */
   .console-vitrine-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--console-color, #fff) 80%, transparent), transparent);
     z-index: 2;
   }
 
   .console-vitrine-card:hover {
     transform: translateY(-5px) scale(1.02);
-    border-color: var(--acc);
-    box-shadow: 0 16px 35px rgba(0,0,0,0.6), 0 0 20px color-mix(in srgb, var(--acc) 45%, transparent), inset 0 1px 2px rgba(255,255,255,0.3);
+    border-color: var(--console-color, var(--acc));
+    box-shadow: 0 16px 35px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent), inset 0 1px 2px rgba(255,255,255,0.4);
   }
   .console-vitrine-card:active { transform: scale(0.96); }
 
   .console-photo-container {
     width: 100%; height: 86px; border-radius: 10px;
-    background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(15,15,22,0.8));
+    background: linear-gradient(135deg, rgba(0,0,0,0.75), color-mix(in srgb, var(--console-color, #000) 25%, #101016));
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
-    /* Effet de renfoncement 3D (boîtier creusé) */
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 1px 2px rgba(255,255,255,0.05);
+    border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 30%, rgba(255,255,255,0.1));
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 1px 2px rgba(255,255,255,0.05);
     padding: 4px; position: relative;
   }
 
   .console-icon-badge {
     font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1.5px;
-    background: var(--card); padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--acc);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 70%, transparent), inset 0 0 8px color-mix(in srgb, var(--acc) 50%, transparent);
-    text-shadow: 0 0 8px var(--acc); transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--card); padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--console-color, var(--acc));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--console-color, var(--acc)) 80%, transparent), inset 0 0 10px color-mix(in srgb, var(--console-color, var(--acc)) 50%, transparent);
+    text-shadow: 0 0 8px var(--console-color, var(--acc)); transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .console-vitrine-card:hover .console-icon-badge {
     transform: scale(1.08) rotate(1deg);
-    box-shadow: 0 0 22px color-mix(in srgb, var(--acc) 90%, transparent), inset 0 0 12px color-mix(in srgb, var(--acc) 70%, transparent);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--console-color, var(--acc)) 100%, transparent), inset 0 0 14px color-mix(in srgb, var(--console-color, var(--acc)) 80%, transparent);
   }
 
   .console-info-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
@@ -346,8 +343,8 @@
   
   .console-brand-tag {
     position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
-    background: color-mix(in srgb, var(--acc) 20%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 3;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    background: color-mix(in srgb, var(--console-color, var(--acc)) 25%, var(--cov)); color: var(--console-color, var(--acc)); letter-spacing: 0.5px; z-index: 3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 50%, transparent);
   }
 
   /* --- WIDGET NÉON STYLISÉ DANS LE DÉTAIL --- */
@@ -1017,31 +1014,31 @@ const WORLD_CONSOLES = [
     desc: "Sortie fin 2013, la PS4 a dominé sa génération grâce à un positionnement gaming pur et dur, une architecture x86 facile à programmer pour les studios et un catalogue de jeux exclusifs légendaires (God of War, Uncharted 4, Bloodborne)." 
   },
   { 
-    name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", code: "PS3", 
+    name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#2563eb", code: "PS3", 
     cpu: "Processeur Cell Broadband Engine", gpu: "NVIDIA RSX Reality Synthesizer", 
     sales: "87.4 millions d'exemplaires", impact: "Pionnière du jeu en HD, intégration du lecteur Blu-ray et gratuité du service en ligne PlayStation Network à ses débuts.",
     desc: "La PS3 a connu un démarrage difficile en raison de la complexité de son processeur Cell, mais elle s'est rattrapée de manière spectaculaire avec des exclusivités cultes (The Last of Us, Uncharted, Metal Gear Solid 4) et l'adoption massive du format Blu-ray." 
   },
   { 
-    name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", code: "PS2", 
+    name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#0284c7", code: "PS2", 
     cpu: "Emotion Engine 294 MHz", gpu: "Graphics Synthesizer", 
     sales: "155+ millions d'exemplaires (Record absolu)", impact: "La console la plus vendue de l'histoire, reine incontestée de la rétrocompatibilité et démocratisation du DVD de salon.",
     desc: "Véritable rouleau kompresseur de l'industrie, la PS2 a profité de sa compatibilité avec les jeux de la première PlayStation et du lecteur DVD intégré pour s'imposer dans tous les foyers de la planète pendant plus d'une décennie." 
   },
   { 
-    name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", code: "PS1", 
+    name: "PlayStation", brand: "Sony", year: "1994", bg: "#475569", code: "PS1", 
     cpu: "R3000A 32-bit RISC (33.86 MHz)", gpu: "Geometry Engine (360k polygones/sec)", 
     sales: "102.4 millions d'exemplaires", impact: "Le coup de maître absolu de Sony qui a fait basculer l'industrie du jeu vidéo de la 2D vers la 3D sur CD-ROM.",
     desc: "Née d'un partenariat avorté avec Nintendo pour un lecteur CD, la première PlayStation a redéfini la culture pop des années 90 en s'adressant à un public plus âgé et branché (Tekken, Gran Turismo, Final Fantasy VII)." 
   },
   { 
-    name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", code: "PS VITA", 
+    name: "PS Vita", brand: "Sony", year: "2011", bg: "#0ea5e9", code: "PS VITA", 
     cpu: "ARM Cortex-A9 MPCore (4 cœurs)", gpu: "PowerVR SGX543MP4+", 
     sales: "Est. 15 millions d'exemplaires", impact: "Bijou technologique portable doté de doubles joysticks analogiques et d'un écran tactile OLED somptueux.",
     desc: "Malgré un succès commercial en deçà des attentes face aux smartphones, la PS Vita reste chérie par les connaisseurs pour sa ludothèque indépendante, ses jeux japonais et sa puissance technique inégalée en format de poche." 
   },
   { 
-    name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", code: "PSP", 
+    name: "PSP", brand: "Sony", year: "2004", bg: "#38bdf8", code: "PSP", 
     cpu: "MIPS R4000 (333 MHz)", gpu: "Sony Graphics Synthesizer", 
     sales: "82 millions d'exemplaires", impact: "La première grande concurrente sérieuse de Nintendo sur le marché portable avec des graphismes dignes de la PS2.",
     desc: "La PlayStation Portable a séduit les joueurs nomades grâce à son grand écran panoramique, ses capacités multimédias (films sur disque UMD, MP3) et des hits inoubliables (Monster Hunter, Crisis Core, GTA Liberty City Stories)." 
@@ -1060,7 +1057,7 @@ const WORLD_CONSOLES = [
     desc: "Malgré un échec commercial dû à un manque de clarté dans son marketing, la Wii U a posé les bases conceptuelles de la Switch et offert des pépites acclamées (Mario Kart 8, Super Mario 3D World) qui ont été portées plus tard avec succès." 
   },
   { 
-    name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", code: "WII", 
+    name: "Wii", brand: "Nintendo", year: "2006", bg: "#94a3b8", code: "WII", 
     cpu: "IBM PowerPC 'Broadway' (729 MHz)", gpu: "ATI 'Hollywood'", 
     sales: "101.63 millions d'exemplaires", impact: "Phénomène sociologique mondial ayant ouvert le jeu vidéo à un public familial et intergénérationnel grâce au contrôle de mouvement.",
     desc: "En misant sur le gameplay par mouvements de la Wiimote plutôt que sur la puissance brute en haute définition, Nintendo a conquis les grands-parents, les enfants et les joueurs occasionnels avec Wii Sports." 
@@ -1078,68 +1075,68 @@ const WORLD_CONSOLES = [
     desc: "La N64 a redéfini le jeu en 3D grâce à Super Mario 64 et The Legend of Zelda: Ocarina of Time. Son design de manette à trois branches et ses 4 ports manettes ont inventé le vrai multijoueur de salon." 
   },
   { 
-    name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", code: "SNES", 
+    name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#8b5cf6", code: "SNES", 
     cpu: "Ricoh 5A22 16-bit (3.58 MHz)", gpu: "Coprocesseur graphique Mode 7", 
     sales: "49.10 millions d'exemplaires", impact: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle (Mode 7, puces spéciales).",
     desc: "La SNES est considérée par beaucoup comme l'âge d'or du jeu vidéo traditionnel, avec des RPGs et des jeux de plateforme légendaires (Chrono Trigger, Super Mario World, Super Metroid, Donkey Kong Country)." 
   },
   { 
-    name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", code: "NES", 
+    name: "NES", brand: "Nintendo", year: "1983", bg: "#ef4444", code: "NES", 
     cpu: "Ricoh 2A03 8-bit (1.79 MHz)", gpu: "Picture Processing Unit (PPU)", 
     sales: "61.91 millions d'exemplaires", impact: "Le sauveur de l'industrie vidéoludique après le krach de 1983 et créateur de la culture des mascottes.",
     desc: "La Famicom au Japon et la NES en Occident ont redéfini les règles du jeu vidéo moderne avec des cartouches interchangeables, un pad rectangulaire iconique et la naissance de Super Mario Bros." 
   },
   { 
-    name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", code: "3DS", 
+    name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#dc2626", code: "3DS", 
     cpu: "Dual-core ARM11 + Core Cortex-A9", gpu: "DMP PICA200", 
     sales: "75.94 millions d'exemplaires", impact: "La première console portable stéréoscopique affichant de la 3D relief sans lunettes.",
     desc: "Portée par une ludothèque gigantesque et la rétrocompatibilité DS, la 3DS a su corriger un lancement difficile pour devenir un incontournable du jeu nomade (Pokemon X/Y, Fire Emblem Awakening, Animal Crossing)." 
   },
   { 
-    name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", code: "DS", 
+    name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#06b6d4", code: "DS", 
     cpu: "ARM9 + ARM7 dual-core", gpu: "Moteur 3D matérialisé matériellement", 
     sales: "154.02 millions d'exemplaires", impact: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade et conquis un public de non-joueurs.",
     desc: "L'un des plus grands succès commerciaux de l'histoire du jeu vidéo, la DS a introduit le tactile accessible, le micro intégré et des concepts originaux comme Nintendogs ou le Programme d'entraînement cérébral du Dr Kawashima." 
   },
   { 
-    name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", code: "GBA", 
+    name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#6366f1", code: "GBA", 
     cpu: "ARM7TDMI 32-bit (16.8 MHz)", gpu: "Processeur graphique 2D intégré", 
     sales: "81.51 millions d'exemplaires", impact: "La puissance d'une Super Nintendo dans la poche avec un format paysage ergonomique et coloré.",
     desc: "Véritable paradis de la 2D pixel-art, la GBA a accueilli les meilleures adaptations de classiques rétro ainsi que des chefs-d'œuvre originaux (Metroid Fusion, Pokémon Rubis/Saphir, The Legend of Zelda: The Minish Cap)." 
   },
   { 
-    name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", code: "GBC", 
+    name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#a855f7", code: "GBC", 
     cpu: "Sharp LR35902 8-bit boosté", gpu: "Processeur graphique couleur", 
     sales: "118.69 millions d'exemplaires (combiné GB/GBC)", impact: "L'arrivée salvatrice et colorée de la couleur sur la console portable la plus célèbre de la planète.",
     desc: "Rétrocompatible avec toute la ludothèque de la Game Boy originale tout en affichant une palette de 32 000 couleurs, elle a abrité le raz-de-marée mondial Pokémon Or et Argent." 
   },
   { 
-    name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", code: "GB", 
+    name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#84cc16", code: "GB", 
     cpu: "Sharp LR35902 8-bit (4.19 MHz)", gpu: "Écran LCD matrice monochrome 4 nuances", 
     sales: "118.69 millions d'exemplaires", impact: "Le monolithe gris indestructible qui a conquis le monde entier grâce à l'autonomie légendaire et Tetris.",
     desc: "Lancée en 1989, la Game Boy a surclassé toutes ses concurrentes techniques grâce à une robustesse légendaire, une consommation de piles minime et le pack-in légendaire de Tetris." 
   },
 
   { 
-    name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", code: "DC", 
+    name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#f97316", code: "DC", 
     cpu: "Hitachi SH-4 32-bit RISC (200 MHz)", gpu: "NEC PowerVR2 CLX2", 
     sales: "9.13 millions d'exemplaires", impact: "La console avant-gardiste de SEGA, pionnière du jeu en ligne sur console avec modem intégré et arcade à la maison.",
     desc: "Dernière console de SEGA, la Dreamcast était une merveille technologique en avance sur son temps. Elle a proposé des jeux d'arcade parfaits (Soulcalibur, Crazy Taxi, Shenmue) et une carte mémoire munie d'un écran LCD (VMU)." 
   },
   { 
-    name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", code: "SATURN", 
+    name: "Saturn", brand: "SEGA", year: "1994", bg: "#475569", code: "SATURN", 
     cpu: "Architecture double processeur Hitachi SH-2", gpu: "Double VDP (Video Display Processor)", 
     sales: "9.26 millions d'exemplaires", impact: "Une bête de course absolue en 2D et reine des conversions d'arcade mythiques de SEGA.",
     desc: "Très appréciée au Japon pour ses jeux de combat 2D et ses RPGs, la Saturn reste célèbre pour sa complexité d'architecture matérielle qui a rendu son développement difficile en Occident face à la PlayStation." 
   },
   { 
-    name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", code: "MD", 
+    name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#f43f5e", code: "MD", 
     cpu: "Motorola 68000 16/32-bit (7.67 MHz)", gpu: "Processeur graphique VDP dérivé arcade", 
     sales: "30.75 millions d'exemplaires", impact: "L'ère rebelle du 'Blast Processing' et de Sonic le Hérisson qui a tenu tête à Nintendo.",
     desc: "Symbole de la culture pop des années 90 avec son slogan agressif 'SEGA does what Nintendon't', la Mega Drive a marqué les esprits par sa vitesse d'action, ses musiques FM Yamaha et des licences cultes (Streets of Rage, Golden Axe)." 
   },
   { 
-    name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", code: "SMS", 
+    name: "Master System", brand: "SEGA", year: "1985", bg: "#b91c1c", code: "SMS", 
     cpu: "Zilog Z80 8-bit (4 MHz)", gpu: "SEGA VDP personnalisé", 
     sales: "13 millions d'exemplaires", impact: "La rivale historique de la NES, extrêmement populaire en Europe et au Brésil.",
     desc: "Dotée de graphismes aux couleurs plus chatoyantes et d'une ludothèque arcade solide (Alex Kidd, Phantasy Star, Wonder Boy), la Master System a ouvert la voie à l'âge d'or de SEGA." 
@@ -1158,57 +1155,57 @@ const WORLD_CONSOLES = [
     desc: "La tour surpuissante de Microsoft conçue pour le jeu en 4K native à haute fréquence d'images, combinée au service d'abonnement Xbox Game Pass qui redéfinit l'accès aux jeux vidéo." 
   },
   { 
-    name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", code: "XONE", 
+    name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#16a34a", code: "XONE", 
     cpu: "AMD Jaguar 8 cœurs", gpu: "AMD Radeon GCN", 
     sales: "Est. 58 millions d'exemplaires", impact: "Le centre de divertissement multimédia et pionnier du jeu cloud et du cloud gaming.",
     desc: "Conçue à l'origine comme un hub multimédia total pour le salon, la Xbox One a pivoté vers une machine 100% dédiée aux joueurs, introduisant le Xbox Game Pass et les manettes Elite." 
   },
   { 
-    name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", code: "X360", 
+    name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#22c55e", code: "X360", 
     cpu: "IBM PowerPC Xenon 3 cœurs (3.2 GHz)", gpu: "ATI Xenos", 
     sales: "84 millions d'exemplaires", impact: "La reine absolue de la génération HD, du jeu en ligne sur le Xbox Live et des succès de Gears of War / Halo 3.",
     desc: "La Xbox 360 a marqué les esprits par son avance d'un an sur la concurrence, la création des succès (Achievements), un écosystème multijoueur parfait et une ludothèque occidentale majeure." 
   },
   { 
-    name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", code: "XBOX", 
+    name: "Xbox", brand: "Microsoft", year: "2001", bg: "#15803d", code: "XBOX", 
     cpu: "Intel Pentium III personnalisé (733 MHz)", gpu: "NVIDIA NV20 (233 MHz)", 
     sales: "24 millions d'exemplaires", impact: "L'arrivée fracassante de Microsoft dans le monde des consoles avec un disque dur intégré et Halo: Combat Evolved.",
     desc: "Pionnière du jeu en ligne sur console avec le service Xbox Live et dotée d'une architecture proche d'un PC, la première Xbox a imposé Microsoft comme un acteur incontournable de l'industrie." 
   },
 
   { 
-    name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", code: "JAGUAR", 
+    name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#a8a29e", code: "JAGUAR", 
     cpu: "Processeur Tom 32-bit + Jerry 32-bit", gpu: "Processeur graphique multitâche", 
     sales: "Est. 250 000 exemplaires", impact: "La première console présentée comme '64-bits' de l'histoire du jeu vidéo.",
     desc: "Dernière tentative majeure d'Atari sur le marché des consoles de salon, la Jaguar est entrée dans la légende pour son architecture atypique et sa manette au pavé numérique original." 
   },
   { 
-    name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", code: "LYNX", 
+    name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
     cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
     sales: "Est. 3 millions d'exemplaires", impact: "La première console portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
     desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
   },
   { 
-    name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", code: "2600", 
+    name: "Atari 2600", brand: "Atari", year: "1977", bg: "#d97706", code: "2600", 
     cpu: "MOS Technology 6507 (1.19 MHz)", gpu: "TIA (Television Interface Adapter)", 
     sales: "30 millions d'exemplaires", impact: "La pionnière absolue qui a popularisé le système de cartouches interchangeables et lancé l'âge d'or des arcades à la maison.",
     desc: "Véritable ancêtre de toutes nos consoles modernes, l'Atari 2600 a démocratisé le jeu vidéo dans les foyers du monde entier avec des monuments comme Space Invaders et Pac-Man." 
   },
 
   { 
-    name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", code: "C64", 
+    name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#0d9488", code: "C64", 
     cpu: "MOS Technology 6510 (1.02 MHz)", gpu: "VIC-II (16 couleurs, sprites matériels)", 
     sales: "17+ millions d'exemplaires (Record Guinness)", impact: "L'ordinateur personnel le plus vendu de tous les temps, berceau de la culture démo et des musiques SID.",
     desc: "Légende absolue de l'informatique familiale des années 80, le C64 a initié des millions de passionnés à la programmation BASIC et à la création musicale sur puce audio SID." 
   },
   { 
-    name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#b91c1c", code: "NEO-GEO", 
+    name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#dc2626", code: "NEO-GEO", 
     cpu: "Motorola 68000 (12 MHz) + Z80 (4 MHz)", gpu: "Processeur 2D ultra-puissant spécial arcade", 
     sales: "Est. 1 million d'exemplaires", impact: "La Rolls-Royce absolue de l'arcade à la maison avec des cartouches géantes et une 2D surpuissante sans compromis.",
     desc: "Offrant exactement la même expérience que les bornes d'arcade des salles enfumées, la Neo-Geo s'adressait aux passionnés fortunés avec des jeux de combat légendaires (King of Fighters, Metal Slug, Samurai Shodown)." 
   },
   { 
-    name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569", code: "PCE", 
+    name: "PC Engine", brand: "NEC", year: "1987", bg: "#64748b", code: "PCE", 
     cpu: "HuC6280 8-bit (7.16 MHz)", gpu: "Double moteur graphique 16-bit", 
     sales: "10 millions d'exemplaires", impact: "La console miniature au format carte de crédit (HuCard) pionnière du lecteur CD-ROM.",
     desc: "Phénomène de design et de puissance au Japon, la PC Engine a régalé les amateurs de jeux d'action et de shoot'em up fulgurants (R-Type, Castlevania Rondo of Blood)." 
@@ -1633,7 +1630,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE DES CONSOLES AVEC BADGES NÉON PRO --- */
+/* --- MUSÉE DES CONSOLES AVEC COULEURS RÉTRO ET RELIEF PRO --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1646,6 +1643,8 @@ function openConsoleVitrine() {
   const grid = el("div", "vitrine-grid");
   for (const consoleItem of WORLD_CONSOLES) {
     const card = el("div", "console-vitrine-card");
+    card.style.setProperty('--console-color', consoleItem.bg);
+    
     const brandTag = el("span", "console-brand-tag", consoleItem.brand);
     
     const photoBox = el("div", "console-photo-container");
