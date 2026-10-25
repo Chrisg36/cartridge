@@ -112,6 +112,24 @@
     opacity: 0.6;
   }
 
+  /* --- AMÉLIORATION 1 : EFFET CRT POWER-ON (Flash d'allumage) --- */
+  .crt-flash {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+  }
+  @keyframes crtPowerOn {
+    0% { opacity: 1; transform: scaleY(0.005) scaleX(1); filter: brightness(3); }
+    50% { opacity: 0.8; transform: scaleY(0.08) scaleX(1.02); filter: brightness(2); }
+    100% { opacity: 0; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+  }
+  .trigger-crt-flash .crt-flash {
+    animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  }
+
   .sticky-header-container {
     position: sticky;
     top: 0;
@@ -234,6 +252,29 @@
     white-space: nowrap;
   }
   
+  /* --- AMÉLIORATION 2 : BANNIÈRE MAGAZINE RÉTRO --- */
+  .magazine-edition-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--acc) 25%, var(--card)), var(--card));
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    border-radius: var(--radius);
+    padding: 6px 14px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--acc);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .magazine-edition-banner span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   h1 { 
     margin: 0; 
     font-size: 17px; 
@@ -310,7 +351,6 @@
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
   
-  /* Animation de transition en fondu (Fade In) d'origine */
   #list {
     animation: fadeInList 0.35s ease-in-out;
   }
@@ -319,6 +359,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* --- AMÉLIORATION 3 & 4 & 5 : FILIGRANE, CURSEUR ARCADE & AURA PULSÉE --- */
   .row { 
     display: flex; 
     align-items: center; 
@@ -330,15 +371,65 @@
     transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); 
     border: 1px solid rgba(255,255,255,0.03); 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
   }
+  
+  /* Amélioration 4 : Filigrane de connecteur de cartouche doré en arrière-plan */
+  .row::before, .grid-card::before {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: -15px;
+    width: 80px;
+    height: 40px;
+    background: repeating-linear-gradient(90deg, var(--acc), var(--acc) 3px, transparent 3px, transparent 6px);
+    opacity: 0.04;
+    transform: rotate(-15deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Amélioration 5 : Aura de Hype pulsée pour les gros jeux */
+  .row.is-hyped {
+    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
+    animation: hypeGlowPulse 2.5s infinite alternate ease-in-out;
+  }
+  @keyframes hypeGlowPulse {
+    0% { box-shadow: 0 4px 12px rgba(0,0,0,0.2), 0 0 5px color-mix(in srgb, var(--acc) 10%, transparent); }
+    100% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 16px color-mix(in srgb, var(--acc) 35%, transparent); }
+  }
+
   .row:hover { 
     transform: translateY(-3px) scale(1.005); 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 25%, transparent); 
-    border-color: color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 18px color-mix(in srgb, var(--acc) 30%, transparent); 
+    border-color: color-mix(in srgb, var(--acc) 60%, transparent);
   }
   .row:active { transform: scale(0.97); }
-  .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   
+  .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; position: relative; z-index: 1; }
+  
+  /* Amélioration 3 : Curseur rétro Arcade au survol des lignes */
+  .row .open::after {
+    content: '▶';
+    position: absolute;
+    right: 8px;
+    font-size: 11px;
+    color: var(--acc);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .row:hover .open::after {
+    opacity: 1;
+    transform: translateX(0);
+    animation: arcadeCursorBlink 0.8s infinite alternate;
+  }
+  @keyframes arcadeCursorBlink {
+    0% { opacity: 0.4; }
+    100% { opacity: 1; }
+  }
+
   .cov-container {
     position: relative;
     width: 56px;
@@ -363,11 +454,11 @@
     opacity: 1;
   }
 
-  .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; z-index: 1; }
   .t b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; letter-spacing: 0.5px; }
   .m { color: var(--mut); font-size: 12px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   
-  .actions { display: flex; gap: 6px; flex: none; }
+  .actions { display: flex; gap: 6px; flex: none; position: relative; z-index: 1; }
   .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease, filter 0.1s ease; }
   .btn-icon:hover { filter: brightness(1.2); }
   .btn-icon:active { transform: scale(0.85); }
@@ -395,10 +486,14 @@
     position: relative;
     border: 1px solid rgba(255,255,255,0.04);
   }
+  .grid-card.is-hyped {
+    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
+    animation: hypeGlowPulse 2.5s infinite alternate ease-in-out;
+  }
   .grid-card:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 20px color-mix(in srgb, var(--acc) 35%, transparent);
-    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 22px color-mix(in srgb, var(--acc) 40%, transparent);
+    border-color: color-mix(in srgb, var(--acc) 60%, transparent);
   }
   .grid-card:active { transform: scale(0.95); }
   .grid-cov-container {
@@ -432,6 +527,8 @@
     gap: 6px;
     flex: 1;
     justify-content: space-between;
+    position: relative;
+    z-index: 1;
   }
   .grid-title {
     font-size: 14px;
@@ -717,6 +814,8 @@
 </head>
 <body>
 
+<div class="crt-flash"></div>
+
 <div class="app-bg-cartridges">
   <div class="bg-cartridge"></div>
   <div class="bg-cartridge gameboy-cart"></div>
@@ -812,6 +911,12 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
       </div>
+    </div>
+
+    <!-- Amélioration 2 : Bannière de magazine rétro -->
+    <div class="magazine-edition-banner">
+      <span>🕹️ COLLECTOR EDITION</span>
+      <span id="editionDateBadge">MONTHLY RELEASES</span>
     </div>
 
     <div class="header-bottom">
@@ -1459,8 +1564,15 @@ const utc = (d) => new Date(d + "T00:00:00Z");
 const fmtDay = (d) => utc(d).toLocaleDateString(currentLang, { weekday: "long", day: "numeric", timeZone: "UTC" });
 const fmtFull = (d) => utc(d).toLocaleDateString(currentLang, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
+/* Amélioration 1 : Déclenchement du flash CRT Power-On lors du changement de mois */
 function shiftMonth(delta) {
   playThemeSound(theme);
+  
+  document.body.classList.add("trigger-crt-flash");
+  setTimeout(() => {
+    document.body.classList.remove("trigger-crt-flash");
+  }, 350);
+
   const [y, m] = ym.split("-").map(Number);
   ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
   load();
@@ -1500,8 +1612,13 @@ function renderShimmerLoader() {
 
 async function load() {
   updateStaticTexts();
-  $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  $("#title").textContent = monthTitle;
   
+  /* Mise à jour du badge de la bannière magazine */
+  const editionBadge = $("#editionDateBadge");
+  if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
+
   renderShimmerLoader();
   const startTime = Date.now();
 
@@ -1581,7 +1698,8 @@ function render() {
   if (viewMode === "grid") {
     const gridContainer = el("div", "games-grid");
     for (const it of items) {
-      const card = el("div", "grid-card");
+      const isHyped = it.g.hypes && it.g.hypes >= 15;
+      const card = el("div", "grid-card" + (isHyped ? " is-hyped" : ""));
       card.addEventListener("click", () => {
         playThemeSound(theme);
         openSheet(it);
@@ -1629,7 +1747,8 @@ function render() {
 }
 
 function row(it) {
-  const r = el("div", "row");
+  const isHyped = it.g.hypes && it.g.hypes >= 15;
+  const r = el("div", "row" + (isHyped ? " is-hyped" : ""));
   const open = el("button", "open");
   
   const covContainer = el("div", "cov-container");
