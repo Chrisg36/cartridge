@@ -112,7 +112,7 @@
     opacity: 0.6;
   }
 
-  /* --- AMÉLIORATION 1 : EFFET CRT POWER-ON (Flash d'allumage) --- */
+  /* Effet CRT Power-On */
   .crt-flash {
     position: fixed;
     inset: 0;
@@ -252,7 +252,6 @@
     white-space: nowrap;
   }
   
-  /* --- AMÉLIORATION 2 : BANNIÈRE MAGAZINE RÉTRO --- */
   .magazine-edition-banner {
     display: flex;
     align-items: center;
@@ -359,7 +358,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- AMÉLIORATION 3 & 4 & 5 : FILIGRANE, CURSEUR ARCADE & AURA PULSÉE --- */
   .row { 
     display: flex; 
     align-items: center; 
@@ -375,7 +373,6 @@
     overflow: hidden;
   }
   
-  /* Amélioration 4 : Filigrane de connecteur de cartouche doré en arrière-plan */
   .row::before, .grid-card::before {
     content: '';
     position: absolute;
@@ -390,7 +387,6 @@
     z-index: 0;
   }
 
-  /* Amélioration 5 : Aura de Hype pulsée pour les gros jeux */
   .row.is-hyped {
     border-color: color-mix(in srgb, var(--acc) 50%, transparent);
     animation: hypeGlowPulse 2.5s infinite alternate ease-in-out;
@@ -409,7 +405,6 @@
   
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; position: relative; z-index: 1; }
   
-  /* Amélioration 3 : Curseur rétro Arcade au survol des lignes */
   .row .open::after {
     content: '▶';
     position: absolute;
@@ -702,6 +697,23 @@
   .score-high { background: #10B981; color: #042F2E; }
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
+
+  /* --- NOUVEAU BADGE DE HYPE PRO (Style Éclair / Énergie) --- */
+  .hype-pro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--acc) 20%, var(--cov));
+    color: var(--acc);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent);
+    letter-spacing: 0.5px;
+  }
+
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
   #splash {
@@ -913,7 +925,6 @@
       </div>
     </div>
 
-    <!-- Amélioration 2 : Bannière de magazine rétro -->
     <div class="magazine-edition-banner">
       <span>🕹️ COLLECTOR EDITION</span>
       <span id="editionDateBadge">MONTHLY RELEASES</span>
@@ -1521,9 +1532,10 @@ function renderPlatforms(releases) {
   }).join('');
 }
 
+/* Remplacement de l'icône flamme par un badge PRO avec éclair stylé */
 function renderHypeBadge(game) {
   if (!game.hypes || game.hypes < 5) return '';
-  return `<span class="score-badge" style="background: rgba(255, 107, 53, 0.15); color: var(--acc);">🔥 ${game.hypes}</span>`;
+  return `<span class="hype-pro-badge">⚡ SURGE ${game.hypes}</span>`;
 }
 
 function renderTimeBadge(dateStr) {
@@ -1564,7 +1576,6 @@ const utc = (d) => new Date(d + "T00:00:00Z");
 const fmtDay = (d) => utc(d).toLocaleDateString(currentLang, { weekday: "long", day: "numeric", timeZone: "UTC" });
 const fmtFull = (d) => utc(d).toLocaleDateString(currentLang, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
-/* Amélioration 1 : Déclenchement du flash CRT Power-On lors du changement de mois */
 function shiftMonth(delta) {
   playThemeSound(theme);
   
@@ -1615,7 +1626,6 @@ async function load() {
   const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   $("#title").textContent = monthTitle;
   
-  /* Mise à jour du badge de la bannière magazine */
   const editionBadge = $("#editionDateBadge");
   if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
 
