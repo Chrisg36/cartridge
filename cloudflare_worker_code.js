@@ -43,94 +43,12 @@ async function getToken(env) {
     `https://id.twitch.tv/oauth2/token?client_id=${env.CLIENT_ID.trim()}&client_secret=${env.CLIENT_SECRET.trim()}&grant_type=client_credentials`,
     { method: "POST" }
   );
-  if (!res.ok) throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`);
-  const data = await res.json();
-  cachedToken = data.access_token;
-  tokenExpiry = Date.now() + (data.expires_in - 600) * 1000;
-  return cachedToken;
-}
-
-async function cacheGet(key) {
-  try { return await caches.default.match(key); } catch (e) { return undefined; }
-}
-function cachePut(ctx, key, response) {
-  try { ctx.waitUntil(caches.default.put(key, response).catch(() => {})); } catch (e) {}
-}
-
-async function igdb(env, query) {
-  const token = await getToken(env);
-  const res = await fetch("https://api.igdb.com/v4/games", {
-    method: "POST",
-    headers: {
-      "Client-ID": env.CLIENT_ID.trim(),
-      Authorization: `Bearer ${token}`,
+  if (!res.ok) throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`); const data = await res.json(); cachedToken = data.access_token; tokenExpiry = Date.now() + (data.expires_in - 600) * 1000; return cachedToken; }  async function cacheGet(key) { try { return await caches.default.match(key); } catch (e) { return undefined; } } function cachePut(ctx, key, response) { try { ctx.waitUntil(caches.default.put(key, response).catch(() => {})); } catch (e) {} }  async function igdb(env, query) { const token = await getToken(env); const res = await fetch("https://api.igdb.com/v4/games", { method: "POST", headers: { "Client-ID": env.CLIENT_ID.trim(), Authorization: `Bearer ${token}`,
       "Content-Type": "text/plain",
     },
     body: query,
   });
-  if (!res.ok) throw new Error(`Erreur IGDB (${res.status}) : ${await res.text()}`);
-  return res.json();
-}
-
-// Une sortie IGDB -> { id, name } de plateforme (l'IGDB renvoie un nombre ou un objet)
-function platformOf(r) {
-  const p = r.platform;
-  const id = p && typeof p === "object" ? p.id : p;
-  const name = PLATFORM_NAMES[id] || (p && typeof p === "object" ? p.name : null);
-  return { id, name };
-}
-
-// Transforme les jeux IGDB en liste propre pour l'application
-function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
-  const games = [];
-  for (const g of raw || []) {
-    const byPlatform = {};
-    for (const r of g.release_dates || []) {
-      if (!r.date) continue;
-      const { id, name } = platformOf(r);
-      if (!name) continue;
-      if (allowedIds && !allowedIds.includes(id)) continue;
-      if (start && (r.date < start || r.date >= end)) continue; // seulement le mois demandé
-      if (!byPlatform[name] || r.date < byPlatform[name].date) {
-        byPlatform[name] = { date: r.date, human: r.human || "" };
-      }
-    }
-    let releases = Object.entries(byPlatform)
-      .map(([platform, r]) => ({
-        platform,
-        date: iso(r.date),
-        human: r.human,
-        exact: hasDay(r.human),
-      }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    const fix = DATE_FIXES[g.id];
-    if (fix) {
-      if (!searchMode && fix.slice(0, 7) !== month) continue;
-      releases = releases.map((r) => ({ ...r, date: fix, exact: true }));
-    }
-    if (!releases.length) continue; // pas de date connue : on n'invente rien
-
-    // Extraction du Développeur et de l'Éditeur depuis involved_companies
-    const developers = [];
-    const publishers = [];
-    if (g.involved_companies) {
-      for (const ic of g.involved_companies) {
-        if (ic.company && ic.company.name) {
-          if (ic.developer) developers.push(ic.company.name);
-          if (ic.publisher) publishers.push(ic.company.name);
-        }
-      }
-    }
-
-    games.push({
-      id: g.id,
-      name: g.name,
-      summary: g.summary || null,
-      developer: developers.join(", ") || null,
-      publisher: publishers.join(", ") || null,
-      genres: (g.genres || []).map((x) => x.name),
-      cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
+  if (!res.ok) throw new Error(`Erreur IGDB (${res.status}) : ${await res.text()}`); return res.json(); }  // Une sortie IGDB -> { id, name } de plateforme (l'IGDB renvoie un nombre ou un objet) function platformOf(r) { const p = r.platform; const id = p && typeof p === "object" ? p.id : p; const name = PLATFORM_NAMES[id] \vert{}\vert{} (p && typeof p === "object" ? p.name : null); return { id, name }; }  // Transforme les jeux IGDB en liste propre pour l'application function buildGames(raw, { allowedIds, start, end, month, searchMode }) { const games = []; for (const g of raw \vert{}\vert{} []) { const byPlatform = {}; for (const r of g.release_dates \vert{}\vert{} []) { if (!r.date) continue; const { id, name } = platformOf(r); if (!name) continue; if (allowedIds && !allowedIds.includes(id)) continue; if (start && (r.date < start \vert{}\vert{} r.date >= end)) continue; // seulement le mois demandé if (!byPlatform[name] \vert{}\vert{} r.date < byPlatform[name].date) { byPlatform[name] = { date: r.date, human: r.human \vert{}\vert{} "" }; } } let releases = Object.entries(byPlatform) .map(([platform, r]) => ({ platform, date: iso(r.date), human: r.human, exact: hasDay(r.human), })) .sort((a, b) => a.date.localeCompare(b.date));  const fix = DATE_FIXES[g.id]; if (fix) { if (!searchMode && fix.slice(0, 7) !== month) continue; releases = releases.map((r) => ({ ...r, date: fix, exact: true })); } if (!releases.length) continue; // pas de date connue : on n'invente rien  // Extraction du Développeur et de l'Éditeur depuis involved_companies const developers = []; const publishers = []; if (g.involved_companies) { for (const ic of g.involved_companies) { if (ic.company && ic.company.name) { if (ic.developer) developers.push(ic.company.name); if (ic.publisher) publishers.push(ic.company.name); } } }  // Extraction propre des genres IGDB (ex: RPG, Shooter, Racing, Horror...)[cite: 3] const genres = (g.genres \vert{}\vert{} []).map((x) => x.name).filter(Boolean);  games.push({ id: g.id, name: g.name, summary: g.summary \vert{}\vert{} null, developer: developers.join(", ") \vert{}\vert{} null, publisher: publishers.join(", ") \vert{}\vert{} null, genres: genres.length > 0 ? genres : ["Action"], // <--- MODIFICATION ICI[cite: 3] cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
       hypes: (g.hypes || 0) + (g.total_rating_count || 0), // score de popularité
       rating: g.rating || null,
       aggregated_rating: g.aggregated_rating || null,
@@ -182,66 +100,10 @@ async function translateSummary(idParam, lang, env, ctx) {
   const hit = await cacheGet(key);
   if (hit) return hit;
   try {
-    const raw = await igdb(env, `fields summary; where id = ${id};`);
-    const text = raw[0] && raw[0].summary;
-    if (!text) return Response.json({ id, summary: null }, { headers: CORS });
-    if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS });
-    const out = [];
-    for (const chunk of splitText(text)) {
-      const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
-        text: chunk,
-        source_lang: "english",
-        target_lang: TARGET_LANGS[lang] || "french",
-      });
-      out.push(r.translated_text);
-    }
-    const response = Response.json(
-      { id, summary: out.join(" ") },
-      { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } }
-    );
-    cachePut(ctx, key, response.clone());
-    return response;
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: 500, headers: CORS });
-  }
-}
-
-export default {
-  async fetch(request, env, ctx) {
-    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
-    const url = new URL(request.url);
-
-    if (url.searchParams.has("translate")) {
-      return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
-    }
-
-    let month = url.searchParams.get("month");
-    const searchQuery = (url.searchParams.get("search") || "").replace(/["\\;]/g, "").trim();
-    const platformParam = url.searchParams.get("platform");
-    const showAll = url.searchParams.get("all") === "1";
-
-    if (platformParam && !FILTERS[platformParam]) {
-      return Response.json({ error: "platform doit valoir : pc, ps5, xbox ou switch2" }, { status: 400, headers: CORS });
-    }
-    if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
-    if (!searchQuery && !/^\d{4}-\d{2}$/.test(month)) {
-      return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
-    }
-
-    const cacheKey = new Request(url.origin + "/v22" + url.search);
-    const cached = await cacheGet(cacheKey);
-    if (cached) return cached;
-
-    try {
-      let games;
-
-      if (searchQuery) {
-        const words = searchQuery.split(/\s+/).filter(Boolean).slice(0, 5);
-        const contains = words.map((w) => `name ~ *"${w}"*`).join(" & ");
+    const raw = await igdb(env, `fields summary; where id = ${id};`); const text = raw[0] && raw[0].summary; if (!text) return Response.json({ id, summary: null }, { headers: CORS }); if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS }); const out = []; for (const chunk of splitText(text)) { const r = await env.AI.run("@cf/meta/m2m100-1.2b", { text: chunk, source_lang: "english", target_lang: TARGET_LANGS[lang] \vert{}\vert{} "french", }); out.push(r.translated_text); } const response = Response.json( { id, summary: out.join(" ") }, { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } } ); cachePut(ctx, key, response.clone()); return response; } catch (e) { return Response.json({ error: e.message }, { status: 500, headers: CORS }); } }  export default { async fetch(request, env, ctx) { if (request.method === "OPTIONS") return new Response(null, { headers: CORS }); const url = new URL(request.url);  if (url.searchParams.has("translate")) { return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") \vert{}\vert{} "fr", env, ctx); }  let month = url.searchParams.get("month"); const searchQuery = (url.searchParams.get("search") \vert{}\vert{} "").replace(/["\\;]/g, "").trim(); const platformParam = url.searchParams.get("platform"); const showAll = url.searchParams.get("all") === "1";  if (platformParam && !FILTERS[platformParam]) { return Response.json({ error: "platform doit valoir : pc, ps5, xbox ou switch2" }, { status: 400, headers: CORS }); } if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7); if (!searchQuery && !/^\d{4}-\d{2}$/.test(month)) { return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS }); }  const cacheKey = new Request(url.origin + "/v22" + url.search); const cached = await cacheGet(cacheKey); if (cached) return cached;  try { let games;  if (searchQuery) { const words = searchQuery.split(/\s+/).filter(Boolean).slice(0, 5); const contains = words.map((w) => `name ~ *"${w}"*`).join(" & ");
         const poolFields = "fields name, hypes, total_rating_count;";
         const attempts = [
-          `search "${searchQuery}"; ${poolFields} where game_type = ${GAME_TYPES}; limit 500;`,
-          `${poolFields} where ${contains} & game_type = ${GAME_TYPES}; limit 500;`,
+          `search "${searchQuery}"; ${poolFields} where game_type = ${GAME_TYPES}; limit 500;`, `${poolFields} where ${contains} & game_type =${GAME_TYPES}; limit 500;`,
           `search "${searchQuery}"; ${poolFields} limit 500;`,
         ];
         let pool = [];
@@ -274,9 +136,7 @@ export default {
         const end = Math.floor(Date.UTC(y, m, 1) / 1000);
         const platformIds = platformParam ? [FILTERS[platformParam]] : (month < "2020-11" ? Object.keys(PLATFORM_NAMES).map(Number) : MONTH_PLATFORMS);
 
-        let where = `game_type = ${GAME_TYPES} & cover != null`;
-        where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`;
-        where += ` & release_dates.platform = (${platformIds.join(",")})`;
+        let where = `game_type = ${GAME_TYPES} & cover != null`; where += ` & release_dates.date >= ${start} & release_dates.date < ${end}`; where += ` & release_dates.platform = (${platformIds.join(",")})`;
         if (!showAll) where += " & (hypes > 0 | total_rating_count >= 5 | game_type = (8,9))";
 
         const raw = await igdb(env, `
@@ -284,19 +144,3 @@ export default {
                  release_dates.date, release_dates.platform, release_dates.human,
                  involved_companies.company.name, involved_companies.developer, involved_companies.publisher;
           where ${where};
-          limit 500;
-        `);
-        games = buildGames(raw, { allowedIds: platformIds, start, end, month, searchMode: false });
-        games.sort((a, b) => a.date.localeCompare(b.date) || b.hypes - a.hypes);
-      }
-
-      const response = Response.json(games, {
-        headers: { ...CORS, "Cache-Control": "public, max-age=600" },
-      });
-      cachePut(ctx, cacheKey, response.clone());
-      return response;
-    } catch (e) {
-      return Response.json({ error: e.message }, { status: 500, headers: CORS });
-    }
-  },
-};
