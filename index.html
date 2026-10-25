@@ -1415,21 +1415,26 @@ try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch
 let showFavoritesOnly = false;
 
 function isFavorite(id) { return favorites.includes(id); }
+let isToggling = false;
+
 function toggleFavorite(id) {
   if (isToggling) return;
   isToggling = true;
 
   const wasFav = favorites.includes(id);
   if (wasFav) { 
-    // Si le jeu était déjà en favori, on l'enlère (AUCUN POINT GAINÉ)
     favorites = favorites.filter(favId => favId !== id); 
   } else { 
-    // Si le jeu n'y était PAS, on l'ajoute ET on donne des points UNIQUEMENT LÀ
     favorites.push(id); 
-    addCoins(10); // +10 crédits pour une vraie découverte de favori
+    addCoins(10); // Bonus de 10 crédits pour le premier ajout
   }
   
-  try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
+  try { 
+    localStorage.setItem("favorites", JSON.stringify(favorites)); 
+  } catch (e) {
+    console.error("Erreur de sauvegarde dans le localStorage :", e);
+  }
+
   playThemeSound(theme);
   render();
 
