@@ -175,12 +175,13 @@
   
   h1 { 
     margin: 0; 
-    font-size: 22px; 
+    font-size: 18px; /* Ajusté pour tenir sur une seule ligne identique au PC */
     text-transform: uppercase; 
-    letter-spacing: 2px; 
+    letter-spacing: 1.5px; 
     font-weight: 800;
     display: inline-block;
-    padding: 6px 14px;
+    white-space: nowrap; /* Empêche le retour à la ligne du mois et de l'année */
+    padding: 6px 12px;
     background: var(--card);
     border-radius: var(--radius);
     border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
@@ -625,7 +626,7 @@
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
 </div>
 
-<!-- Écran de chargement initial (Splash Screen avec temps de chargement bien visible) -->
+<!-- Écran de chargement initial (Splash Screen avec temps de chargement bien visible à 1200ms) -->
 <div id="splash">
   <div class="splash-bg-grid">
     <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
@@ -1225,7 +1226,7 @@ async function load() {
   
   renderShimmerLoader();
   
-  // Délai de chargement initial bien visible (1200ms) pour savourer l'effet shimmer au lancement
+  // Temps de chargement initial bien visible à 1200 ms pour l'effet shimmer au lancement
   const startTime = Date.now();
 
   try {
