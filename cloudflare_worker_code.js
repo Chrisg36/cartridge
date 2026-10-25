@@ -67,7 +67,7 @@ export default {
 
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
 
-    const cacheKey = new Request(url.origin + "/v15" + url.search);
+    const cacheKey = new Request(url.origin + "/v16" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -75,14 +75,11 @@ export default {
       let queryBody = "";
 
       if (searchQuery) {
-        // On extrait le premier mot clé principal (ex: "wind" ou "zelda") ou on utilise le terme de recherche global
-        const terms = searchQuery.split(" ");
-        const mainTerm = terms.length > 1 ? terms[terms.length - 1] : searchQuery;
-        
+        // Syntaxe officielle IGDB pour la recherche textuelle globale
         queryBody = `
+          search "${searchQuery}";
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
-          where name ~ *"${searchQuery}"* | name ~ *"${mainTerm}"*;
           limit 40;
         `;
       } else {
