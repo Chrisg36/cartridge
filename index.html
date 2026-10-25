@@ -112,7 +112,6 @@
     opacity: 0.6;
   }
 
-  /* Effet CRT Power-On */
   .crt-flash {
     position: fixed;
     inset: 0;
@@ -648,7 +647,7 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES ULTRA PRO (STYLE MUSÉE HAUT DE GAMME) --- */
+  /* --- VITRINE DES CONSOLES (CLiquable & Vitrine Pro) --- */
   .vitrine-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -671,6 +670,7 @@
     position: relative;
     overflow: hidden;
     box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .console-vitrine-card:hover {
@@ -691,6 +691,10 @@
     box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.4);
     letter-spacing: 1px;
     border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.2s ease;
+  }
+  .console-vitrine-card:hover .console-emblem {
+    transform: scale(1.1);
   }
   .console-info-group {
     display: flex;
@@ -721,6 +725,33 @@
     background: color-mix(in srgb, var(--acc) 15%, var(--cov));
     color: var(--acc);
     letter-spacing: 0.5px;
+  }
+
+  /* Vitrine design détaillée au clic */
+  .console-detail-banner {
+    width: 100%;
+    height: 140px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.2);
+  }
+  .console-detail-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+    pointer-events: none;
   }
 
   .share-textarea {
@@ -768,7 +799,8 @@
   .time-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; background: var(--cov); color: var(--txt); }
   .badge-today { background: var(--acc); color: var(--on); box-shadow: 0 0 8px var(--acc); }
 
-  .score-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
+  /* --- SCORE METACRITIQUE AMÉLIORÉ --- */
+  .score-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; border-radius: 10px; }
   .score-high { background: #10B981; color: #042F2E; }
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
@@ -1066,7 +1098,7 @@ const TRANSLATIONS = {
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
-    vitrineDesc: "L'intégralité des consoles, ordinateurs et machines de légende qui ont façonné l'histoire du jeu vidéo :",
+    vitrineDesc: "Clique sur n'importe quelle console pour inspecter son design de légende :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -1110,7 +1142,7 @@ const TRANSLATIONS = {
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
     vitrineTitle: "🏛️ World Console & Micro Museum",
-    vitrineDesc: "Explore all legendary consoles, computers, and arcade systems throughout gaming history:",
+    vitrineDesc: "Click on any console to inspect its legendary design:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
@@ -1154,7 +1186,7 @@ const TRANSLATIONS = {
     summaryLabel: "概要",
     summaryLoading: "AIで概要を翻訳中… ⏳",
     vitrineTitle: "🏛️ 世界のコンソール・パソコン博物館",
-    vitrineDesc: "歴史に名を残すすべての家庭用ゲーム機、パソコン、アーケード機：",
+    vitrineDesc: "コンソールをクリックして伝説のハードウェアデザインをチェック：",
     today: "今日",
     tomorrow: "明日",
     inDays: (d) => `${d}日後`,
@@ -1198,7 +1230,7 @@ const TRANSLATIONS = {
     summaryLabel: "Zusammenfassung",
     summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
     vitrineTitle: "🏛️ Welt-Konsolen- und Computer-Museum",
-    vitrineDesc: "Entdecke alle legendären Konsolen, Heimcomputer und Arcade-Systeme:",
+    vitrineDesc: "Klicke auf eine Konsole, um das legendäre Design zu inspizieren:",
     today: "Heute",
     tomorrow: "Morgen",
     inDays: (d) => `In ${d} Tagen`,
@@ -1242,7 +1274,7 @@ const TRANSLATIONS = {
     summaryLabel: "Resumen",
     summaryLoading: "Traduciendo resumen con IA… ⏳",
     vitrineTitle: "🏛️ Museo Mundial de Consolas y Micros",
-    vitrineDesc: "Explora todas las consolas, ordenadores y sistemas arcade de la historia:",
+    vitrineDesc: "Haz clic en cualquier consola para inspeccionar su diseño de leyenda:",
     today: "Hoy",
     tomorrow: "Mañana",
     inDays: (d) => `En ${d} días`,
@@ -1286,7 +1318,7 @@ const TRANSLATIONS = {
     summaryLabel: "简介",
     summaryLoading: "AI 正在翻译简介… ⏳",
     vitrineTitle: "🏛️ 世界主机与微型机博物馆",
-    vitrineDesc: "探索电子游戏历史上所有的传奇主机、家用电脑和街机平台：",
+    vitrineDesc: "点击任意主机即可欣赏其传奇的硬件设计：",
     today: "今天",
     tomorrow: "明天",
     inDays: (d) => `${d} 天后`,
@@ -1330,7 +1362,7 @@ const TRANSLATIONS = {
     summaryLabel: "Resumo",
     summaryLoading: "Traduzindo resumo com IA… ⏳",
     vitrineTitle: "🏛️ Museu Mundial de Consoles e Micros",
-    vitrineDesc: "Explore todos os consoles lendários, computadores e sistemas de fliperama da história:",
+    vitrineDesc: "Clique em qualquer console para inspecionar seu design lendário:",
     today: "Hoje",
     tomorrow: "Amanhã",
     inDays: (d) => `Em ${d} dias`,
@@ -1374,7 +1406,7 @@ const TRANSLATIONS = {
     summaryLabel: "개요",
     summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
     vitrineTitle: "🏛️ 세계 콘솔 및 마이크로컴퓨터 박물관",
-    vitrineDesc: "비디오 게임 역사 속 모든 전설적인 콘솔, 홈 컴퓨터, 아케이드 기기를 만나보세요:",
+    vitrineDesc: "콘솔을 클릭하여 전설적인 하드웨어 디자인을 감상하세요:",
     today: "오늘",
     tomorrow: "내일",
     inDays: (d) => `${d}일 후`,
@@ -1437,68 +1469,60 @@ const LANG_NAMES = {
   it: "🇮🇹 Italiano"
 };
 
-/* Liste exhaustive et pro : Atari, Commodore, Amiga, Nintendo, Sony, SEGA, Microsoft, NEC, SNK, Arcade... */
 const WORLD_CONSOLES = [
-  /* SONY */
-  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087" },
-  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791" },
-  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111" },
-  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30" },
-  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640" },
-  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a" },
-  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b" },
+  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
+  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
+  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
+  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
+  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
+  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
+  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
 
-  /* NINTENDO */
-  { name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#e60012" },
-  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012" },
-  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff" },
-  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666" },
-  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed" },
-  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201" },
-  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5" },
-  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521" },
-  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e" },
-  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4" },
-  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5" },
-  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0" },
-  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f" },
+  { name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#e60012", desc: "L'évolution ultime du concept hybride de Nintendo, taillée pour les performances nouvelle génération." },
+  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
+  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
+  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
+  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire (GoldenEye, Mario Kart 64)." },
+  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
+  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
+  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
+  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
+  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", desc: "La Super NES miniature dans la poche." },
+  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
+  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
 
-  /* SEGA */
-  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600" },
-  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155" },
-  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706" },
-  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626" },
-  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7" },
+  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
+  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
+  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
+  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
+  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", desc: "La console portable couleur rétroéclairée de SEGA." },
 
-  /* MICROSOFT */
-  { name: "Xbox Series X/S", brand: "Microsoft", year: "2020", bg: "#107c10" },
-  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10" },
-  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00" },
-  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10" },
+  { name: "Xbox Series X/S", brand: "Microsoft", year: "2020", bg: "#107c10", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
+  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
+  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
+  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
 
-  /* ATARI */
-  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c" },
-  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c" },
-  { name: "Atari 7800", brand: "Atari", year: "1986", bg: "#c2410c" },
-  { name: "Atari 5200", brand: "Atari", year: "1982", bg: "#9a3412" },
-  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309" },
-  { name: "Atari ST", brand: "Atari", year: "1985", bg: "#7c2d12" },
+  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", desc: "La première console 64-bits autoproclamée de l'histoire." },
+  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", desc: "La première console portable couleur au format paysager." },
+  { name: "Atari 7800", brand: "Atari", year: "1986", bg: "#c2410c", desc: "La rétrocompatibilité assurée avec les cartouches de la 2600." },
+  { name: "Atari 5200", brand: "Atari", year: "1982", bg: "#9a3412", desc: "La console de salon musclée basée sur l'architecture des ordinateurs Atari 8-bits." },
+  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
+  { name: "Atari ST", brand: "Atari", year: "1985", bg: "#7c2d12", desc: "L'ordinateur personnel chéri des musiciens et des créateurs de jeux 16-bits." },
 
-  /* COMMODORE & AMIGA */
-  { name: "Amiga CD32", brand: "Commodore", year: "1993", bg: "#0f766e" },
-  { name: "Amiga 500 / 1200", brand: "Commodore", year: "1987", bg: "#115e59" },
-  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a" },
-  { name: "Commodore VIC-20", brand: "Commodore", year: "1980", bg: "#042f2e" },
+  { name: "Amiga CD32", brand: "Commodore", year: "1993", bg: "#0f766e", desc: "La première console 32-bits basée sur le chipset légendaire de l'Amiga." },
+  { name: "Amiga 500 / 1200", brand: "Commodore", year: "1987", bg: "#115e59", desc: "L'ordinateur mythique aux capacités graphiques et musicales époustouflantes pour son époque." },
+  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
+  { name: "Commodore VIC-20", brand: "Commodore", year: "1980", bg: "#042f2e", desc: "Le précurseur abordable de l'informatique familiale." },
 
-  /* SNK & ARCADE & AUTRES */
-  { name: "Neo-Geo AES/MVS", brand: "SNK", year: "1990", bg: "#b91c1c" },
-  { name: "Neo-Geo Pocket", brand: "SNK", year: "1998", bg: "#991b1b" },
-  { name: "PC Engine / TurboGrafx", brand: "NEC", year: "1987", bg: "#475569" },
-  { name: "3DO Interactive", brand: "The 3DO Company", year: "1993", bg: "#4f46e5" },
-  { name: "ColecoVision", brand: "Coleco", year: "1982", bg: "#0369a1" },
-  { name: "Intellivision", brand: "Mattel", year: "1979", bg: "#0f766e" },
-  { name: "MSX / MSX2", brand: "ASCII / Microsoft", year: "1983", bg: "#4338ca" },
-  { name: "PC / Windows", brand: "Valve / PC", year: "1981", bg: "#333333" }
+  { name: "Neo-Geo AES/MVS", brand: "SNK", year: "1990", bg: "#b91c1c", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
+  { name: "Neo-Geo Pocket", brand: "SNK", year: "1998", bg: "#991b1b", desc: "La petite merveille portable de SNK dotée d'une croix directionnelle légendaire." },
+  { name: "PC Engine / TurboGrafx", brand: "NEC", year: "1987", bg: "#475569", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." },
+  { name: "3DO Interactive", brand: "The 3DO Company", year: "1993", bg: "#4f46e5", desc: "Le lecteur multimédia de salon haut de gamme codéveloppé par Trip Hawkins." },
+  { name: "ColecoVision", brand: "Coleco", year: "1982", bg: "#0369a1", desc: "La console domestique qui proposait les graphismes les plus proches des bornes d'arcade." },
+  { name: "Intellivision", brand: "Mattel", year: "1979", bg: "#0f766e", desc: "La concurrente directe de l'Atari 2600 avec ses manettes à clavier numérique." },
+  { name: "MSX / MSX2", brand: "ASCII / Microsoft", year: "1983", bg: "#4338ca", desc: "La norme informatique standardisée qui a vu naître les premiers chefs-d'œuvre de Hideo Kojima (Metal Gear)." },
+  { name: "PC / Windows", brand: "Valve / PC", year: "1981", bg: "#333333", desc: "La plateforme ultime et infinie du jeu vidéo mondial." }
 ];
 
 let currentLang = "fr";
@@ -1707,12 +1731,13 @@ function renderTimeBadge(dateStr) {
   return '';
 }
 
+/* Score Metacritic mis en avant avec la mention META */
 function renderScoreBadge(game) {
   const scoreRaw = game.aggregated_rating || game.rating;
   if (!scoreRaw) return '';
   const score = Math.round(scoreRaw);
   let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
-  return `<span class="score-badge ${scoreClass}">★ ${score}</span>`;
+  return `<span class="score-badge ${scoreClass}">META ★ ${score}</span>`;
 }
 
 const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
@@ -1962,7 +1987,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- OUVERTURE DU MUSÉE PRO DES CONSOLES ET MICROS --- */
+/* --- MUSÉE INTERACTIF DES CONSOLES (AFFICHAGE DU DESIGN AU CLIC) --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1986,6 +2011,13 @@ function openConsoleVitrine() {
     infoGroup.append(name, year);
 
     card.append(brandTag, emblem, infoGroup);
+
+    /* Clic sur la console pour afficher son design et sa fiche détaillée */
+    card.addEventListener("click", () => {
+      playThemeSound(theme);
+      openConsoleDetail(consoleItem);
+    });
+
     grid.append(card);
   }
   p.append(grid);
@@ -1999,6 +2031,39 @@ function openConsoleVitrine() {
 
   $("#sheet").classList.add("on");
 }
+
+function openConsoleDetail(consoleItem) {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.replaceChildren();
+
+  const banner = el("div", "console-detail-banner", consoleItem.name);
+  banner.style.background = consoleItem.bg;
+  
+  const subInfo = el("span", "", `Lancement : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
+  subInfo.style.fontSize = "12px";
+  subInfo.style.fontWeight = "600";
+  subInfo.style.opacity = "0.9";
+  banner.append(subInfo);
+
+  const descTitle = el("h2", "", "Design & Histoire");
+  const descText = el("p", "", consoleItem.desc);
+
+  const backBtn = el("button", "cta", "← Retour au Musée");
+  backBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    openConsoleVitrine();
+  });
+
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    closeSheet();
+  });
+
+  p.append(banner, descTitle, descText, backBtn, closeBtn);
+}
+
 $("#vitrineBtn").addEventListener("click", openConsoleVitrine);
 
 function openShareModal() {
