@@ -137,7 +137,7 @@
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
   .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .t b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; letter-spacing: 0.5px; }
-  .m { color: var(--mut); font-size: 12px; font-weight: 600; }
+  .m { color: var(--mut); font-size: 12px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   
   .actions { display: flex; gap: 6px; flex: none; }
   .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease; }
@@ -172,16 +172,37 @@
     margin-top: 10px;
   }
 
-  .platform-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; }
+  /* --- COULEURS DES BADGES CONSOLES COMPLETS --- */
+  .platform-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; }
   .badge-pc { background: #333; color: #fff; }
   .badge-ps5 { background: #003087; color: #fff; }
+  .badge-ps4 { background: #003791; color: #fff; }
+  .badge-ps3 { background: #000000; color: #66a3ff; border: 1px solid #333; }
+  .badge-ps2 { background: #000f30; color: #00a0e9; }
+  .badge-ps1 { background: #2f3640; color: #f5f5f5; }
   .badge-xbox { background: #107c10; color: #fff; }
+  .badge-xbox360 { background: #5c9e00; color: #fff; }
+  .badge-xboxone { background: #107c10; color: #e5e5e5; }
   .badge-switch2 { background: #e60012; color: #fff; }
+  .badge-gamecube { background: #6747ed; color: #fff; }
+  .badge-n64 { background: #f5b201; color: #000; }
+  .badge-snes { background: #6b5cd5; color: #fff; }
+  .badge-nes { background: #e52521; color: #fff; }
+  .badge-gb { background: #8bac0f; color: #0f1f0f; }
+  .badge-gbc { background: #9c27b0; color: #fff; }
+  .badge-gba { background: #3f51b5; color: #fff; }
+  .badge-ds { background: #00bcd4; color: #000; }
+  .badge-3ds { background: #ce181e; color: #fff; }
+  .badge-dreamcast { background: #ff6600; color: #fff; }
+  .badge-saturn { background: #334155; color: #f8fafc; }
+  .badge-megadrive { background: #d97706; color: #fff; }
+  .badge-mastersystem { background: #dc2626; color: #fff; }
+  .badge-default { background: var(--cov); color: var(--txt); }
 
-  .time-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; background: var(--cov); color: var(--txt); }
+  .time-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; background: var(--cov); color: var(--txt); }
   .badge-today { background: var(--acc); color: var(--on); }
 
-  .score-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; }
+  .score-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; }
   .score-high { background: #10B981; color: #042F2E; }
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
@@ -286,299 +307,12 @@ const TRANSLATIONS = {
     inDays: (d) => `In ${d} days`,
     yesterday: "Yesterday",
     daysAgo: (d) => `${d} days ago`
-  },
-  ja: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 ゲームを検索（全年代）...",
-    all: "すべて",
-    favorites: "❤️ お気に入り",
-    allGenres: "🎮 すべてのカテゴリー",
-    noGamesSearch: "該当するゲームが見つかりませんでした。",
-    noGamesFav: "今月のお気に入りはありません。",
-    noGamesFilter: "この条件に一致するゲームはありません。",
-    loading: "読み込み中…",
-    searchDb: "データベース全体を検索中... 🔍",
-    netError: "読み込めませんでした。config.jsのURLを確認してください。",
-    searchError: "検索中にエラーが発生しました。",
-    settingsTitle: "設定",
-    themeLabel: "テーマ & レトロコンソール",
-    soundLabel: "効果音",
-    soundOn: "🔊 サウンド ON",
-    soundOff: "🔇 サウンド OFF",
-    langLabel: "表示言語",
-    retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
-    close: "閉じる",
-    shareTitle: "今月の予定を共有",
-    shareDesc: "このメッセージをコピーしてSNSに送信できます:",
-    noFavShare: "お気に入りがまだありません！ハート ❤️ を追加してください。",
-    shareFooter: "✨ ゲーム発売アプリから共有されました！",
-    copyBtn: "📋 テキストをコピー",
-    copiedBtn: "✅ コピーしました！",
-    calendarBtn: "カレンダーに追加",
-    favAdd: "🤍 お気に入りに追加",
-    favRemove: "❤️ お気に入りから削除",
-    trailerBtn: "🎥 YouTubeで予告編を見る",
-    hltbBtn: "⏱️ クリア時間をチェック (HowLongToBeat)",
-    summaryLabel: "概要",
-    summaryLoading: "AIで概要を翻訳中… ⏳",
-    today: "今日",
-    tomorrow: "明日",
-    inDays: (d) => `${d}日後`,
-    yesterday: "昨日",
-    daysAgo: (d) => `${d}日前`
-  },
-  de: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
-    all: "Alle",
-    favorites: "❤️ Favoriten",
-    allGenres: "🎮 Alle Kategorien",
-    noGamesSearch: "Keine Spiele für diese Suche gefunden.",
-    noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
-    noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
-    loading: "Laden…",
-    searchDb: "Durchsuche die Datenbank... 🔍",
-    netError: "Fehler beim Laden. Überprüfe die Worker-URL in config.js.",
-    searchError: "Fehler bei der Suche.",
-    settingsTitle: "Einstellungen",
-    themeLabel: "Designs & Retro-Konsolen",
-    soundLabel: "Soundeffekte",
-    soundOn: "🔊 Ton an",
-    soundOff: "🔇 Ton aus",
-    langLabel: "Sprache",
-    retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
-    close: "Schließen",
-    shareTitle: "Meinen Monat teilen",
-    shareDesc: "Kopiere diese Nachricht und teile sie auf Discord oder WhatsApp:",
-    noFavShare: "Noch keine Favoriten! Füge Herzen ❤️ hinzu.",
-    shareFooter: "✨ Geteilt über meine Spiele-App!",
-    copyBtn: "📋 Text kopieren",
-    copiedBtn: "✅ Kopiert!",
-    calendarBtn: "Zum Kalender hinzufügen",
-    favAdd: "🤍 Zu Favoriten hinzufügen",
-    favRemove: "❤️ Aus Favoriten entfernen",
-    trailerBtn: "🎥 Trailer auf YouTube ansehen",
-    hltbBtn: "⏱️ Spielzeit prüfen (HowLongToBeat)",
-    summaryLabel: "Zusammenfassung",
-    summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
-    today: "Heute",
-    tomorrow: "Morgen",
-    inDays: (d) => `In ${d} Tagen`,
-    yesterday: "Gestern",
-    daysAgo: (d) => `Vor ${d} Tagen`
-  },
-  es: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
-    all: "Todos",
-    favorites: "❤️ Favoritos",
-    allGenres: "🎮 Todas las categorías",
-    noGamesSearch: "No se encontraron juegos para esta búsqueda.",
-    noGamesFav: "No hay favoritos este mes.",
-    noGamesFilter: "No hay lanzamientos para este filtro este mes.",
-    loading: "Cargando…",
-    searchDb: "Buscando en toda la base de datos... 🔍",
-    netError: "Error al cargar. Comprueba la URL en config.js.",
-    searchError: "Error en la búsqueda.",
-    settingsTitle: "Ajustes",
-    themeLabel: "Temas y Consolas Retro",
-    soundLabel: "Efectos de sonido",
-    soundOn: "🔊 Sonido activado",
-    soundOff: "🔇 Sonido desactivado",
-    langLabel: "Idioma de la interfaz",
-    retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
-    close: "Cerrar",
-    shareTitle: "Compartir mi mes",
-    shareDesc: "Copia este mensaje y compártelo en Discord o WhatsApp:",
-    noFavShare: "¡Sin favoritos todavía! Añade corazones ❤️.",
-    shareFooter: "✨ ¡Compartido desde mi app de juegos!",
-    copyBtn: "📋 Copiar texto",
-    copiedBtn: "✅ ¡Copiado!",
-    calendarBtn: "Añadir al calendario",
-    favAdd: "🤍 Añadir a favoritos",
-    favRemove: "❤️ Quitar de favoritos",
-    trailerBtn: "🎥 Ver tráiler en YouTube",
-    hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
-    summaryLabel: "Resumen",
-    summaryLoading: "Traduciendo resumen con IA… ⏳",
-    today: "Hoy",
-    tomorrow: "Mañana",
-    inDays: (d) => `En ${d} días`,
-    yesterday: "Ayer",
-    daysAgo: (d) => `Hace ${d} días`
-  },
-  zh: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
-    all: "全部",
-    favorites: "❤️ 收藏",
-    allGenres: "🎮 所有分类",
-    noGamesSearch: "未找到相关游戏。",
-    noGamesFav: "本月暂无收藏游戏。",
-    noGamesFilter: "本月暂无符合该筛选条件的游戏。",
-    loading: "加载中…",
-    searchDb: "正在搜索整个数据库... 🔍",
-    netError: "加载失败，请检查 config.js 中的 Worker 地址。",
-    searchError: "搜索出错。",
-    settingsTitle: "设置",
-    themeLabel: "主题与复古主机",
-    soundLabel: "音效设置",
-    soundOn: "🔊 开启音效",
-    soundOff: "🔇 关闭音效",
-    langLabel: "界面语言",
-    retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
-    close: "关闭",
-    shareTitle: "分享我的发售表",
-    shareDesc: "复制此消息并直接分享到社交平台：",
-    noFavShare: "暂无收藏！快给游戏点个红心 ❤️ 吧。",
-    shareFooter: "✨ 来自我的游戏发售日历应用！",
-    copyBtn: "📋 复制文本",
-    copiedBtn: "✅ 已复制到剪贴板！",
-    calendarBtn: "添加到日历",
-    favAdd: "🤍 添加到收藏",
-    favRemove: "❤️ 取消收藏",
-    trailerBtn: "🎥 在 YouTube 查看预告片",
-    hltbBtn: "⏱️ 查看通关时长 (HowLongToBeat)",
-    summaryLabel: "简介",
-    summaryLoading: "AI 正在翻译简介… ⏳",
-    today: "今天",
-    tomorrow: "明天",
-    inDays: (d) => `${d} 天后`,
-    yesterday: "昨天",
-    daysAgo: (d) => `${d} 天前`
-  },
-  pt: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
-    all: "Todos",
-    favorites: "❤️ Favoritos",
-    allGenres: "🎮 Todas as categorias",
-    noGamesSearch: "Nenhum jogo encontrado para esta busca.",
-    noGamesFav: "Nenhum favorito este mês.",
-    noGamesFilter: "Nenhum lançamento para este filtro este mês.",
-    loading: "Carregando…",
-    searchDb: "Pesquisando em todo o banco de dados... 🔍",
-    netError: "Erro ao carregar. Verifique a URL do Worker em config.js.",
-    searchError: "Erro na pesquisa.",
-    settingsTitle: "Configurações",
-    themeLabel: "Temas e Consoles Retro",
-    soundLabel: "Efeitos sonoros",
-    soundOn: "🔊 Som ligado",
-    soundOff: "🔇 Som desligado",
-    langLabel: "Idioma da interface",
-    retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
-    close: "Fechar",
-    shareTitle: "Compartilhar meu mês",
-    shareDesc: "Copie e compartilhe esta mensagem no Discord ou WhatsApp:",
-    noFavShare: "Sem favoritos ainda! Adicione corações ❤️.",
-    shareFooter: "✨ Compartilhado do meu app de jogos!",
-    copyBtn: "📋 Copiar texto",
-    copiedBtn: "✅ Copiado!",
-    calendarBtn: "Adicionar ao calendário",
-    favAdd: "🤍 Adicionar aos favoritos",
-    favRemove: "❤️ Remover dos favoritos",
-    trailerBtn: "🎥 Assistir trailer no YouTube",
-    hltbBtn: "⏱️ Ver duração (HowLongToBeat)",
-    summaryLabel: "Resumo",
-    summaryLoading: "Traduzindo resumo com IA… ⏳",
-    today: "Hoje",
-    tomorrow: "Amanhã",
-    inDays: (d) => `Em ${d} dias`,
-    yesterday: "Ontem",
-    daysAgo: (d) => `Há ${d} dias`
-  },
-  ko: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
-    all: "전체",
-    favorites: "❤️ 즐겨찾기",
-    allGenres: "🎮 모든 카테고리",
-    noGamesSearch: "검색 결과가 없습니다.",
-    noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
-    noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
-    loading: "로딩 중…",
-    searchDb: "전체 데이터베이스 검색 중... 🔍",
-    netError: "불러오지 못했습니다. config.js의 Worker 주소를 확인하세요.",
-    searchError: "검색 중 오류 발생.",
-    settingsTitle: "설정",
-    themeLabel: "테마 및 레트로 콘솔",
-    soundLabel: "효과음",
-    soundOn: "🔊 사운드 켜기",
-    soundOff: "🔇 사운드 끄기",
-    langLabel: "인터페이스 언어",
-    retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
-    close: "닫기",
-    shareTitle: "내 일정 공유하기",
-    shareDesc: "이 메시지를 복사하여 메신저나 디스코드에 공유하세요:",
-    noFavShare: "아직 즐겨찾기가 없습니다! 하트 ❤️를 추가해보세요.",
-    shareFooter: "✨ 게임 출시 앱에서 공유됨!",
-    copyBtn: "📋 텍스트 복사",
-    copiedBtn: "✅ 복사되었습니다!",
-    calendarBtn: "캘린더에 추가",
-    favAdd: "🤍 즐겨찾기에 추가",
-    favRemove: "❤️ 즐겨찾기에서 제거",
-    trailerBtn: "🎥 YouTube에서 트레일러 보기",
-    hltbBtn: "⏱️ 플레이 시간 확인 (HowLongToBeat)",
-    summaryLabel: "개요",
-    summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
-    today: "오늘",
-    tomorrow: "내일",
-    inDays: (d) => `${d}일 후`,
-    yesterday: "어제",
-    daysAgo: (d) => `${d}일 전`
-  },
-  it: {
-    subTitle: "Cartridge",
-    searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
-    all: "Tutti",
-    favorites: "❤️ Preferiti",
-    allGenres: "🎮 Tutte le categorie",
-    noGamesSearch: "Nessun gioco trovato.",
-    noGamesFav: "Nessun preferito questo mese.",
-    noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
-    loading: "Caricamento…",
-    searchDb: "Ricerca nell'intero database... 🔍",
-    netError: "Impossibile caricare. Controlla l'URL in config.js.",
-    searchError: "Errore durante la ricerca.",
-    settingsTitle: "Impostazioni",
-    themeLabel: "Temi e Console Retro",
-    soundLabel: "Effetti sonori",
-    soundOn: "🔊 Audio attivo",
-    soundOff: "🔇 Audio disattivato",
-    langLabel: "Lingua dell'interfaccia",
-    retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
-    close: "Chiudi",
-    shareTitle: "Condividi il mio mese",
-    shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
-    noFavShare: "Nessun preferito per ora! Aggiungi cuori ❤️.",
-    shareFooter: "✨ Condiviso dalla mia app di giochi!",
-    copyBtn: "📋 Copia testo",
-    copiedBtn: "✅ Copiato!",
-    calendarBtn: "Aggiungi ai preferiti",
-    favAdd: "🤍 Aggiungi ai preferiti",
-    favRemove: "❤️ Rimuovi dai preferiti",
-    trailerBtn: "🎥 Guarda il trailer su YouTube",
-    hltbBtn: "⏱️ Controlla durata (HowLongToBeat)",
-    summaryLabel: "Sommario",
-    summaryLoading: "Traduzione del sommario con IA in corso… ⏳",
-    today: "Oggi",
-    tomorrow: "Domani",
-    inDays: (d) => `Tra ${d} giorni`,
-    yesterday: "Ieri",
-    daysAgo: (d) => `Giorni fa`
   }
 };
 
 const LANG_NAMES = {
   fr: "🇫🇷 Français",
-  en: "🇬🇧 English",
-  ja: "🇯🇵 日本語",
-  de: "🇩🇪 Deutsch",
-  es: "🇪🇸 Español",
-  zh: "🇨🇳 中文",
-  pt: "🇧🇷 Português",
-  ko: "🇰🇷 한국어",
-  it: "🇮🇹 Italiano"
+  en: "🇬🇧 English"
 };
 
 let currentLang = "fr";
@@ -628,127 +362,50 @@ function playThemeSound(themeKey) {
       osc.start(now);
       osc.stop(now + 0.2);
     } else {
-      switch(themeKey) {
-        case "gameboy":
-          osc.type = "square";
-          osc.frequency.setValueAtTime(220, now);
-          osc.frequency.setValueAtTime(440, now + 0.08);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.setValueAtTime(0.08, now + 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-          break;
-        case "nes":
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(330, now);
-          osc.frequency.setValueAtTime(554, now + 0.07);
-          osc.frequency.setValueAtTime(659, now + 0.14);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-          break;
-        case "snes":
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(392, now);
-          osc.frequency.setValueAtTime(523, now + 0.08);
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-          break;
-        case "ps1":
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(180, now);
-          osc.frequency.exponentialRampToValueAtTime(720, now + 0.18);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-          osc.start(now);
-          osc.stop(now + 0.22);
-          break;
-        case "n64":
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(150, now);
-          osc.frequency.linearRampToValueAtTime(580, now + 0.2);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-          break;
-        case "dreamcast":
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.setValueAtTime(880, now + 0.1);
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-          osc.start(now);
-          osc.stop(now + 0.22);
-          break;
-        case "gamecube":
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(350, now);
-          osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-          break;
-        case "arcade":
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(900, now);
-          osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-          osc.start(now);
-          osc.stop(now + 0.18);
-          break;
-        case "atari":
-          osc.type = "square";
-          osc.frequency.setValueAtTime(250, now);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-          osc.start(now);
-          osc.stop(now + 0.12);
-          break;
-        case "dos":
-          osc.type = "square";
-          osc.frequency.setValueAtTime(750, now);
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-          osc.start(now);
-          osc.stop(now + 0.1);
-          break;
-        case "megadrive":
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(466, now);
-          osc.frequency.setValueAtTime(622, now + 0.08);
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-          break;
-        default:
-          osc.type = "square";
-          osc.frequency.setValueAtTime(400, now);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-          osc.start(now);
-          osc.stop(now + 0.15);
-      }
+      osc.type = "square";
+      osc.frequency.setValueAtTime(400, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now);
+      osc.stop(now + 0.15);
     }
   } catch (e) {}
+}
+
+/* --- BADGES CONSOLES ÉTENDUS POUR TOUTES LES PLATEFORMES --- */
+function getPlatformBadgeClass(plat) {
+  const p = plat.toLowerCase();
+  if (p.includes("ps5")) return "badge-ps5";
+  if (p.includes("ps4")) return "badge-ps4";
+  if (p.includes("ps3")) return "badge-ps3";
+  if (p.includes("ps2")) return "badge-ps2";
+  if (p.includes("playstation") || p.includes("ps1")) return "badge-ps1";
+  if (p.includes("xbox 360")) return "badge-xbox360";
+  if (p.includes("xbox one")) return "badge-xboxone";
+  if (p.includes("xbox")) return "badge-xbox";
+  if (p.includes("switch")) return "badge-switch2";
+  if (p.includes("gamecube") || p.includes("game cube")) return "badge-gamecube";
+  if (p.includes("nintendo 64") || p.includes("n64")) return "badge-n64";
+  if (p.includes("super nintendo") || p.includes("snes")) return "badge-snes";
+  if (p.includes("nes") || p.includes("nintendo entertainment system")) return "badge-nes";
+  if (p.includes("game boy advance") || p.includes("gba")) return "badge-gba";
+  if (p.includes("game boy color") || p.includes("gbc")) return "badge-gbc";
+  if (p.includes("game boy") || p.includes("gb")) return "badge-gb";
+  if (p.includes("3ds")) return "badge-3ds";
+  if (p.includes("ds")) return "badge-ds";
+  if (p.includes("dreamcast")) return "badge-dreamcast";
+  if (p.includes("saturn")) return "badge-saturn";
+  if (p.includes("mega drive") || p.includes("genesis")) return "badge-megadrive";
+  if (p.includes("master system")) return "badge-mastersystem";
+  if (p.includes("pc") || p.includes("win")) return "badge-pc";
+  return "badge-default";
 }
 
 function renderPlatforms(releases) {
   if (!releases) return '';
   const platforms = [...new Set(releases.map(r => r.platform))];
   return platforms.map(plat => {
-    let badgeClass = "badge-pc"; 
-    const pLower = plat.toLowerCase();
-    if (pLower.includes("ps5")) badgeClass = "badge-ps5";
-    else if (pLower.includes("xbox")) badgeClass = "badge-xbox";
-    else if (pLower.includes("switch")) badgeClass = "badge-switch2";
+    const badgeClass = getPlatformBadgeClass(plat);
     return `<span class="platform-badge ${badgeClass}">${plat}</span>`;
   }).join('');
 }
@@ -850,7 +507,7 @@ function itemsFor(games) {
   for (const g of games) {
     if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
     
-    // Filtrage intelligent par catégorie / mots-clés dans le nom ou le résumé du jeu
+    // Filtrage par genre (mots-clés ou identifiants IGDB)
     if (currentGenreFilter !== "all") {
       const gName = (g.name || "").toLowerCase();
       const gSummary = (g.summary || "").toLowerCase();
