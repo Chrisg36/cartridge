@@ -1827,7 +1827,7 @@ function openSettings() {
   p.append(group);
 
   p.append(el("p", "m", t('soundLabel')));
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn'] : t('soundOff'));
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
   soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
