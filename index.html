@@ -624,14 +624,23 @@ function toggleFavorite(id) {
   render();
 }
 
-/* --- SYSTÈME DE SONS PAR WEB AUDIO --- */
+/* --- SYSTÈMES DE SONS SANS ERREUR AUDIO CONTEXT --- */
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
+let audioCtx = null;
 function playThemeSound(themeKey) {
   if (!soundEnabled) return;
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!audioCtx) {
+      audioCtx = new AudioContextClass();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain);
@@ -791,22 +800,27 @@ async function searchGlobal(query) {
 
 function itemsFor(games) {
   const out = [];
-  for (const g of games) {
-    if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
-    
-    if (currentGenreFilter !== "all") {
-      const gName = (g.name || "").toLowerCase();
-      const gSummary = (g.summary || "").toLowerCase();
-      const gGenres = Array.isArray(g.genres) ? g.genres.join(" ").toLowerCase() : "";
-      const searchCat = currentGenreFilter.toLowerCase();
+  for (const g of (games || [])) {
+    if (!searchQuery) {
+      if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
       
-      const match = gName.includes(searchCat) || gSummary.includes(searchCat) || gGenres.includes(searchCat);
-      if (!match) continue;
+      if (currentGenreFilter !== "all") {
+        const gName = (g.name || "").toLowerCase();
+        const gSummary = (g.summary || "").toLowerCase();
+        const gGenres = Array.isArray(g.genres) ? g.genres.join(" ").toLowerCase() : "";
+        const searchCat = currentGenreFilter.toLowerCase();
+        
+        const match = gName.includes(searchCat) || gSummary.includes(searchCat) || gGenres.includes(searchCat);
+        if (!match) continue;
+      }
     }
 
-    const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
-    if (!rel.length) continue;
-    out.push({ g, rel, date: rel[0].date });
+    const rel = (filter === "Tous" || filter === "❤️ Favoris" || searchQuery) ? g.releases : g.releases.filter((r) => r.platform === filter);
+    if (!searchQuery && !rel.length) continue;
+    
+    const validRel = rel.length ? rel : g.releases;
+    const dateVal = (validRel[0] && validRel[0].date) || g.date || "2000-01-01";
+    out.push({ g, rel: validRel, date: dateVal });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
 }
