@@ -1,224 +1,1181 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartridge</title>
-    <style>
-        :root {
-            --bg-color: #0f1015;
-            --card-bg: #1a1c23;
-            --accent-color: #6366f1;
-            --text-color: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-color: #2d3748;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111318" id="themeMeta">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sorties">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="config.js"></script>
+<!-- Ajout de la police Rajdhani pour un style moderne/tech/gaming -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<title>Sorties jeux vidéo</title>
+<style>
+  /* --- THÈMES MODERNES (Avec la police Rajdhani) --- */
+  :root, [data-theme="dark"] { color-scheme: dark; --bg:#111318; --card:#1B1E26; --cov:#2A2F3B; --txt:#F2F3F5; --mut:#A3A9B8; --acc:#FF7A45; --on:#111318; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+  [data-theme="light"] { color-scheme: light; --bg:#F6F7F9; --card:#FFFFFF; --cov:#DDE1E8; --txt:#14161B; --mut:#5A6172; --acc:#C2410C; --on:#FFFFFF; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+  [data-theme="midnight"] { color-scheme: dark; --bg:#0B1020; --card:#151C33; --cov:#232C4A; --txt:#EAF0FF; --mut:#9AA7C7; --acc:#5CA8FF; --on:#0B1020; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+  [data-theme="forest"] { color-scheme: dark; --bg:#0E1511; --card:#17221B; --cov:#243329; --txt:#EAF5EE; --mut:#9DB5A5; --acc:#4ADE80; --on:#0E1511; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+  [data-theme="violet"] { color-scheme: dark; --bg:#130F1E; --card:#1E1830; --cov:#2D2548; --txt:#F1ECFF; --mut:#B0A5CC; --acc:#B794FF; --on:#130F1E; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+  [data-theme="ruby"] { color-scheme: dark; --bg:#170D10; --card:#251519; --cov:#3A2127; --txt:#FBEFF1; --mut:#C7A4AB; --acc:#FF5C7A; --on:#170D10; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+  /* --- THÈMES RÉTRO --- */
+  [data-theme="gameboy"] {
+    color-scheme: dark; --bg: #0f1f0f; --card: #152915; --cov: #1f3b1f; --txt: #9bbc0f; --mut: #486648; --acc: #8bac0f; --on: #0f1f0f;
+    --pattern: radial-gradient(#1f3b1f 1.5px, transparent 1.5px); background-size: 8px 8px; --font: 'Press Start 2P', monospace; --radius: 0px;
+  }
+  [data-theme="nes"] {
+    color-scheme: dark; --bg: #121214; --card: #1c1c21; --cov: #2c2c36; --txt: #ffffff; --mut: #8b8b9e; --acc: #e52521; --on: #ffffff;
+    --pattern: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
+    --font: 'Press Start 2P', monospace; --radius: 4px;
+  }
+  [data-theme="snes"] {
+    color-scheme: dark; --bg: #16151d; --card: #23222d; --cov: #343242; --txt: #f1f0f7; --mut: #8f8ba8; --acc: #6b5cd5; --on: #ffffff;
+    --pattern: repeating-linear-gradient(45deg, rgba(107, 92, 213, 0.06) 0px, rgba(107, 92, 213, 0.06) 2px, transparent 2px, transparent 8px);
+    --font: 'Press Start 2P', monospace; --radius: 6px;
+  }
+  [data-theme="ps1"] {
+    color-scheme: dark; --bg: #1a1e29; --card: #252b3b; --cov: #343d54; --txt: #e2e8f0; --mut: #8893af; --acc: #0070d1; --on: #ffffff;
+    --pattern: linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%); background-size: 16px 16px;
+    --font: 'Orbitron', sans-serif; --radius: 8px;
+  }
+  [data-theme="n64"] {
+    color-scheme: dark; --bg: #120b1f; --card: rgba(41, 25, 66, 0.85); --cov: #432b68; --txt: #f5b201; --mut: #a88cc9; --acc: #00c3e3; --on: #000000;
+    --pattern: linear-gradient(rgba(0, 195, 227, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 195, 227, 0.1) 1px, transparent 1px); background-size: 24px 24px;
+    --font: 'Orbitron', sans-serif; --radius: 14px;
+  }
+  [data-theme="dreamcast"] {
+    color-scheme: light; --bg: #eceef2; --card: #ffffff; --cov: #d8dce6; --txt: #1c202a; --mut: #68728d; --acc: #ff6600; --on: #ffffff;
+    --pattern: radial-gradient(#d8dce6 1.5px, transparent 1.5px); background-size: 14px 14px;
+    --font: 'Orbitron', sans-serif; --radius: 12px;
+  }
+  [data-theme="gamecube"] {
+    color-scheme: dark; --bg: #110e1b; --card: #1c172e; --cov: #2b2345; --txt: #f0edfa; --mut: #8e83b5; --acc: #6747ed; --on: #ffffff;
+    --pattern: radial-gradient(rgba(103, 71, 237, 0.2) 2px, transparent 2.5px); background-size: 18px 18px;
+    --font: 'Orbitron', sans-serif; --radius: 14px;
+  }
+  [data-theme="arcade"] {
+    color-scheme: dark; --bg: #0d0614; --card: #1a0b2e; --cov: #2c134d; --txt: #ff00ff; --mut: #a64dff; --acc: #00ffff; --on: #0d0614;
+    --pattern: linear-gradient(rgba(18, 16, 38, 0) 50%, rgba(0, 0, 0, 0.6) 50%); background-size: 100% 4px;
+    --font: 'Press Start 2P', monospace; --radius: 2px;
+  }
+  [data-theme="atari"] {
+    color-scheme: dark; --bg: #1a120b; --card: #2a1c12; --cov: #3d2a1a; --txt: #f3e9d2; --mut: #a38971; --acc: #ff7700; --on: #ffffff;
+    --pattern: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
+    --font: 'VT323', monospace; --radius: 6px;
+  }
+  [data-theme="dos"] {
+    color-scheme: dark; --bg: #000000; --card: #050d05; --cov: #0a1f0a; --txt: #00ff00; --mut: #008800; --acc: #00ff66; --on: #000000;
+    --pattern: linear-gradient(rgba(0, 255, 0, 0.03) 50%, rgba(0, 0, 0, 0.5) 50%); background-size: 100% 3px;
+    --font: 'Share Tech Mono', monospace; --radius: 0px;
+  }
+  [data-theme="megadrive"] {
+    color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff;
+    --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px;
+    --font: 'Orbitron', sans-serif; --radius: 10px;
+  }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+  .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
+  [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box { box-shadow: 0 0 0 1px #D8DCE6; }
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image: var(--pattern);
+    color: var(--txt);
+    font-family: var(--font);
+    padding: env(safe-area-inset-top) env(safe-area-inset-bottom);
+  }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+  main { max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  
+  .nav { display: flex; gap: 8px; }
+  .chip { border: 0; border-radius: var(--radius); padding: 10px 16px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
+  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; }
+  
+  .search-box {
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--txt);
+    font-size: 15px;
+    outline: none;
+    font-family: var(--font);
+    font-weight: 600;
+  }
+  .search-box::placeholder { color: var(--mut); }
 
-        header h1 {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-        }
+  .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
+  .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
+  .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
+  .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .t b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; letter-spacing: 0.5px; }
+  .m { color: var(--mut); font-size: 12px; font-weight: 600; }
+  
+  .actions { display: flex; gap: 6px; flex: none; }
+  .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease; }
+  .btn-icon:active { transform: scale(0.92); }
+  .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
+  .add { color: var(--on); background: var(--acc); }
 
-        header p {
-            color: var(--text-muted);
-        }
+  .msg { color: var(--mut); text-align: center; padding: 40px 0; font-weight: 600; }
+  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+  #sheet.on { display: flex; }
+  .panel { background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); }
+  .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
+  .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+  .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
+  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
+  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; }
+  .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 14px auto 0; padding: 8px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
 
-        /* Barre de filtres */
-        .filters-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-        }
+  .share-textarea {
+    width: 100%;
+    height: 140px;
+    background: var(--cov);
+    color: var(--txt);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 12px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    resize: none;
+    outline: none;
+    margin-top: 10px;
+  }
 
-        .filter-btn {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
+  .platform-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; }
+  .badge-pc { background: #333; color: #fff; }
+  .badge-ps5 { background: #003087; color: #fff; }
+  .badge-xbox { background: #107c10; color: #fff; }
+  .badge-switch2 { background: #e60012; color: #fff; }
 
-        .filter-btn:hover, .filter-btn.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
+  .time-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; background: var(--cov); color: var(--txt); }
+  .badge-today { background: var(--acc); color: var(--on); }
 
-        select#genreFilter {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* Grille des jeux */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .game-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .game-info {
-            padding: 20px;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .game-meta {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .game-hype {
-            color: #f59e0b;
-            font-weight: 600;
-        }
-    </style>
+  .score-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-right: 4px; margin-top: 2px; }
+  .score-high { background: #10B981; color: #042F2E; }
+  .score-mid { background: #F59E0B; color: #451A03; }
+  .score-low { background: #EF4444; color: #450A0A; }
+  .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+</style>
 </head>
 <body>
-
-    <header>
-        <h1>Cartridge</h1>
-        <p>Découvrez et suivez les sorties de jeux vidéo à venir</p>
-    </header>
-
-    <!-- Filtres Hype & Genres -->
-    <div class="filters-container">
-        <button class="filter-btn active" onclick="filterByHype('all', this)">Tous les jeux</button>
-        <button class="filter-btn" onclick="filterByHype('hyped', this)">🔥 Les plus attendus</button>
-        
-        <select id="genreFilter" onchange="filterByGenre(this.value)">
-            <option value="all">Tous les genres</option>
-            <option value="RPG">RPG</option>
-            <option value="Action">Action</option>
-            <option value="Adventure">Aventure</option>
-            <option value="Shooter">Shooter</option>
-            <option value="Strategy">Stratégie</option>
-        </select>
+<main>
+  <header>
+    <div><small id="sub-title">Sorties</small><h1 id="title"></h1></div>
+    <div class="nav">
+      <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
+      <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
+      <button class="chip" id="prev" aria-label="Mois précédent">‹</button>
+      <button class="chip" id="next" aria-label="Mois suivant">›</button>
     </div>
+  </header>
+  <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
+  <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+  <div id="list"></div>
+</main>
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
-    <!-- Liste des jeux -->
-    <div id="gamesGrid" class="games-grid">
-        <!-- Les cartes de jeux seront injectées ici -->
-    </div>
+<script>
+const TRANSLATIONS = {
+  fr: {
+    subTitle: "Sorties",
+    searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
+    all: "Tous",
+    favorites: "❤️ Favoris",
+    noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
+    noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
+    noGamesFilter: "Aucune sortie pour ce filtre ce mois-ci.",
+    loading: "Chargement…",
+    searchDb: "Recherche dans toute la base de données... 🔍",
+    netError: "Impossible de charger les sorties. Vérifie l’adresse du Worker dans config.js.",
+    searchError: "Erreur lors de la recherche.",
+    settingsTitle: "Réglages",
+    themeLabel: "Thèmes & Consoles Rétro",
+    soundLabel: "Effets sonores",
+    soundOn: "🔊 Son activé",
+    soundOff: "🔇 Son coupé",
+    langLabel: "Langue de l'interface",
+    retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
+    close: "Fermer",
+    shareTitle: "Partager mon mois",
+    shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
+    noFavShare: "Aucun favori pour l'instant ! Ajoute des cœurs ❤️ sur tes jeux.",
+    shareFooter: "✨ Partagé depuis mon appli de sorties de jeux !",
+    copyBtn: "📋 Copier le texte",
+    copiedBtn: "✅ Copié ! Prêt à coller sur Messenger ou Discord",
+    calendarBtn: "Ajouter au calendrier",
+    favAdd: "🤍 Ajouter aux favoris",
+    favRemove: "❤️ Retirer des favoris",
+    trailerBtn: "🎥 Voir la bande-annonce sur YouTube",
+    hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
+    summaryLabel: "Résumé",
+    summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
+    today: "Aujourd'hui",
+    tomorrow: "Demain",
+    inDays: (d) => `Dans ${d} jours`,
+    yesterday: "Hier",
+    daysAgo: (d) => `Il y a ${d} jours`
+  },
+  en: {
+    subTitle: "Releases",
+    searchPlaceholder: "🔍 Search any game (all years)...",
+    all: "All",
+    favorites: "❤️ Favorites",
+    noGamesSearch: "No games found for this search.",
+    noGamesFav: "No games in your favorites this month.",
+    noGamesFilter: "No releases for this filter this month.",
+    loading: "Loading...",
+    searchDb: "Searching entire database... 🔍",
+    netError: "Unable to load releases. Check Worker URL in config.js.",
+    searchError: "Error during search.",
+    settingsTitle: "Settings",
+    themeLabel: "Themes & Retro Consoles",
+    soundLabel: "Sound Effects",
+    soundOn: "🔊 Sound ON",
+    soundOff: "🔇 Sound OFF",
+    langLabel: "Interface Language",
+    retroLabel: "🕰️ Time Capsule (Time Travel)",
+    close: "Close",
+    shareTitle: "Share my month",
+    shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
+    noFavShare: "No favorites yet! Add hearts ❤️ to your games.",
+    shareFooter: "✨ Shared from my game releases app!",
+    copyBtn: "📋 Copy text",
+    copiedBtn: "✅ Copied! Ready to paste",
+    calendarBtn: "Add to calendar",
+    favAdd: "🤍 Add to favorites",
+    favRemove: "❤️ Remove from favorites",
+    trailerBtn: "🎥 Watch trailer on YouTube",
+    hltbBtn: "⏱️ Check HowLongToBeat",
+    summaryLabel: "Summary",
+    summaryLoading: "Translating summary with AI… ⏳",
+    today: "Today",
+    tomorrow: "Tomorrow",
+    inDays: (d) => `In ${d} days`,
+    yesterday: "Yesterday",
+    daysAgo: (d) => `${d} days ago`
+  },
+  ja: {
+    subTitle: "リリース",
+    searchPlaceholder: "🔍 ゲームを検索（全年代）...",
+    all: "すべて",
+    favorites: "❤️ お気に入り",
+    noGamesSearch: "該当するゲームが見つかりませんでした。",
+    noGamesFav: "今月のお気に入りはありません。",
+    noGamesFilter: "この条件に一致するゲームはありません。",
+    loading: "読み込み中…",
+    searchDb: "データベース全体を検索中... 🔍",
+    netError: "読み込めませんでした。config.jsのURLを確認してください。",
+    searchError: "検索中にエラーが発生しました。",
+    settingsTitle: "設定",
+    themeLabel: "テーマ & レトロコンソール",
+    soundLabel: "効果音",
+    soundOn: "🔊 サウンド ON",
+    soundOff: "🔇 サウンド OFF",
+    langLabel: "表示言語",
+    retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
+    close: "閉じる",
+    shareTitle: "今月の予定を共有",
+    shareDesc: "このメッセージをコピーしてSNSに送信できます:",
+    noFavShare: "お気に入りがまだありません！ハート ❤️ を追加してください。",
+    shareFooter: "✨ ゲーム発売アプリから共有されました！",
+    copyBtn: "📋 テキストをコピー",
+    copiedBtn: "✅ コピーしました！",
+    calendarBtn: "カレンダーに追加",
+    favAdd: "🤍 お気に入りに追加",
+    favRemove: "❤️ お気に入りから削除",
+    trailerBtn: "🎥 YouTubeで予告編を見る",
+    hltbBtn: "⏱️ クリア時間をチェック (HowLongToBeat)",
+    summaryLabel: "概要",
+    summaryLoading: "AIで概要を翻訳中… ⏳",
+    today: "今日",
+    tomorrow: "明日",
+    inDays: (d) => `${d}日後`,
+    yesterday: "昨日",
+    daysAgo: (d) => `${d}日前`
+  },
+  de: {
+    subTitle: "Releases",
+    searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
+    all: "Alle",
+    favorites: "❤️ Favoriten",
+    noGamesSearch: "Keine Spiele für diese Suche gefunden.",
+    noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
+    noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
+    loading: "Laden…",
+    searchDb: "Durchsuche die Datenbank... 🔍",
+    netError: "Fehler beim Laden. Überprüfe die Worker-URL in config.js.",
+    searchError: "Fehler bei der Suche.",
+    settingsTitle: "Einstellungen",
+    themeLabel: "Designs & Retro-Konsolen",
+    soundLabel: "Soundeffekte",
+    soundOn: "🔊 Ton an",
+    soundOff: "🔇 Ton aus",
+    langLabel: "Sprache",
+    retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
+    close: "Schließen",
+    shareTitle: "Meinen Monat teilen",
+    shareDesc: "Kopiere diese Nachricht und teile sie auf Discord oder WhatsApp:",
+    noFavShare: "Noch keine Favoriten! Füge Herzen ❤️ hinzu.",
+    shareFooter: "✨ Geteilt über meine Spiele-App!",
+    copyBtn: "📋 Text kopieren",
+    copiedBtn: "✅ Kopiert!",
+    calendarBtn: "Zum Kalender hinzufügen",
+    favAdd: "🤍 Zu Favoriten hinzufügen",
+    favRemove: "❤️ Aus Favoriten entfernen",
+    trailerBtn: "🎥 Trailer auf YouTube ansehen",
+    hltbBtn: "⏱️ Spielzeit prüfen (HowLongToBeat)",
+    summaryLabel: "Zusammenfassung",
+    summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
+    today: "Heute",
+    tomorrow: "Morgen",
+    inDays: (d) => `In ${d} Tagen`,
+    yesterday: "Gestern",
+    daysAgo: (d) => `Vor ${d} Tagen`
+  },
+  es: {
+    subTitle: "Lanzamientos",
+    searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
+    all: "Todos",
+    favorites: "❤️ Favoritos",
+    noGamesSearch: "No se encontraron juegos para esta búsqueda.",
+    noGamesFav: "No hay favoritos este mes.",
+    noGamesFilter: "No hay lanzamientos para este filtro este mes.",
+    loading: "Cargando…",
+    searchDb: "Buscando en toda la base de datos... 🔍",
+    netError: "Error al cargar. Comprueba la URL en config.js.",
+    searchError: "Error en la búsqueda.",
+    settingsTitle: "Ajustes",
+    themeLabel: "Temas y Consolas Retro",
+    soundLabel: "Efectos de sonido",
+    soundOn: "🔊 Sonido activado",
+    soundOff: "🔇 Sonido desactivado",
+    langLabel: "Idioma de la interfaz",
+    retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
+    close: "Cerrar",
+    shareTitle: "Compartir mi mes",
+    shareDesc: "Copia este mensaje y compártelo en Discord o WhatsApp:",
+    noFavShare: "¡Sin favoritos todavía! Añade corazones ❤️.",
+    shareFooter: "✨ ¡Compartido desde mi app de juegos!",
+    copyBtn: "📋 Copiar texto",
+    copiedBtn: "✅ ¡Copiado!",
+    calendarBtn: "Añadir al calendario",
+    favAdd: "🤍 Añadir a favoritos",
+    favRemove: "❤️ Quitar de favoritos",
+    trailerBtn: "🎥 Ver tráiler en YouTube",
+    hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
+    summaryLabel: "Resumen",
+    summaryLoading: "Traduciendo resumen con IA… ⏳",
+    today: "Hoy",
+    tomorrow: "Mañana",
+    inDays: (d) => `En ${d} días`,
+    yesterday: "Ayer",
+    daysAgo: (d) => `Hace ${d} días`
+  },
+  zh: {
+    subTitle: "发售表",
+    searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
+    all: "全部",
+    favorites: "❤️ 收藏",
+    noGamesSearch: "未找到相关游戏。",
+    noGamesFav: "本月暂无收藏游戏。",
+    noGamesFilter: "本月暂无符合该筛选条件的游戏。",
+    loading: "加载中…",
+    searchDb: "正在搜索整个数据库... 🔍",
+    netError: "加载失败，请检查 config.js 中的 Worker 地址。",
+    searchError: "搜索出错。",
+    settingsTitle: "设置",
+    themeLabel: "主题与复古主机",
+    soundLabel: "音效设置",
+    soundOn: "🔊 开启音效",
+    soundOff: "🔇 关闭音效",
+    langLabel: "界面语言",
+    retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
+    close: "关闭",
+    shareTitle: "分享我的发售表",
+    shareDesc: "复制此消息并直接分享到社交平台：",
+    noFavShare: "暂无收藏！快给游戏点个红心 ❤️ 吧。",
+    shareFooter: "✨ 来自我的游戏发售日历应用！",
+    copyBtn: "📋 复制文本",
+    copiedBtn: "✅ 已复制到剪贴板！",
+    calendarBtn: "添加到日历",
+    favAdd: "🤍 添加到收藏",
+    favRemove: "❤️ 取消收藏",
+    trailerBtn: "🎥 在 YouTube 查看预告片",
+    hltbBtn: "⏱️ 查看通关时长 (HowLongToBeat)",
+    summaryLabel: "简介",
+    summaryLoading: "AI 正在翻译简介… ⏳",
+    today: "今天",
+    tomorrow: "明天",
+    inDays: (d) => `${d} 天后`,
+    yesterday: "昨天",
+    daysAgo: (d) => `${d} 天前`
+  },
+  pt: {
+    subTitle: "Lançamentos",
+    searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
+    all: "Todos",
+    favorites: "❤️ Favoritos",
+    noGamesSearch: "Nenhum jogo encontrado para esta busca.",
+    noGamesFav: "Nenhum favorito este mês.",
+    noGamesFilter: "Nenhum lançamento para este filtro este mês.",
+    loading: "Carregando…",
+    searchDb: "Pesquisando em todo o banco de dados... 🔍",
+    netError: "Erro ao carregar. Verifique a URL do Worker em config.js.",
+    searchError: "Erro na pesquisa.",
+    settingsTitle: "Configurações",
+    themeLabel: "Temas e Consoles Retro",
+    soundLabel: "Efeitos sonoros",
+    soundOn: "🔊 Som ligado",
+    soundOff: "🔇 Som desligado",
+    langLabel: "Idioma da interface",
+    retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
+    close: "Fechar",
+    shareTitle: "Compartilhar meu mês",
+    shareDesc: "Copie e compartilhe esta mensagem no Discord ou WhatsApp:",
+    noFavShare: "Sem favoritos ainda! Adicione corações ❤️.",
+    shareFooter: "✨ Compartilhado do meu app de jogos!",
+    copyBtn: "📋 Copiar texto",
+    copiedBtn: "✅ Copiado!",
+    calendarBtn: "Adicionar ao calendário",
+    favAdd: "🤍 Adicionar aos favoritos",
+    favRemove: "❤️ Remover dos favoritos",
+    trailerBtn: "🎥 Assistir trailer no YouTube",
+    hltbBtn: "⏱️ Ver duração (HowLongToBeat)",
+    summaryLabel: "Resumo",
+    summaryLoading: "Traduzindo resumo com IA… ⏳",
+    today: "Hoje",
+    tomorrow: "Amanhã",
+    inDays: (d) => `Em ${d} dias`,
+    yesterday: "Ontem",
+    daysAgo: (d) => `Há ${d} dias`
+  },
+  ko: {
+    subTitle: "출시 일정",
+    searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
+    all: "전체",
+    favorites: "❤️ 즐겨찾기",
+    noGamesSearch: "검색 결과가 없습니다.",
+    noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
+    noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
+    loading: "로딩 중…",
+    searchDb: "전체 데이터베이스 검색 중... 🔍",
+    netError: "불러오지 못했습니다. config.js의 Worker 주소를 확인하세요.",
+    searchError: "검색 중 오류 발생.",
+    settingsTitle: "설정",
+    themeLabel: "테마 및 레트로 콘솔",
+    soundLabel: "효과음",
+    soundOn: "🔊 사운드 켜기",
+    soundOff: "🔇 사운드 끄기",
+    langLabel: "인터페이스 언어",
+    retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
+    close: "닫기",
+    shareTitle: "내 일정 공유하기",
+    shareDesc: "이 메시지를 복사하여 메신저나 디스코드에 공유하세요:",
+    noFavShare: "아직 즐겨찾기가 없습니다! 하트 ❤️를 추가해보세요.",
+    shareFooter: "✨ 게임 출시 앱에서 공유됨!",
+    copyBtn: "📋 텍스트 복사",
+    copiedBtn: "✅ 복사되었습니다!",
+    calendarBtn: "캘린더에 추가",
+    favAdd: "🤍 즐겨찾기에 추가",
+    favRemove: "❤️ 즐겨찾기에서 제거",
+    trailerBtn: "🎥 YouTube에서 트레일러 보기",
+    hltbBtn: "⏱️ 플레이 시간 확인 (HowLongToBeat)",
+    summaryLabel: "개요",
+    summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
+    today: "오늘",
+    tomorrow: "내일",
+    inDays: (d) => `${d}일 후`,
+    yesterday: "어제",
+    daysAgo: (d) => `${d}일 전`
+  },
+  it: {
+    subTitle: "Uscite",
+    searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
+    all: "Tutti",
+    favorites: "❤️ Preferiti",
+    noGamesSearch: "Nessun gioco trovato.",
+    noGamesFav: "Nessun preferito questo mese.",
+    noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
+    loading: "Caricamento…",
+    searchDb: "Ricerca nell'intero database... 🔍",
+    netError: "Impossibile caricare. Controlla l'URL in config.js.",
+    searchError: "Errore durante la ricerca.",
+    settingsTitle: "Impostazioni",
+    themeLabel: "Temi e Console Retro",
+    soundLabel: "Effetti sonori",
+    soundOn: "🔊 Audio attivo",
+    soundOff: "🔇 Audio disattivato",
+    langLabel: "Lingua dell'interfaccia",
+    retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
+    close: "Chiudi",
+    shareTitle: "Condividi il mio mese",
+    shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
+    noFavShare: "Nessun preferito per ora! Aggiungi cuori ❤️.",
+    shareFooter: "✨ Condiviso dalla mia app di giochi!",
+    copyBtn: "📋 Copia testo",
+    copiedBtn: "✅ Copiato!",
+    calendarBtn: "Aggiungi ai preferiti",
+    favAdd: "🤍 Aggiungi ai preferiti",
+    favRemove: "❤️ Rimuovi dai preferiti",
+    trailerBtn: "🎥 Guarda il trailer su YouTube",
+    hltbBtn: "⏱️ Controlla durata (HowLongToBeat)",
+    summaryLabel: "Sommario",
+    summaryLoading: "Traduzione del sommario con IA in corso… ⏳",
+    today: "Oggi",
+    tomorrow: "Domani",
+    inDays: (d) => `Tra ${d} giorni`,
+    yesterday: "Ieri",
+    daysAgo: (d) => `Giorni fa`
+  }
+};
 
-    <script>
-        // Tableau complet des données de jeux
-        let allGames = [
-            { id: 1, title: "Cyber Odyssey", releaseDate: "15 Nov 2026", hypes: 25, genres: ["RPG", "Action"] },
-            { id: 2, title: "Shadow Tactics 2", releaseDate: "22 Nov 2026", hypes: 5, genres: ["Strategy"] },
-            { id: 3, title: "Starfall Arena", releaseDate: "05 Déc 2026", hypes: 40, genres: ["Shooter", "Action"] },
-            { id: 4, title: "Mystic Realms", releaseDate: "12 Déc 2026", hypes: 12, genres: ["RPG", "Adventure"] }
-        ];
+const LANG_NAMES = {
+  fr: "🇫🇷 Français",
+  en: "🇬🇧 English",
+  ja: "🇯🇵 日本語",
+  de: "🇩🇪 Deutsch",
+  es: "🇪🇸 Español",
+  zh: "🇨🇳 中文",
+  pt: "🇧🇷 Português",
+  ko: "🇰🇷 한국어",
+  it: "🇮🇹 Italiano"
+};
 
-        // Fonction pour afficher les jeux dans la grille
-        function displayGames(gamesToDisplay) {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = '';
+let currentLang = "fr";
+try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
 
-            if (gamesToDisplay.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Aucun jeu trouvé.</p>';
-                return;
-            }
+function t(key, param) {
+  const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
+  const val = dict[key] || TRANSLATIONS.fr[key];
+  if (typeof val === "function") return val(param);
+  return val || key;
+}
 
-            gamesToDisplay.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.innerHTML = `
-                    <div class="game-info">
-                        <div class="game-title">${game.title}</div>
-                        <div class="game-meta">
-                            <span>📅 ${game.releaseDate}</span>
-                            <span class="game-hype">🔥 ${game.hypes} Hype</span>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--accent-color);">
-                            ${game.genres.join(' • ')}
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+let favorites = [];
+try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-        // Filtrer par Hype
-        function filterByHype(type, btnElement) {
-            document.querySelectorAll('.filters-container .filter-btn').forEach(b => b.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
+function isFavorite(id) { return favorites.includes(id); }
+function toggleFavorite(id) {
+  if (isFavorite(id)) { favorites = favorites.filter(favId => favId !== id); }
+  else { favorites.push(id); }
+  try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
+  playThemeSound(theme);
+  render();
+}
 
-            document.getElementById('genreFilter').value = 'all';
+/* --- SYSTÈME DE SONS PAR WEB AUDIO --- */
+let soundEnabled = true;
+try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-            if (type === 'hyped') {
-                const hypedGames = allGames.filter(game => game.hypes > 10);
-                displayGames(hypedGames);
-            } else {
-                displayGames(allGames);
-            }
-        }
+function playThemeSound(themeKey) {
+  if (!soundEnabled) return;
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    const modernThemes = ["dark", "light", "midnight", "forest", "violet", "ruby"];
 
-        // Filtrer par Genre
-        function filterByGenre(genre) {
-            document.querySelectorAll('.filters-container .filter-btn').forEach(b => b.classList.remove('active'));
-            
-            if (genre === 'all') {
-                document.querySelector('.filter-btn').classList.add('active');
-                displayGames(allGames);
-            } else {
-                const filtered = allGames.filter(game => game.genres && game.genres.includes(genre));
-                displayGames(filtered);
-            }
-        }
+    if (modernThemes.includes(themeKey)) {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else {
+      switch(themeKey) {
+        case "gameboy":
+          osc.type = "square";
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(440, now + 0.08);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.setValueAtTime(0.08, now + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+          break;
+        case "nes":
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(330, now);
+          osc.frequency.setValueAtTime(554, now + 0.07);
+          osc.frequency.setValueAtTime(659, now + 0.14);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+          break;
+        case "snes":
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(392, now);
+          osc.frequency.setValueAtTime(523, now + 0.08);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+          break;
+        case "ps1":
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.exponentialRampToValueAtTime(720, now + 0.18);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+          break;
+        case "n64":
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.linearRampToValueAtTime(580, now + 0.2);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+          break;
+        case "dreamcast":
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(880, now + 0.1);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+          break;
+        case "gamecube":
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(350, now);
+          osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+          break;
+        case "arcade":
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(900, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.18);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+          break;
+        case "atari":
+          osc.type = "square";
+          osc.frequency.setValueAtTime(250, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+          break;
+        case "dos":
+          osc.type = "square";
+          osc.frequency.setValueAtTime(750, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          osc.start(now);
+          osc.stop(now + 0.1);
+          break;
+        case "megadrive":
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(466, now);
+          osc.frequency.setValueAtTime(622, now + 0.08);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+          break;
+        default:
+          osc.type = "square";
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
+      }
+    }
+  } catch (e) {}
+}
 
-        // Initialisation de l'affichage au chargement de la page
-        displayGames(allGames);
-    </script>
+function renderPlatforms(releases) {
+  if (!releases) return '';
+  const platforms = [...new Set(releases.map(r => r.platform))];
+  return platforms.map(plat => {
+    let badgeClass = "badge-pc"; 
+    const pLower = plat.toLowerCase();
+    if (pLower.includes("ps5")) badgeClass = "badge-ps5";
+    else if (pLower.includes("xbox")) badgeClass = "badge-xbox";
+    else if (pLower.includes("switch")) badgeClass = "badge-switch2";
+    return `<span class="platform-badge ${badgeClass}">${plat}</span>`;
+  }).join('');
+}
+
+function renderHypeBadge(game) {
+  if (!game.hypes || game.hypes < 5) return '';
+  return `<span class="score-badge" style="background: rgba(255, 107, 53, 0.15); color: var(--acc);">🔥 ${game.hypes}</span>`;
+}
+
+function renderTimeBadge(dateStr) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const releaseDate = new Date(dateStr + "T00:00:00Z"); releaseDate.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((releaseDate - today) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return `<span class="time-badge badge-today">${t('today')}</span>`;
+  if (diffDays === 1) return `<span class="time-badge">${t('tomorrow')}</span>`;
+  if (diffDays > 1 && diffDays <= 7) return `<span class="time-badge">${t('inDays', diffDays)}</span>`;
+  if (diffDays === -1) return `<span class="time-badge">${t('yesterday')}</span>`;
+  if (diffDays < -1 && diffDays >= -7) return `<span class="time-badge">${t('daysAgo', Math.abs(diffDays))}</span>`;
+  return '';
+}
+
+function renderScoreBadge(game) {
+  const scoreRaw = game.aggregated_rating || game.rating;
+  if (!scoreRaw) return '';
+  const score = Math.round(scoreRaw);
+  let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
+  return `<span class="score-badge ${scoreClass}">★ ${score}</span>`;
+}
+
+const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
+const cache = {};
+let ym = new Date().toISOString().slice(0, 7);
+let filter = "Tous";
+let searchQuery = "";
+let searchResults = null;
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+};
+const utc = (d) => new Date(d + "T00:00:00Z");
+const fmtDay = (d) => utc(d).toLocaleDateString(currentLang, { weekday: "long", day: "numeric", timeZone: "UTC" });
+const fmtFull = (d) => utc(d).toLocaleDateString(currentLang, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
+function shiftMonth(delta) {
+  playThemeSound(theme);
+  const [y, m] = ym.split("-").map(Number);
+  ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
+  load();
+}
+
+function updateStaticTexts() {
+  $("#sub-title").textContent = t('subTitle');
+  $("#search").placeholder = t('searchPlaceholder');
+  const chipsElements = $("#chips").children;
+  if (chipsElements.length >= 2) {
+    chipsElements[0].textContent = t('all');
+    chipsElements[1].textContent = t('favorites');
+  }
+}
+
+async function load() {
+  updateStaticTexts();
+  $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  if (!cache[ym]) {
+    $("#list").replaceChildren(el("p", "msg", t('loading')));
+    try {
+      const res = await fetch(`${API}/?month=${ym}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur du serveur");
+      cache[ym] = data;
+    } catch (e) {
+      $("#list").replaceChildren(el("p", "msg", t('netError')));
+      return;
+    }
+  }
+  render();
+}
+
+async function searchGlobal(query) {
+  if (!query || query.length < 2) {
+    searchResults = null;
+    render();
+    return;
+  }
+  $("#list").replaceChildren(el("p", "msg", t('searchDb')));
+  try {
+    const res = await fetch(`${API}/?search=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    searchResults = data;
+    render();
+  } catch (e) {
+    $("#list").replaceChildren(el("p", "msg", t('searchError')));
+  }
+}
+
+function itemsFor(games) {
+  const out = [];
+  for (const g of games) {
+    if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
+    const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
+    if (!rel.length) continue;
+    out.push({ g, rel, date: rel[0].date });
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
+}
+
+function render() {
+  let gamesToDisplay = searchQuery ? (searchResults || []) : (cache[ym] || []);
+  const items = itemsFor(gamesToDisplay);
+  const list = $("#list");
+  
+  if (!items.length) {
+    let msgText = searchQuery ? t('noGamesSearch') : (filter === "❤️ Favoris" ? t('noGamesFav') : t('noGamesFilter'));
+    list.replaceChildren(el("p", "msg", msgText));
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  let last = "";
+  for (const it of items) {
+    const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
+    if (headerText !== last) {
+      frag.append(el("p", "day", headerText));
+      last = headerText;
+    }
+    frag.append(row(it));
+  }
+  list.replaceChildren(frag);
+}
+
+function row(it) {
+  const r = el("div", "row");
+  const open = el("button", "open");
+  const img = el("img", "cov");
+  img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
+  const tDiv = el("div", "t");
+  
+  const platformSpan = el("span", "m");
+  platformSpan.innerHTML = renderPlatforms(it.rel) + renderHypeBadge(it.g) + renderScoreBadge(it.g) + renderTimeBadge(it.date);
+  tDiv.append(el("b", "", it.g.name), platformSpan);
+
+  open.append(img, tDiv);
+  open.addEventListener("click", () => {
+    playThemeSound(theme);
+    openSheet(it);
+  });
+
+  const actions = el("div", "actions");
+  const favBtn = el("button", "btn-icon" + (isFavorite(it.g.id) ? " fav-active" : ""));
+  favBtn.innerHTML = isFavorite(it.g.id)
+    ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#FF4757" stroke="#FF4757" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+    : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+  favBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFavorite(it.g.id); });
+
+  const add = el("button", "btn-icon add");
+  add.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+  add.addEventListener("click", (e) => { 
+    e.stopPropagation(); 
+    playThemeSound(theme);
+    addToCalendar(it); 
+  });
+
+  actions.append(favBtn, add);
+  r.append(open, actions);
+  return r;
+}
+
+function openShareModal() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  
+  const allGames = cache[ym] || [];
+  const favGames = allGames.filter(g => isFavorite(g.id));
+
+  let shareText = `🎮 Mes jeux favoris de ${monthName} :\n`;
+  if (favGames.length === 0) {
+    shareText += t('noFavShare') + "\n";
+  } else {
+    for (const g of favGames) {
+      const plats = [...new Set(g.releases.map(r => r.platform))].join(", ");
+      shareText += `• ${g.name} (${plats})\n`;
+    }
+  }
+  shareText += "\n" + t('shareFooter');
+
+  const textarea = el("textarea", "share-textarea");
+  textarea.value = shareText;
+  textarea.readOnly = true;
+
+  const copyBtn = el("button", "cta", t('copyBtn'));
+  copyBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      copyBtn.textContent = t('copiedBtn');
+      setTimeout(() => { copyBtn.textContent = t('copyBtn'); }, 3000);
+    });
+  });
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => {
+    playThemeSound(theme);
+    closeSheet();
+  });
+
+  p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
+  $("#sheet").classList.add("on");
+}
+$("#shareBtn").addEventListener("click", openShareModal);
+
+async function openSheet(it) {
+  const p = $("#panel");
+  const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
+  const close = el("button", "close", t('close')); 
+  close.addEventListener("click", () => {
+    playThemeSound(theme);
+    closeSheet();
+  });
+  
+  const cta = el("button", "cta", t('calendarBtn'));
+  cta.addEventListener("click", () => {
+    playThemeSound(theme);
+    addToCalendar(it);
+  });
+
+  const favCta = el("button", "cta-sec");
+  favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
+  favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
+
+  const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
+  const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
+
+  p.replaceChildren(img, el("h2", "", it.g.name), d, cta, favCta);
+
+  const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
+  const trailerBtn = el("a", "cta-sec");
+  trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
+  trailerBtn.style.textDecoration = "none"; trailerBtn.style.marginTop = "8px";
+  trailerBtn.innerHTML = t('trailerBtn');
+  trailerBtn.addEventListener("click", () => playThemeSound(theme));
+  p.append(trailerBtn);
+
+  const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
+  const hltbBtn = el("a", "cta-sec");
+  hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
+  hltbBtn.style.textDecoration = "none"; hltbBtn.style.marginTop = "8px";
+  hltbBtn.innerHTML = t('hltbBtn');
+  hltbBtn.addEventListener("click", () => playThemeSound(theme));
+  p.append(hltbBtn);
+
+  if (it.g.summary) {
+    const label = el("p", "m", t('summaryLabel')); label.style.marginTop = "16px";
+    const summaryEl = el("p", "", t('summaryLoading'));
+    summaryEl.style.opacity = "0.7";
+    p.append(label, summaryEl);
+    $("#sheet").classList.add("on");
+
+    try {
+      const res = await fetch(`${API}/?translate=${it.g.id}&lang=${currentLang}`);
+      const data = await res.json();
+      summaryEl.style.opacity = "1";
+      summaryEl.textContent = data.summary || it.g.summary;
+    } catch (e) {
+      summaryEl.style.opacity = "1";
+      summaryEl.textContent = it.g.summary;
+    }
+  } else {
+    $("#sheet").classList.add("on");
+  }
+  p.append(close);
+}
+
+function closeSheet() { $("#sheet").classList.remove("on"); }
+$("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+const icsEsc = (s) => String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+function addToCalendar(it) {
+  const day = it.date.replace(/-/g, "");
+  const next = new Date(utc(it.date).getTime() + 864e5).toISOString().slice(0, 10).replace(/-/g, "");
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const lines = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sorties Jeux//FR", "BEGIN:VEVENT",
+    `UID:${it.g.id}-${day}@sorties-jeux`, `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${next}`,
+    `SUMMARY:${icsEsc("Sortie : " + it.g.name)}`,
+    `DESCRIPTION:${icsEsc(it.rel.map((r) => r.platform).join(", "))}`,
+    "BEGIN:VALARM", "TRIGGER:PT9H", "ACTION:DISPLAY", "DESCRIPTION:Sortie aujourd’hui", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR",
+  ];
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = it.g.name.replace(/[^\w]+/g, "-").slice(0, 40) + ".ics";
+  document.body.append(a);
+  a.click();
+  a.remove();
+}
+
+const THEMES = {
+  dark: ["Sombre", "#111318", "#FF7A45"],
+  light: ["Clair", "#F6F7F9", "#C2410C"],
+  midnight: ["Minuit", "#0B1020", "#5CA8FF"],
+  forest: ["Forêt", "#0E1511", "#4ADE80"],
+  violet: ["Violet", "#130F1E", "#B794FF"],
+  ruby: ["Rubis", "#170D10", "#FF5C7A"],
+  gameboy: ["Game Boy", "#0f1f0f", "#8BAC0F"],
+  nes: ["NES Classic", "#121214", "#E52521"],
+  snes: ["Super Nintendo", "#16151d", "#6b5cd5"],
+  ps1: ["PlayStation 1", "#1a1e29", "#0070D1"],
+  n64: ["Nintendo 64", "#120b1f", "#f5b201"],
+  dreamcast: ["Dreamcast", "#eceef2", "#ff6600"],
+  gamecube: ["GameCube", "#110e1b", "#6747ed"],
+  arcade: ["Arcade 90s", "#0d0614", "#00FFFF"],
+  atari: ["Atari 2600", "#1a120b", "#FF7700"],
+  dos: ["MS-DOS", "#000000", "#00FF00"],
+  megadrive: ["Mega Drive", "#060914", "#FF0033"]
+};
+
+function applyTheme(th) {
+  if (!THEMES[th]) th = "dark";
+  document.documentElement.dataset.theme = th;
+  $("#themeMeta").content = THEMES[th][1];
+  playThemeSound(th);
+  return th;
+}
+let theme = "dark";
+try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
+theme = applyTheme(theme);
+
+function openSettings() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.replaceChildren(); 
+
+  p.append(el("h2", "", t('settingsTitle')));
+
+  // Section Thèmes & Consoles Rétro
+  p.append(el("p", "m", t('themeLabel')));
+  const group = el("div", "chips"); group.style.flexWrap = "wrap";
+  for (const [key, [label, , acc]] of Object.entries(THEMES)) {
+    const b = el("button", "chip", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+    });
+    group.append(b);
+  }
+  p.append(group);
+
+  // Section Paramètre Sonore (ON/OFF)
+  p.append(el("p", "m", t('soundLabel')));
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    if (soundEnabled) playThemeSound(theme);
+  });
+  p.append(soundBtn);
+
+  // Section Langues
+  p.append(el("p", "m", t('langLabel')));
+  const langGrid = el("div", "lang-grid");
+  Object.entries(LANG_NAMES).forEach(([code, label]) => {
+    const b = el("button", "chip", label);
+    if (code === currentLang) b.setAttribute("aria-pressed", "true");
+    b.addEventListener("click", () => {
+      playThemeSound(theme);
+      currentLang = code;
+      try { localStorage.setItem("lang", currentLang); } catch (e) {}
+      load();          
+      openSettings();  
+    });
+    langGrid.append(b);
+  });
+  p.append(langGrid);
+
+  // Section Capsule Temporelle (Mode Rétro)
+  p.append(el("p", "m", t('retroLabel')));
+  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
+  [
+    [-1, "Année dernière"],
+    [-5, "Il y a 5 ans"],
+    [-10, "Il y a 10 ans"],
+    [-20, "Il y a 20 ans"]
+  ].forEach(([years, label]) => {
+    const b = el("button", "chip", label);
+    b.addEventListener("click", () => {
+      playThemeSound(theme);
+      const [y, m] = ym.split("-").map(Number);
+      const targetYear = y + years;
+      ym = `${targetYear}-${String(m).padStart(2, "0")}`;
+      load();
+      closeSheet();
+    });
+    retroGroup.append(b);
+  });
+  p.append(retroGroup);
+
+  const close = el("button", "close", t('close')); 
+  close.addEventListener("click", () => {
+    playThemeSound(theme);
+    closeSheet();
+  });
+  p.append(close);
+
+  $("#sheet").classList.add("on");
+}
+$("#settings").addEventListener("click", openSettings);
+
+const chips = $("#chips");
+for (const f of FILTERS) {
+  let label = f;
+  if (f === "Tous") label = t('all');
+  if (f === "❤️ Favoris") label = t('favorites');
+  const b = el("button", "chip", label);
+  b.setAttribute("aria-pressed", String(f === filter));
+  b.addEventListener("click", () => {
+    playThemeSound(theme);
+    filter = f;
+    chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.textContent === b.textContent)));
+    render();
+  });
+  chips.append(b);
+}
+
+let searchTimeout;
+$("#search").addEventListener("input", (e) => {
+  searchQuery = e.target.value.trim();
+  clearTimeout(searchTimeout);
+  if (!searchQuery) {
+    searchResults = null;
+    render();
+    return;
+  }
+  searchTimeout = setTimeout(() => {
+    searchGlobal(searchQuery);
+  }, 400);
+});
+
+$("#prev").addEventListener("click", () => shiftMonth(-1));
+$("#next").addEventListener("click", () => shiftMonth(1));
+load();
+</script>
 </body>
 </html>
