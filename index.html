@@ -1189,14 +1189,43 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX --- */
+/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX AVEC GAME CUBE & DREAMCAST UNIQUES --- */
 function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
 
-    if (th === "gameboy") {
+    if (th === "gamecube") {
+      // Jingle emblématique GameCube : arpège joyeux marimbas/synthé (Sol - Mi - Do - Sol aigu)
+      const notes = [392.00, 329.63, 261.63, 523.25];
+      notes.forEach((freq, idx) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.08);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.1, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+        osc.start(startTime);
+        osc.stop(startTime + 0.25);
+      });
+    } else if (th === "dreamcast") {
+      // Jingle Dreamcast : glissando futuriste spatial (effet laser / montée douce)
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    } else if (th === "gameboy") {
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "square";
