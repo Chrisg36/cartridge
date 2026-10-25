@@ -91,6 +91,22 @@
     overflow-x: hidden;
   }
 
+  /* --- AMÉLIORATION 1 : HEADER & RECHERCHE EN GLASSMORPHISM FIXE --- */
+  .sticky-header-container {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding-top: 16px;
+    padding-bottom: 8px;
+    margin: -16px -20px 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
   /* --- ARRIÈRE-PLAN AVEC CARTOUCHES HAUTE FINITION ET RELIEF 3D --- */
   .app-bg-cartridges {
     position: fixed;
@@ -147,18 +163,35 @@
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
   header { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
   header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
-  h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  
+  /* --- AMÉLIORATION 4 : TITRE DE MOIS STYLE BADGE CAPSULE TECH --- */
+  h1 { 
+    margin: 0; 
+    font-size: 24px; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: 800;
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.1);
+  }
+
   button { font: inherit; color: inherit; cursor: pointer; }
   
   .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
-  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
-  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
+  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.15s ease; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
+  .chip:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .chip:active { transform: scale(0.95); }
+  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 12px var(--acc); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 6px; scrollbar-width: none; align-items: center; }
   
   .search-box {
     width: 100%;
     padding: 12px 16px;
-    margin-top: 6px;
+    margin-top: 8px;
     margin-bottom: 6px;
     border: 0;
     border-radius: var(--radius);
@@ -168,13 +201,26 @@
     outline: none;
     font-family: var(--font);
     font-weight: 600;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    transition: box-shadow 0.2s ease;
   }
+  .search-box:focus { box-shadow: 0 0 0 2px var(--acc), inset 0 2px 4px rgba(0,0,0,0.2); }
   .search-box::placeholder { color: var(--mut); }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
   
+  /* --- AMÉLIORATION 5 : ANIMATION DE TRANSITION EN FONDU (FADE IN) --- */
+  #list {
+    animation: fadeInList 0.3s ease-in-out;
+  }
+  @keyframes fadeInList {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* --- VUE LISTE --- */
-  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
+  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid rgba(255,255,255,0.03); }
+  .row:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
   .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -187,7 +233,7 @@
   .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
   .add { color: var(--on); background: var(--acc); }
 
-  /* --- VUE GRILLE / ÉTAGÈRE DE JAQUETTES --- */
+  /* --- AMÉLIORATION 2 : MICRO-ANIMATIONS & GLOW SUR LES CARTES (GRILLE) --- */
   .games-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -205,24 +251,30 @@
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     border: 1px solid rgba(255,255,255,0.04);
   }
   .grid-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
+    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
   }
   .grid-cov-container {
     position: relative;
     width: 100%;
     aspect-ratio: 3/4;
     background: var(--cov);
+    overflow: hidden;
   }
   .grid-cov {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .grid-card:hover .grid-cov {
+    transform: scale(1.06);
   }
   .grid-info {
     padding: 10px;
@@ -262,19 +314,75 @@
     color: #fff;
     cursor: pointer;
     z-index: 2;
+    transition: transform 0.2s ease, background 0.2s ease;
   }
+  .grid-fav-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.8); }
   .grid-fav-btn.fav-active { color: #FF4757; }
 
+  /* --- AMÉLIORATION 3 : SQUELETTE DE CHARGEMENT SHIMMER --- */
+  .shimmer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .shimmer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-cov {
+    width: 56px;
+    height: 76px;
+    border-radius: calc(var(--radius) - 4px);
+    background: var(--cov);
+    flex: none;
+  }
+  .shimmer-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .shimmer-line {
+    height: 14px;
+    border-radius: 6px;
+    background: var(--cov);
+    width: 70%;
+  }
+  .shimmer-line.short {
+    width: 40%;
+  }
+  .shimmer-row::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    animation: shimmerWave 1.6s infinite;
+  }
+  @keyframes shimmerWave {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
   .msg { color: var(--mut); text-align: center; padding: 40px 0; font-weight: 600; }
-  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
   #sheet.on { display: flex; }
-  .panel { background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); }
+  .panel { background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
-  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
-  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; }
+  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; transition: filter 0.2s; }
+  .cta:hover { filter: brightness(1.1); }
+  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; transition: filter 0.2s; }
+  .cta-sec:hover { filter: brightness(1.1); }
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 14px auto 0; padding: 8px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
+  .close:hover { color: var(--txt); }
 
   .share-textarea {
     width: 100%;
@@ -499,18 +607,24 @@
 </div>
 
 <main>
-  <header>
-    <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
-    <div class="nav">
-      <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
-      <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
-      <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
-      <button class="chip" id="prev" aria-label="Mois précédent">‹</button>
-      <button class="chip" id="next" aria-label="Mois suivant">›</button>
-    </div>
-  </header>
-  <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
-  <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+  <div class="sticky-header-container">
+    <header>
+      <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
+      <div class="nav">
+        <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
+        <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
+        <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
+        <button class="chip" id="prev" aria-label="Mois précédent">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="chip" id="next" aria-label="Mois suivant">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </header>
+    <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
+    <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+  </div>
   <div id="list"></div>
 </main>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
@@ -1049,11 +1163,25 @@ function hideSplash() {
   if (splash) splash.classList.add("hidden");
 }
 
+/* --- AMÉLIORATION 3 : RENDU DES SQUELETTES SHIMMER --- */
+function renderShimmerLoader() {
+  const container = el("div", "shimmer-container");
+  for (let i = 0; i < 5; i++) {
+    const row = el("div", "shimmer-row");
+    const cov = el("div", "shimmer-cov");
+    const lines = el("div", "shimmer-lines");
+    lines.append(el("div", "shimmer-line"), el("div", "shimmer-line short"));
+    row.append(cov, lines);
+    container.append(row);
+  }
+  $("#list").replaceChildren(container);
+}
+
 async function load() {
   updateStaticTexts();
   $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   if (!cache[ym]) {
-    $("#list").replaceChildren(el("p", "msg", t('loading')));
+    renderShimmerLoader();
     try {
       const res = await fetch(`${API}/?month=${ym}`);
       const data = await res.json();
@@ -1075,7 +1203,7 @@ async function searchGlobal(query) {
     render();
     return;
   }
-  $("#list").replaceChildren(el("p", "msg", t('searchDb')));
+  renderShimmerLoader();
   try {
     const res = await fetch(`${API}/?search=${encodeURIComponent(query)}`);
     const data = await res.json();
