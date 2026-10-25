@@ -555,21 +555,40 @@
   }
   .header-currency-badge:hover { transform: scale(1.05); }
 
-  .collection-shelf-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;
+  /* 🏛️ VRAIE VITRINE DE JEUX VIDÉO (ÉTAGÈRES EN BOIS/MÉTAL STYLE BIBLIOTHÈQUE GAMING) */
+  .gaming-shelf-container {
+    display: flex; flex-direction: column; gap: 18px; margin-top: 14px; padding-bottom: 20px;
   }
-  @media(min-width: 500px) { .collection-shelf-grid { grid-template-columns: repeat(4, 1fr); } }
+  .wooden-shelf {
+    background: linear-gradient(180deg, #1e1b18 0%, #12100e 100%);
+    border: 2px solid #3d2f24; border-radius: 12px;
+    padding: 12px 10px 6px;
+    position: relative;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.5);
+  }
+  /* Planche de l'étagère en relief en bas */
+  .wooden-shelf::after {
+    content: ''; position: absolute; bottom: -8px; left: -4px; right: -4px; height: 8px;
+    background: linear-gradient(90deg, #2a221b, #4a3b2e, #2a221b);
+    border-radius: 4px; border: 1px solid #5a4738;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+  }
+  .shelf-games-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: flex-end; min-height: 110px;
+  }
+  @media(min-width: 500px) { .shelf-games-row { grid-template-columns: repeat(4, 1fr); } }
 
-  .collection-item-card {
-    background: var(--card); border: 2px solid var(--acc); border-radius: 10px; overflow: hidden;
+  .shelf-game-box {
+    background: var(--card); border: 2px solid var(--acc); border-radius: 6px; overflow: hidden;
     display: flex; flex-direction: column; align-items: center; position: relative;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
-    animation: fadeInList 0.3s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.7), inset 0 1px 3px rgba(255,255,255,0.25);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer;
   }
-  .collection-item-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-  .collection-item-title {
-    font-size: 9px; font-weight: 800; text-transform: uppercase; width: 100%; text-align: center;
-    background: rgba(0,0,0,0.85); color: #fff; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .shelf-game-box:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 12px 25px rgba(0,0,0,0.8), 0 0 15px var(--acc); }
+  .shelf-game-box img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .shelf-game-spine {
+    font-size: 8px; font-weight: 800; text-transform: uppercase; width: 100%; text-align: center;
+    background: rgba(0,0,0,0.9); color: #fff; padding: 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .shop-banner {
@@ -701,7 +720,7 @@
     <div class="header-top">
       <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
       <div class="nav">
-        <button class="header-currency-badge" id="shopBtn" title="Boutique & Collection de Jaquettes">
+        <button class="header-currency-badge" id="shopBtn" title="Boutique & Vitrine de Jaquettes">
           🪙 <span id="userCoins">100</span>
         </button>
         <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Musée des Consoles & Ordinateurs">
@@ -725,7 +744,6 @@
     <div class="header-bottom">
       <h1 id="title"></h1>
       <div class="month-nav">
-        <!-- 🕹️ FLÈCHES RÉTRO GÉOMÉTRIQUES PARFAITES -->
         <button class="chip" id="prev" aria-label="Mois précédent">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M15 5L8 12L15 19"/></svg>
         </button>
@@ -789,7 +807,7 @@ function openShopModal() {
   const banner = el("div", "shop-banner");
   banner.innerHTML = `
     <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
-    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection de boîtiers officiels !</p>
   `;
 
   const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
@@ -816,7 +834,7 @@ function openShopModal() {
     triggerRandomPackDraw("Acheté");
   });
 
-  const viewShelfBtn = el("button", "cta-sec", "📚 Voir ma Vitrine / Étagère de Jaquettes");
+  const viewShelfBtn = el("button", "cta-sec", "🏛️ Voir ma Vraie Vitrine / Étagère de Jeux");
   viewShelfBtn.style.marginTop = "10px";
   viewShelfBtn.addEventListener("click", () => {
     playThemeSound(theme);
@@ -859,11 +877,11 @@ function triggerRandomPackDraw(type) {
   p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
   p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
 
-  const cardPreview = el("div", "collection-item-card");
+  const cardPreview = el("div", "shelf-game-box");
   cardPreview.style.maxWidth = "160px";
   cardPreview.style.margin = "16px auto";
   const img = el("img"); img.src = randomGame.cover;
-  const title = el("div", "collection-item-title", randomGame.name);
+  const title = el("div", "shelf-game-spine", randomGame.name);
   cardPreview.append(img, title);
   p.append(cardPreview);
 
@@ -872,27 +890,40 @@ function triggerRandomPackDraw(type) {
   p.append(backBtn);
 }
 
+// 🏛️ AFFICHAGE DE LA VRAIE VITRINE DE JEUX VIDÉO (PAR ÉTAGÈRES)
 function openCollectionShelf() {
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
   p.replaceChildren();
 
-  p.append(el("h2", "", "📚 Ma Vitrine / Étagère Géante"));
-  p.append(el("p", "m", `Total collectionné : ${myCollection.length} jaquettes`));
+  p.append(el("h2", "", "🏛️ Vitrine de Jeux Collectionnés"));
+  p.append(el("p", "m", `Total dans la vitrine : ${myCollection.length} boîtiers`));
 
   if (myCollection.length === 0) {
-    p.append(el("p", "msg", "Votre collection est vide ! Ouvrez un pack mystère dans la boutique."));
+    p.append(el("p", "msg", "Votre vitrine est vide ! Ouvrez des packs dans la boutique."));
   } else {
-    const grid = el("div", "collection-shelf-grid");
-    for (const item of myCollection) {
-      const card = el("div", "collection-item-card");
-      const img = el("img"); img.src = item.cover; img.loading = "lazy";
-      const title = el("div", "collection-item-title", item.name);
-      card.append(img, title);
-      grid.append(card);
+    const container = el("div", "gaming-shelf-container");
+    
+    // Découpage par étagères de 4 jeux max pour un rendu bibliothèque réaliste
+    const itemsPerShelf = 4;
+    for (let i = 0; i < myCollection.length; i += itemsPerShelf) {
+      const shelfSlice = myCollection.slice(i, i + itemsPerShelf);
+      
+      const woodenShelf = el("div", "wooden-shelf");
+      const shelfRow = el("div", "shelf-games-row");
+
+      for (const item of shelfSlice) {
+        const gameBox = el("div", "shelf-game-box");
+        const img = el("img"); img.src = item.cover; img.loading = "lazy";
+        const spine = el("div", "shelf-game-spine", item.name);
+        gameBox.append(img, spine);
+        shelfRow.append(gameBox);
+      }
+      woodenShelf.append(shelfRow);
+      container.append(woodenShelf);
     }
-    p.append(grid);
+    p.append(container);
   }
 
   const backShop = el("button", "cta", "← Retour Boutique");
@@ -1258,11 +1289,14 @@ try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch
 let showFavoritesOnly = false;
 
 function isFavorite(id) { return favorites.includes(id); }
+
+// 🪙 CORRECTION BUG POINTS : On ne donne des points QUE si le jeu n'était PAS déjà dans les favoris
 function toggleFavorite(id) {
-  if (isFavorite(id)) { favorites = favorites.filter(favId => favId !== id); }
-  else { 
+  if (isFavorite(id)) { 
+    favorites = favorites.filter(favId => favId !== id); 
+  } else { 
     favorites.push(id); 
-    addCoins(10);
+    addCoins(10); // +10 crédits uniquement à l'ajout
   }
   try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
   playThemeSound(theme);
