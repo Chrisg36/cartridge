@@ -2066,16 +2066,37 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // 🏷️ Récupération intelligente et diversifiée des genres / styles (FPS, RPG, Course, Horreur, Indé...)
+  // 🏷️ Dictionnaire de traduction des genres en français
+  const GENRE_FR = {
+    "Action": "Action",
+    "Adventure": "Aventure",
+    "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir",
+    "Racing": "Course",
+    "Horror": "Horreur",
+    "Strategy": "Stratégie",
+    "Simulation": "Simulation",
+    "Sports": "Sport",
+    "Fighting": "Combat",
+    "Platform": "Plateforme",
+    "Indie": "Indépendant",
+    "Puzzle": "Réflexion",
+    "Music": "Musique",
+    "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel",
+    "Card & Board Game": "Jeu de cartes"
+  };
+
+  // Récupération et traduction des genres du jeu
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
-  let categoryText = "Jeu Vidéo";
+  let categoryText = "Action";
   if (Array.isArray(genresRaw)) {
-    categoryText = genresRaw.map(g => typeof g === 'object' ? (g.name || '') : g).filter(Boolean).join(" • ");
+    categoryText = genresRaw.map(g => {
+      const name = typeof g === 'object' ? (g.name || '') : g;
+      return GENRE_FR[name] || name;
+    }).filter(Boolean).join(" • ");
   } else if (typeof genresRaw === 'string' && genresRaw.trim() !== '') {
-    categoryText = genresRaw;
-  }
-  if (!categoryText || categoryText === "Jeu Vidéo") {
-    categoryText = "Action / Aventure";
+    categoryText = GENRE_FR[genresRaw] || genresRaw;
   }
 
   const categoryBadge = el("p", "m", `🏷️ Styles : ${categoryText}`);
@@ -2126,7 +2147,6 @@ async function openSheet(it) {
   }
   p.append(close);
 }
-
 function closeSheet() { $("#sheet").classList.remove("on"); }
 $("#sheet").classList.remove("on");
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
