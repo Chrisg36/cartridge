@@ -95,8 +95,8 @@
   h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
   button { font: inherit; color: inherit; cursor: pointer; }
   
-  .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
+  .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
   .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
   
@@ -408,8 +408,8 @@
   <header>
     <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
     <div class="nav">
-      <!-- Bouton de bascule Vue Liste / Vue Grille -->
-      <button class="chip" id="viewModeBtn" aria-label="Changer de vue">🗂️</button>
+      <!-- Bouton de bascule Vue Liste / Grille avec icône SVG personnalisée -->
+      <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
       <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
       <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
       <button class="chip" id="prev" aria-label="Mois précédent">‹</button>
@@ -801,7 +801,7 @@ const LANG_NAMES = {
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
 
-// Gestion du mode d'affichage (liste ou grille) mémorisé
+// Gestion du mode d'affichage mémorisé
 let viewMode = "list";
 try { viewMode = localStorage.getItem("viewMode") || "list"; } catch (e) {}
 
@@ -951,7 +951,18 @@ function shiftMonth(delta) {
 function updateStaticTexts() {
   $("#sub-title").textContent = t('subTitle');
   $("#search").placeholder = t('searchPlaceholder');
-  $("#viewModeBtn").textContent = viewMode === "list" ? "🗂️" : "📋";
+  
+  // Icônes SVG maison faites sur-mesure pour le bouton de vue
+  const viewBtn = $("#viewModeBtn");
+  if (viewMode === "list") {
+    // Icône Grille (4 carrés)
+    viewBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`;
+    viewBtn.setAttribute("aria-label", "Passer en vue grille");
+  } else {
+    // Icône Liste (lignes horizontales)
+    viewBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
+    viewBtn.setAttribute("aria-label", "Passer en vue liste");
+  }
 }
 
 function hideSplash() {
@@ -1032,7 +1043,7 @@ function render() {
 
   const frag = document.createDocumentFragment();
 
-  // --- RENDU VUE GRILLE (Façon étagère de jaquettes) ---
+  // --- RENDU VUE GRILLE ---
   if (viewMode === "grid") {
     const gridContainer = el("div", "games-grid");
     for (const it of items) {
@@ -1071,7 +1082,7 @@ function render() {
     return;
   }
 
-  // --- RENDU VUE LISTE CLASSIQUE ---
+  // --- RENDU VUE LISTE ---
   let last = "";
   for (const it of items) {
     const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
