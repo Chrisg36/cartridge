@@ -2,9 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Optimisation iOS critique pour éviter les zooms automatiques et gérer l'encoche -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#111318" id="themeMeta">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cartridge">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="config.js"></script>
@@ -78,7 +80,11 @@
 
   .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
   [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box { box-shadow: 0 0 0 1px #D8DCE6; }
-  * { box-sizing: border-box; }
+  
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; /* Supprime le flash gris au clic sur iOS */
+  }
   
   body {
     margin: 0;
@@ -86,25 +92,28 @@
     background-image: var(--pattern);
     color: var(--txt);
     font-family: var(--font);
-    padding: env(safe-area-inset-top) env(safe-area-inset-bottom);
+    /* Gestion propre des marges de sécurité iOS (encoche et barre du bas) */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
     position: relative;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* --- AMÉLIORATION 1 : HEADER & RECHERCHE EN GLASSMORPHISM FIXE --- */
+  /* --- HEADER & RECHERCHE EN GLASSMORPHISM FIXE (Optimisé iOS) --- */
   .sticky-header-container {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 80%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding-top: 16px;
-    padding-bottom: 8px;
-    margin: -16px -20px 0;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Indispensable pour Safari iOS */
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: 10px;
+    margin: 0 -20px;
     padding-left: 20px;
     padding-right: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
   /* --- ARRIÈRE-PLAN AVEC CARTOUCHES HAUTE FINITION ET RELIEF 3D --- */
@@ -161,13 +170,12 @@
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-  header { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
   header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
   
-  /* --- AMÉLIORATION 4 : TITRE DE MOIS STYLE BADGE CAPSULE TECH --- */
   h1 { 
     margin: 0; 
-    font-size: 24px; 
+    font-size: 22px; 
     text-transform: uppercase; 
     letter-spacing: 2px; 
     font-weight: 800;
@@ -183,33 +191,31 @@
   
   .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
   .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.15s ease; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
-  .chip:hover { transform: translateY(-1px); filter: brightness(1.1); }
-  .chip:active { transform: scale(0.95); }
+  .chip:active { transform: scale(0.92); }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 12px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 6px; scrollbar-width: none; align-items: center; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: none; align-items: center; -webkit-overflow-scrolling: touch; }
   
   .search-box {
     width: 100%;
     padding: 12px 16px;
-    margin-top: 8px;
-    margin-bottom: 6px;
+    margin-top: 6px;
+    margin-bottom: 2px;
     border: 0;
     border-radius: var(--radius);
     background: var(--card);
     color: var(--txt);
-    font-size: 15px;
+    font-size: 16px; /* 16px minimum pour éviter le zoom automatique agaçant sur iPhone */
     outline: none;
     font-family: var(--font);
     font-weight: 600;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-    transition: box-shadow 0.2s ease;
   }
   .search-box:focus { box-shadow: 0 0 0 2px var(--acc), inset 0 2px 4px rgba(0,0,0,0.2); }
   .search-box::placeholder { color: var(--mut); }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
   
-  /* --- AMÉLIORATION 5 : ANIMATION DE TRANSITION EN FONDU (FADE IN) --- */
+  /* --- ANIMATION DE TRANSITION EN FONDU (FADE IN) --- */
   #list {
     animation: fadeInList 0.3s ease-in-out;
   }
@@ -219,8 +225,7 @@
   }
 
   /* --- VUE LISTE --- */
-  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid rgba(255,255,255,0.03); }
-  .row:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.03); }
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
   .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -229,11 +234,11 @@
   
   .actions { display: flex; gap: 6px; flex: none; }
   .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease; }
-  .btn-icon:active { transform: scale(0.92); }
+  .btn-icon:active { transform: scale(0.90); }
   .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
   .add { color: var(--on); background: var(--acc); }
 
-  /* --- AMÉLIORATION 2 : MICRO-ANIMATIONS & GLOW SUR LES CARTES (GRILLE) --- */
+  /* --- VUE GRILLE --- */
   .games-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -251,14 +256,8 @@
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     border: 1px solid rgba(255,255,255,0.04);
-  }
-  .grid-card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
-    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
   }
   .grid-cov-container {
     position: relative;
@@ -271,10 +270,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-  .grid-card:hover .grid-cov {
-    transform: scale(1.06);
   }
   .grid-info {
     padding: 10px;
@@ -307,6 +302,7 @@
     border-radius: 50%;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border: 0;
     display: flex;
     align-items: center;
@@ -314,12 +310,10 @@
     color: #fff;
     cursor: pointer;
     z-index: 2;
-    transition: transform 0.2s ease, background 0.2s ease;
   }
-  .grid-fav-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.8); }
   .grid-fav-btn.fav-active { color: #FF4757; }
 
-  /* --- AMÉLIORATION 3 : SQUELETTE DE CHARGEMENT SHIMMER --- */
+  /* --- SQUELETTE DE CHARGEMENT SHIMMER --- */
   .shimmer-container {
     display: flex;
     flex-direction: column;
@@ -371,18 +365,37 @@
   }
 
   .msg { color: var(--mut); text-align: center; padding: 40px 0; font-weight: 600; }
-  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
+  
+  #sheet { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,.75); 
+    display: none; 
+    align-items: flex-end; 
+    justify-content: center; 
+    z-index: 100; 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
   #sheet.on { display: flex; }
-  .panel { background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+  .panel { 
+    background: var(--bg); 
+    background-image: var(--pattern); 
+    width: 100%; 
+    max-width: 640px; 
+    max-height: 88vh; 
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch;
+    border-radius: 28px 28px 0 0; 
+    padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.6); 
+  }
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
-  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; transition: filter 0.2s; }
-  .cta:hover { filter: brightness(1.1); }
-  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; transition: filter 0.2s; }
-  .cta-sec:hover { filter: brightness(1.1); }
-  .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 14px auto 0; padding: 8px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
-  .close:hover { color: var(--txt); }
+  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
+  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; text-decoration: none; }
+  .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
 
   .share-textarea {
     width: 100%;
@@ -508,6 +521,7 @@
     height: 120px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 30px;
     border: 1.5px solid rgba(255, 122, 69, 0.5);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 122, 69, 0.2);
@@ -966,7 +980,7 @@ const TRANSLATIONS = {
     shareTitle: "Condividi il mio mese",
     shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
     noFavShare: "Nessun preferito per ora! Aggiungi cuori ❤️.",
-    shareFooter: "✨ Condiviso dalla mia app di giochi!",
+    shareFooter: "✨ Condiviso dalla mia app de giochi!",
     copyBtn: "📋 Copia testo",
     copiedBtn: "✅ Copiato!",
     calendarBtn: "Aggiungi ai preferiti",
@@ -1163,7 +1177,6 @@ function hideSplash() {
   if (splash) splash.classList.add("hidden");
 }
 
-/* --- AMÉLIORATION 3 : RENDU DES SQUELETTES SHIMMER --- */
 function renderShimmerLoader() {
   const container = el("div", "shimmer-container");
   for (let i = 0; i < 5; i++) {
@@ -1405,7 +1418,7 @@ async function openSheet(it) {
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
   trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
-  trailerBtn.style.textDecoration = "none"; trailerBtn.style.marginTop = "8px";
+  trailerBtn.style.marginTop = "8px";
   trailerBtn.innerHTML = t('trailerBtn');
   trailerBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(trailerBtn);
@@ -1413,7 +1426,7 @@ async function openSheet(it) {
   const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
   const hltbBtn = el("a", "cta-sec");
   hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
-  hltbBtn.style.textDecoration = "none"; hltbBtn.style.marginTop = "8px";
+  hltbBtn.style.marginTop = "8px";
   hltbBtn.innerHTML = t('hltbBtn');
   hltbBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(hltbBtn);
