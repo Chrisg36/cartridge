@@ -171,16 +171,41 @@
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
   header { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
-  header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  
+  /* --- LOGO NÉON RÉTRO DU SITE --- */
+  .neon-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    background: var(--card);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--acc);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 50%, transparent), inset 0 0 8px color-mix(in srgb, var(--acc) 30%, transparent);
+    text-shadow: 0 0 8px var(--acc), 0 0 16px var(--acc);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   
   h1 { 
     margin: 0; 
-    font-size: 18px; /* Ajusté pour tenir sur une seule ligne identique au PC */
+    font-size: 18px; 
     text-transform: uppercase; 
     letter-spacing: 1.5px; 
     font-weight: 800;
     display: inline-block;
-    white-space: nowrap; /* Empêche le retour à la ligne du mois et de l'année */
+    white-space: nowrap; 
     padding: 6px 12px;
     background: var(--card);
     border-radius: var(--radius);
@@ -653,7 +678,10 @@
 <main>
   <div class="sticky-header-container">
     <header>
-      <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
+      <div class="header-left">
+        <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
+        <h1 id="title"></h1>
+      </div>
       <div class="nav">
         <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
         <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
@@ -676,7 +704,7 @@
 <script>
 const TRANSLATIONS = {
   fr: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
     all: "Tous",
     favorites: "❤️ Favoris",
@@ -715,7 +743,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Il y a ${d} jours`
   },
   en: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Search any game (all years)...",
     all: "All",
     favorites: "❤️ Favorites",
@@ -754,7 +782,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d} days ago`
   },
   ja: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 ゲームを検索（全年代）...",
     all: "すべて",
     favorites: "❤️ お気に入り",
@@ -793,7 +821,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d}日前`
   },
   de: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
     all: "Alle",
     favorites: "❤️ Favoriten",
@@ -832,7 +860,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Vor ${d} Tagen`
   },
   es: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
@@ -871,7 +899,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Hace ${d} días`
   },
   zh: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
     all: "全部",
     favorites: "❤️ 收藏",
@@ -910,7 +938,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d} 天前`
   },
   pt: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
@@ -949,7 +977,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Há ${d} dias`
   },
   ko: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
     all: "전체",
     favorites: "❤️ 즐겨찾기",
@@ -988,7 +1016,7 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d}일 전`
   },
   it: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
     all: "Tutti",
     favorites: "❤️ Preferiti",
