@@ -261,7 +261,7 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES --- */
+  /* --- VITRINE DES CONSOLES AVEC VRAIES PHOTOS OFFICIELLES --- */
   .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
   @media(min-width: 500px) { .vitrine-grid { grid-template-columns: repeat(3, 1fr); } }
   .console-vitrine-card {
@@ -270,95 +270,31 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .console-vitrine-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--acc); box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent); }
-  .console-emblem {
-    width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: #fff;
-    box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.4); letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.2); transition: transform 0.2s ease;
+  .console-photo-container {
+    width: 100%; height: 90px; border-radius: 10px; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid rgba(255,255,255,0.1); padding: 4px;
   }
-  .console-vitrine-card:hover .console-emblem { transform: scale(1.1); }
-  .console-info-group { display: flex; flex-direction: column; gap: 2px; }
-  .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); }
+  .console-photo { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+  .console-vitrine-card:hover .console-photo { transform: scale(1.1); }
+  .console-info-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+  .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .console-vitrine-card span { font-size: 11px; color: var(--mut); font-weight: 700; }
   .console-brand-tag {
     position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
-    background: color-mix(in srgb, var(--acc) 15%, var(--cov)); color: var(--acc); letter-spacing: 0.5px;
+    background: color-mix(in srgb, var(--acc) 15%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 2;
   }
 
-  /* --- WIDGET VISUEL PRO - VRAIES SILHOUETTES DE MACHINES --- */
+  /* --- WIDGET PHOTO HD DANS LE DÉTAIL --- */
   .console-mockup-banner {
-    width: 100%; height: 200px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 220px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
     flex-direction: column; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
-    border: 1.5px solid rgba(255,255,255,0.2); margin-bottom: 16px;
+    border: 1.5px solid rgba(255,255,255,0.2); margin-bottom: 16px; padding: 20px;
   }
   .console-mockup-banner::before {
-    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%); pointer-events: none; z-index: 2;
+    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none; z-index: 2;
   }
-  .console-graphic { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.7)); }
-
-  /* REPRODUCTIONS ULTRA-FIDÈLES DES VRAIES CONSOLES */
-  
-  /* PlayStation 1 : Boîtier gris biseauté avec son capot CD central et ses boutons Power/Open */
-  .hw-ps1 { width: 150px; height: 75px; background: #c8c9ce; border-radius: 8px 8px 12px 12px; position: relative; border-bottom: 6px solid #8e9096; box-shadow: inset 0 2px 4px rgba(255,255,255,0.9); }
-  .hw-ps1::before { content: ''; position: absolute; top: 12px; left: 35px; width: 80px; height: 50px; background: #b2b4bc; border-radius: 6px; border: 2px solid #8e9096; }
-  .hw-ps1::after { content: ''; position: absolute; top: 22px; right: 16px; width: 14px; height: 14px; background: #0070d1; border-radius: 50%; box-shadow: 0 18px 0 #ff4757; }
-
-  /* PlayStation 2 : Le monolithe noir vertical ou horizontal aux lignes biseautées bleues */
-  .hw-ps2 { width: 140px; height: 60px; background: #111318; border-radius: 4px; position: relative; border: 1.5px solid #3a3f4b; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); }
-  .hw-ps2::before { content: ''; position: absolute; bottom: 8px; left: 16px; width: 45px; height: 4px; background: #00a0e9; border-radius: 2px; }
-
-  /* PlayStation 3 : Formes arrondies et bombées avec logo rétro distinctif */
-  .hw-ps3 { width: 150px; height: 65px; background: #1a1a1a; border-radius: 30px 30px 10px 10px; position: relative; border-bottom: 6px solid #000; box-shadow: inset 0 4px 8px rgba(255,255,255,0.15); }
-
-  /* PlayStation 4 : Design incliné en lamelles superposées */
-  .hw-ps4 { width: 150px; height: 55px; background: #222629; border-radius: 4px; position: relative; transform: skewX(-6deg); border-bottom: 6px solid #111; }
-
-  /* PlayStation 5 : Les ailes blanches futuristes encadrant le cœur noir */
-  .hw-ps5 { width: 80px; height: 130px; background: #f8fafc; border-radius: 20px 20px 8px 8px; position: relative; display: flex; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-  .hw-ps5::before { content: ''; position: absolute; inset: 0 22px; background: #09090b; border-radius: 6px; }
-
-  /* Nintendo Switch : Tablette centrale noire avec les Joy-Con rouge et bleu emblématiques */
-  .hw-switch { width: 170px; height: 70px; background: #18181b; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; padding: 0 2px; border: 2px solid #27272a; }
-  .hw-switch-l { width: 22px; height: 60px; background: #e60012; border-radius: 10px 4px 4px 10px; position: relative; }
-  .hw-switch-screen { width: 116px; height: 60px; background: #050505; border-radius: 4px; border: 2px solid #3f3f46; position: relative; overflow: hidden; }
-  .hw-switch-screen::after { content: ''; position: absolute; inset: 6px; background: linear-gradient(135deg, #3b82f6, #ec4899); opacity: 0.7; }
-  .hw-switch-r { width: 22px; height: 60px; background: #00bcd4; border-radius: 4px 10px 10px 4px; position: relative; }
-
-  /* Super Nintendo (SNES) : Gris doux, bande violette et boutons colorés iconiques */
-  .hw-snes { width: 150px; height: 70px; background: #dcdedf; border-radius: 10px; position: relative; border-bottom: 8px solid #adb5bd; }
-  .hw-snes::before { content: ''; position: absolute; top: 14px; left: 16px; width: 60px; height: 28px; background: #4b5563; border-radius: 4px; }
-  .hw-snes::after { content: ''; position: absolute; top: 16px; right: 20px; width: 22px; height: 22px; background: #6b5cd5; border-radius: 50%; box-shadow: -26px 6px 0 #3b82f6, 0 26px 0 #eab308, -26px 32px 0 #ef4444; }
-
-  /* NES : Le magnétoscope rectangulaire bicolore gris/noir avec trappe à cartouche */
-  .hw-nes { width: 160px; height: 65px; background: #6b7280; border-radius: 6px; position: relative; border-bottom: 8px solid #374151; display: flex; align-items: center; justify-content: center; }
-  .hw-nes::before { content: ''; width: 85px; height: 42px; background: #1f2937; border-radius: 4px; border-top: 4px solid #111827; }
-
-  /* Nintendo 64 : Le trident futuriste avec son stick central et ses coloris cultes */
-  .hw-n64 { width: 140px; height: 85px; background: #4a4556; border-radius: 24px 24px 8px 8px; position: relative; border-bottom: 8px solid #231f20; }
-  .hw-n64::before { content: ''; position: absolute; top: 12px; left: 35px; width: 70px; height: 35px; background: #f5b201; border-radius: 6px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); }
-
-  /* Game Boy : Le monolithe vertical avec son écran vert ambré et sa croix directionnelle */
-  .hw-gameboy { width: 72px; height: 118px; background: #c2c9d6; border-radius: 8px 8px 18px 18px; position: relative; border-bottom: 8px solid #8e99a8; display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 8px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.9); }
-  .hw-gb-screen { width: 50px; height: 40px; background: #485543; border-radius: 4px; border: 2px solid #283124; }
-  .hw-gb-controls { width: 44px; height: 26px; background: #1e293b; border-radius: 6px; }
-
-  /* SEGA Mega Drive : Boîtier noir mat galbé avec l'arche 16-bit et anneau rouge */
-  .hw-megadrive { width: 150px; height: 65px; background: #111318; border-radius: 12px; position: relative; border-bottom: 8px solid #000; border-top: 3px solid #ff0033; }
-  .hw-megadrive::before { content: ''; position: absolute; top: 12px; right: 16px; width: 35px; height: 35px; border-radius: 50%; border: 4px solid #ff0033; }
-
-  /* SEGA Dreamcast : Design futuriste galbé blanc avec la spirale orange iconique */
-  .hw-dreamcast { width: 145px; height: 68px; background: #f1f5f9; border-radius: 14px; position: relative; border-bottom: 8px solid #cbd5e1; display: flex; align-items: center; justify-content: center; }
-  .hw-dreamcast::before { content: ''; width: 40px; height: 40px; border-radius: 50%; border: 4px solid #ff6600; background: #fff; }
-
-  /* Xbox Original / 360 / Series : Le monolithe noir massif au logo lumineux vert */
-  .hw-xbox { width: 110px; height: 100px; background: #0f172a; border-radius: 16px; position: relative; border: 2px solid #107c10; display: flex; align-items: center; justify-content: center; }
-  .hw-xbox::before { content: ''; width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle, #107c10 0%, #000 85%); box-shadow: 0 0 22px rgba(16,124,16,0.7); }
-
-  /* Atari 2600 : Façade texturée imitation bois chaleureuse */
-  .hw-atari { width: 160px; height: 60px; background: #5c3a21; border-radius: 6px; position: relative; border-top: 8px solid #1c1917; border-bottom: 6px solid #292524; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-
-  /* Ordinateur personnel (Commodore, Amiga, PC) : Clavier intégré robuste */
-  .hw-computer { width: 150px; height: 80px; background: #e2e8f0; border-radius: 8px; position: relative; border-bottom: 8px solid #cbd5e1; display: flex; align-items: center; justify-content: center; }
-  .hw-computer::before { content: ''; width: 116px; height: 50px; background: #0f172a; border-radius: 4px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
-
+  .console-banner-photo { max-width: 85%; max-height: 120px; object-fit: contain; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.8)); position: relative; z-index: 3; transition: transform 0.4s ease; }
+  .console-mockup-banner:hover .console-banner-photo { transform: scale(1.06); }
   .console-title-badge { margin-top: 10px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); position: relative; z-index: 3; }
   .console-subtitle-info { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); position: relative; z-index: 3; }
 
@@ -604,7 +540,7 @@ const TRANSLATIONS = {
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
-    vitrineDesc: "Clique sur n'importe quelle console pour découvrir sa réplique visuelle authentique :",
+    vitrineDesc: "Clique sur n'importe quelle console pour découvrir sa photo officielle et son histoire :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -648,7 +584,7 @@ const TRANSLATIONS = {
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
     vitrineTitle: "🏛️ World Console & Micro Museum",
-    vitrineDesc: "Click on any console to discover its authentic visual replica:",
+    vitrineDesc: "Click on any console to discover its official photo and history:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
@@ -692,7 +628,7 @@ const TRANSLATIONS = {
     summaryLabel: "概要",
     summaryLoading: "AIで概要を翻訳中… ⏳",
     vitrineTitle: "🏛️ 世界のコンソール・パソコン博物館",
-    vitrineDesc: "コンソールをクリックしてリアルな実機デザインを確認：",
+    vitrineDesc: "コンソールをクリックして公式写真と詳細を確認：",
     today: "今日",
     tomorrow: "明日",
     inDays: (d) => `${d}日後`,
@@ -736,7 +672,7 @@ const TRANSLATIONS = {
     summaryLabel: "Zusammenfassung",
     summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
     vitrineTitle: "🏛️ Welt-Konsolen- und Computer-Museum",
-    vitrineDesc: "Klicke auf eine Konsole, um die authentische visuelle Nachbildung zu sehen:",
+    vitrineDesc: "Klicke auf eine Konsole, um das offizielle Foto zu sehen:",
     today: "Heute",
     tomorrow: "Morgen",
     inDays: (d) => `In ${d} Tagen`,
@@ -780,7 +716,7 @@ const TRANSLATIONS = {
     summaryLabel: "Resumen",
     summaryLoading: "Traduciendo resumen con IA… ⏳",
     vitrineTitle: "🏛️ Museo Mundial de Consolas y Micros",
-    vitrineDesc: "Haz clic en cualquier consola para ver su réplica visual auténtica:",
+    vitrineDesc: "Haz clic en cualquier consola para ver su foto oficial:",
     today: "Hoy",
     tomorrow: "Mañana",
     inDays: (d) => `En ${d} días`,
@@ -824,7 +760,7 @@ const TRANSLATIONS = {
     summaryLabel: "简介",
     summaryLoading: "AI 正在翻译简介… ⏳",
     vitrineTitle: "🏛️ 世界主机与微型机博物馆",
-    vitrineDesc: "点击任意主机即可欣赏其逼真的实机外观设计：",
+    vitrineDesc: "点击任意主机即可查看高清官方照片与详细资料：",
     today: "今天",
     tomorrow: "明天",
     inDays: (d) => `${d} 天后`,
@@ -868,7 +804,7 @@ const TRANSLATIONS = {
     summaryLabel: "Resumo",
     summaryLoading: "Traduzindo resumo com IA… ⏳",
     vitrineTitle: "🏛️ Museu Mundial de Consoles e Micros",
-    vitrineDesc: "Clique em qualquer console para ver sua réplica visual autêntica:",
+    vitrineDesc: "Clique em qualquer console para ver sua foto oficial:",
     today: "Hoje",
     tomorrow: "Amanhã",
     inDays: (d) => `Em ${d} dias`,
@@ -912,7 +848,7 @@ const TRANSLATIONS = {
     summaryLabel: "개요",
     summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
     vitrineTitle: "🏛️ 세계 콘솔 및 마이크로컴퓨터 박물관",
-    vitrineDesc: "콘솔을 클릭하여 실사와 같은 정교한 실기 외형을 확인하세요:",
+    vitrineDesc: "콘솔을 클릭하여 공식 실물 사진을 확인하세요:",
     today: "오늘",
     tomorrow: "내일",
     inDays: (d) => `${d}일 후`,
@@ -976,59 +912,45 @@ const LANG_NAMES = {
 };
 
 const WORLD_CONSOLES = [
-  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", type: "ps5", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
-  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", type: "ps4", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
-  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", type: "ps3", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
-  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", type: "ps2", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
-  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", type: "ps1", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
-  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", type: "gameboy", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
-  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", type: "gameboy", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
+  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
+  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/PlayStation_4_and_Controller.png", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
+  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", img: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Sony-PlayStation-3-2001-C-Right.png", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
+  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PS2-Back.png", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
+  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", img: "https://upload.wikimedia.org/wikipedia/commons/9/95/PSX-Console-wController.png", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
+  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/PlayStation_Vita_Wi-Fi_model.png", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
+  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/PSP-1000.png", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
 
-  { name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#e60012", type: "switch", desc: "L'évolution ultime du concept hybride de Nintendo, taillée pour les performances nouvelle génération." },
-  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", type: "switch", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
-  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", type: "nes", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
-  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", type: "nes", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
-  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", type: "n64", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
-  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", type: "n64", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire (GoldenEye, Mario Kart 64)." },
-  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", type: "snes", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
-  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", type: "nes", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
-  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", type: "gameboy", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
-  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", type: "gameboy", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
-  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", type: "gameboy", desc: "La Super NES miniature dans la poche." },
-  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", type: "gameboy", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
-  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", type: "gameboy", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
+  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Nintendo_Switch_console_and_Joy-Cons.png", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
+  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wii_U_Console_and_Gamepad.png", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
+  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Wii_Console.png", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
+  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/GameCube-Set.png", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Nintendo-64-Console-Set.png", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire (GoldenEye, Mario Kart 64)." },
+  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", img: "https://upload.wikimedia.org/wikipedia/commons/3/37/SNES-Mod-US.png", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
+  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", img: "https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.png", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
+  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Nintendo_3DS_Cosmo_Black.png", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
+  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Nintendo_DS_Rumble_Pak.png", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
+  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Game_Boy_Advance_purple.png", desc: "La Super NES miniature dans la poche." },
+  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Game_Boy_Color.png", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
+  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", img: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Game-Boy-Na.png", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
 
-  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", type: "dreamcast", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
-  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", type: "megadrive", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
-  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", type: "megadrive", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
-  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", type: "nes", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
-  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", type: "gameboy", desc: "La console portable couleur rétroéclairée de SEGA." },
+  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Sega-Dreamcast-Set.png", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
+  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", img: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Sega-Saturn-Console-Set.png", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
+  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", img: "https://upload.wikimedia.org/wikipedia/commons/3/38/Sega-Mega-Drive-1-Console-Set.png", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
+  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", img: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sega-Master-System-Set.png", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
+  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Sega-Game-Gear-V1.png", desc: "La console portable couleur rétroéclairée de SEGA." },
 
-  { name: "Xbox Series X/S", brand: "Microsoft", year: "2020", bg: "#107c10", type: "xbox", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
-  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", type: "xbox", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
-  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", type: "xbox", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
-  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", type: "xbox", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
+  { name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Xbox_Series_X_and_Controller.png", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
+  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Xbox_One_Console.png", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
+  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", img: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox-360-Console-Set.png", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
+  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox-Console-Set.png", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
 
-  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", type: "atari", desc: "La première console 64-bits autoproclamée de l'histoire." },
-  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", type: "gameboy", desc: "La première console portable couleur au format paysager." },
-  { name: "Atari 7800", brand: "Atari", year: "1986", bg: "#c2410c", type: "atari", desc: "La rétrocompatibilité assurée avec les cartouches de la 2600." },
-  { name: "Atari 5200", brand: "Atari", year: "1982", bg: "#9a3412", type: "atari", desc: "La console de salon musclée basée sur l'architecture des ordinateurs Atari 8-bits." },
-  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", type: "atari", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
-  { name: "Atari ST", brand: "Atari", year: "1985", bg: "#7c2d12", type: "computer", desc: "L'ordinateur personnel chéri des musiciens et des créateurs de jeux 16-bits." },
+  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", img: "https://upload.wikimedia.org/wikipedia/commons/2/22/Atari-Jaguar-Console-Set.png", desc: "La première console 64-bits autoproclamée de l'histoire." },
+  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", img: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Atari-Lynx-1.png", desc: "La première console portable couleur au format paysager." },
+  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", img: "https://upload.wikimedia.org/wikipedia/commons/1/18/Atari-2600-Wood-4Sw-Set.png", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
 
-  { name: "Amiga CD32", brand: "Commodore", year: "1993", bg: "#0f766e", type: "computer", desc: "La première console 32-bits basée sur le chipset légendaire de l'Amiga." },
-  { name: "Amiga 500 / 1200", brand: "Commodore", year: "1987", bg: "#115e59", type: "computer", desc: "L'ordinateur mythique aux capacités graphiques et musicales époustouflantes pour son époque." },
-  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", type: "computer", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
-  { name: "Commodore VIC-20", brand: "Commodore", year: "1980", bg: "#042f2e", type: "computer", desc: "Le précurseur abordable de l'informatique familiale." },
-
-  { name: "Neo-Geo AES/MVS", brand: "SNK", year: "1990", bg: "#b91c1c", type: "nes", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
-  { name: "Neo-Geo Pocket", brand: "SNK", year: "1998", bg: "#991b1b", type: "gameboy", desc: "La petite merveille portable de SNK dotée d'une croix directionnelle légendaire." },
-  { name: "PC Engine / TurboGrafx", brand: "NEC", year: "1987", bg: "#475569", type: "nes", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." },
-  { name: "3DO Interactive", brand: "The 3DO Company", year: "1993", bg: "#4f46e5", type: "ps1", desc: "Le lecteur multimédia de salon haut de gamme codéveloppé par Trip Hawkins." },
-  { name: "ColecoVision", brand: "Coleco", year: "1982", bg: "#0369a1", type: "atari", desc: "La console domestique qui proposait les graphismes les plus proches des bornes d'arcade." },
-  { name: "Intellivision", brand: "Mattel", year: "1979", bg: "#0f766e", type: "atari", desc: "La concurrente directe de l'Atari 2600 avec ses manettes à clavier numérique." },
-  { name: "MSX / MSX2", brand: "ASCII / Microsoft", year: "1983", bg: "#4338ca", type: "computer", desc: "La norme informatique standardisée qui a vu naître les premiers chefs-d'œuvre de Hideo Kojima (Metal Gear)." },
-  { name: "PC / Windows", brand: "Valve / PC", year: "1981", bg: "#333333", type: "computer", desc: "La plateforme ultime et infinie du jeu vidéo mondial." }
+  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Commodore_64_Computer_and_peripherals.png", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
+  { name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#b91c1c", img: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Neo-Geo-AES-Console-Set.png", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
+  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569", img: "https://upload.wikimedia.org/wikipedia/commons/7/77/PC-Engine-Console.png", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." }
 ];
 
 let currentLang = "fr";
@@ -1347,7 +1269,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE INTERACTIF DES CONSOLES --- */
+/* --- MUSÉE INTERACTIF AVEC VRAIES PHOTOS OFFICIELLES --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -1360,15 +1282,20 @@ function openConsoleVitrine() {
   for (const consoleItem of WORLD_CONSOLES) {
     const card = el("div", "console-vitrine-card");
     const brandTag = el("span", "console-brand-tag", consoleItem.brand);
-    const emblem = el("div", "console-emblem", consoleItem.brand.slice(0, 3).toUpperCase());
-    emblem.style.background = consoleItem.bg;
+    
+    const photoBox = el("div", "console-photo-container");
+    const img = el("img", "console-photo");
+    img.src = consoleItem.img;
+    img.alt = consoleItem.name;
+    img.loading = "lazy";
+    photoBox.append(img);
 
     const infoGroup = el("div", "console-info-group");
     const name = el("b", "", consoleItem.name);
     const year = el("span", "", consoleItem.year);
     infoGroup.append(name, year);
 
-    card.append(brandTag, emblem, infoGroup);
+    card.append(brandTag, photoBox, infoGroup);
     card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
     grid.append(card);
   }
@@ -1389,15 +1316,15 @@ function openConsoleDetail(consoleItem) {
   const banner = el("div", "console-mockup-banner");
   banner.style.background = consoleItem.bg;
 
-  const graphicDiv = el("div", "console-graphic");
-  const hardwareEl = el("div", `hw-${consoleItem.type || 'ps1'}`);
-  graphicDiv.append(hardwareEl);
+  const bannerImg = el("img", "console-banner-photo");
+  bannerImg.src = consoleItem.img;
+  bannerImg.alt = consoleItem.name;
 
   const titleBadge = el("div", "console-title-badge", consoleItem.name);
   const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
-  banner.append(graphicDiv, titleBadge, subInfo);
+  banner.append(bannerImg, titleBadge, subInfo);
 
-  const descTitle = el("h2", "", "Design & Hardware");
+  const descTitle = el("h2", "", "Histoire & Hardware");
   const descText = el("p", "", consoleItem.desc);
 
   const backBtn = el("button", "cta", "← Retour au Musée");
