@@ -32,7 +32,7 @@
   [data-theme="megadrive"] { color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff; --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px; --font: 'Orbitron', sans-serif; --radius: 10px; }
 
   .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
-  [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box { box-shadow: 0 0 0 1px #D8DCE6; }
+  [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="light"] .platform-select, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box, [data-theme="dreamcast"] .platform-select { box-shadow: 0 0 0 1px #D8DCE6; }
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
@@ -142,8 +142,38 @@
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
   .chip[aria-pressed="true"] svg { color: var(--on); }
   
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 4px; scrollbar-width: none; align-items: center; -webkit-overflow-scrolling: touch; }
+  /* --- MENU DÉROULANT TACTILE iOS POUR LES CONSOLES --- */
+  .filter-bar-container { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
   
+  .platform-select {
+    flex: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
+    color: var(--txt);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    border-radius: var(--radius);
+    padding: 12px 40px 12px 16px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .platform-select:focus {
+    box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2);
+    border-color: var(--acc);
+  }
+  .platform-select option {
+    background-color: var(--card);
+    color: var(--txt);
+    padding: 10px;
+    font-weight: 600;
+  }
+
   .search-box {
     width: 100%; padding: 12px 16px; margin-top: 6px; margin-bottom: 2px; border: 0; border-radius: var(--radius);
     background: var(--card); color: var(--txt); font-size: 16px; outline: none; font-family: var(--font); font-weight: 600;
@@ -273,7 +303,6 @@
 
   .panel > * { position: relative; z-index: 1; }
 
-  /* CORRECTION DU CADRAGE DE L'IMAGE DE FICHE DE JEU (iOS & NAVIGATEUR) */
   .panel .big { 
     width: 100%; 
     aspect-ratio: 16 / 9; 
@@ -363,7 +392,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 50%, transparent);
   }
 
-  /* --- WIDGET NÉON STYLISÉ DANS LE DÉTAIL --- */
   .console-mockup-banner {
     width: 100%; padding: 28px 20px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
     flex-direction: column; position: relative; overflow: hidden; box-shadow: inset 0 0 35px rgba(0,0,0,0.7), 0 10px 30px rgba(0,0,0,0.5);
@@ -590,7 +618,11 @@
       </div>
     </div>
 
-    <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
+    <!-- SÉLECTEUR DÉROULANT TACTILE DE TOUTES LES CONSOLES -->
+    <div class="filter-bar-container">
+      <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
+    </div>
+
     <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
   </div>
   <div id="list"></div>
@@ -602,11 +634,11 @@ const TRANSLATIONS = {
   fr: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
-    all: "Tous",
-    favorites: "❤️ Favoris",
+    all: "✨ Tous les jeux",
+    favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
-    noGamesFilter: "Aucune sortie pour ce filtre ce mois-ci.",
+    noGamesFilter: "Aucune sortie pour cette console ce mois-ci.",
     loading: "Chargement…",
     searchDb: "Recherche dans toute la base de données... 🔍",
     netError: "Impossible de charger les sorties. Vérifie l’adresse du Worker dans config.js.",
@@ -647,11 +679,11 @@ const TRANSLATIONS = {
   en: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Search any game (all years)...",
-    all: "All",
-    favorites: "❤️ Favorites",
+    all: "✨ All Games",
+    favorites: "❤️ My Favorites",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
-    noGamesFilter: "No releases for this filter this month.",
+    noGamesFilter: "No releases for this console this month.",
     loading: "Loading...",
     searchDb: "Searching entire database... 🔍",
     netError: "Unable to load releases. Check Worker URL in config.js.",
@@ -692,11 +724,11 @@ const TRANSLATIONS = {
   ja: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 ゲームを検索（全年代）...",
-    all: "すべて",
+    all: "✨ すべてのゲーム",
     favorites: "❤️ お気に入り",
     noGamesSearch: "該当するゲームが見つかりませんでした。",
     noGamesFav: "今月のお気に入りはありません。",
-    noGamesFilter: "この条件に一致するゲームはありません。",
+    noGamesFilter: "このコンソールのリリース情報はありません。",
     loading: "読み込み中…",
     searchDb: "データベース全体を検索中... 🔍",
     netError: "読み込めませんでした。config.jsのURLを確認してください。",
@@ -737,11 +769,11 @@ const TRANSLATIONS = {
   de: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
-    all: "Alle",
+    all: "✨ Alle Spiele",
     favorites: "❤️ Favoriten",
     noGamesSearch: "Keine Spiele für diese Suche gefunden.",
     noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
-    noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
+    noGamesFilter: "Keine Releases für diese Konsole in diesem Monat.",
     loading: "Laden…",
     searchDb: "Durchsuche die Datenbank... 🔍",
     netError: "Fehler beim Laden. Überprüfe die Worker-URL in config.js.",
@@ -782,11 +814,11 @@ const TRANSLATIONS = {
   es: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
-    all: "Todos",
+    all: "✨ Todos los juegos",
     favorites: "❤️ Favoritos",
     noGamesSearch: "No se encontraron juegos para esta búsqueda.",
     noGamesFav: "No hay favoritos este mes.",
-    noGamesFilter: "No hay lanzamientos para este filtro este mes.",
+    noGamesFilter: "No hay lanzamientos para esta consola este mes.",
     loading: "Cargando…",
     searchDb: "Buscando en toda la base de datos... 🔍",
     netError: "Error al cargar. Comprueba la URL en config.js.",
@@ -827,11 +859,11 @@ const TRANSLATIONS = {
   zh: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
-    all: "全部",
-    favorites: "❤️ 收藏",
+    all: "✨ 全部游戏",
+    favorites: "❤️ 我的收藏",
     noGamesSearch: "未找到相关游戏。",
     noGamesFav: "本月暂无收藏游戏。",
-    noGamesFilter: "本月暂无符合该筛选条件的游戏。",
+    noGamesFilter: "本月该主机暂无发售游戏。",
     loading: "加载中…",
     searchDb: "正在搜索整个数据库... 🔍",
     netError: "加载失败，请检查 config.js 中的 Worker 地址。",
@@ -872,11 +904,11 @@ const TRANSLATIONS = {
   pt: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
-    all: "Todos",
-    favorites: "❤️ Favoritos",
+    all: "✨ Todos os Jogos",
+    favorites: "❤️ Meus Favoritos",
     noGamesSearch: "Nenhum jogo encontrado para esta busca.",
     noGamesFav: "Nenhum favorito este mês.",
-    noGamesFilter: "Nenhum lançamento para este filtro este mês.",
+    noGamesFilter: "Nenhum lançamento para este console este mês.",
     loading: "Carregando…",
     searchDb: "Pesquisando em todo o banco de dados... 🔍",
     netError: "Erro ao carregar. Verifique a URL do Worker em config.js.",
@@ -917,11 +949,11 @@ const TRANSLATIONS = {
   ko: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
-    all: "전체",
-    favorites: "❤️ 즐겨찾기",
+    all: "✨ 모든 게임",
+    favorites: "❤️ 내 즐겨찾기",
     noGamesSearch: "검색 결과가 없습니다.",
     noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
-    noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
+    noGamesFilter: "이번 달 해당 콘솔의 출시 게임이 없습니다.",
     loading: "로딩 중…",
     searchDb: "전체 데이터베이스 검색 중... 🔍",
     netError: "불러오지 못했습니다. config.js의 Worker 주소를 확인하세요.",
@@ -962,11 +994,11 @@ const TRANSLATIONS = {
   it: {
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
-    all: "Tutti",
-    favorites: "❤️ Preferiti",
+    all: "✨ Tutti i giochi",
+    favorites: "❤️ I miei preferiti",
     noGamesSearch: "Nessun gioco trovato.",
     noGamesFav: "Nessun preferito questo mese.",
-    noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
+    noGamesFilter: "Nessuna uscita per questa console questo mese.",
     loading: "Caricamento…",
     searchDb: "Ricerca nell'intero database... 🔍",
     netError: "Impossibile caricare. Controlla l'URL in config.js.",
@@ -1266,7 +1298,6 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-/* --- JINGLES 100% UNIQUES POUR CHAQUE THÈME & CONSOLE --- */
 function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
@@ -1515,10 +1546,8 @@ function renderScoreBadge(game) {
   return `<span class="score-badge ${scoreClass}">META ★ ${score}</span>`;
 }
 
-const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
-const cache = {};
+let currentFilter = "Tous";
 let ym = new Date().toISOString().slice(0, 7);
-let filter = "Tous";
 let searchQuery = "";
 let searchResults = null;
 
@@ -1612,13 +1641,15 @@ async function searchGlobal(query) {
 function itemsFor(games) {
   const out = [];
   for (const g of games) {
-    if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
-    const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
+    if (currentFilter === "❤️ Favoris" && !isFavorite(g.id)) continue;
+    const rel = (currentFilter === "Tous" || currentFilter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform.toLowerCase() === currentFilter.toLowerCase());
     if (!rel.length) continue;
     out.push({ g, rel, date: rel[0].date });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
 }
+
+const cache = {};
 
 function render() {
   let gamesToDisplay = searchQuery ? (searchResults || []) : (cache[ym] || []);
@@ -1626,7 +1657,7 @@ function render() {
   const list = $("#list");
   
   if (!items.length) {
-    let msgText = searchQuery ? t('noGamesSearch') : (filter === "❤️ Favoris" ? t('noGamesFav') : t('noGamesFilter'));
+    let msgText = searchQuery ? t('noGamesSearch') : (currentFilter === "❤️ Favoris" ? t('noGamesFav') : t('noGamesFilter'));
     list.replaceChildren(el("p", "msg", msgText));
     return;
   }
@@ -1712,7 +1743,6 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE DES CONSOLES : TRIÉ PAR CONSTRUCTEUR --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -2044,20 +2074,57 @@ function openSettings() {
 }
 $("#settings").addEventListener("click", openSettings);
 
-const chips = $("#chips");
-function renderChipsBar() {
-  chips.replaceChildren();
-  for (const f of FILTERS) {
-    let label = f;
-    if (f === "Tous") label = t('all');
-    if (f === "❤️ Favoris") label = t('favorites');
-    const b = el("button", "chip", label);
-    b.setAttribute("aria-pressed", String(f === filter));
-    b.addEventListener("click", () => { playThemeSound(theme); filter = f; renderChipsBar(); render(); });
-    chips.append(b);
+/* --- REMPLISSAGE DU MENU DÉROULANT DES CONSOLES (GROUPÉ PAR FABRICANT) --- */
+function renderPlatformDropdown() {
+  const select = $("#platformSelect");
+  select.replaceChildren();
+
+  // Options principales
+  const optAll = document.createElement("option");
+  optAll.value = "Tous";
+  optAll.textContent = t('all');
+  select.append(optAll);
+
+  const optFav = document.createElement("option");
+  optFav.value = "❤️ Favoris";
+  optFav.textContent = t('favorites');
+  select.append(optFav);
+
+  // Groupement par fabricant issu du musée des consoles
+  const groups = {};
+  for (const item of WORLD_CONSOLES) {
+    if (!groups[item.brand]) groups[item.brand] = [];
+    if (!groups[item.brand].includes(item.name)) {
+      groups[item.brand].push(item.name);
+    }
   }
+
+  // Ajout de PC de base
+  groups["PC & Autres"] = ["PC"];
+
+  for (const [brand, consoleNames] of Object.entries(groups)) {
+    const optGroup = document.createElement("optgroup");
+    optGroup.label = `--- ${brand.toUpperCase()} ---`;
+
+    for (const name of consoleNames) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      optGroup.append(opt);
+    }
+    select.append(optGroup);
+  }
+
+  select.value = currentFilter;
 }
-renderChipsBar();
+
+$("#platformSelect").addEventListener("change", (e) => {
+  playThemeSound(theme);
+  currentFilter = e.target.value;
+  render();
+});
+
+renderPlatformDropdown();
 
 const particlesContainer = $("#particles");
 for (let i = 0; i < 20; i++) {
