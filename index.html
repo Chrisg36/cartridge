@@ -1253,7 +1253,7 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-/* --- VRAIS JINGLES RÉTRO AUTHENTIQUES RESTAURÉS --- */
+/* --- JINGLES 100% UNIQUES POUR CHAQUE THÈME & CONSOLE --- */
 function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
@@ -1261,87 +1261,192 @@ function playThemeSound(th) {
     const now = ac.currentTime;
 
     if (th === "gamecube") {
-      // Le fameux jingle 4 notes aigus de la GameCube (La-Mi-Fa#-Ré)
-      const notes = [880, 659.25, 740, 587.33];
-      notes.forEach((freq, idx) => {
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.connect(gain);
-        gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.09);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.12, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
-        osc.start(startTime);
-        osc.stop(startTime + 0.22);
-      });
-    } else if (th === "ps1") {
-      // Accord solennel de la PlayStation 1 (Symphonie grave puis cristalline)
-      [130.81, 261.63, 523.25, 659.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.connect(gain);
-        gain.connect(ac.destination);
-        osc.type = idx < 2 ? "sawtooth" : "sine";
-        const startTime = now + (idx * 0.06);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
-        osc.start(startTime);
-        osc.stop(startTime + 0.35);
-      });
-    } else if (th === "gameboy") {
-      // Le bip de démarrage emblématique Game Boy (Square wave net)
-      const osc = ac.createOscillator(); 
-      const gain = ac.createGain();
-      osc.connect(gain); 
-      gain.connect(ac.destination);
-      osc.type = "square";
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.setValueAtTime(880, now + 0.12);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      osc.start(now); 
-      osc.stop(now + 0.3);
-    } else if (th === "dreamcast") {
-      // Glissando mélodieux SEGA Dreamcast
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.connect(gain);
-      gain.connect(ac.destination);
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(330, now);
-      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.25);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-      osc.start(now);
-      osc.stop(now + 0.35);
-    } else if (th === "n64") {
-      // Petite mélodie joyeuse Nintendo 64
-      [523.25, 587.33, 659.25, 783.99].forEach((freq, idx) => {
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
+      // GameCube : Arpège aigu distinctif (La - Mi - Fa# - Ré)
+      [880, 659.25, 740, 587.33].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
         osc.connect(gain); gain.connect(ac.destination);
         osc.type = "triangle";
-        const startTime = now + (idx * 0.07);
+        const startTime = now + (idx * 0.08);
         osc.frequency.setValueAtTime(freq, startTime);
         gain.gain.setValueAtTime(0.1, startTime);
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
         osc.start(startTime); osc.stop(startTime + 0.2);
       });
-    } else if (th === "arcade" || th === "nes" || th === "snes") {
-      // Sons 8-bit / 16-bit dynamiques
+    } else if (th === "ps1") {
+      // PS1 : Accord grave profond puis nappe cristalline
+      [130.81, 261.63, 523.25, 659.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = idx < 2 ? "sawtooth" : "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        osc.start(startTime); osc.stop(startTime + 0.3);
+      });
+    } else if (th === "gameboy") {
+      // Game Boy : Le double bip 8-bit classique d'allumage
+      [440, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.09, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "dreamcast") {
+      // Dreamcast : Glissando mélodieux et futuriste
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(329.63, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+      osc.start(now); osc.stop(now + 0.32);
+    } else if (th === "n64") {
+      // Nintendo 64 : Gamme montante joyeuse
+      [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+        osc.start(startTime); osc.stop(startTime + 0.15);
+      });
+    } else if (th === "nes") {
+      // NES : Séquence carrée 8-bit héroïque
+      [330, 440, 659.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
+        osc.start(startTime); osc.stop(startTime + 0.16);
+      });
+    } else if (th === "snes") {
+      // Super Nintendo : Accord riche et harmonieux 16-bits
+      [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+        osc.start(startTime); osc.stop(startTime + 0.25);
+      });
+    } else if (th === "arcade") {
+      // Arcade : Jingle punchy style borne d'arcade / insérer une pièce
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
+        osc.start(startTime); osc.stop(startTime + 0.14);
+      });
+    } else if (th === "atari") {
+      // Atari : Son brut analogique vintage 2600
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.linearRampToValueAtTime(450, now + 0.15);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (th === "dos") {
+      // MS-DOS : Bip système terminal brut
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "square";
-      osc.frequency.setValueAtTime(587.33, now);
-      osc.frequency.setValueAtTime(880, now + 0.08);
+      osc.frequency.setValueAtTime(800, now);
       gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.start(now); osc.stop(now + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (th === "megadrive") {
+      // Mega Drive : Son FM synthétiseur percutant
+      [261.63, 392, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "midnight") {
+      // Thème Minuit : Nappe synthétiseur spatiale et douce
+      [220, 329.63, 440].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        osc.start(startTime); osc.stop(startTime + 0.3);
+      });
+    } else if (th === "forest") {
+      // Thème Forêt : Notes organiques douces
+      [349.23, 440, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.08);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
+        osc.start(startTime); osc.stop(startTime + 0.22);
+      });
+    } else if (th === "violet") {
+      // Thème Violet : Effet magique mystique
+      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "ruby") {
+      // Thème Rubis : Sonnerie chaleureuse et dynamique
+      [329.63, 493.88, 587.33].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "light") {
+      // Thème Clair : Jingle lumineux et aérien
+      [587.33, 739.99, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
     } else {
-      // Son standard par défaut
+      // Thème Sombre par défaut : Séquence moderne épurée
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sine";
@@ -1349,8 +1454,7 @@ function playThemeSound(th) {
       osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
       gain.gain.setValueAtTime(0.08, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.start(now);
-      osc.stop(now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
     }
   } catch (e) {}
 }
