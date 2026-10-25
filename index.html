@@ -525,6 +525,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Désactivé",
     langLabel: "Langue de l'interface",
     retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
+    currentMonthBtn: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
     shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
@@ -569,6 +570,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT OFF",
     langLabel: "Interface Language",
     retroLabel: "🕰️ Time Capsule (Time Travel)",
+    currentMonthBtn: "📅 Return to current month",
     close: "Close",
     shareTitle: "Share my month",
     shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
@@ -613,6 +615,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT オフ",
     langLabel: "表示言語",
     retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
+    currentMonthBtn: "📅 今月に戻る",
     close: "閉じる",
     shareTitle: "今月の予定を共有",
     shareDesc: "このメッセージをコピーしてSNSに送信できます:",
@@ -657,6 +660,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Aus",
     langLabel: "Sprache",
     retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
+    currentMonthBtn: "📅 Zum aktuellen Monat zurück",
     close: "Schließen",
     shareTitle: "Meinen Monat teilen",
     shareDesc: "Kopiere diese Nachricht und teile sie auf Discord oder WhatsApp:",
@@ -701,6 +705,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Desactivado",
     langLabel: "Idioma de la interfaz",
     retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
+    currentMonthBtn: "📅 Volver al mes actual",
     close: "Cerrar",
     shareTitle: "Compartir mi mes",
     shareDesc: "Copia este mensaje y compártelo en Discord o WhatsApp:",
@@ -745,6 +750,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT 已关闭",
     langLabel: "界面语言",
     retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
+    currentMonthBtn: "📅 返回当前月份",
     close: "关闭",
     shareTitle: "分享我的发售表",
     shareDesc: "复制此消息并直接分享到社交平台：",
@@ -789,6 +795,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Desligado",
     langLabel: "Idioma da interface",
     retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
+    currentMonthBtn: "📅 Voltar ao mês atual",
     close: "Fechar",
     shareTitle: "Compartilhar meu mês",
     shareDesc: "Copie e compartilhe esta mensagem no Discord ou WhatsApp:",
@@ -833,6 +840,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT 끄기",
     langLabel: "인터페이스 언어",
     retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
+    currentMonthBtn: "📅 이번 달로 돌아가기",
     close: "닫기",
     shareTitle: "내 일정 공유하기",
     shareDesc: "이 메시지를 복사하여 메신저나 디스코드에 공유하세요:",
@@ -877,6 +885,7 @@ const TRANSLATIONS = {
     crtOff: "🖥️ CRT Disattivo",
     langLabel: "Lingua dell'interfaccia",
     retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
+    currentMonthBtn: "📅 Torna al mese corrente",
     close: "Chiudi",
     shareTitle: "Condividi il mio mese",
     shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
@@ -891,6 +900,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Controlla durata (HowLongToBeat)",
     summaryLabel: "Sommario",
     summaryLoading: "Traduzione del sommario con IA in corso… ⏳",
+    vitrineTitle: "🏛️ Museo Mondiale di Consoles e Micros",
+    vitrineDesc: "Clicca su qualsiasi console per vedere sua foto ufficiale:",
     today: "Oggi",
     tomorrow: "Domani",
     inDays: (d) => `Tra ${d} giorni`,
@@ -985,7 +996,6 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX (AVEC GAMECUBE ET DREAMCAST DÉDIÉS) --- */
 function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
@@ -993,19 +1003,17 @@ function playThemeSound(th) {
     const now = ac.currentTime;
 
     if (th === "gamecube") {
-      // Jingle GameCube : Arpège aigu et rebondissant (style séquenceur 16-bits / mini-disque)
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sine";
-      osc.frequency.setValueAtTime(523.25, now);       // Do5
-      osc.frequency.setValueAtTime(659.25, now + 0.06);  // Mi5
-      osc.frequency.setValueAtTime(783.99, now + 0.12);  // Sol5
-      osc.frequency.setValueAtTime(1046.50, now + 0.18); // Do6
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.06);
+      osc.frequency.setValueAtTime(783.99, now + 0.12);
+      osc.frequency.setValueAtTime(1046.50, now + 0.18);
       gain.gain.setValueAtTime(0.09, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       osc.start(now); osc.stop(now + 0.3);
     } else if (th === "dreamcast") {
-      // Jingle Dreamcast : Son de démarrage arcade / FM synth un peu ample et futuriste
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "sawtooth";
@@ -1171,7 +1179,8 @@ function renderScoreBadge(game) {
 
 const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
 const cache = {};
-let ym = new Date().toISOString().slice(0, 7);
+const currentRealYM = new Date().toISOString().slice(0, 7);
+let ym = currentRealYM;
 let filter = "Tous";
 let searchQuery = "";
 let searchResults = null;
@@ -1623,7 +1632,7 @@ function openSettings() {
   p.append(soundBtn);
 
   p.append(el("p", "m", t('crtLabel')));
-  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn'] : t('crtOff'));
   crtBtn.addEventListener("click", () => {
     crtEnabled = !crtEnabled;
     try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
@@ -1648,12 +1657,26 @@ function openSettings() {
   p.append(langGrid);
 
   p.append(el("p", "m", t('retroLabel')));
+  
+  // Bouton pour revenir au mois actuel si on est dans le passé
+  if (ym !== currentRealYM) {
+    const resetMonthBtn = el("button", "cta", t('currentMonthBtn'));
+    resetMonthBtn.style.marginBottom = "8px";
+    resetMonthBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      ym = currentRealYM;
+      load();
+      closeSheet();
+    });
+    p.append(resetMonthBtn);
+  }
+
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
   [[-1, "Année dernière"], [-5, "Il y a 5 ans"], [-10, "Il y a 10 ans"], [-20, "Il y a 20 ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
     b.addEventListener("click", () => {
       playThemeSound(theme);
-      const [y, m] = ym.split("-").map(Number);
+      const [y, m] = currentRealYM.split("-").map(Number);
       ym = `${y + years}-${String(m).padStart(2, "0")}`;
       load(); closeSheet();
     });
