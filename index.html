@@ -62,7 +62,7 @@
     --font: 'Press Start 2P', monospace; --radius: 2px;
   }
   [data-theme="atari"] {
-    color-theme: dark; --bg: #1a120b; --card: #2a1c12; --cov: #3d2a1a; --txt: #f3e9d2; --mut: #a38971; --acc: #ff7700; --on: #ffffff;
+    color-scheme: dark; --bg: #1a120b; --card: #2a1c12; --cov: #3d2a1a; --txt: #f3e9d2; --mut: #a38971; --acc: #ff7700; --on: #ffffff;
     --pattern: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
     --font: 'VT323', monospace; --radius: 6px;
   }
@@ -83,7 +83,7 @@
   * { 
     box-sizing: border-box; 
     -webkit-tap-highlight-color: transparent; 
-    -webkit-text-size-adjust: 100%; /* Bloque la modification automatique de police sur iOS / Android */
+    -webkit-text-size-adjust: 100%; 
     text-size-adjust: 100%;
   }
   
@@ -100,7 +100,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* --- HEADER & RECHERCHE EN GLASSMORPHISM FIXE (Universel Mobile & PC) --- */
+  /* --- HEADER & RECHERCHE EN GLASSMORPHISM FIXE --- */
   .sticky-header-container {
     position: sticky;
     top: 0;
@@ -116,7 +116,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* --- ARRIÈRE-PLAN AVEC CARTOUCHES HAUTE FINITION ET RELIEF 3D --- */
+  /* --- ARRIÈRE-PLAN AVEC CARTOUCHES 3D --- */
   .app-bg-cartridges {
     position: fixed;
     inset: 0;
@@ -217,15 +217,33 @@
   
   /* --- ANIMATION DE TRANSITION EN FONDU (FADE IN) --- */
   #list {
-    animation: fadeInList 0.3s ease-in-out;
+    animation: fadeInList 0.35s ease-in-out;
   }
   @keyframes fadeInList {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- VUE LISTE --- */
-  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.03); }
+  /* --- VUE LISTE AVEC MICRO-ANIMATION TACTILE --- */
+  .row { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    background: var(--card); 
+    border-radius: var(--radius); 
+    padding: 12px; 
+    margin-bottom: 10px; 
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    border: 1px solid rgba(255,255,255,0.03); 
+  }
+  .row:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 22px rgba(0,0,0,0.3); 
+    border-color: color-mix(in srgb, var(--acc) 40%, transparent);
+  }
+  .row:active {
+    transform: scale(0.98);
+  }
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
   .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -233,12 +251,13 @@
   .m { color: var(--mut); font-size: 12px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   
   .actions { display: flex; gap: 6px; flex: none; }
-  .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease; }
+  .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease, filter 0.1s ease; }
+  .btn-icon:hover { filter: brightness(1.2); }
   .btn-icon:active { transform: scale(0.90); }
   .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
   .add { color: var(--on); background: var(--acc); }
 
-  /* --- VUE GRILLE --- */
+  /* --- VUE GRILLE AVEC MICRO-ANIMATION ET GLOW HAUTE FIDÉLITÉ --- */
   .games-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -256,8 +275,17 @@
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     border: 1px solid rgba(255,255,255,0.04);
+  }
+  .grid-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
+    border-color: color-mix(in srgb, var(--acc) 50%, transparent);
+  }
+  .grid-card:active {
+    transform: scale(0.96);
   }
   .grid-cov-container {
     position: relative;
@@ -270,6 +298,10 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .grid-card:hover .grid-cov {
+    transform: scale(1.06);
   }
   .grid-info {
     padding: 10px;
@@ -310,7 +342,9 @@
     color: #fff;
     cursor: pointer;
     z-index: 2;
+    transition: transform 0.2s ease, background 0.2s ease;
   }
+  .grid-fav-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.8); }
   .grid-fav-btn.fav-active { color: #FF4757; }
 
   /* --- SQUELETTE DE CHARGEMENT SHIMMER --- */
@@ -393,9 +427,12 @@
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
-  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
-  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; text-decoration: none; }
+  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; transition: filter 0.2s; }
+  .cta:hover { filter: brightness(1.1); }
+  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; text-decoration: none; transition: filter 0.2s; }
+  .cta-sec:hover { filter: brightness(1.1); }
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
+  .close:hover { color: var(--txt); }
 
   .share-textarea {
     width: 100%;
@@ -449,7 +486,7 @@
   .score-low { background: #EF4444; color: #450A0A; }
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
-  /* --- SPLASH SCREEN iOS & ANDROID --- */
+  /* --- SPLASH SCREEN --- */
   #splash {
     position: fixed;
     inset: 0;
@@ -588,7 +625,7 @@
 </head>
 <body>
 
-<!-- Décor en arrière-plan avec cartouches 3D haute finition -->
+<!-- Décor en arrière-plan avec cartouches 3D -->
 <div class="app-bg-cartridges">
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
@@ -596,7 +633,7 @@
   <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
 </div>
 
-<!-- Écran de chargement universel -->
+<!-- Écran de chargement initial -->
 <div id="splash">
   <div class="splash-bg-grid">
     <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
@@ -1193,21 +1230,36 @@ function renderShimmerLoader() {
 async function load() {
   updateStaticTexts();
   $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  if (!cache[ym]) {
-    renderShimmerLoader();
-    try {
+  
+  renderShimmerLoader();
+  
+  // Petit délai artificiel (500ms) pour savourer l'effet shimmer et la transition fluide
+  const startTime = Date.now();
+
+  try {
+    if (!cache[ym]) {
       const res = await fetch(`${API}/?month=${ym}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur du serveur");
       cache[ym] = data;
-    } catch (e) {
+    }
+  } catch (e) {
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, 500 - elapsed);
+    setTimeout(() => {
       $("#list").replaceChildren(el("p", "msg", t('netError')));
       hideSplash();
-      return;
-    }
+    }, remaining);
+    return;
   }
-  render();
-  setTimeout(hideSplash, 2000);
+
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.max(0, 500 - elapsed);
+
+  setTimeout(() => {
+    render();
+    hideSplash();
+  }, remaining);
 }
 
 async function searchGlobal(query) {
@@ -1217,12 +1269,16 @@ async function searchGlobal(query) {
     return;
   }
   renderShimmerLoader();
+  const startTime = Date.now();
   try {
     const res = await fetch(`${API}/?search=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erreur");
     searchResults = data;
-    render();
+    
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, 400 - elapsed);
+    setTimeout(() => render(), remaining);
   } catch (e) {
     $("#list").replaceChildren(el("p", "msg", t('searchError')));
   }
