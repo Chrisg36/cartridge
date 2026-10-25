@@ -2,17 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#111318" id="themeMeta">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cartridge">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="config.js"></script>
-<!-- Police Rajdhani et Orbitron pour un style moderne/tech/gaming -->
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Cartridge</title>
 <style>
-  /* --- THÈMES MODERNES --- */
   :root, [data-theme="dark"] { color-scheme: dark; --bg:#111318; --card:#1B1E26; --cov:#2A2F3B; --txt:#F2F3F5; --mut:#A3A9B8; --acc:#FF7A45; --on:#111318; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="light"] { color-scheme: light; --bg:#F6F7F9; --card:#FFFFFF; --cov:#DDE1E8; --txt:#14161B; --mut:#5A6172; --acc:#C2410C; --on:#FFFFFF; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="midnight"] { color-scheme: dark; --bg:#0B1020; --card:#151C33; --cov:#232C4A; --txt:#EAF0FF; --mut:#9AA7C7; --acc:#5CA8FF; --on:#0B1020; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
@@ -20,294 +19,287 @@
   [data-theme="violet"] { color-scheme: dark; --bg:#130F1E; --card:#1E1830; --cov:#2D2548; --txt:#F1ECFF; --mut:#B0A5CC; --acc:#B794FF; --on:#130F1E; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="ruby"] { color-scheme: dark; --bg:#170D10; --card:#251519; --cov:#3A2127; --txt:#FBEFF1; --mut:#C7A4AB; --acc:#FF5C7A; --on:#170D10; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
 
-  /* --- THÈMES RÉTRO --- */
-  [data-theme="gameboy"] {
-    color-scheme: dark; --bg: #0f1f0f; --card: #152915; --cov: #1f3b1f; --txt: #9bbc0f; --mut: #486648; --acc: #8bac0f; --on: #0f1f0f;
-    --pattern: radial-gradient(#1f3b1f 1.5px, transparent 1.5px); background-size: 8px 8px; --font: 'Press Start 2P', monospace; --radius: 0px;
-  }
-  [data-theme="nes"] {
-    color-scheme: dark; --bg: #121214; --card: #1c1c21; --cov: #2c2c36; --txt: #ffffff; --mut: #8b8b9e; --acc: #e52521; --on: #ffffff;
-    --pattern: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
-    --font: 'Press Start 2P', monospace; --radius: 4px;
-  }
-  [data-theme="snes"] {
-    color-scheme: dark; --bg: #16151d; --card: #23222d; --cov: #343242; --txt: #f1f0f7; --mut: #8f8ba8; --acc: #6b5cd5; --on: #ffffff;
-    --pattern: repeating-linear-gradient(45deg, rgba(107, 92, 213, 0.06) 0px, rgba(107, 92, 213, 0.06) 2px, transparent 2px, transparent 8px);
-    --font: 'Press Start 2P', monospace; --radius: 6px;
-  }
-  [data-theme="ps1"] {
-    color-scheme: dark; --bg: #1a1e29; --card: #252b3b; --cov: #343d54; --txt: #e2e8f0; --mut: #8893af; --acc: #0070d1; --on: #ffffff;
-    --pattern: linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%); background-size: 16px 16px;
-    --font: 'Orbitron', sans-serif; --radius: 8px;
-  }
-  [data-theme="n64"] {
-    color-scheme: dark; --bg: #120b1f; --card: rgba(41, 25, 66, 0.85); --cov: #432b68; --txt: #f5b201; --mut: #a88cc9; --acc: #00c3e3; --on: #000000;
-    --pattern: linear-gradient(rgba(0, 195, 227, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 195, 227, 0.1) 1px, transparent 1px); background-size: 24px 24px;
-    --font: 'Orbitron', sans-serif; --radius: 14px;
-  }
-  [data-theme="dreamcast"] {
-    color-scheme: light; --bg: #eceef2; --card: #ffffff; --cov: #d8dce6; --txt: #1c202a; --mut: #68728d; --acc: #ff6600; --on: #ffffff;
-    --pattern: radial-gradient(#d8dce6 1.5px, transparent 1.5px); background-size: 14px 14px;
-    --font: 'Orbitron', sans-serif; --radius: 12px;
-  }
-  [data-theme="gamecube"] {
-    color-scheme: dark; --bg: #110e1b; --card: #1c172e; --cov: #2b2345; --txt: #f0edfa; --mut: #8e83b5; --acc: #6747ed; --on: #ffffff;
-    --pattern: radial-gradient(rgba(103, 71, 237, 0.2) 2px, transparent 2.5px); background-size: 18px 18px;
-    --font: 'Orbitron', sans-serif; --radius: 14px;
-  }
-  [data-theme="arcade"] {
-    color-scheme: dark; --bg: #0d0614; --card: #1a0b2e; --cov: #2c134d; --txt: #ff00ff; --mut: #a64dff; --acc: #00ffff; --on: #0d0614;
-    --pattern: linear-gradient(rgba(18, 16, 38, 0) 50%, rgba(0, 0, 0, 0.6) 50%); background-size: 100% 4px;
-    --font: 'Press Start 2P', monospace; --radius: 2px;
-  }
-  [data-theme="atari"] {
-    color-scheme: dark; --bg: #1a120b; --card: #2a1c12; --cov: #3d2a1a; --txt: #f3e9d2; --mut: #a38971; --acc: #ff7700; --on: #ffffff;
-    --pattern: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px);
-    --font: 'VT323', monospace; --radius: 6px;
-  }
-  [data-theme="dos"] {
-    color-scheme: dark; --bg: #000000; --card: #050d05; --cov: #0a1f0a; --txt: #00ff00; --mut: #008800; --acc: #00ff66; --on: #000000;
-    --pattern: linear-gradient(rgba(0, 255, 0, 0.03) 50%, rgba(0, 0, 0, 0.5) 50%); background-size: 100% 3px;
-    --font: 'Share Tech Mono', monospace; --radius: 0px;
-  }
-  [data-theme="megadrive"] {
-    color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff;
-    --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px;
-    --font: 'Orbitron', sans-serif; --radius: 10px;
-  }
+  [data-theme="gameboy"] { color-scheme: dark; --bg: #0f1f0f; --card: #152915; --cov: #1f3b1f; --txt: #9bbc0f; --mut: #486648; --acc: #8bac0f; --on: #0f1f0f; --pattern: radial-gradient(#1f3b1f 1.5px, transparent 1.5px); background-size: 8px 8px; --font: 'Press Start 2P', monospace; --radius: 0px; }
+  [data-theme="nes"] { color-scheme: dark; --bg: #121214; --card: #1c1c21; --cov: #2c2c36; --txt: #ffffff; --mut: #8b8b9e; --acc: #e52521; --on: #ffffff; --pattern: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); --font: 'Press Start 2P', monospace; --radius: 4px; }
+  [data-theme="snes"] { color-scheme: dark; --bg: #16151d; --card: #23222d; --cov: #343242; --txt: #f1f0f7; --mut: #8f8ba8; --acc: #6b5cd5; --on: #ffffff; --pattern: repeating-linear-gradient(45deg, rgba(107, 92, 213, 0.06) 0px, rgba(107, 92, 213, 0.06) 2px, transparent 2px, transparent 8px); --font: 'Press Start 2P', monospace; --radius: 6px; }
+  [data-theme="ps1"] { color-scheme: dark; --bg: #1a1e29; --card: #252b3b; --cov: #343d54; --txt: #e2e8f0; --mut: #8893af; --acc: #0070d1; --on: #ffffff; --pattern: linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%); background-size: 16px 16px; --font: 'Orbitron', sans-serif; --radius: 8px; }
+  [data-theme="n64"] { color-scheme: dark; --bg: #120b1f; --card: rgba(41, 25, 66, 0.85); --cov: #432b68; --txt: #f5b201; --mut: #a88cc9; --acc: #00c3e3; --on: #000000; --pattern: linear-gradient(rgba(0, 195, 227, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 195, 227, 0.1) 1px, transparent 1px); background-size: 24px 24px; --font: 'Orbitron', sans-serif; --radius: 14px; }
+  [data-theme="dreamcast"] { color-scheme: light; --bg: #eceef2; --card: #ffffff; --cov: #d8dce6; --txt: #1c202a; --mut: #68728d; --acc: #ff6600; --on: #ffffff; --pattern: radial-gradient(#d8dce6 1.5px, transparent 1.5px); background-size: 14px 14px; --font: 'Orbitron', sans-serif; --radius: 12px; }
+  [data-theme="gamecube"] { color-scheme: dark; --bg: #110e1b; --card: #1c172e; --cov: #2b2345; --txt: #f0edfa; --mut: #8e83b5; --acc: #6747ed; --on: #ffffff; --pattern: radial-gradient(rgba(103, 71, 237, 0.2) 2px, transparent 2.5px); background-size: 18px 18px; --font: 'Orbitron', sans-serif; --radius: 14px; }
+  [data-theme="arcade"] { color-scheme: dark; --bg: #0d0614; --card: #1a0b2e; --cov: #2c134d; --txt: #ff00ff; --mut: #a64dff; --acc: #00ffff; --on: #0d0614; --pattern: linear-gradient(rgba(18, 16, 38, 0) 50%, rgba(0, 0, 0, 0.6) 50%); background-size: 100% 4px; --font: 'Press Start 2P', monospace; --radius: 2px; }
+  [data-theme="atari"] { color-scheme: dark; --bg: #1a120b; --card: #2a1c12; --cov: #3d2a1a; --txt: #f3e9d2; --mut: #a38971; --acc: #ff7700; --on: #ffffff; --pattern: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 10px); --font: 'VT323', monospace; --radius: 6px; }
+  [data-theme="dos"] { color-scheme: dark; --bg: #000000; --card: #050d05; --cov: #0a1f0a; --txt: #00ff00; --mut: #008800; --acc: #00ff66; --on: #000000; --pattern: linear-gradient(rgba(0, 255, 0, 0.03) 50%, rgba(0, 0, 0, 0.5) 50%); background-size: 100% 3px; --font: 'Share Tech Mono', monospace; --radius: 0px; }
+  [data-theme="megadrive"] { color-scheme: dark; --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff; --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px; --font: 'Orbitron', sans-serif; --radius: 10px; }
 
   .dot { display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
   [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box { box-shadow: 0 0 0 1px #D8DCE6; }
-  * { box-sizing: border-box; }
+  
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
   body {
-    margin: 0;
-    background-color: var(--bg);
-    background-image: var(--pattern);
-    color: var(--txt);
-    font-family: var(--font);
-    padding: env(safe-area-inset-top) env(safe-area-inset-bottom);
-    position: relative;
-    overflow-x: hidden;
+    margin: 0; background-color: var(--bg); background-image: var(--pattern); color: var(--txt);
+    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+    position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased;
   }
 
-  /* --- ARRIÈRE-PLAN AVEC CARTOUCHES HAUTE FINITION ET RELIEF 3D --- */
+  body.crt-enabled::after {
+    content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 38, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 3px;
+    z-index: 999; pointer-events: none; opacity: 0.6;
+  }
+
+  .crt-flash { position: fixed; inset: 0; background: #ffffff; z-index: 9999; pointer-events: none; opacity: 0; }
+  @keyframes crtPowerOn {
+    0% { opacity: 1; transform: scaleY(0.005) scaleX(1); filter: brightness(3); }
+    50% { opacity: 0.8; transform: scaleY(0.08) scaleX(1.02); filter: brightness(2); }
+    100% { opacity: 0; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+  }
+  .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+
+  .sticky-header-container {
+    position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: 12px; margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
   .app-bg-cartridges {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.08;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 70px;
-    padding: 20px;
-    transform: rotate(-10deg) scale(1.2);
+    position: fixed; inset: -50px; pointer-events: none; z-index: 0; opacity: 0.12;
+    display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 40px; padding: 20px; transform: rotate(-12deg) scale(1.3);
   }
-
-  .app-bg-cartridges .bg-cartridge {
-    width: 60px;
-    height: 84px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(0,0,0,0.4));
-    border: 1.5px solid var(--acc);
-    border-radius: 10px 10px 4px 4px;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+  .bg-cartridge {
+    width: 54px; height: 76px; background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(0,0,0,0.5));
+    border: 1.5px solid var(--acc); border-radius: 10px 10px 4px 4px; position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.25);
     animation: floatAppCartridge 14s infinite ease-in-out alternate;
   }
-
-  .app-bg-cartridges .bg-cartridge::before {
-    content: '';
-    position: absolute;
-    top: 8px; left: 8px; right: 8px; height: 32px;
-    background: var(--card);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+  .bg-cartridge::before {
+    content: ''; position: absolute; top: 7px; left: 6px; right: 6px; height: 30px;
+    background: var(--card); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
   }
-
-  .app-bg-cartridges .bg-cartridge::after {
-    content: '';
-    position: absolute;
-    bottom: 6px; left: 12px; right: 12px; height: 10px;
-    background: linear-gradient(90deg, #D4AF37, #FFD700, #B8860B, #FFD700, #D4AF37);
-    border-radius: 2px;
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+  .bg-cartridge::after {
+    content: ''; position: absolute; bottom: 5px; left: 10px; right: 10px; height: 9px;
+    background: linear-gradient(90deg, #D4AF37, #FFD700, #B8860B, #FFD700, #D4AF37); border-radius: 2px; box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
   }
+  .bg-cartridge.gameboy-cart { width: 58px; height: 64px; border-radius: 4px 14px 4px 4px; }
+  .bg-cartridge.gameboy-cart::before { top: 6px; height: 26px; }
+  .bg-cartridge.n64-cart { width: 66px; height: 70px; border-radius: 6px 6px 12px 12px; background: linear-gradient(145deg, rgba(245, 178, 1, 0.2), rgba(0,0,0,0.5)); border-color: #f5b201; }
+  .bg-cartridge.switch-cart { width: 44px; height: 60px; border-radius: 8px 8px 12px 12px; background: linear-gradient(145deg, rgba(230, 0, 18, 0.25), rgba(0,0,0,0.5)); border-color: #e60012; }
+  .bg-cartridge.switch-cart::before { top: 5px; height: 22px; }
+  @keyframes floatAppCartridge { 0% { transform: translateY(0px) rotate(0deg) scale(1); } 100% { transform: translateY(-25px) rotate(6deg) scale(1.04); } }
 
-  .app-bg-cartridges .bg-cartridge:nth-child(even) { animation-duration: 18s; animation-delay: -4s; }
-  .app-bg-cartridges .bg-cartridge:nth-child(3n) { animation-duration: 11s; animation-delay: -6s; }
-
-  @keyframes floatAppCartridge {
-    0% { transform: translateY(0px) rotate(0deg) scale(1); }
-    100% { transform: translateY(-30px) rotate(8deg) scale(1.03); }
+  .pixel-particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .pixel-particle {
+    position: absolute; width: 3px; height: 3px; background: var(--acc); opacity: 0.35; border-radius: 50%;
+    box-shadow: 0 0 6px var(--acc); animation: floatParticle 10s infinite linear;
+  }
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    20% { opacity: 0.5; } 80% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-  header { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-  header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
-  h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-  button { font: inherit; color: inherit; cursor: pointer; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .header-bottom { display: flex; justify-content: space-between; align-items: center; }
+
+  .neon-logo {
+    font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+    color: #fff; background: var(--card); padding: 10px 14px; border-radius: var(--radius); border: 1.5px solid var(--acc);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--acc) 60%, transparent), inset 0 0 10px color-mix(in srgb, var(--acc) 40%, transparent);
+    text-shadow: 0 0 8px var(--acc), 0 0 16px var(--acc); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
   
-  .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
-  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
-  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
+  .magazine-edition-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--acc) 25%, var(--card)), var(--card));
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: var(--radius);
+    padding: 6px 14px; margin-bottom: 10px; font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--acc); box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .magazine-edition-banner span { display: inline-flex; align-items: center; gap: 4px; }
+
+  h1 { 
+    margin: 0; font-size: 17px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
+    display: inline-block; white-space: nowrap; padding: 10px 16px; background: var(--card);
+    border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--acc) 20%, rgba(0,0,0,0.2)), inset 0 1px 2px rgba(255,255,255,0.1);
+    flex: 1; text-align: center; margin-right: 8px;
+  }
+
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .nav { display: flex; gap: 6px; align-items: center; }
+  .month-nav { display: flex; gap: 6px; align-items: center; flex: none; }
+
+  .chip { 
+    border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; 
+    background: var(--card); color: var(--txt); white-space: nowrap; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+  }
+  .chip svg { color: var(--acc); transition: transform 0.2s ease, filter 0.2s ease; }
+  .chip:hover svg { filter: drop-shadow(0 0 6px var(--acc)); transform: scale(1.08); }
+  .chip:active { transform: scale(0.90) translateY(2px); }
+  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
+  .chip[aria-pressed="true"] svg { color: var(--on); }
+  
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 4px; scrollbar-width: none; align-items: center; -webkit-overflow-scrolling: touch; }
   
   .search-box {
-    width: 100%;
-    padding: 12px 16px;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    border: 0;
-    border-radius: var(--radius);
-    background: var(--card);
-    color: var(--txt);
-    font-size: 15px;
-    outline: none;
-    font-family: var(--font);
-    font-weight: 600;
+    width: 100%; padding: 12px 16px; margin-top: 6px; margin-bottom: 2px; border: 0; border-radius: var(--radius);
+    background: var(--card); color: var(--txt); font-size: 16px; outline: none; font-family: var(--font); font-weight: 600;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); transition: box-shadow 0.2s ease;
   }
+  .search-box:focus { box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2); border-color: var(--acc); }
   .search-box::placeholder { color: var(--mut); }
 
-  select#genreFilter {
-    background: var(--card);
-    color: var(--txt);
-    border: 0;
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    min-height: 44px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: var(--font);
-    cursor: pointer;
-    outline: none;
-    flex: none;
-  }
-
-  .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
   
-  /* --- VUE LISTE --- */
-  .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
-  .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
-  .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
-  .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  #list { animation: fadeInList 0.35s ease-in-out; }
+  @keyframes fadeInList { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .row { 
+    display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; 
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); border: 1px solid rgba(255,255,255,0.03); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+  }
+  .row::before, .grid-card::before {
+    content: ''; position: absolute; right: -10px; bottom: -15px; width: 80px; height: 40px;
+    background: repeating-linear-gradient(90deg, var(--acc), var(--acc) 3px, transparent 3px, transparent 6px);
+    opacity: 0.04; transform: rotate(-15deg); pointer-events: none; z-index: 0;
+  }
+  .row.is-hyped { border-color: color-mix(in srgb, var(--acc) 50%, transparent); animation: hypeGlowPulse 2.5s infinite alternate ease-in-out; }
+  @keyframes hypeGlowPulse {
+    0% { box-shadow: 0 4px 12px rgba(0,0,0,0.2), 0 0 5px color-mix(in srgb, var(--acc) 10%, transparent); }
+    100% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 16px color-mix(in srgb, var(--acc) 35%, transparent); }
+  }
+  .row:hover { transform: translateY(-3px) scale(1.005); box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 18px color-mix(in srgb, var(--acc) 30%, transparent); border-color: color-mix(in srgb, var(--acc) 60%, transparent); }
+  .row:active { transform: scale(0.97); }
+  .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; position: relative; z-index: 1; }
+  .row .open::after {
+    content: '▶'; position: absolute; right: 8px; font-size: 11px; color: var(--acc); opacity: 0; transform: translateX(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .row:hover .open::after { opacity: 1; transform: translateX(0); animation: arcadeCursorBlink 0.8s infinite alternate; }
+  @keyframes arcadeCursorBlink { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+
+  .cov-container { position: relative; width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); overflow: hidden; flex: none; background: var(--cov); }
+  .cov { width: 100%; height: 100%; object-fit: cover; }
+  .cov-container::after {
+    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.15) 100%);
+    opacity: 0; transition: opacity 0.3s ease; mix-blend-mode: overlay; pointer-events: none;
+  }
+  .row:hover .cov-container::after, .grid-card:hover .grid-cov-container::after { opacity: 1; }
+
+  .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; z-index: 1; }
   .t b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; letter-spacing: 0.5px; }
   .m { color: var(--mut); font-size: 12px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   
-  .actions { display: flex; gap: 6px; flex: none; }
-  .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease; }
-  .btn-icon:active { transform: scale(0.92); }
-  .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
-  .add { color: var(--on); background: var(--acc); }
+  .actions { display: flex; gap: 6px; flex: none; position: relative; z-index: 1; }
+  .btn-icon { color: var(--txt); width: 40px; height: 40px; border: 0; border-radius: var(--radius); background: var(--cov); display: flex; align-items: center; justify-content: center; flex: none; transition: transform 0.1s ease, filter 0.1s ease; }
+  .btn-icon:hover { filter: brightness(1.2); }
+  .btn-icon:active { transform: scale(0.85); }
+  .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); box-shadow: 0 0 10px rgba(255, 71, 87, 0.3); }
+  .add { color: var(--on); background: var(--acc); box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 50%, transparent); }
 
-  /* --- VUE GRILLE / ÉTAGÈRE DE JAQUETTES --- */
-  .games-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    margin-top: 10px;
-  }
-  @media(min-width: 500px) {
-    .games-grid { grid-template-columns: repeat(3, 1fr); }
-  }
+  .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 10px; }
+  @media(min-width: 500px) { .games-grid { grid-template-columns: repeat(3, 1fr); } }
 
   .grid-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-    border: 1px solid rgba(255,255,255,0.04);
+    background: var(--card); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; border: 1px solid rgba(255,255,255,0.04);
   }
-  .grid-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-  .grid-cov-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3/4;
-    background: var(--cov);
-  }
-  .grid-cov {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .grid-info {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    justify-content: space-between;
-  }
-  .grid-title {
-    font-size: 14px;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-  }
-  .grid-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-  }
+  .grid-card.is-hyped { border-color: color-mix(in srgb, var(--acc) 50%, transparent); animation: hypeGlowPulse 2.5s infinite alternate ease-in-out; }
+  .grid-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 22px color-mix(in srgb, var(--acc) 40%, transparent); border-color: color-mix(in srgb, var(--acc) 60%, transparent); }
+  .grid-card:active { transform: scale(0.95); }
+  .grid-cov-container { position: relative; width: 100%; aspect-ratio: 3/4; background: var(--cov); overflow: hidden; }
+  .grid-cov { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+  .grid-card:hover .grid-cov { transform: scale(1.06); }
+  .grid-info { padding: 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between; position: relative; z-index: 1; }
+  .grid-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+  .grid-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   .grid-fav-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    border: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    z-index: 2;
+    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 0; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; z-index: 2; transition: transform 0.2s ease, background 0.2s ease;
   }
+  .grid-fav-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.8); }
+  .grid-fav-btn:active { transform: scale(0.85); }
   .grid-fav-btn.fav-active { color: #FF4757; }
 
+  .shimmer-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+  .shimmer-row { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: var(--radius); padding: 12px; position: relative; overflow: hidden; }
+  .shimmer-cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); flex: none; }
+  .shimmer-lines { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .shimmer-line { height: 14px; border-radius: 6px; background: var(--cov); width: 70%; }
+  .shimmer-line.short { width: 40%; }
+  .shimmer-row::after {
+    content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    animation: shimmerWave 1.6s infinite;
+  }
+  @keyframes shimmerWave { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
   .msg { color: var(--mut); text-align: center; padding: 40px 0; font-weight: 600; }
-  #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+  
+  #sheet { 
+    position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; align-items: flex-end; justify-content: center; z-index: 100; 
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
   #sheet.on { display: flex; }
-  .panel { background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); }
+  .panel { 
+    background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
+    -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--acc) 20%, transparent); 
+  }
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
   .panel p { line-height: 1.5; font-size: 14px; font-weight: 600; }
-  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
-  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; }
-  .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 14px auto 0; padding: 8px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
+  .cta { width: 100%; min-height: 52px; border: 0; border-radius: var(--radius); background: var(--acc); color: var(--on); font-weight: 700; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; transition: filter 0.2s; box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 50%, transparent); }
+  .cta:hover { filter: brightness(1.1); }
+  .cta:active { transform: scale(0.97); }
+  .cta-sec { width: 100%; min-height: 48px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-weight: 700; font-size: 14px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; text-decoration: none; transition: filter 0.2s; }
+  .cta-sec:hover { filter: brightness(1.1); }
+  .cta-sec:active { transform: scale(0.97); }
+  .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
+  .close:hover { color: var(--txt); }
 
-  .share-textarea {
-    width: 100%;
-    height: 140px;
-    background: var(--cov);
-    color: var(--txt);
-    border: 0;
-    border-radius: var(--radius);
-    padding: 12px;
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 600;
-    resize: none;
-    outline: none;
-    margin-top: 10px;
+  /* --- VITRINE DES CONSOLES AVEC VRAIES PHOTOS OFFICIELLES --- */
+  .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+  @media(min-width: 500px) { .vitrine-grid { grid-template-columns: repeat(3, 1fr); } }
+  .console-vitrine-card {
+    background: var(--card); border: 1.5px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius: var(--radius);
+    padding: 16px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; position: relative; overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .console-vitrine-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--acc); box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent); }
+  .console-photo-container {
+    width: 100%; height: 90px; border-radius: 10px; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 1px solid rgba(255,255,255,0.1); padding: 4px;
+  }
+  .console-photo { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+  .console-vitrine-card:hover .console-photo { transform: scale(1.1); }
+  .console-info-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+  .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .console-vitrine-card span { font-size: 11px; color: var(--mut); font-weight: 700; }
+  .console-brand-tag {
+    position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
+    background: color-mix(in srgb, var(--acc) 15%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 2;
   }
 
-  /* --- BADGES CONSOLES COMPLETS --- */
+  /* --- WIDGET PHOTO HD DANS LE DÉTAIL --- */
+  .console-mockup-banner {
+    width: 100%; height: 220px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+    flex-direction: column; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
+    border: 1.5px solid rgba(255,255,255,0.2); margin-bottom: 16px; padding: 20px;
+  }
+  .console-mockup-banner::before {
+    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none; z-index: 2;
+  }
+  .console-banner-photo { max-width: 85%; max-height: 120px; object-fit: contain; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.8)); position: relative; z-index: 3; transition: transform 0.4s ease; }
+  .console-mockup-banner:hover .console-banner-photo { transform: scale(1.06); }
+  .console-title-badge { margin-top: 10px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); position: relative; z-index: 3; }
+  .console-subtitle-info { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); position: relative; z-index: 3; }
+
+  .share-textarea { width: 100%; height: 140px; background: var(--cov); color: var(--txt); border: 0; border-radius: var(--radius); padding: 12px; font-family: var(--font); font-size: 14px; font-weight: 600; resize: none; outline: none; margin-top: 10px; }
+
   .platform-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
   .badge-pc { background: #333; color: #fff; }
   .badge-ps5 { background: #003087; color: #fff; }
@@ -335,167 +327,121 @@
   .badge-default { background: var(--cov); color: var(--txt); }
 
   .time-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; background: var(--cov); color: var(--txt); }
-  .badge-today { background: var(--acc); color: var(--on); }
+  .badge-today { background: var(--acc); color: var(--on); box-shadow: 0 0 8px var(--acc); }
 
-  .score-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
+  .score-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; border-radius: 10px; }
   .score-high { background: #10B981; color: #042F2E; }
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
+
+  .hype-pro-badge {
+    display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; border-radius: 10px;
+    background: color-mix(in srgb, var(--acc) 20%, var(--cov)); color: var(--acc); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent); letter-spacing: 0.5px;
+  }
+
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
-  /* --- SPLASH SCREEN iOS --- */
   #splash {
-    position: fixed;
-    inset: 0;
-    background-color: var(--bg);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    overflow: hidden;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+    position: fixed; inset: 0; background-color: var(--bg); z-index: 9999; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 24px; overflow: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
   }
   #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
   .splash-bg-grid {
-    position: absolute;
-    inset: -20px;
-    pointer-events: none;
-    opacity: 0.12;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 40px;
-    padding: 20px;
-    transform: rotate(-10deg) scale(1.2);
+    position: absolute; inset: -50px; pointer-events: none; opacity: 0.12; display: grid;
+    grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 40px; padding: 20px; transform: rotate(-12deg) scale(1.3);
   }
-  .splash-bg-grid .bg-cartridge {
-    width: 40px;
-    height: 56px;
-    background: var(--card);
-    border: 2px solid var(--acc);
-    border-radius: 6px 6px 3px 3px;
-    position: relative;
-    animation: floatBgCartridge 6s infinite ease-in-out alternate;
-  }
-  .splash-bg-grid .bg-cartridge::before {
-    content: '';
-    position: absolute;
-    top: 4px; left: 6px; right: 6px; height: 18px;
-    background: var(--acc); border-radius: 3px; opacity: 0.6;
-  }
-  .splash-bg-grid .bg-cartridge::after {
-    content: '';
-    position: absolute;
-    bottom: 4px; left: 8px; right: 8px; height: 8px;
-    background: #d4af37; border-radius: 2px;
-  }
-  .splash-bg-grid .bg-cartridge:nth-child(even) { animation-duration: 8s; animation-delay: -2s; }
-  .splash-bg-grid .bg-cartridge:nth-child(3n) { animation-duration: 5s; animation-delay: -1s; }
-
-  @keyframes floatBgCartridge {
-    0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-20px) rotate(5deg); }
-  }
-
-  .splash-container {
-    display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 2;
-    animation: pulseGlow 2.5s infinite ease-in-out;
-  }
-
+  .splash-container { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 2; animation: pulseGlow 2.5s infinite ease-in-out; }
   .splash-logo-pro {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
-    backdrop-filter: blur(12px);
-    border-radius: 30px;
-    border: 1.5px solid rgba(255, 122, 69, 0.5);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 122, 69, 0.2);
-    overflow: hidden;
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 120px; height: 120px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 30px; border: 1.5px solid rgba(255, 122, 69, 0.5);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 122, 69, 0.2); overflow: hidden;
   }
-
   .splash-logo-pro::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%; width: 200%; height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-    transform: rotate(30deg);
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent); transform: rotate(30deg);
   }
-
   .splash-logo-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 46px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: var(--txt);
-    background: linear-gradient(180deg, #FFFFFF 30%, var(--acc) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-family: 'Orbitron', sans-serif; font-size: 46px; font-weight: 900; letter-spacing: 2px; color: var(--txt);
+    background: linear-gradient(180deg, #FFFFFF 30%, var(--acc) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 2px 8px rgba(255, 122, 69, 0.4));
   }
-
   .splash-chip-pins { display: flex; gap: 4px; margin-top: -2px; }
-  .splash-chip-pin {
-    width: 6px; height: 10px;
-    background: linear-gradient(180deg, #FFD700, #B8860B);
-    border-radius: 2px 2px 0 0;
-    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
-  }
-
+  .splash-chip-pin { width: 6px; height: 10px; background: linear-gradient(180deg, #FFD700, #B8860B); border-radius: 2px 2px 0 0; box-shadow: 0 0 6px rgba(255, 215, 0, 0.6); }
   .splash-cartridges { display: flex; gap: 12px; height: 38px; align-items: flex-end; }
   .cartridge {
-    width: 24px; height: 34px; background: var(--card);
-    border: 2px solid var(--acc); border-radius: 5px 5px 2px 2px;
-    position: relative; animation: bounceCartridge 1.2s infinite ease-in-out;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    width: 24px; height: 34px; background: var(--card); border: 2px solid var(--acc); border-radius: 5px 5px 2px 2px;
+    position: relative; animation: bounceCartridge 1.2s infinite ease-in-out; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   }
-  .cartridge::before {
-    content: ''; position: absolute; top: 3px; left: 3px; right: 3px; height: 10px;
-    background: var(--acc); border-radius: 2px; opacity: 0.8;
-  }
-  .cartridge::after {
-    content: ''; position: absolute; bottom: 2px; left: 4px; right: 4px; height: 6px;
-    background: #d4af37; border-radius: 1px;
-  }
-  .cartridge:nth-child(1) { animation-delay: 0s; }
-  .cartridge:nth-child(2) { animation-delay: 0.2s; }
-  .cartridge:nth-child(3) { animation-delay: 0.4s; }
-  .cartridge:nth-child(4) { animation-delay: 0.6s; }
-
-  @keyframes bounceCartridge {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); background: var(--acc); }
-  }
-  @keyframes pulseGlow {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-  }
+  .cartridge::before { content: ''; position: absolute; top: 3px; left: 3px; right: 3px; height: 10px; background: var(--acc); border-radius: 2px; opacity: 0.8; }
+  .cartridge::after { content: ''; position: absolute; bottom: 2px; left: 4px; right: 4px; height: 6px; background: #d4af37; border-radius: 1px; }
+  .cartridge:nth-child(1) { animation-delay: 0s; } .cartridge:nth-child(2) { animation-delay: 0.2s; } .cartridge:nth-child(3) { animation-delay: 0.4s; } .cartridge:nth-child(4) { animation-delay: 0.6s; }
+  @keyframes bounceCartridge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); background: var(--acc); } }
+  @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 </style>
 </head>
 <body>
 
-<!-- Décor en arrière-plan avec cartouches 3D haute finition -->
+<div class="crt-flash"></div>
+
 <div class="app-bg-cartridges">
-  <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-  <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-  <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-  <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge gameboy-cart"></div>
+  <div class="bg-cartridge n64-cart"></div>
+  <div class="bg-cartridge switch-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge switch-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge gameboy-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge n64-cart"></div>
+  <div class="bg-cartridge n64-cart"></div>
+  <div class="bg-cartridge switch-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge gameboy-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge gameboy-cart"></div>
+  <div class="bg-cartridge switch-cart"></div>
+  <div class="bg-cartridge n64-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge switch-cart"></div>
+  <div class="bg-cartridge"></div>
+  <div class="bg-cartridge n64-cart"></div>
+  <div class="bg-cartridge gameboy-cart"></div>
+  <div class="bg-cartridge"></div>
 </div>
 
-<!-- Écran de chargement iOS -->
+<div class="pixel-particles" id="particles"></div>
+
 <div id="splash">
   <div class="splash-bg-grid">
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge switch-cart"></div>
+    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge n64-cart"></div>
+    <div class="bg-cartridge gameboy-cart"></div>
+    <div class="bg-cartridge"></div>
   </div>
   <div class="splash-container">
     <div class="splash-logo-pro">
@@ -514,18 +460,43 @@
 </div>
 
 <main>
-  <header>
-    <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
-    <div class="nav">
-      <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
-      <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
-      <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
-      <button class="chip" id="prev" aria-label="Mois précédent">‹</button>
-      <button class="chip" id="next" aria-label="Mois suivant">›</button>
+  <div class="sticky-header-container">
+    <div class="header-top">
+      <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
+      <div class="nav">
+        <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Musée des Consoles & Ordinateurs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M8 10v4"></path><circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle></svg>
+        </button>
+        <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
+        <button class="chip" id="shareBtn" aria-label="Partager mon mois">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+        </button>
+        <button class="chip" id="settings" aria-label="Réglages">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
     </div>
-  </header>
-  <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
-  <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+
+    <div class="magazine-edition-banner">
+      <span>🕹️ COLLECTOR EDITION</span>
+      <span id="editionDateBadge">MONTHLY RELEASES</span>
+    </div>
+
+    <div class="header-bottom">
+      <h1 id="title"></h1>
+      <div class="month-nav">
+        <button class="chip" id="prev" aria-label="Mois précédent">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="chip" id="next" aria-label="Mois suivant">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
+    <input type="text" id="search" class="search-box" placeholder="🔍 Rechercher n'importe quel jeu (toutes années)...">
+  </div>
   <div id="list"></div>
 </main>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
@@ -533,11 +504,10 @@
 <script>
 const TRANSLATIONS = {
   fr: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Rechercher n'importe quel jeu (toutes années)...",
     all: "Tous",
     favorites: "❤️ Favoris",
-    allGenres: "🎮 Toutes les catégories",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
     noGamesFilter: "Aucune sortie pour ce filtre ce mois-ci.",
@@ -550,6 +520,9 @@ const TRANSLATIONS = {
     soundLabel: "Effets sonores",
     soundOn: "🔊 Son activé",
     soundOff: "🔇 Son coupé",
+    crtLabel: "Effet Écran Cathodique (CRT Scanlines)",
+    crtOn: "📺 CRT Activé",
+    crtOff: "🖥️ CRT Désactivé",
     langLabel: "Langue de l'interface",
     retroLabel: "🕰️ Capsule Temporelle (Voyage dans le passé)",
     close: "Fermer",
@@ -566,6 +539,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
+    vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
+    vitrineDesc: "Clique sur n'importe quelle console pour découvrir sa photo officielle et son histoire :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -573,11 +548,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Il y a ${d} jours`
   },
   en: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Search any game (all years)...",
     all: "All",
     favorites: "❤️ Favorites",
-    allGenres: "🎮 All categories",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
     noGamesFilter: "No releases for this filter this month.",
@@ -590,6 +564,9 @@ const TRANSLATIONS = {
     soundLabel: "Sound Effects",
     soundOn: "🔊 Sound ON",
     soundOff: "🔇 Sound OFF",
+    crtLabel: "CRT Scanlines Effect",
+    crtOn: "📺 CRT ON",
+    crtOff: "🖥️ CRT OFF",
     langLabel: "Interface Language",
     retroLabel: "🕰️ Time Capsule (Time Travel)",
     close: "Close",
@@ -606,6 +583,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Check HowLongToBeat",
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
+    vitrineTitle: "🏛️ World Console & Micro Museum",
+    vitrineDesc: "Click on any console to discover its official photo and history:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
@@ -613,11 +592,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d} days ago`
   },
   ja: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 ゲームを検索（全年代）...",
     all: "すべて",
     favorites: "❤️ お気に入り",
-    allGenres: "🎮 すべてのカテゴリー",
     noGamesSearch: "該当するゲームが見つかりませんでした。",
     noGamesFav: "今月のお気に入りはありません。",
     noGamesFilter: "この条件に一致するゲームはありません。",
@@ -630,6 +608,9 @@ const TRANSLATIONS = {
     soundLabel: "効果音",
     soundOn: "🔊 サウンド ON",
     soundOff: "🔇 サウンド OFF",
+    crtLabel: "CRT走査線エフェクト",
+    crtOn: "📺 CRT オン",
+    crtOff: "🖥️ CRT オフ",
     langLabel: "表示言語",
     retroLabel: "🕰️ タイムカプセル (過去へのタイムトラベル)",
     close: "閉じる",
@@ -646,6 +627,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ クリア時間をチェック (HowLongToBeat)",
     summaryLabel: "概要",
     summaryLoading: "AIで概要を翻訳中… ⏳",
+    vitrineTitle: "🏛️ 世界のコンソール・パソコン博物館",
+    vitrineDesc: "コンソールをクリックして公式写真と詳細を確認：",
     today: "今日",
     tomorrow: "明日",
     inDays: (d) => `${d}日後`,
@@ -653,11 +636,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d}日前`
   },
   de: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Spiele suchen (alle Jahre)...",
     all: "Alle",
     favorites: "❤️ Favoriten",
-    allGenres: "🎮 Alle Kategorien",
     noGamesSearch: "Keine Spiele für diese Suche gefunden.",
     noGamesFav: "Diesen Monat keine Favoriten vorhanden.",
     noGamesFilter: "Keine Releases für diesen Filter in diesem Monat.",
@@ -670,6 +652,9 @@ const TRANSLATIONS = {
     soundLabel: "Soundeffekte",
     soundOn: "🔊 Ton an",
     soundOff: "🔇 Ton aus",
+    crtLabel: "CRT-Scanlines-Effekt",
+    crtOn: "📺 CRT An",
+    crtOff: "🖥️ CRT Aus",
     langLabel: "Sprache",
     retroLabel: "🕰️ Zeitkapsel (Zeitreise)",
     close: "Schließen",
@@ -686,6 +671,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Spielzeit prüfen (HowLongToBeat)",
     summaryLabel: "Zusammenfassung",
     summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
+    vitrineTitle: "🏛️ Welt-Konsolen- und Computer-Museum",
+    vitrineDesc: "Klicke auf eine Konsole, um das offizielle Foto zu sehen:",
     today: "Heute",
     tomorrow: "Morgen",
     inDays: (d) => `In ${d} Tagen`,
@@ -693,11 +680,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Vor ${d} Tagen`
   },
   es: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Buscar cualquier juego (todos los años)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
-    allGenres: "🎮 Todas las categorías",
     noGamesSearch: "No se encontraron juegos para esta búsqueda.",
     noGamesFav: "No hay favoritos este mes.",
     noGamesFilter: "No hay lanzamientos para este filtro este mes.",
@@ -710,6 +696,9 @@ const TRANSLATIONS = {
     soundLabel: "Efectos de sonido",
     soundOn: "🔊 Sonido activado",
     soundOff: "🔇 Sonido desactivado",
+    crtLabel: "Efecto de líneas CRT",
+    crtOn: "📺 CRT Activado",
+    crtOff: "🖥️ CRT Desactivado",
     langLabel: "Idioma de la interfaz",
     retroLabel: "🕰️ Cápsula del tiempo (Viaje en el tiempo)",
     close: "Cerrar",
@@ -726,6 +715,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
     summaryLabel: "Resumen",
     summaryLoading: "Traduciendo resumen con IA… ⏳",
+    vitrineTitle: "🏛️ Museo Mundial de Consolas y Micros",
+    vitrineDesc: "Haz clic en cualquier consola para ver su foto oficial:",
     today: "Hoy",
     tomorrow: "Mañana",
     inDays: (d) => `En ${d} días`,
@@ -733,11 +724,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Hace ${d} días`
   },
   zh: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 搜索任意游戏（所有年份）...",
     all: "全部",
     favorites: "❤️ 收藏",
-    allGenres: "🎮 所有分类",
     noGamesSearch: "未找到相关游戏。",
     noGamesFav: "本月暂无收藏游戏。",
     noGamesFilter: "本月暂无符合该筛选条件的游戏。",
@@ -750,6 +740,9 @@ const TRANSLATIONS = {
     soundLabel: "音效设置",
     soundOn: "🔊 开启音效",
     soundOff: "🔇 关闭音效",
+    crtLabel: "CRT 显像管 scanlines 效果",
+    crtOn: "📺 CRT 已开启",
+    crtOff: "🖥️ CRT 已关闭",
     langLabel: "界面语言",
     retroLabel: "🕰️ 时间胶囊（穿梭回过去）",
     close: "关闭",
@@ -766,6 +759,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ 查看通关时长 (HowLongToBeat)",
     summaryLabel: "简介",
     summaryLoading: "AI 正在翻译简介… ⏳",
+    vitrineTitle: "🏛️ 世界主机与微型机博物馆",
+    vitrineDesc: "点击任意主机即可查看高清官方照片与详细资料：",
     today: "今天",
     tomorrow: "明天",
     inDays: (d) => `${d} 天后`,
@@ -773,11 +768,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d} 天前`
   },
   pt: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Pesquisar qualquer jogo (todos os anos)...",
     all: "Todos",
     favorites: "❤️ Favoritos",
-    allGenres: "🎮 Todas as categorias",
     noGamesSearch: "Nenhum jogo encontrado para esta busca.",
     noGamesFav: "Nenhum favorito este mês.",
     noGamesFilter: "Nenhum lançamento para este filtro este mês.",
@@ -790,6 +784,9 @@ const TRANSLATIONS = {
     soundLabel: "Efeitos sonoros",
     soundOn: "🔊 Som ligado",
     soundOff: "🔇 Som desligado",
+    crtLabel: "Efeito CRT Scanlines",
+    crtOn: "📺 CRT Ligado",
+    crtOff: "🖥️ CRT Desligado",
     langLabel: "Idioma da interface",
     retroLabel: "🕰️ Cápsula do Tempo (Viagem no tempo)",
     close: "Fechar",
@@ -806,6 +803,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Ver duração (HowLongToBeat)",
     summaryLabel: "Resumo",
     summaryLoading: "Traduzindo resumo com IA… ⏳",
+    vitrineTitle: "🏛️ Museu Mundial de Consoles e Micros",
+    vitrineDesc: "Clique em qualquer console para ver sua foto oficial:",
     today: "Hoje",
     tomorrow: "Amanhã",
     inDays: (d) => `Em ${d} dias`,
@@ -813,11 +812,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `Há ${d} dias`
   },
   ko: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 모든 게임 검색 (전체 연도)...",
     all: "전체",
     favorites: "❤️ 즐겨찾기",
-    allGenres: "🎮 모든 카테고리",
     noGamesSearch: "검색 결과가 없습니다.",
     noGamesFav: "이번 달 즐겨찾기한 게임이 없습니다.",
     noGamesFilter: "이번 달 해당 필터의 출시 게임이 없습니다.",
@@ -830,6 +828,9 @@ const TRANSLATIONS = {
     soundLabel: "효과음",
     soundOn: "🔊 사운드 켜기",
     soundOff: "🔇 사운드 끄기",
+    crtLabel: "CRT 스캔라인 효과",
+    crtOn: "📺 CRT 켜기",
+    crtOff: "🖥️ CRT 끄기",
     langLabel: "인터페이스 언어",
     retroLabel: "🕰️ 타임캡슐 (과거로 시간 여행)",
     close: "닫기",
@@ -846,6 +847,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ 플레이 시간 확인 (HowLongToBeat)",
     summaryLabel: "개요",
     summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
+    vitrineTitle: "🏛️ 세계 콘솔 및 마이크로컴퓨터 박물관",
+    vitrineDesc: "콘솔을 클릭하여 공식 실물 사진을 확인하세요:",
     today: "오늘",
     tomorrow: "내일",
     inDays: (d) => `${d}일 후`,
@@ -853,11 +856,10 @@ const TRANSLATIONS = {
     daysAgo: (d) => `${d}일 전`
   },
   it: {
-    subTitle: "Cartridge",
+    subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "🔍 Cerca qualsiasi gioco (tutti gli anni)...",
     all: "Tutti",
     favorites: "❤️ Preferiti",
-    allGenres: "🎮 Tutte le categorie",
     noGamesSearch: "Nessun gioco trovato.",
     noGamesFav: "Nessun preferito questo mese.",
     noGamesFilter: "Nessuna uscita per questo filtro questo mese.",
@@ -870,13 +872,16 @@ const TRANSLATIONS = {
     soundLabel: "Effetti sonori",
     soundOn: "🔊 Audio attivo",
     soundOff: "🔇 Audio disattivato",
+    crtLabel: "Effetto Scanlines CRT",
+    crtOn: "📺 CRT Attivo",
+    crtOff: "🖥️ CRT Disattivo",
     langLabel: "Lingua dell'interfaccia",
     retroLabel: "🕰️ Capsula del Tempo (Viaggio nel passato)",
     close: "Chiudi",
     shareTitle: "Condividi il mio mese",
     shareDesc: "Copia e condividi questo messaggio su Discord o WhatsApp:",
     noFavShare: "Nessun preferito per ora! Aggiungi cuori ❤️.",
-    shareFooter: "✨ Condiviso dalla mia app di giochi!",
+    shareFooter: "✨ Condiviso dalla mia app de giochi!",
     copyBtn: "📋 Copia testo",
     copiedBtn: "✅ Copiato!",
     calendarBtn: "Aggiungi ai preferiti",
@@ -906,11 +911,57 @@ const LANG_NAMES = {
   it: "🇮🇹 Italiano"
 };
 
+const WORLD_CONSOLES = [
+  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png", desc: "La console next-gen de Sony équipée d'un SSD ultra-rapide et de la manette DualSense à retour haptique." },
+  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/PlayStation_4_and_Controller.png", desc: "Le mastodonte de la 8e génération, roi des blockbusters narratifs et des ventes records." },
+  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111", img: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Sony-PlayStation-3-2001-C-Right.png", desc: "Propulsée par l'architecture révolutionnaire du processeur Cell et pionnière du jeu en HD avec Blu-ray." },
+  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30", img: "https://upload.wikimedia.org/wikipedia/commons/1/1b/PS2-Back.png", desc: "La console la plus vendue de tous les temps (plus de 155 millions d'exemplaires) et reine de la rétrocompatibilité." },
+  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640", img: "https://upload.wikimedia.org/wikipedia/commons/9/95/PSX-Console-wController.png", desc: "Le coup de maître de Sony qui a démocratisé le disque compact et la 3D polygonale." },
+  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a", img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/PlayStation_Vita_Wi-Fi_model.png", desc: "Console portable surpuissante dotée d'un superbe écran OLED et de deux joysticks analogiques." },
+  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/PSP-1000.png", desc: "La première grande concurrente nomade de Nintendo utilisant le format UMD." },
+
+  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Nintendo_Switch_console_and_Joy-Cons.png", desc: "Le concept révolutionnaire combinant console de salon et portable avec des Joy-Con détachables." },
+  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wii_U_Console_and_Gamepad.png", desc: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo." },
+  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#666666", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Wii_Console.png", desc: "Le phénomène mondial du jeu de mouvement et de la télécommande gyroscopique." },
+  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/GameCube-Set.png", desc: "La cube violette iconique aux mini-disques optiques et à la manette légendaire." },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Nintendo-64-Console-Set.png", desc: "Le pionnier de la 3D en relief avec stick analogique et multijoueur local légendaire." },
+  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5", img: "https://upload.wikimedia.org/wikipedia/commons/3/37/SNES-Mod-US.png", desc: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle." },
+  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521", img: "https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.png", desc: "Le sauveur de l'industrie vidéoludique après le krach de 1983." },
+  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e", img: "https://upload.wikimedia.org/wikipedia/commons/6/67/Nintendo_3DS_Cosmo_Black.png", desc: "La portable stéréoscopique affichant de la 3D sans lunettes." },
+  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Nintendo_DS_Rumble_Pak.png", desc: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade." },
+  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5", img: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Game_Boy_Advance_purple.png", desc: "La Super NES miniature dans la poche." },
+  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0", img: "https://upload.wikimedia.org/wikipedia/commons/1/19/Game_Boy_Color.png", desc: "L'arrivée de la couleur sur la console portable la plus célèbre de la planète." },
+  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f", img: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Game-Boy-Na.png", desc: "Le monolithe gris indestructible qui a conquis le monde avec Tetris." },
+
+  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600", img: "https://upload.wikimedia.org/wikipedia/commons/1/10/Sega-Dreamcast-Set.png", desc: "La console avant-gardiste de SEGA avec modem internet intégré et arcade à la maison." },
+  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155", img: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Sega-Saturn-Console-Set.png", desc: "La bête de course 2D et pionnière de la 3D complexe signée SEGA." },
+  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706", img: "https://upload.wikimedia.org/wikipedia/commons/3/38/Sega-Mega-Drive-1-Console-Set.png", desc: "L'ère du 'Blast Processing' et de Sonic the Hedgehog." },
+  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626", img: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Sega-Master-System-Set.png", desc: "La rivale historique de la NES avec des graphismes chatoyants." },
+  { name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Sega-Game-Gear-V1.png", desc: "La console portable couleur rétroéclairée de SEGA." },
+
+  { name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Xbox_Series_X_and_Controller.png", desc: "Puissance brute, Xbox Game Pass et rétrocompatibilité totale chez Microsoft." },
+  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Xbox_One_Console.png", desc: "Le centre de divertissement multimédia et vidéoludique du salon." },
+  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00", img: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox-360-Console-Set.png", desc: "La reine de la génération HD, du Xbox Live révolutionnaire et de l'ère Gears of War / Halo." },
+  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10", img: "https://upload.wikimedia.org/wikipedia/commons/4/43/Xbox-Console-Set.png", desc: "L'arrivée fracassante de Microsoft dans le monde des consoles avec le monstre noir et vert." },
+
+  { name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#78716c", img: "https://upload.wikimedia.org/wikipedia/commons/2/22/Atari-Jaguar-Console-Set.png", desc: "La première console 64-bits autoproclamée de l'histoire." },
+  { name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#ea580c", img: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Atari-Lynx-1.png", desc: "La première console portable couleur au format paysager." },
+  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309", img: "https://upload.wikimedia.org/wikipedia/commons/1/18/Atari-2600-Wood-4Sw-Set.png", desc: "La pionnière absolue qui a popularisé le système de cartouches interchangeables." },
+
+  { name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#134e4a", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Commodore_64_Computer_and_peripherals.png", desc: "L'ordinateur personnel le plus vendu de tous les temps au Livre Guinness." },
+  { name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#b91c1c", img: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Neo-Geo-AES-Console-Set.png", desc: "La Rolls-Royce de l'arcade à la maison avec des cartouches gigantesques et une 2D surpuissante." },
+  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569", img: "https://upload.wikimedia.org/wikipedia/commons/7/77/PC-Engine-Console.png", desc: "La console minuscule au format HuCard capable de claquer des graphismes colorés fulgurants." }
+];
+
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
 
 let viewMode = "list";
 try { viewMode = localStorage.getItem("viewMode") || "list"; } catch (e) {}
+
+let crtEnabled = false;
+try { crtEnabled = localStorage.getItem("crt") === "true"; } catch (e) {}
+if (crtEnabled) document.body.classList.add("crt-enabled");
 
 function t(key, param) {
   const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
@@ -931,47 +982,112 @@ function toggleFavorite(id) {
   render();
 }
 
-/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX (BRUIT BLANC FILTRÉ) --- */
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-function playThemeSound(themeKey) {
+/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX --- */
+function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
 
-    const bufferSize = ac.sampleRate * 0.3; // 300ms
-    const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+    if (th === "gameboy") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.08);
+      osc.frequency.setValueAtTime(783.99, now + 0.16);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (th === "nes") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.setValueAtTime(440, now + 0.07);
+      osc.frequency.setValueAtTime(554, now + 0.14);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now); osc.stop(now + 0.22);
+    } else if (th === "snes") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.18);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (th === "ps1") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(261.63, now);
+      osc.frequency.setValueAtTime(392.00, now + 0.1);
+      osc.frequency.setValueAtTime(523.25, now + 0.2);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now); osc.stop(now + 0.35);
+    } else if (th === "n64") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now); osc.stop(now + 0.22);
+    } else if (th === "arcade") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(900, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (th === "atari") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.setValueAtTime(250, now + 0.08);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (th === "dos") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (th === "megadrive") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.setValueAtTime(440, now + 0.1);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
     }
-
-    const noise = ac.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = ac.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(200, now);
-    filter.frequency.exponentialRampToValueAtTime(3500, now + 0.15);
-    filter.frequency.exponentialRampToValueAtTime(800, now + 0.3);
-    filter.Q.value = 8;
-
-    const gain = ac.createGain();
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ac.destination);
-
-    noise.start(now);
-    noise.stop(now + 0.3);
   } catch (e) {}
 }
 
-/* --- BADGES CONSOLES COMPLETS --- */
 function getPlatformBadgeClass(plat) {
   const p = plat.toLowerCase();
   if (p.includes("ps5")) return "badge-ps5";
@@ -1003,15 +1119,12 @@ function getPlatformBadgeClass(plat) {
 function renderPlatforms(releases) {
   if (!releases) return '';
   const platforms = [...new Set(releases.map(r => r.platform))];
-  return platforms.map(plat => {
-    const badgeClass = getPlatformBadgeClass(plat);
-    return `<span class="platform-badge ${badgeClass}">${plat}</span>`;
-  }).join('');
+  return platforms.map(plat => `<span class="platform-badge ${getPlatformBadgeClass(plat)}">${plat}</span>`).join('');
 }
 
 function renderHypeBadge(game) {
   if (!game.hypes || game.hypes < 5) return '';
-  return `<span class="score-badge" style="background: rgba(255, 107, 53, 0.15); color: var(--acc);">🔥 ${game.hypes}</span>`;
+  return `<span class="hype-pro-badge">⚡ HYPE ${game.hypes}</span>`;
 }
 
 function renderTimeBadge(dateStr) {
@@ -1031,14 +1144,13 @@ function renderScoreBadge(game) {
   if (!scoreRaw) return '';
   const score = Math.round(scoreRaw);
   let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
-  return `<span class="score-badge ${scoreClass}">★ ${score}</span>`;
+  return `<span class="score-badge ${scoreClass}">META ★ ${score}</span>`;
 }
 
 const FILTERS = ["Tous", "❤️ Favoris", "PC", "PS5", "Xbox", "Switch 2"];
 const cache = {};
 let ym = new Date().toISOString().slice(0, 7);
 let filter = "Tous";
-let currentGenreFilter = "all";
 let searchQuery = "";
 let searchResults = null;
 
@@ -1055,6 +1167,8 @@ const fmtFull = (d) => utc(d).toLocaleDateString(currentLang, { day: "numeric", 
 
 function shiftMonth(delta) {
   playThemeSound(theme);
+  document.body.classList.add("trigger-crt-flash");
+  setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
   const [y, m] = ym.split("-").map(Number);
   ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
   load();
@@ -1063,14 +1177,11 @@ function shiftMonth(delta) {
 function updateStaticTexts() {
   $("#sub-title").textContent = t('subTitle');
   $("#search").placeholder = t('searchPlaceholder');
-  
   const viewBtn = $("#viewModeBtn");
   if (viewMode === "list") {
     viewBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`;
-    viewBtn.setAttribute("aria-label", "Passer en vue grille");
   } else {
     viewBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
-    viewBtn.setAttribute("aria-label", "Passer en vue liste");
   }
 }
 
@@ -1079,39 +1190,52 @@ function hideSplash() {
   if (splash) splash.classList.add("hidden");
 }
 
+function renderShimmerLoader() {
+  const container = el("div", "shimmer-container");
+  for (let i = 0; i < 5; i++) {
+    const row = el("div", "shimmer-row");
+    const cov = el("div", "shimmer-cov");
+    const lines = el("div", "shimmer-lines");
+    lines.append(el("div", "shimmer-line"), el("div", "shimmer-line short"));
+    row.append(cov, lines);
+    container.append(row);
+  }
+  $("#list").replaceChildren(container);
+}
+
 async function load() {
   updateStaticTexts();
-  $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  if (!cache[ym]) {
-    $("#list").replaceChildren(el("p", "msg", t('loading')));
-    try {
+  const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  $("#title").textContent = monthTitle;
+  const editionBadge = $("#editionDateBadge");
+  if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
+
+  renderShimmerLoader();
+  const startTime = Date.now();
+  try {
+    if (!cache[ym]) {
       const res = await fetch(`${API}/?month=${ym}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur du serveur");
+      if (!res.ok) throw new Error(data.error || "Erreur");
       cache[ym] = data;
-    } catch (e) {
-      $("#list").replaceChildren(el("p", "msg", t('netError')));
-      hideSplash();
-      return;
     }
+  } catch (e) {
+    setTimeout(() => { $("#list").replaceChildren(el("p", "msg", t('netError'))); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
+    return;
   }
-  render();
-  setTimeout(hideSplash, 2000);
+  setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
 async function searchGlobal(query) {
-  if (!query || query.length < 2) {
-    searchResults = null;
-    render();
-    return;
-  }
-  $("#list").replaceChildren(el("p", "msg", t('searchDb')));
+  if (!query || query.length < 2) { searchResults = null; render(); return; }
+  renderShimmerLoader();
+  const startTime = Date.now();
   try {
     const res = await fetch(`${API}/?search=${encodeURIComponent(query)}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erreur");
     searchResults = data;
-    render();
+    setTimeout(() => render(), Math.max(0, 600 - (Date.now() - startTime)));
   } catch (e) {
     $("#list").replaceChildren(el("p", "msg", t('searchError')));
   }
@@ -1121,17 +1245,6 @@ function itemsFor(games) {
   const out = [];
   for (const g of games) {
     if (filter === "❤️ Favoris" && !isFavorite(g.id)) continue;
-    
-    if (currentGenreFilter !== "all") {
-      const gName = (g.name || "").toLowerCase();
-      const gSummary = (g.summary || "").toLowerCase();
-      const gGenres = Array.isArray(g.genres) ? g.genres.join(" ").toLowerCase() : "";
-      const searchCat = currentGenreFilter.toLowerCase();
-      
-      const match = gName.includes(searchCat) || gSummary.includes(searchCat) || gGenres.includes(searchCat);
-      if (!match) continue;
-    }
-
     const rel = (filter === "Tous" || filter === "❤️ Favoris") ? g.releases : g.releases.filter((r) => r.platform === filter);
     if (!rel.length) continue;
     out.push({ g, rel, date: rel[0].date });
@@ -1151,36 +1264,27 @@ function render() {
   }
 
   const frag = document.createDocumentFragment();
-
   if (viewMode === "grid") {
     const gridContainer = el("div", "games-grid");
     for (const it of items) {
-      const card = el("div", "grid-card");
-      card.addEventListener("click", () => {
-        playThemeSound(theme);
-        openSheet(it);
-      });
+      const isHyped = it.g.hypes && it.g.hypes >= 15;
+      const card = el("div", "grid-card" + (isHyped ? " is-hyped" : ""));
+      card.addEventListener("click", () => { playThemeSound(theme); openSheet(it); });
 
       const covContainer = el("div", "grid-cov-container");
-      const img = el("img", "grid-cov");
-      img.src = it.g.cover; img.alt = ""; img.loading = "lazy";
+      const img = el("img", "grid-cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy";
 
       const favBtn = el("button", "grid-fav-btn" + (isFavorite(it.g.id) ? " fav-active" : ""));
       favBtn.innerHTML = isFavorite(it.g.id)
         ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="#FF4757" stroke="#FF4757" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
         : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-      favBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleFavorite(it.g.id);
-      });
+      favBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFavorite(it.g.id); });
 
       covContainer.append(img, favBtn);
-
       const info = el("div", "grid-info");
       const title = el("h3", "grid-title", it.g.name);
       const meta = el("div", "grid-meta");
       meta.innerHTML = renderPlatforms(it.rel) + renderTimeBadge(it.date);
-
       info.append(title, meta);
       card.append(covContainer, info);
       gridContainer.append(card);
@@ -1193,31 +1297,28 @@ function render() {
   let last = "";
   for (const it of items) {
     const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
-    if (headerText !== last) {
-      frag.append(el("p", "day", headerText));
-      last = headerText;
-    }
+    if (headerText !== last) { frag.append(el("p", "day", headerText)); last = headerText; }
     frag.append(row(it));
   }
   list.replaceChildren(frag);
 }
 
 function row(it) {
-  const r = el("div", "row");
+  const isHyped = it.g.hypes && it.g.hypes >= 15;
+  const r = el("div", "row" + (isHyped ? " is-hyped" : ""));
   const open = el("button", "open");
-  const img = el("img", "cov");
-  img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
-  const tDiv = el("div", "t");
   
+  const covContainer = el("div", "cov-container");
+  const img = el("img", "cov"); img.src = it.g.cover; img.alt = ""; img.loading = "lazy"; img.width = 56; img.height = 76;
+  covContainer.append(img);
+
+  const tDiv = el("div", "t");
   const platformSpan = el("span", "m");
   platformSpan.innerHTML = renderPlatforms(it.rel) + renderHypeBadge(it.g) + renderScoreBadge(it.g) + renderTimeBadge(it.date);
   tDiv.append(el("b", "", it.g.name), platformSpan);
 
-  open.append(img, tDiv);
-  open.addEventListener("click", () => {
-    playThemeSound(theme);
-    openSheet(it);
-  });
+  open.append(covContainer, tDiv);
+  open.addEventListener("click", () => { playThemeSound(theme); openSheet(it); });
 
   const actions = el("div", "actions");
   const favBtn = el("button", "btn-icon" + (isFavorite(it.g.id) ? " fav-active" : ""));
@@ -1228,11 +1329,7 @@ function row(it) {
 
   const add = el("button", "btn-icon add");
   add.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
-  add.addEventListener("click", (e) => { 
-    e.stopPropagation(); 
-    playThemeSound(theme);
-    addToCalendar(it); 
-  });
+  add.addEventListener("click", (e) => { e.stopPropagation(); playThemeSound(theme); addToCalendar(it); });
 
   actions.append(favBtn, add);
   r.append(open, actions);
@@ -1247,11 +1344,90 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
+/* --- MUSÉE DES CONSOLES --- */
+function openConsoleVitrine() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.replaceChildren();
+
+  p.append(el("h2", "", t('vitrineTitle')));
+  p.append(el("p", "m", t('vitrineDesc')));
+
+  const grid = el("div", "vitrine-grid");
+  for (const consoleItem of WORLD_CONSOLES) {
+    const card = el("div", "console-vitrine-card");
+    const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+    
+    const photoBox = el("div", "console-photo-container");
+    const img = el("img", "console-photo");
+    img.src = consoleItem.img;
+    img.alt = consoleItem.name;
+    img.loading = "lazy";
+    img.onerror = function() {
+      this.style.display = 'none';
+      if (!photoBox.querySelector('.fallback-txt')) {
+        const fallback = el("span", "fallback-txt", consoleItem.name);
+        fallback.style.fontSize = "11px";
+        fallback.style.fontWeight = "800";
+        fallback.style.color = "var(--txt)";
+        photoBox.append(fallback);
+      }
+    };
+    photoBox.append(img);
+
+    const infoGroup = el("div", "console-info-group");
+    const name = el("b", "", consoleItem.name);
+    const year = el("span", "", consoleItem.year);
+    infoGroup.append(name, year);
+
+    card.append(brandTag, photoBox, infoGroup);
+    card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
+    grid.append(card);
+  }
+  p.append(grid);
+
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(closeBtn);
+
+  $("#sheet").classList.add("on");
+}
+
+function openConsoleDetail(consoleItem) {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.replaceChildren();
+
+  const banner = el("div", "console-mockup-banner");
+  banner.style.background = consoleItem.bg;
+
+  const bannerImg = el("img", "console-banner-photo");
+  bannerImg.src = consoleItem.img;
+  bannerImg.alt = consoleItem.name;
+  bannerImg.onerror = function() { this.style.display = 'none'; };
+
+  const titleBadge = el("div", "console-title-badge", consoleItem.name);
+  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
+  banner.append(bannerImg, titleBadge, subInfo);
+
+  const descTitle = el("h2", "", "Histoire & Hardware");
+  const descText = el("p", "", consoleItem.desc);
+
+  const backBtn = el("button", "cta", "← Retour au Musée");
+  backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
+
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+
+  p.append(banner, descTitle, descText, backBtn, closeBtn);
+}
+
+$("#vitrineBtn").addEventListener("click", openConsoleVitrine);
+
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
   const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  
   const allGames = cache[ym] || [];
   const favGames = allGames.filter(g => isFavorite(g.id));
 
@@ -1267,8 +1443,7 @@ function openShareModal() {
   shareText += "\n" + t('shareFooter');
 
   const textarea = el("textarea", "share-textarea");
-  textarea.value = shareText;
-  textarea.readOnly = true;
+  textarea.value = shareText; textarea.readOnly = true;
 
   const copyBtn = el("button", "cta", t('copyBtn'));
   copyBtn.addEventListener("click", () => {
@@ -1280,10 +1455,7 @@ function openShareModal() {
   });
 
   const close = el("button", "close", t('close'));
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
 
   p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
   $("#sheet").classList.add("on");
@@ -1294,16 +1466,10 @@ async function openSheet(it) {
   const p = $("#panel");
   const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
   const close = el("button", "close", t('close')); 
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
   
   const cta = el("button", "cta", t('calendarBtn'));
-  cta.addEventListener("click", () => {
-    playThemeSound(theme);
-    addToCalendar(it);
-  });
+  cta.addEventListener("click", () => { playThemeSound(theme); addToCalendar(it); });
 
   const favCta = el("button", "cta-sec");
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
@@ -1317,34 +1483,29 @@ async function openSheet(it) {
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
   trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
-  trailerBtn.style.textDecoration = "none"; trailerBtn.style.marginTop = "8px";
-  trailerBtn.innerHTML = t('trailerBtn');
+  trailerBtn.style.marginTop = "8px"; trailerBtn.innerHTML = t('trailerBtn');
   trailerBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(trailerBtn);
 
   const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
   const hltbBtn = el("a", "cta-sec");
   hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
-  hltbBtn.style.textDecoration = "none"; hltbBtn.style.marginTop = "8px";
-  hltbBtn.innerHTML = t('hltbBtn');
+  hltbBtn.style.marginTop = "8px"; hltbBtn.innerHTML = t('hltbBtn');
   hltbBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(hltbBtn);
 
   if (it.g.summary) {
     const label = el("p", "m", t('summaryLabel')); label.style.marginTop = "16px";
-    const summaryEl = el("p", "", t('summaryLoading'));
-    summaryEl.style.opacity = "0.7";
+    const summaryEl = el("p", "", t('summaryLoading')); summaryEl.style.opacity = "0.7";
     p.append(label, summaryEl);
     $("#sheet").classList.add("on");
 
     try {
       const res = await fetch(`${API}/?translate=${it.g.id}&lang=${currentLang}`);
       const data = await res.json();
-      summaryEl.style.opacity = "1";
-      summaryEl.textContent = data.summary || it.g.summary;
+      summaryEl.style.opacity = "1"; summaryEl.textContent = data.summary || it.g.summary;
     } catch (e) {
-      summaryEl.style.opacity = "1";
-      summaryEl.textContent = it.g.summary;
+      summaryEl.style.opacity = "1"; summaryEl.textContent = it.g.summary;
     }
   } else {
     $("#sheet").classList.add("on");
@@ -1374,9 +1535,7 @@ function addToCalendar(it) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = it.g.name.replace(/[^\w]+/g, "-").slice(0, 40) + ".ics";
-  document.body.append(a);
-  a.click();
-  a.remove();
+  document.body.append(a); a.click(); a.remove();
 }
 
 const THEMES = {
@@ -1414,7 +1573,6 @@ function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
   p.replaceChildren(); 
-
   p.append(el("h2", "", t('settingsTitle')));
 
   p.append(el("p", "m", t('themeLabel')));
@@ -1442,17 +1600,26 @@ function openSettings() {
   });
   p.append(soundBtn);
 
+  p.append(el("p", "m", t('crtLabel')));
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.addEventListener("click", () => {
+    crtEnabled = !crtEnabled;
+    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
+    document.body.classList.toggle("crt-enabled", crtEnabled);
+    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
+    playThemeSound(theme);
+  });
+  p.append(crtBtn);
+
   p.append(el("p", "m", t('langLabel')));
   const langGrid = el("div", "lang-grid");
   Object.entries(LANG_NAMES).forEach(([code, label]) => {
     const b = el("button", "chip", label);
     if (code === currentLang) b.setAttribute("aria-pressed", "true");
     b.addEventListener("click", () => {
-      playThemeSound(theme);
-      currentLang = code;
+      playThemeSound(theme); currentLang = code;
       try { localStorage.setItem("lang", currentLang); } catch (e) {}
-      load();          
-      openSettings();  
+      load(); openSettings();  
     });
     langGrid.append(b);
   });
@@ -1460,30 +1627,20 @@ function openSettings() {
 
   p.append(el("p", "m", t('retroLabel')));
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
-  [
-    [-1, "Année dernière"],
-    [-5, "Il y a 5 ans"],
-    [-10, "Il y a 10 ans"],
-    [-20, "Il y a 20 ans"]
-  ].forEach(([years, label]) => {
+  [[-1, "Année dernière"], [-5, "Il y a 5 ans"], [-10, "Il y a 10 ans"], [-20, "Il y a 20 ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
     b.addEventListener("click", () => {
       playThemeSound(theme);
       const [y, m] = ym.split("-").map(Number);
-      const targetYear = y + years;
-      ym = `${targetYear}-${String(m).padStart(2, "0")}`;
-      load();
-      closeSheet();
+      ym = `${y + years}-${String(m).padStart(2, "0")}`;
+      load(); closeSheet();
     });
     retroGroup.append(b);
   });
   p.append(retroGroup);
 
   const close = el("button", "close", t('close')); 
-  close.addEventListener("click", () => {
-    playThemeSound(theme);
-    closeSheet();
-  });
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
   p.append(close);
 
   $("#sheet").classList.add("on");
@@ -1491,62 +1648,35 @@ function openSettings() {
 $("#settings").addEventListener("click", openSettings);
 
 const chips = $("#chips");
-
 function renderChipsBar() {
   chips.replaceChildren();
-  
   for (const f of FILTERS) {
     let label = f;
     if (f === "Tous") label = t('all');
     if (f === "❤️ Favoris") label = t('favorites');
     const b = el("button", "chip", label);
     b.setAttribute("aria-pressed", String(f === filter));
-    b.addEventListener("click", () => {
-      playThemeSound(theme);
-      filter = f;
-      renderChipsBar();
-      render();
-    });
+    b.addEventListener("click", () => { playThemeSound(theme); filter = f; renderChipsBar(); render(); });
     chips.append(b);
   }
-
-  const select = document.createElement("select");
-  select.id = "genreFilter";
-  select.innerHTML = `
-    <option value="all">${t('allGenres')}</option>
-    <option value="FPS" ${currentGenreFilter === 'FPS' ? 'selected' : ''}>🎯 FPS</option>
-    <option value="Horror" ${currentGenreFilter === 'Horror' ? 'selected' : ''}>😱 Horreur</option>
-    <option value="Indie" ${currentGenreFilter === 'Indie' ? 'selected' : ''}>💡 Indé</option>
-    <option value="Adventure" ${currentGenreFilter === 'Adventure' ? 'selected' : ''}>🗺️ Aventure</option>
-    <option value="Action" ${currentGenreFilter === 'Action' ? 'selected' : ''}>⚔️ Action</option>
-    <option value="Sport" ${currentGenreFilter === 'Sport' ? 'selected' : ''}>⚽ Sport</option>
-    <option value="Strategy" ${currentGenreFilter === 'Strategy' ? 'selected' : ''}>♟️ Stratégie</option>
-    <option value="Simulator" ${currentGenreFilter === 'Simulator' ? 'selected' : ''}>✈️ Simulation</option>
-    <option value="Racing" ${currentGenreFilter === 'Racing' ? 'selected' : ''}>🏎️ Course</option>
-    <option value="RPG" ${currentGenreFilter === 'RPG' ? 'selected' : ''}>🛡️ RPG</option>
-  `;
-  select.addEventListener("change", (e) => {
-    playThemeSound(theme);
-    currentGenreFilter = e.target.value;
-    render();
-  });
-  chips.append(select);
 }
-
 renderChipsBar();
+
+const particlesContainer = $("#particles");
+for (let i = 0; i < 20; i++) {
+  const p = el("div", "pixel-particle");
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.animationDuration = (8 + Math.random() * 6) + "s";
+  p.style.animationDelay = (Math.random() * 5) + "s";
+  particlesContainer.append(p);
+}
 
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
   clearTimeout(searchTimeout);
-  if (!searchQuery) {
-    searchResults = null;
-    render();
-    return;
-  }
-  searchTimeout = setTimeout(() => {
-    searchGlobal(searchQuery);
-  }, 400);
+  if (!searchQuery) { searchResults = null; render(); return; }
+  searchTimeout = setTimeout(() => searchGlobal(searchQuery), 400);
 });
 
 $("#prev").addEventListener("click", () => shiftMonth(-1));
