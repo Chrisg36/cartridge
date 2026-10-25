@@ -2066,9 +2066,19 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // 🏷️ Ajout de la catégorie / genre du jeu
-  const categoryText = it.g.category || it.g.genre || "Jeu Vidéo / Action";
-  const categoryBadge = el("p", "m", `🏷️ Catégorie : ${categoryText}`);
+  // 🏷️ Récupération intelligente et diversifiée des genres / styles (FPS, RPG, Course, Horreur, Indé...)
+  let genresRaw = it.g.genres || it.g.genre || it.g.category;
+  let categoryText = "Jeu Vidéo";
+  if (Array.isArray(genresRaw)) {
+    categoryText = genresRaw.map(g => typeof g === 'object' ? (g.name || '') : g).filter(Boolean).join(" • ");
+  } else if (typeof genresRaw === 'string' && genresRaw.trim() !== '') {
+    categoryText = genresRaw;
+  }
+  if (!categoryText || categoryText === "Jeu Vidéo") {
+    categoryText = "Action / Aventure";
+  }
+
+  const categoryBadge = el("p", "m", `🏷️ Styles : ${categoryText}`);
   categoryBadge.style.fontWeight = "700";
   categoryBadge.style.color = "var(--acc)";
   categoryBadge.style.marginTop = "4px";
