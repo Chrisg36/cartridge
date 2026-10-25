@@ -985,14 +985,36 @@ function toggleFavorite(id) {
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
-/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX --- */
+/* --- SYSTÈMES DE JINGLES RÉTRO ORIGINAUX (AVEC GAMECUBE ET DREAMCAST DÉDIÉS) --- */
 function playThemeSound(th) {
   if (!soundEnabled) return;
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
 
-    if (th === "gameboy") {
+    if (th === "gamecube") {
+      // Jingle GameCube : Arpège aigu et rebondissant (style séquenceur 16-bits / mini-disque)
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, now);       // Do5
+      osc.frequency.setValueAtTime(659.25, now + 0.06);  // Mi5
+      osc.frequency.setValueAtTime(783.99, now + 0.12);  // Sol5
+      osc.frequency.setValueAtTime(1046.50, now + 0.18); // Do6
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if (th === "dreamcast") {
+      // Jingle Dreamcast : Son de démarrage arcade / FM synth un peu ample et futuriste
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.22);
+      gain.gain.setValueAtTime(0.07, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.start(now); osc.stop(now + 0.28);
+    } else if (th === "gameboy") {
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
       osc.type = "square";
