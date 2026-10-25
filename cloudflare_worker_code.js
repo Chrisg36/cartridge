@@ -67,7 +67,7 @@ export default {
 
     if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
 
-    const cacheKey = new Request(url.origin + "/v17" + url.search);
+    const cacheKey = new Request(url.origin + "/v18" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
@@ -75,12 +75,9 @@ export default {
       let queryBody = "";
 
       if (searchQuery) {
-        // On isole les mots clés principaux pour interroger l'API avec souplesse
-        const cleanQuery = searchQuery.toLowerCase().replace(/\b(the|a|an|of)\b/g, "").trim();
-        const mainTerm = cleanQuery.split(" ").pop() || searchQuery;
-
+        // Recherche globale exacte avec le terme complet saisi par l'utilisateur
         queryBody = `
-          search "${mainTerm}";
+          search "${searchQuery}";
           fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
                  release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
           limit 40;
@@ -105,16 +102,25 @@ export default {
       for (const g of (raw || [])) {
         const byPlatform = {};
         for (const r of (g.release_dates || [])) {
-          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
-          const rDate = r.date ? iso(r.date) : "2002-12-13";
-          if (!byPlatform[platName]) {
+          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform];
+          if (!platName) continue;
+          const rDate = r.date ? iso(r.date) : null;
+          if (!byPlatform[platName] && rDate) {
             byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
           }
         }
 
         let releases = Object.values(byPlatform);
         if (!releases.length) {
-          releases = [{ platform: "GameCube", date: "2002-12-13", human: "", exact: false }];
+          for (const r of (g.release_dates || [])) {
+            const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || "Rétro";
+            const rDate = r.date ? iso(r.date) : "2000-01-01";
+            byPlatform[platName] = { platformName: platName, date: rDate, human: r.human || "" };
+          }
+          releases = Object.values(byPlatform);
+        }
+        if (!releases.length) {
+          releases = [{ platform: "Nintendo", date: "2002-12-13", human: "", exact: false }];
         }
 
         games.push({
