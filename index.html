@@ -648,6 +648,54 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
+  /* --- VITRINE DES CONSOLES (MUSEUM STYLE) --- */
+  .vitrine-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+  }
+  @media(min-width: 500px) {
+    .vitrine-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .console-vitrine-card {
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .console-vitrine-card b {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+  .console-vitrine-card span {
+    font-size: 11px;
+    color: var(--mut);
+    font-weight: 600;
+  }
+  .console-badge-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 12px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
   .share-textarea {
     width: 100%;
     height: 140px;
@@ -698,7 +746,6 @@
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
 
-  /* --- NOUVEAU BADGE DE HYPE PRO (Style Éclair / Énergie) --- */
   .hype-pro-badge {
     display: inline-flex;
     align-items: center;
@@ -915,6 +962,10 @@
     <div class="header-top">
       <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
       <div class="nav">
+        <!-- Bouton de la Vitrine des Consoles -->
+        <button class="chip" id="vitrineBtn" aria-label="Vitrine des Consoles" title="Vitrine des Consoles">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4"></path><path d="M8 10v4"></path><circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle></svg>
+        </button>
         <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
         <button class="chip" id="shareBtn" aria-label="Partager mon mois">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
@@ -987,6 +1038,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
+    vitrineTitle: "🏛️ Vitrine Mondiale des Consoles",
+    vitrineDesc: "Découvrez toutes les consoles et plateformes de légende sorties à travers l'histoire du jeu vidéo :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -1029,6 +1082,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Check HowLongToBeat",
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
+    vitrineTitle: "🏛️ World Console Showcase",
+    vitrineDesc: "Explore all legendary consoles and platforms throughout gaming history:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
@@ -1071,6 +1126,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ クリア時間をチェック (HowLongToBeat)",
     summaryLabel: "概要",
     summaryLoading: "AIで概要を翻訳中… ⏳",
+    vitrineTitle: "🏛️ 世界のコンソール博物館",
+    vitrineDesc: "ゲームの歴史に名を残すすべてのレトロ・最新コンソール一覧：",
     today: "今日",
     tomorrow: "明日",
     inDays: (d) => `${d}日後`,
@@ -1113,6 +1170,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Spielzeit prüfen (HowLongToBeat)",
     summaryLabel: "Zusammenfassung",
     summaryLoading: "Übersetzung der Zusammenfassung durch KI… ⏳",
+    vitrineTitle: "🏛️ Welt-Konsolen-Museum",
+    vitrineDesc: "Entdecke alle legendären Konsolen und Plattformen der Videospielgeschichte:",
     today: "Heute",
     tomorrow: "Morgen",
     inDays: (d) => `In ${d} Tagen`,
@@ -1155,6 +1214,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
     summaryLabel: "Resumen",
     summaryLoading: "Traduciendo resumen con IA… ⏳",
+    vitrineTitle: "🏛️ Museo Mundial de Consolas",
+    vitrineDesc: "Explora todas las consolas legendarias y plataformas de la historia:",
     today: "Hoy",
     tomorrow: "Mañana",
     inDays: (d) => `En ${d} días`,
@@ -1197,6 +1258,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ 查看通关时长 (HowLongToBeat)",
     summaryLabel: "简介",
     summaryLoading: "AI 正在翻译简介… ⏳",
+    vitrineTitle: "🏛️ 世界主机博物馆",
+    vitrineDesc: "探索电子游戏历史上所有的传奇主机与平台：",
     today: "今天",
     tomorrow: "明天",
     inDays: (d) => `${d} 天后`,
@@ -1239,6 +1302,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Ver duração (HowLongToBeat)",
     summaryLabel: "Resumo",
     summaryLoading: "Traduzindo resumo com IA… ⏳",
+    vitrineTitle: "🏛️ Museu Mundial de Consoles",
+    vitrineDesc: "Explore todos os consoles lendários e plataformas da história dos videogames:",
     today: "Hoje",
     tomorrow: "Amanhã",
     inDays: (d) => `Em ${d} dias`,
@@ -1281,6 +1346,8 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ 플레이 시간 확인 (HowLongToBeat)",
     summaryLabel: "개요",
     summaryLoading: "AI가 개요를 번역 중입니다… ⏳",
+    vitrineTitle: "🏛️ 세계 콘솔 박물관",
+    vitrineDesc: "비디오 게임 역사 속 모든 전설적인 콘솔과 플랫폼을 만나보세요:",
     today: "오늘",
     tomorrow: "내일",
     inDays: (d) => `${d}일 후`,
@@ -1342,6 +1409,41 @@ const LANG_NAMES = {
   ko: "🇰🇷 한국어",
   it: "🇮🇹 Italiano"
 };
+
+/* Liste complète des consoles de l'histoire du jeu vidéo pour la Vitrine */
+const WORLD_CONSOLES = [
+  { name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087" },
+  { name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791" },
+  { name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#111111" },
+  { name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#000f30" },
+  { name: "PlayStation", brand: "Sony", year: "1994", bg: "#2f3640" },
+  { name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012" },
+  { name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff" },
+  { name: "Wii", brand: "Nintendo", year: "2006", bg: "#888888" },
+  { name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed" },
+  { name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201" },
+  { name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#6b5cd5" },
+  { name: "NES", brand: "Nintendo", year: "1983", bg: "#e52521" },
+  { name: "Xbox Series X/S", brand: "Microsoft", year: "2020", bg: "#107c10" },
+  { name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#107c10" },
+  { name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#5c9e00" },
+  { name: "Xbox", brand: "Microsoft", year: "2001", bg: "#107c10" },
+  { name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#ff6600" },
+  { name: "Saturn", brand: "SEGA", year: "1994", bg: "#334155" },
+  { name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#d97706" },
+  { name: "Master System", brand: "SEGA", year: "1985", bg: "#dc2626" },
+  { name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#3f51b5" },
+  { name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#9c27b0" },
+  { name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#8bac0f" },
+  { name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#00bcd4" },
+  { name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#ce181e" },
+  { name: "PSP", brand: "Sony", year: "2004", bg: "#1e293b" },
+  { name: "PS Vita", brand: "Sony", year: "2011", bg: "#0f172a" },
+  { name: "Atari 2600", brand: "Atari", year: "1977", bg: "#b45309" },
+  { name: "Neo-Geo", brand: "SNK", year: "1990", bg: "#b91c1c" },
+  { name: "PC Engine", brand: "NEC", year: "1987", bg: "#475569" },
+  { name: "PC / Windows", brand: "Valve / Microsoft", year: "1981", bg: "#333333" }
+];
 
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
@@ -1532,10 +1634,9 @@ function renderPlatforms(releases) {
   }).join('');
 }
 
-/* Remplacement de l'icône flamme par un badge PRO avec éclair stylé */
 function renderHypeBadge(game) {
   if (!game.hypes || game.hypes < 5) return '';
-  return `<span class="hype-pro-badge">⚡ SURGE ${game.hypes}</span>`;
+  return `<span class="hype-pro-badge">⚡ HYPE ${game.hypes}</span>`;
 }
 
 function renderTimeBadge(dateStr) {
@@ -1804,6 +1905,41 @@ $("#viewModeBtn").addEventListener("click", () => {
   updateStaticTexts();
   render();
 });
+
+/* --- OUVERTURE DE LA VITRINE DES CONSOLES --- */
+function openConsoleVitrine() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.replaceChildren();
+
+  p.append(el("h2", "", t('vitrineTitle')));
+  p.append(el("p", "m", t('vitrineDesc')));
+
+  const grid = el("div", "vitrine-grid");
+  for (const consoleItem of WORLD_CONSOLES) {
+    const card = el("div", "console-vitrine-card");
+    
+    const badge = el("div", "console-badge-icon", consoleItem.brand.slice(0, 3).toUpperCase());
+    badge.style.background = consoleItem.bg;
+
+    const name = el("b", "", consoleItem.name);
+    const year = el("span", "", consoleItem.year);
+
+    card.append(badge, name, year);
+    grid.append(card);
+  }
+  p.append(grid);
+
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    closeSheet();
+  });
+  p.append(closeBtn);
+
+  $("#sheet").classList.add("on");
+}
+$("#vitrineBtn").addEventListener("click", openConsoleVitrine);
 
 function openShareModal() {
   playThemeSound(theme);
