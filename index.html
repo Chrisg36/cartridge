@@ -245,7 +245,7 @@
   }
   #sheet.on { display: flex; }
   
-  /* --- VRAI MOTIF DE CIRCUIT IMPRIMÉ (PCB) EN FILIGRANE POUR LES RÉGLAGES --- */
+  /* --- PANNEAU DES RÉGLAGES AVEC MOTIF CIRCUIT IMPRIMÉ (PCB) --- */
   .panel { 
     background: var(--bg); background-image: var(--pattern); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; 
     -webkit-overflow-scrolling: touch; border-radius: 28px 28px 0 0; padding: 20px 20px calc(30px + env(safe-area-inset-bottom)); 
@@ -258,12 +258,9 @@
     position: absolute;
     inset: 0;
     background-image: 
-      /* Pastilles de connexion (vias) */
       radial-gradient(circle, color-mix(in srgb, var(--acc) 35%, transparent) 2px, transparent 2.5px),
-      /* Pistes obliques à 45° */
       linear-gradient(45deg, color-mix(in srgb, var(--acc) 18%, transparent) 1.5px, transparent 1.5px),
       linear-gradient(-45deg, color-mix(in srgb, var(--acc) 18%, transparent) 1.5px, transparent 1.5px),
-      /* Pistes horizontales et verticales */
       linear-gradient(0deg, color-mix(in srgb, var(--acc) 12%, transparent) 1px, transparent 1px),
       linear-gradient(90deg, color-mix(in srgb, var(--acc) 12%, transparent) 1px, transparent 1px);
     background-size: 32px 32px, 32px 32px, 32px 32px, 16px 16px, 16px 16px;
@@ -274,11 +271,7 @@
     border-radius: 28px 28px 0 0;
   }
 
-  /* S'assurer que le contenu du panneau reste au-dessus du fond PCB */
-  .panel > * {
-    position: relative;
-    z-index: 1;
-  }
+  .panel > * { position: relative; z-index: 1; }
 
   .panel .big { width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius); background: var(--cov); }
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
@@ -292,35 +285,69 @@
   .close { all: unset; cursor: pointer; color: var(--mut); display: block; margin: 16px auto 0; padding: 10px 16px; text-align: center; font-weight: 700; letter-spacing: 0.5px; }
   .close:hover { color: var(--txt); }
 
-  /* --- VITRINE DES CONSOLES : VRAI STYLE NÉON PRO --- */
-  .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+  /* --- VITRINE DES CONSOLES : CARTES DESIGN 3D PROFONDEUR & RELIEF PRO --- */
+  .vitrine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 14px; }
   @media(min-width: 500px) { .vitrine-grid { grid-template-columns: repeat(3, 1fr); } }
+  
   .console-vitrine-card {
-    background: var(--card); border: 1.5px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius: var(--radius);
-    padding: 16px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; position: relative; overflow: hidden;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--card) 90%, #000), var(--card));
+    border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
+    border-radius: calc(var(--radius) + 2px);
+    padding: 14px 10px;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
+    position: relative; overflow: hidden;
+    /* Effet de relief 3D prononcé (ombrages multiples + lueur interne subtile) */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -2px 5px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease;
   }
-  .console-vitrine-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--acc); box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent); }
+  
+  /* Ligne lumineuse de reflet style verre/métal brossé sur le haut de la carte */
+  .console-vitrine-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    z-index: 2;
+  }
+
+  .console-vitrine-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: var(--acc);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.6), 0 0 20px color-mix(in srgb, var(--acc) 45%, transparent), inset 0 1px 2px rgba(255,255,255,0.3);
+  }
+  .console-vitrine-card:active { transform: scale(0.96); }
+
   .console-photo-container {
-    width: 100%; height: 90px; border-radius: 10px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-    overflow: hidden; border: 1px solid rgba(255,255,255,0.1); padding: 4px; position: relative;
+    width: 100%; height: 86px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(15,15,22,0.8));
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    /* Effet de renfoncement 3D (boîtier creusé) */
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 1px 2px rgba(255,255,255,0.05);
+    padding: 4px; position: relative;
   }
+
   .console-icon-badge {
     font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1.5px;
-    background: var(--card); padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--acc);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 60%, transparent), inset 0 0 6px color-mix(in srgb, var(--acc) 40%, transparent);
-    text-shadow: 0 0 6px var(--acc); transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--card); padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--acc);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 70%, transparent), inset 0 0 8px color-mix(in srgb, var(--acc) 50%, transparent);
+    text-shadow: 0 0 8px var(--acc); transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .console-vitrine-card:hover .console-icon-badge {
     transform: scale(1.08) rotate(1deg);
-    box-shadow: 0 0 18px color-mix(in srgb, var(--acc) 90%, transparent), inset 0 0 10px color-mix(in srgb, var(--acc) 60%, transparent);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--acc) 90%, transparent), inset 0 0 12px color-mix(in srgb, var(--acc) 70%, transparent);
   }
+
   .console-info-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
-  .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .console-vitrine-card b { font-size: 13px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
   .console-vitrine-card span { font-size: 11px; color: var(--mut); font-weight: 700; }
+  
   .console-brand-tag {
     position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
-    background: color-mix(in srgb, var(--acc) 15%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 2;
+    background: color-mix(in srgb, var(--acc) 20%, var(--cov)); color: var(--acc); letter-spacing: 0.5px; z-index: 3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
   }
 
   /* --- WIDGET NÉON STYLISÉ DANS LE DÉTAIL --- */
