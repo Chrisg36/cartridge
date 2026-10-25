@@ -105,6 +105,21 @@
     padding: 5px 6px; font-size: 9px; gap: 2px;
   }
 
+  /* Empêche le header de dépasser de l'écran */
+  .sticky-header-container {
+    overflow-x: hidden;
+  }
+  
+  /* Réduit légèrement l'espacement et la taille des boutons de la barre de navigation pour qu'ils rentrent tous */
+  .nav {
+    gap: 2px;
+  }
+  
+  .nav .chip, .nav .header-currency-badge {
+    padding: 5px 6px;
+    min-height: 30px;
+  }
+
   .app-bg-cartridges {
     position: fixed; inset: -50px; pointer-events: none; z-index: 0; opacity: 0.12;
     display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 40px; padding: 20px; transform: rotate(-12deg) scale(1.3);
