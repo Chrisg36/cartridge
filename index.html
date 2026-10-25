@@ -1411,14 +1411,17 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
+// Mémoire permanente anti-triche (ne s'efface jamais quand on enlève un favori)
+let rewardedFavorites = [];
+try { rewardedFavorites = JSON.parse(localStorage.getItem("rewardedFavorites") || "[]"); } catch (e) { rewardedFavorites = []; }
+
 let showFavoritesOnly = false;
 
-// 1. Déclare bien isicale ici en premier
-function isFavorite(id) { 
-  return favorites.map(Number).includes(Number(id)); 
+function isFavorite(rawId) {
+  const id = Number(rawId);
+  return favorites.map(Number).includes(id);
 }
 
-// 2. Ensuite la fonction sécurisée anti-farm de crédits
 let isToggling = false;
 function toggleFavorite(rawId) {
   if (isToggling) return;
@@ -1429,11 +1432,22 @@ function toggleFavorite(rawId) {
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
+    // On retire le jeu des favoris (AUCUN point gagné)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
+    // On ajoute le jeu aux favoris
     currentFavs.push(id);
     favorites = currentFavs;
-    addCoins(10); 
+
+    // VÉRIFICATION ANTI-FARM : Est-ce que ce jeu a déjà donné des points par le passé ?
+    let currentRewarded = rewardedFavorites.map(Number);
+    if (!currentRewarded.includes(id)) {
+      currentRewarded.push(id);
+      rewardedFavorites = currentRewarded;
+      try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
+      
+      addCoins(10); // +10 points accordés une et une seule fois pour ce jeu !
+    }
   }
   
   try { 
@@ -1445,7 +1459,6 @@ function toggleFavorite(rawId) {
 
   setTimeout(() => { isToggling = false; }, 150);
 }
-
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
