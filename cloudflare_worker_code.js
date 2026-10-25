@@ -1,8 +1,8 @@
 let cachedToken = null;
 let tokenExpiry = 0;
 
-// Table complète des identifiants IGDB pour les consoles actuelles ET rétro
-const PLATFORMS = {
+// Mapping personnalisé pour les plateformes principales si besoin
+const PLATFORMS_MAP = {
   6: "PC",
   167: "PS5",
   48: "PS4",
@@ -10,7 +10,7 @@ const PLATFORMS = {
   8: "PS2",
   7: "PlayStation",
   169: "Xbox Series X|S",
-  11: "Xbox One",
+  11: "Xbox",
   12: "Xbox 360",
   130: "Nintendo Switch",
   508: "Switch 2",
@@ -194,20 +194,22 @@ export default {
       return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
     }
 
-    // Passé en v8 pour invalider le cache précédent et forcer le rechargement
-    const cacheKey = new Request(url.origin + "/v8" + url.search);
+    // Version V9 pour vider automatiquement le cache de ton Worker
+    const cacheKey = new Request(url.origin + "/v9" + url.search);
     const cached = await cacheGet(cacheKey);
     if (cached) return cached;
 
     try {
       const platformIds = platformParam
         ? [FILTERS[platformParam]]
-        : Object.keys(PLATFORMS).map(Number);
+        : Object.keys(PLATFORMS_MAP).map(Number);
 
       let start = 0, end = 0;
       let where = "cover != null";
       let tail;
+
       if (searchQuery) {
+        // Recherche globale sans filtre de plateforme restrictif
         where += ` & release_dates != null & name ~ *"${searchQuery}"*`;
         tail = "limit 40;";
       } else {
@@ -221,7 +223,7 @@ export default {
 
       const raw = await igdb(env, `
         fields name, summary, hypes, total_rating_count, rating, aggregated_rating, cover.image_id,
-               release_dates.date, release_dates.platform, release_dates.human, genres.name;
+               release_dates.date, release_dates.platform, release_dates.platform.name, release_dates.human, genres.name;
         where ${where};
         ${tail}
       `);
@@ -234,9 +236,10 @@ export default {
           if (!searchQuery && !platformIds.includes(r.platform)) continue;
           if (!searchQuery && (r.date < start || r.date >= end)) continue;
           
-          const platName = PLATFORMS[r.platform] || r.human || "Retro";
-          if (!byPlatform[r.platform] || r.date < byPlatform[r.platform].date) {
-            byPlatform[r.platform] = { platformName: platName, date: r.date, human: r.human || "" };
+          // Récupère le nom officiel de la console envoyé par IGDB (ex: GameCube, Nintendo 64, etc.)
+          const platName = (r.platform && r.platform.name) || PLATFORMS_MAP[r.platform] || r.human || "Retro";
+          if (!byPlatform[platName] || r.date < byPlatform[platName].date) {
+            byPlatform[platName] = { platformName: platName, date: r.date, human: r.human || "" };
           }
         }
         
@@ -263,7 +266,7 @@ export default {
           name: g.name,
           summary: g.summary || null,
           genres: genreList,
-          cover: `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg`,
+          cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
           hypes: (g.hypes || 0) + (g.total_rating_count || 0),
           rating: g.rating || null,
           aggregated_rating: g.aggregated_rating || null,
@@ -272,6 +275,7 @@ export default {
           releases,
         });
       }
+
       if (searchQuery) {
         games.sort((a, b) => b.hypes - a.hypes || b.date.localeCompare(a.date));
       } else {
