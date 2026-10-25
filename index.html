@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-title" content="Cartridge">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="config.js"></script>
-<!-- Ajout de la police Rajdhani pour un style moderne/tech/gaming -->
+<!-- Police Rajdhani pour un style moderne/tech/gaming -->
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <title>Cartridge</title>
 <style>
-  /* --- THÈMES MODERNES (Avec la police Rajdhani) --- */
+  /* --- THÈMES MODERNES --- */
   :root, [data-theme="dark"] { color-scheme: dark; --bg:#111318; --card:#1B1E26; --cov:#2A2F3B; --txt:#F2F3F5; --mut:#A3A9B8; --acc:#FF7A45; --on:#111318; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="light"] { color-scheme: light; --bg:#F6F7F9; --card:#FFFFFF; --cov:#DDE1E8; --txt:#14161B; --mut:#5A6172; --acc:#C2410C; --on:#FFFFFF; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="midnight"] { color-scheme: dark; --bg:#0B1020; --card:#151C33; --cov:#232C4A; --txt:#EAF0FF; --mut:#9AA7C7; --acc:#5CA8FF; --on:#0B1020; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
@@ -95,8 +95,8 @@
   h1 { margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
   button { font: inherit; color: inherit; cursor: pointer; }
   
-  .nav { display: flex; gap: 8px; }
-  .chip { border: 0; border-radius: var(--radius); padding: 10px 16px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
+  .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.1s; letter-spacing: 0.5px; }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
   .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 6px; scrollbar-width: none; align-items: center; }
   
@@ -132,6 +132,8 @@
   }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  /* --- VUE LISTE --- */
   .row { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; }
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
@@ -144,6 +146,84 @@
   .btn-icon:active { transform: scale(0.92); }
   .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
   .add { color: var(--on); background: var(--acc); }
+
+  /* --- VUE GRILLE / ÉTAGÈRE DE JAQUETTES --- */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 10px;
+  }
+  @media(min-width: 500px) {
+    .games-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .grid-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .grid-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .grid-cov-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--cov);
+  }
+  .grid-cov {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .grid-info {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .grid-title {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+  }
+  .grid-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .grid-fav-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .grid-fav-btn.fav-active { color: #FF4757; }
 
   .msg { color: var(--mut); text-align: center; padding: 40px 0; font-weight: 600; }
   #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
@@ -172,8 +252,8 @@
     margin-top: 10px;
   }
 
-  /* --- STYLES DES BADGES DE CONSOLES --- */
-  .platform-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; }
+  /* --- BADGES CONSOLES COMPLETS --- */
+  .platform-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
   .badge-pc { background: #333; color: #fff; }
   .badge-ps5 { background: #003087; color: #fff; }
   .badge-ps4 { background: #003791; color: #fff; }
@@ -199,16 +279,16 @@
   .badge-mastersystem { background: #dc2626; color: #fff; }
   .badge-default { background: var(--cov); color: var(--txt); }
 
-  .time-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; background: var(--cov); color: var(--txt); }
+  .time-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; background: var(--cov); color: var(--txt); }
   .badge-today { background: var(--acc); color: var(--on); }
 
-  .score-badge { display: inline-block; padding: 2px 8px; font-size: 0.7rem; font-weight: 700; border-radius: 12px; margin-top: 2px; }
+  .score-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
   .score-high { background: #10B981; color: #042F2E; }
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
 
-  /* --- SPLASH SCREEN iOS AMÉLIORÉ AVEC ARRIÈRE-PLAN DE VRAIES CARTOUCHES CRÉÉES --- */
+  /* --- SPLASH SCREEN iOS AVEC CARTOUCHES --- */
   #splash {
     position: fixed;
     inset: 0;
@@ -222,14 +302,8 @@
     overflow: hidden;
     transition: opacity 0.6s ease, visibility 0.6s ease;
   }
+  #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-  #splash.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  /* Grille de mini-cartouches créées en CSS pour l'arrière-plan */
   .splash-bg-grid {
     position: absolute;
     inset: -20px;
@@ -242,7 +316,6 @@
     padding: 20px;
     transform: rotate(-10deg) scale(1.2);
   }
-
   .bg-cartridge {
     width: 40px;
     height: 56px;
@@ -252,30 +325,18 @@
     position: relative;
     animation: floatBgCartridge 6s infinite ease-in-out alternate;
   }
-
   .bg-cartridge::before {
     content: '';
     position: absolute;
-    top: 4px;
-    left: 6px;
-    right: 6px;
-    height: 18px;
-    background: var(--acc);
-    border-radius: 3px;
-    opacity: 0.6;
+    top: 4px; left: 6px; right: 6px; height: 18px;
+    background: var(--acc); border-radius: 3px; opacity: 0.6;
   }
-
   .bg-cartridge::after {
     content: '';
     position: absolute;
-    bottom: 4px;
-    left: 8px;
-    right: 8px;
-    height: 8px;
-    background: #d4af37; /* Couleur connecteur doré */
-    border-radius: 2px;
+    bottom: 4px; left: 8px; right: 8px; height: 8px;
+    background: #d4af37; border-radius: 2px;
   }
-
   .bg-cartridge:nth-child(even) { animation-duration: 8s; animation-delay: -2s; }
   .bg-cartridge:nth-child(3n) { animation-duration: 5s; animation-delay: -1s; }
 
@@ -285,69 +346,31 @@
   }
 
   .splash-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 2;
     animation: pulseGlow 2s infinite ease-in-out;
   }
-
   .splash-logo {
-    font-size: 52px;
-    font-weight: 900;
-    letter-spacing: 6px;
-    color: var(--acc);
-    font-family: var(--font);
-    background: rgba(255, 122, 69, 0.12);
-    padding: 22px 32px;
-    border-radius: 24px;
+    font-size: 52px; font-weight: 900; letter-spacing: 6px; color: var(--acc);
+    font-family: var(--font); background: rgba(255, 122, 69, 0.12);
+    padding: 22px 32px; border-radius: 24px;
     box-shadow: 0 0 35px rgba(255, 122, 69, 0.25);
     border: 1.5px solid rgba(255, 122, 69, 0.4);
   }
-
-  /* Cartouches de jeux animées principales en bas du logo */
-  .splash-cartridges {
-    display: flex;
-    gap: 12px;
-    height: 38px;
-    align-items: flex-end;
-  }
-
+  .splash-cartridges { display: flex; gap: 12px; height: 38px; align-items: flex-end; }
   .cartridge {
-    width: 24px;
-    height: 34px;
-    background: var(--card);
-    border: 2px solid var(--acc);
-    border-radius: 5px 5px 2px 2px;
-    position: relative;
-    animation: bounceCartridge 1.2s infinite ease-in-out;
+    width: 24px; height: 34px; background: var(--card);
+    border: 2px solid var(--acc); border-radius: 5px 5px 2px 2px;
+    position: relative; animation: bounceCartridge 1.2s infinite ease-in-out;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   }
-
   .cartridge::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    right: 3px;
-    height: 10px;
-    background: var(--acc);
-    border-radius: 2px;
-    opacity: 0.8;
+    content: ''; position: absolute; top: 3px; left: 3px; right: 3px; height: 10px;
+    background: var(--acc); border-radius: 2px; opacity: 0.8;
   }
-
   .cartridge::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 4px;
-    right: 4px;
-    height: 6px;
-    background: #d4af37;
-    border-radius: 1px;
+    content: ''; position: absolute; bottom: 2px; left: 4px; right: 4px; height: 6px;
+    background: #d4af37; border-radius: 1px;
   }
-
   .cartridge:nth-child(1) { animation-delay: 0s; }
   .cartridge:nth-child(2) { animation-delay: 0.2s; }
   .cartridge:nth-child(3) { animation-delay: 0.4s; }
@@ -357,7 +380,6 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); background: var(--acc); }
   }
-
   @keyframes pulseGlow {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.03); }
@@ -366,37 +388,18 @@
 </head>
 <body>
 
-<!-- Écran de chargement iOS avec arrière-plan de vraies cartouches créées -->
+<!-- Écran de chargement iOS -->
 <div id="splash">
   <div class="splash-bg-grid">
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
-    <div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
+    <div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div><div class="bg-cartridge"></div>
   </div>
   <div class="splash-container">
     <div class="splash-logo">CR</div>
     <div class="splash-cartridges">
-      <div class="cartridge"></div>
-      <div class="cartridge"></div>
-      <div class="cartridge"></div>
-      <div class="cartridge"></div>
+      <div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div>
     </div>
   </div>
 </div>
@@ -405,6 +408,8 @@
   <header>
     <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
     <div class="nav">
+      <!-- Bouton de bascule Vue Liste / Vue Grille -->
+      <button class="chip" id="viewModeBtn" aria-label="Changer de vue">🗂️</button>
       <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
       <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
       <button class="chip" id="prev" aria-label="Mois précédent">‹</button>
@@ -796,6 +801,10 @@ const LANG_NAMES = {
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
 
+// Gestion du mode d'affichage (liste ou grille) mémorisé
+let viewMode = "list";
+try { viewMode = localStorage.getItem("viewMode") || "list"; } catch (e) {}
+
 function t(key, param) {
   const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
   const val = dict[key] || TRANSLATIONS.fr[key];
@@ -942,13 +951,12 @@ function shiftMonth(delta) {
 function updateStaticTexts() {
   $("#sub-title").textContent = t('subTitle');
   $("#search").placeholder = t('searchPlaceholder');
+  $("#viewModeBtn").textContent = viewMode === "list" ? "🗂️" : "📋";
 }
 
 function hideSplash() {
   const splash = document.getElementById("splash");
-  if (splash) {
-    splash.classList.add("hidden");
-  }
+  if (splash) splash.classList.add("hidden");
 }
 
 async function load() {
@@ -968,7 +976,6 @@ async function load() {
     }
   }
   render();
-  // Temps de chargement à 2 secondes pour profiter du superbe splash screen
   setTimeout(hideSplash, 2000);
 }
 
@@ -1022,7 +1029,49 @@ function render() {
     list.replaceChildren(el("p", "msg", msgText));
     return;
   }
+
   const frag = document.createDocumentFragment();
+
+  // --- RENDU VUE GRILLE (Façon étagère de jaquettes) ---
+  if (viewMode === "grid") {
+    const gridContainer = el("div", "games-grid");
+    for (const it of items) {
+      const card = el("div", "grid-card");
+      card.addEventListener("click", () => {
+        playThemeSound(theme);
+        openSheet(it);
+      });
+
+      const covContainer = el("div", "grid-cov-container");
+      const img = el("img", "grid-cov");
+      img.src = it.g.cover; img.alt = ""; img.loading = "lazy";
+
+      const favBtn = el("button", "grid-fav-btn" + (isFavorite(it.g.id) ? " fav-active" : ""));
+      favBtn.innerHTML = isFavorite(it.g.id)
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="#FF4757" stroke="#FF4757" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+      favBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFavorite(it.g.id);
+      });
+
+      covContainer.append(img, favBtn);
+
+      const info = el("div", "grid-info");
+      const title = el("h3", "grid-title", it.g.name);
+      const meta = el("div", "grid-meta");
+      meta.innerHTML = renderPlatforms(it.rel) + renderTimeBadge(it.date);
+
+      info.append(title, meta);
+      card.append(covContainer, info);
+      gridContainer.append(card);
+    }
+    frag.append(gridContainer);
+    list.replaceChildren(frag);
+    return;
+  }
+
+  // --- RENDU VUE LISTE CLASSIQUE ---
   let last = "";
   for (const it of items) {
     const headerText = searchQuery ? fmtFull(it.date) : fmtDay(it.date);
@@ -1071,6 +1120,15 @@ function row(it) {
   r.append(open, actions);
   return r;
 }
+
+// Bouton de bascule de vue
+$("#viewModeBtn").addEventListener("click", () => {
+  playThemeSound(theme);
+  viewMode = viewMode === "list" ? "grid" : "list";
+  try { localStorage.setItem("viewMode", viewMode); } catch (e) {}
+  updateStaticTexts();
+  render();
+});
 
 function openShareModal() {
   playThemeSound(theme);
@@ -1242,7 +1300,6 @@ function openSettings() {
 
   p.append(el("h2", "", t('settingsTitle')));
 
-  // Section Thèmes & Consoles Rétro
   p.append(el("p", "m", t('themeLabel')));
   const group = el("div", "chips"); group.style.flexWrap = "wrap";
   for (const [key, [label, , acc]] of Object.entries(THEMES)) {
@@ -1258,7 +1315,6 @@ function openSettings() {
   }
   p.append(group);
 
-  // Section Paramètre Sonore (ON/OFF)
   p.append(el("p", "m", t('soundLabel')));
   const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
   soundBtn.addEventListener("click", () => {
@@ -1269,7 +1325,6 @@ function openSettings() {
   });
   p.append(soundBtn);
 
-  // Section Langues (TOUTES LES LANGUES RESTAURÉES)
   p.append(el("p", "m", t('langLabel')));
   const langGrid = el("div", "lang-grid");
   Object.entries(LANG_NAMES).forEach(([code, label]) => {
@@ -1286,7 +1341,6 @@ function openSettings() {
   });
   p.append(langGrid);
 
-  // Section Capsule Temporelle (Mode Rétro)
   p.append(el("p", "m", t('retroLabel')));
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
   [
