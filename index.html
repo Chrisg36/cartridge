@@ -390,7 +390,7 @@
   .badge-xbox { background: #107c10; color: #fff; }
   .badge-xbox360 { background: #5c9e00; color: #fff; }
   .badge-xboxone { background: #107c10; color: #e5e5e5; }
-  .badge-switch2 { background: #e60012; color: #fff; }
+  .badge-switch2 { background: #ff3b30; color: #fff; }
   .badge-gamecube { background: #6747ed; color: #fff; }
   .badge-n64 { background: #f5b201; color: #000; }
   .badge-snes { background: #6b5cd5; color: #fff; }
@@ -1002,6 +1002,12 @@ const LANG_NAMES = {
 
 const WORLD_CONSOLES = [
   { 
+    name: "Nintendo Switch 2", brand: "Nintendo", year: "2025/2026", bg: "#ff3b30", code: "SWITCH 2", 
+    cpu: "NVIDIA Tegra personnalisé (Architecture Ampere / Ada)", gpu: "Ray Tracing matériel & DLSS", 
+    sales: "Lancement générationnel majeur", impact: "L'évolution ultime du concept hybride de Nintendo, taillée pour le jeu haute fidélité en mode portable et salon grâce au DLSS.",
+    desc: "Successeure très attendue de la console hybride à succès de Nintendo, la Switch 2 repousse les frontières techniques du jeu nomade en intégrant des technologies de pointe comme le support du DLSS de NVIDIA pour des performances visuelles spectaculaires." 
+  },
+  { 
     name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", 
     cpu: "AMD Zen 2 (8 cœurs @ 3.5 GHz)", gpu: "AMD RDNA 2 (10.28 TFLOPs)", 
     sales: "Plus de 55 millions d'exemplaires", impact: "Révolution du stockage SSD ultra-rapide sans temps de chargement et immersion totale grâce au retour haptique de la manette DualSense.",
@@ -1384,6 +1390,7 @@ function getPlatformBadgeClass(plat) {
   if (p.includes("xbox 360")) return "badge-xbox360";
   if (p.includes("xbox one")) return "badge-xboxone";
   if (p.includes("xbox")) return "badge-xbox";
+  if (p.includes("switch 2")) return "badge-switch2";
   if (p.includes("switch")) return "badge-switch2";
   if (p.includes("gamecube") || p.includes("game cube")) return "badge-gamecube";
   if (p.includes("nintendo 64") || p.includes("n64")) return "badge-n64";
@@ -1630,7 +1637,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-/* --- MUSÉE DES CONSOLES AVEC COULEURS RÉTRO ET RELIEF PRO --- */
+/* --- MUSÉE DES CONSOLES AVEC SWITCH 2 & COULEURS RÉTRO --- */
 function openConsoleVitrine() {
   playThemeSound(theme);
   const p = $("#panel");
