@@ -100,20 +100,20 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* --- HEADER & RECHERCHE EN GLASSMORPHISM FIXE --- */
+  /* --- HEADER & RECHERCHE EN GLASSMORPHISM FIXE AMÉLIORÉ --- */
   .sticky-header-container {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding-top: max(12px, env(safe-area-inset-top));
-    padding-bottom: 10px;
+    padding-top: max(14px, env(safe-area-inset-top));
+    padding-bottom: 12px;
     margin: 0 -20px;
     padding-left: 20px;
     padding-right: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   /* --- ARRIÈRE-PLAN AVEC CARTOUCHES 3D --- */
@@ -170,15 +170,35 @@
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-  header { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
-  header small { color: var(--mut); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  
+  /* --- EN-TÊTE STRUCTURÉ (ÉVITE LA SUPERPOSITION) --- */
+  header { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-top: 4px; 
+  }
+  
+  .header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+  }
+
+  header small { color: var(--mut); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
   
   h1 { 
-    margin: 0; 
-    font-size: 22px; 
+    margin: 2px 0 0 0; 
+    font-size: 24px; 
     text-transform: uppercase; 
     letter-spacing: 2px; 
-    font-weight: 800;
+    font-weight: 900;
     display: inline-block;
     padding: 6px 14px;
     background: var(--card);
@@ -189,16 +209,25 @@
 
   button { font: inherit; color: inherit; cursor: pointer; }
   
-  .nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
   .chip { border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; background: var(--card); white-space: nowrap; transition: all 0.15s ease; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; }
   .chip:active { transform: scale(0.92); }
   .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 12px var(--acc); }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: none; align-items: center; -webkit-overflow-scrolling: touch; }
+  
+  .chips { 
+    display: flex; 
+    gap: 8px; 
+    overflow-x: auto; 
+    padding: 6px 0 2px; 
+    scrollbar-width: none; 
+    align-items: center; 
+    -webkit-overflow-scrolling: touch; 
+  }
+  .chips::-webkit-scrollbar { display: none; }
   
   .search-box {
     width: 100%;
     padding: 12px 16px;
-    margin-top: 6px;
+    margin-top: 8px;
     margin-bottom: 2px;
     border: 0;
     border-radius: var(--radius);
@@ -241,9 +270,7 @@
     box-shadow: 0 8px 22px rgba(0,0,0,0.3); 
     border-color: color-mix(in srgb, var(--acc) 40%, transparent);
   }
-  .row:active {
-    transform: scale(0.98);
-  }
+  .row:active { transform: scale(0.98); }
   .row .open { all: unset; display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
   .cov { width: 56px; height: 76px; border-radius: calc(var(--radius) - 4px); background: var(--cov); object-fit: cover; flex: none; }
   .t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -257,7 +284,7 @@
   .btn-icon.fav-active { color: #FF4757; background: rgba(255, 71, 87, 0.15); }
   .add { color: var(--on); background: var(--acc); }
 
-  /* --- VUE GRILLE AVEC MICRO-ANIMATION ET GLOW HAUTE FIDÉLITÉ --- */
+  /* --- VUE GRILLE --- */
   .games-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -284,9 +311,7 @@
     box-shadow: 0 14px 30px rgba(0,0,0,0.4), 0 0 15px color-mix(in srgb, var(--acc) 30%, transparent);
     border-color: color-mix(in srgb, var(--acc) 50%, transparent);
   }
-  .grid-card:active {
-    transform: scale(0.96);
-  }
+  .grid-card:active { transform: scale(0.96); }
   .grid-cov-container {
     position: relative;
     width: 100%;
@@ -300,9 +325,7 @@
     object-fit: cover;
     transition: transform 0.4s ease;
   }
-  .grid-card:hover .grid-cov {
-    transform: scale(1.06);
-  }
+  .grid-card:hover .grid-cov { transform: scale(1.06); }
   .grid-info {
     padding: 10px;
     display: flex;
@@ -347,7 +370,7 @@
   .grid-fav-btn:hover { transform: scale(1.1); background: rgba(0,0,0,0.8); }
   .grid-fav-btn.fav-active { color: #FF4757; }
 
-  /* --- SQUELETTE DE CHARGEMENT SHIMMER --- */
+  /* --- SQUELETTE SHIMMER --- */
   .shimmer-container {
     display: flex;
     flex-direction: column;
@@ -383,9 +406,7 @@
     background: var(--cov);
     width: 70%;
   }
-  .shimmer-line.short {
-    width: 40%;
-  }
+  .shimmer-line.short { width: 40%; }
   .shimmer-row::after {
     content: '';
     position: absolute;
@@ -450,7 +471,7 @@
     margin-top: 10px;
   }
 
-  /* --- BADGES CONSOLES COMPLETS --- */
+  /* --- BADGES CONSOLES --- */
   .platform-badge { display: inline-block; padding: 2px 6px; font-size: 0.65rem; font-weight: 700; border-radius: 10px; }
   .badge-pc { background: #333; color: #fff; }
   .badge-ps5 { background: #003087; color: #fff; }
@@ -660,17 +681,23 @@
 <main>
   <div class="sticky-header-container">
     <header>
-      <div><small id="sub-title">Cartridge</small><h1 id="title"></h1></div>
-      <div class="nav">
-        <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
-        <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
-        <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
-        <button class="chip" id="prev" aria-label="Mois précédent">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-        <button class="chip" id="next" aria-label="Mois suivant">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
+      <!-- Ligne du haut : Titre du mois + Boutons d'outils bien séparés -->
+      <div class="header-top-row">
+        <div>
+          <small id="sub-title">Cartridge</small>
+          <h1 id="title"></h1>
+        </div>
+        <div class="nav">
+          <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
+          <button class="chip" id="shareBtn" aria-label="Partager mon mois">📤</button>
+          <button class="chip" id="settings" aria-label="Réglages">⚙︎</button>
+          <button class="chip" id="prev" aria-label="Mois précédent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="chip" id="next" aria-label="Mois suivant">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
       </div>
     </header>
     <div class="chips" id="chips" role="group" aria-label="Filtrer par plateforme"></div>
@@ -1232,8 +1259,6 @@ async function load() {
   $("#title").textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   
   renderShimmerLoader();
-  
-  // Petit délai artificiel (500ms) pour savourer l'effet shimmer et la transition fluide
   const startTime = Date.now();
 
   try {
@@ -1653,7 +1678,7 @@ function renderChipsBar() {
   chips.replaceChildren();
   
   for (const f of FILTERS) {
-    let label = f;
+    label = f;
     if (f === "Tous") label = t('all');
     if (f === "❤️ Favoris") label = t('favorites');
     const b = el("button", "chip", label);
