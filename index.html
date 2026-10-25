@@ -2052,16 +2052,54 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
+  // 🏷️ Dictionnaire de traduction des genres en français
+  const GENRE_FR = {
+    "Action": "Action",
+    "Adventure": "Aventure",
+    "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir",
+    "Racing": "Course",
+    "Horror": "Horreur",
+    "Strategy": "Stratégie",
+    "Simulation": "Simulation",
+    "Sports": "Sport",
+    "Fighting": "Combat",
+    "Platform": "Plateforme",
+    "Indie": "Indépendant",
+    "Puzzle": "Réflexion",
+    "Music": "Musique",
+    "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel",
+    "Card & Board Game": "Jeu de cartes"
+  };
+
+  // Récupération et traduction des genres du jeu
+  let genresRaw = it.g.genres || it.g.genre || it.g.category;
+  let categoryText = "Action";
+  if (Array.isArray(genresRaw)) {
+    categoryText = genresRaw.map(g => {
+      const name = typeof g === 'object' ? (g.name || '') : g;
+      return GENRE_FR[name] || name;
+    }).filter(Boolean).join(" • ");
+  } else if (typeof genresRaw === 'string' && genresRaw.trim() !== '') {
+    categoryText = GENRE_FR[genresRaw] || genresRaw;
+  }
+
+  const categoryBadge = el("p", "m", `🏷️ Styles : ${categoryText}`);
+  categoryBadge.style.fontWeight = "700";
+  categoryBadge.style.color = "var(--acc)";
+  categoryBadge.style.marginTop = "4px";
+
   const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
   const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
   companyInfo.style.whiteSpace = "pre-line";
-  companyInfo.style.marginTop = "8px";
+  companyInfo.style.marginTop = "6px";
 
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
   const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
 
-  p.replaceChildren(img, el("h2", "", it.g.name), companyInfo, d, cta, favCta);
+  p.replaceChildren(img, el("h2", "", it.g.name), categoryBadge, companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
