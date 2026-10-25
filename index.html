@@ -1408,28 +1408,29 @@ function t(key, param) {
   if (typeof val === "function") return val(param);
   return val || key;
 }
-
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
-let showFavoritesOnly = false;
-let isToggling = false;
 
+let showFavoritesOnly = false;
+
+// 1. Déclare bien isicale ici en premier
+function isFavorite(id) { 
+  return favorites.map(Number).includes(Number(id)); 
+}
+
+// 2. Ensuite la fonction sécurisée anti-farm de crédits
+let isToggling = false;
 function toggleFavorite(rawId) {
   if (isToggling) return;
   isToggling = true;
 
-  // On force l'ID en nombre pour éviter les bugs de type (texte vs nombre)
   const id = Number(rawId);
-  
-  // On convertit tous les favoris enregistrés en nombres
   let currentFavs = favorites.map(Number);
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
-    // Si c'est déjà un favori, on l'enlève (AUCUN POINT GAINÉ)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    // Si ce n'y était PAS, on l'ajoute et on donne les points UNE SEULE FOIS
     currentFavs.push(id);
     favorites = currentFavs;
     addCoins(10); 
