@@ -1411,17 +1411,14 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-// Mémoire permanente anti-triche (ne s'efface jamais quand on enlève un favori)
-let rewardedFavorites = [];
-try { rewardedFavorites = JSON.parse(localStorage.getItem("rewardedFavorites") || "[]"); } catch (e) { rewardedFavorites = []; }
-
 let showFavoritesOnly = false;
 
-function isFavorite(rawId) {
-  const id = Number(rawId);
-  return favorites.map(Number).includes(id);
+// 1. Déclare bien isicale ici en premier
+function isFavorite(id) { 
+  return favorites.map(Number).includes(Number(id)); 
 }
 
+// 2. Ensuite la fonction sécurisée anti-farm de crédits
 let isToggling = false;
 function toggleFavorite(rawId) {
   if (isToggling) return;
@@ -1432,22 +1429,11 @@ function toggleFavorite(rawId) {
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
-    // On retire le jeu des favoris (AUCUN point gagné)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    // On ajoute le jeu aux favoris
     currentFavs.push(id);
     favorites = currentFavs;
-
-    // VÉRIFICATION ANTI-FARM : Est-ce que ce jeu a déjà donné des points par le passé ?
-    let currentRewarded = rewardedFavorites.map(Number);
-    if (!currentRewarded.includes(id)) {
-      currentRewarded.push(id);
-      rewardedFavorites = currentRewarded;
-      try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
-      
-      addCoins(10); // +10 points accordés une et une seule fois pour ce jeu !
-    }
+    addCoins(10); 
   }
   
   try { 
@@ -1459,7 +1445,7 @@ function toggleFavorite(rawId) {
 
   setTimeout(() => { isToggling = false; }, 150);
 }
-  
+
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
@@ -2066,54 +2052,16 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // 🏷️ Dictionnaire de traduction des genres en français
-  const GENRE_FR = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
-  };
-
-  // Récupération et traduction des genres du jeu
-  let genresRaw = it.g.genres || it.g.genre || it.g.category;
-  let categoryText = "Action";
-  if (Array.isArray(genresRaw)) {
-    categoryText = genresRaw.map(g => {
-      const name = typeof g === 'object' ? (g.name || '') : g;
-      return GENRE_FR[name] || name;
-    }).filter(Boolean).join(" • ");
-  } else if (typeof genresRaw === 'string' && genresRaw.trim() !== '') {
-    categoryText = GENRE_FR[genresRaw] || genresRaw;
-  }
-
-  const categoryBadge = el("p", "m", `🏷️ Styles : ${categoryText}`);
-  categoryBadge.style.fontWeight = "700";
-  categoryBadge.style.color = "var(--acc)";
-  categoryBadge.style.marginTop = "4px";
-
   const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
   const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
   companyInfo.style.whiteSpace = "pre-line";
-  companyInfo.style.marginTop = "6px";
+  companyInfo.style.marginTop = "8px";
 
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
   const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
 
-  p.replaceChildren(img, el("h2", "", it.g.name), categoryBadge, companyInfo, d, cta, favCta);
+  p.replaceChildren(img, el("h2", "", it.g.name), companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
@@ -2147,6 +2095,7 @@ async function openSheet(it) {
   }
   p.append(close);
 }
+
 function closeSheet() { $("#sheet").classList.remove("on"); }
 $("#sheet").classList.remove("on");
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
