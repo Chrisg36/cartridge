@@ -718,15 +718,38 @@ function playThemeSound(themeKey) {
 
 function renderPlatforms(releases) {
   if (!releases) return '';
-  const platforms = [...new Set(releases.map(r => r.platform))];
-  return platforms.map(plat => {
-    let badgeClass = "badge-pc"; 
-    const pLower = plat.toLowerCase();
-    if (pLower.includes("ps5")) badgeClass = "badge-ps5";
-    else if (pLower.includes("xbox")) badgeClass = "badge-xbox";
-    else if (pLower.includes("switch")) badgeClass = "badge-switch2";
-    return `<span class="platform-badge ${badgeClass}">${plat}</span>`;
-  }).join('');
+  const platforms = [...new Set(releases.flatMap(r => r.platforms || []))];
+  
+  // 1. Boutons de base ("Tous", "Favoris" et ton nouveau bouton "Hype")
+  let html = `<button class="chip" data-platform="all" aria-pressed="${currentPlatform === 'all' && !currentHypeFilter}">${t('all')}</button>`;
+  html += `<button class="chip" data-platform="fav" aria-pressed="${currentPlatform === 'fav'}">${t('favorites')}</button>`;
+  html += `<button class="chip" data-platform="hype" aria-pressed="${currentHypeFilter}">${t('hypeFilter')}</button>`;
+  
+  // 2. Les puces de plateformes habituelles
+  platforms.forEach(p => {
+    html += `<button class="chip" data-platform="${p}" aria-pressed="${currentPlatform === p && !currentHypeFilter}">${p}</button>`;
+  });
+
+  // 3. Le menu déroulant des genres tout à la fin de la barre
+  html += `
+    <select id="genreFilter" onchange="changeGenre(this.value)">
+      <option value="all">${t('allGenres')}</option>
+      <option value="RPG" ${currentGenreFilter === 'RPG' ? 'selected' : ''}>RPG</option>
+      <option value="Action" ${currentGenreFilter === 'Action' ? 'selected' : ''}>Action</option>
+      <option value="Adventure" ${currentGenreFilter === 'Adventure' ? 'selected' : ''}>Adventure</option>
+      <option value="Shooter" ${currentGenreFilter === 'Shooter' ? 'selected' : ''}>Shooter</option>
+      <option value="Strategy" ${currentGenreFilter === 'Strategy' ? 'selected' : ''}>Strategy</option>
+    </select>
+  `;
+
+  return html;
+}
+
+// Petite fonction pour gérer le changement de genre
+function changeGenre(genre) {
+  currentGenreFilter = genre;
+  playThemeSound(theme);
+  render();
 }
 
 function renderHypeBadge(game) {
