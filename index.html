@@ -584,6 +584,32 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   content: ''; position: absolute; top: 0; width: 24px; height: 3px; background: var(--acc);
   border-radius: 0 0 4px 4px; box-shadow: 0 0 10px var(--acc);
 }
+
+/* 🖥️ Version PC / Grand écran : Un vrai site web élargi */
+  @media (min-width: 768px) {
+    main {
+      max-width: 1200px !important; /* Élargit le site à 1200px (tu peux mettre 1300px ou 1400px si tu veux encore plus large) */
+      padding: 24px 40px 60px !important;
+    }
+
+    /* Augmente le nombre de colonnes pour les grilles de jeux sur PC */
+    .games-grid {
+      grid-template-columns: repeat(4, 1fr) !important; /* Passe à 4 ou 5 colonnes de jeux */
+      gap: 16px;
+    }
+
+    /* Adapte aussi la grille du musée des consoles sur PC */
+    .vitrine-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .games-grid {
+      grid-template-columns: repeat(5, 1fr) !important; /* Encore plus large sur les très grands écrans */
+    }
+  }
+  
 </style>
 </head>
 <body>
