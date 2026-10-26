@@ -2530,37 +2530,60 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
-// 📅 Gestion du sélecteur de mois personnalisé et pro
-const dateSelectBtn = $("#dateSelect");
+// 📅 Gestion intelligente et unifiée du sélecteur de date (iOS / PC)
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+const iosInput = $("#iosDateInput");
+const desktopBtn = $("#dateSelect");
 const customPicker = $("#customMonthPicker");
 const dateSelectText = $("#dateSelectText");
 
 let pickerYear = parseInt(ym.split("-")[0], 10);
 
 function updateDateButtonText() {
+  if (!dateSelectText) return;
   const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
   dateSelectText.textContent = monthName.toUpperCase();
 }
 
-dateSelectBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  playThemeSound(theme);
-  if (customPicker.style.display === "block") {
-    customPicker.style.display = "none";
-  } else {
-    pickerYear = parseInt(ym.split("-")[0], 10);
-    renderCustomMonthPicker();
-    customPicker.style.display = "block";
-  }
-});
+if (isIOS && iosInput) {
+  // 🍏 Sur iOS : on active l'input natif invisible pour afficher le rouleau tactile
+  iosInput.style.display = "block";
+  if (desktopBtn) desktopBtn.style.display = "none";
+  
+  iosInput.value = ym;
+  iosInput.addEventListener("change", (e) => {
+    if (e.target.value) {
+      playThemeSound(theme);
+      ym = e.target.value;
+      load();
+    }
+  });
+} else {
+  // 💻 Sur PC / Navigateur : on active ton popover pro sur-mesure
+  if (desktopBtn && customPicker) {
+    desktopBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      playThemeSound(theme);
+      if (customPicker.style.display === "block") {
+        customPicker.style.display = "none";
+      } else {
+        pickerYear = parseInt(ym.split("-")[0], 10);
+        renderCustomMonthPicker();
+        customPicker.style.display = "block";
+      }
+    });
 
-document.addEventListener("click", (e) => {
-  if (!customPicker.contains(e.target) && !dateSelectBtn.contains(e.target)) {
-    customPicker.style.display = "none";
+    document.addEventListener("click", (e) => {
+      if (!customPicker.contains(e.target) && !desktopBtn.contains(e.target)) {
+        customPicker.style.display = "none";
+      }
+    });
   }
-});
+}
 
 function renderCustomMonthPicker() {
+  if (!customPicker) return;
   const currentMonthNum = parseInt(ym.split("-")[1], 10);
   
   customPicker.replaceChildren();
@@ -2618,7 +2641,7 @@ function renderCustomMonthPicker() {
   customPicker.append(grid);
 }
 
-// Mettre à jour le texte initial au chargement
+// Mise à jour initiale du texte
 updateDateButtonText();
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
