@@ -717,6 +717,63 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
 input[type="month"]#dateSelect:hover {
   border-color: var(--acc) !important;
 }
+
+/* 📅 Popup de sélection de mois sur-mesure */
+.custom-month-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--acc) 20%, transparent);
+  z-index: 100;
+  animation: fadeInList 0.2s ease;
+  font-family: var(--font);
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--acc);
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.picker-month-btn {
+  background: var(--cov);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+}
+
+.picker-month-btn:hover {
+  border-color: var(--acc);
+}
+
+.picker-month-btn.active {
+  background: var(--acc);
+  color: var(--on);
+  box-shadow: 0 0 10px var(--acc);
+}
   
 </style>
 </head>
@@ -827,21 +884,26 @@ input[type="month"]#dateSelect:hover {
     </div>
 
 <div class="header-bottom">
-  <!-- 📅 Champ natif Mois + Année (1970 à 2999) -->
-  <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
-    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; box-sizing: border-box;">
-  </div>
+      <!-- 📅 Sélecteur de mois personnalisé et pro -->
+      <div class="date-picker-container" style="flex: 1; margin-right: 6px; position: relative;">
+        <div id="dateSelect" class="chip" style="width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+          <span id="dateSelectText">OCTOBRE 2026</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <!-- Popup personnalisé qui s'affichera au clic -->
+        <div id="customMonthPicker" class="custom-month-dropdown" style="display: none;"></div>
+      </div>
 
-  <!-- 🕹️ Un unique bloc de flèches rétro -->
-  <div class="month-nav">
-    <button class="chip" id="prev" aria-label="Mois précédent">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
-    </button>
-    <button class="chip" id="next" aria-label="Mois suivant">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>
-    </button>
-  </div>
-</div>
+      <!-- 🕹️ Un unique bloc de flèches rétro -->
+      <div class="month-nav">
+        <button class="chip" id="prev" aria-label="Mois précédent">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
+        </button>
+        <button class="chip" id="next" aria-label="Mois suivant">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>
+        </button>
+      </div>
+    </div>
 
     <div class="filter-bar-container">
       <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
@@ -2470,6 +2532,97 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
+// 📅 Gestion du sélecteur de mois personnalisé et pro
+const dateSelectBtn = $("#dateSelect");
+const customPicker = $("#customMonthPicker");
+const dateSelectText = $("#dateSelectText");
+
+let pickerYear = parseInt(ym.split("-")[0], 10);
+
+function updateDateButtonText() {
+  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  dateSelectText.textContent = monthName.toUpperCase();
+}
+
+dateSelectBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  playThemeSound(theme);
+  if (customPicker.style.display === "block") {
+    customPicker.style.display = "none";
+  } else {
+    pickerYear = parseInt(ym.split("-")[0], 10);
+    renderCustomMonthPicker();
+    customPicker.style.display = "block";
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (!customPicker.contains(e.target) && !dateSelectBtn.contains(e.target)) {
+    customPicker.style.display = "none";
+  }
+});
+
+function renderCustomMonthPicker() {
+  const currentMonthNum = parseInt(ym.split("-")[1], 10);
+  
+  customPicker.replaceChildren();
+
+  // En-tête avec changement d'année
+  const header = el("div", "picker-header");
+  const prevYearBtn = el("button", "chip", "◀");
+  prevYearBtn.style.padding = "4px 8px";
+  prevYearBtn.style.minHeight = "24px";
+  prevYearBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    pickerYear--;
+    renderCustomMonthPicker();
+  });
+
+  const yearTitle = el("span", "", String(pickerYear));
+  yearTitle.style.fontSize = "13px";
+
+  const nextYearBtn = el("button", "chip", "▶");
+  nextYearBtn.style.padding = "4px 8px";
+  nextYearBtn.style.minHeight = "24px";
+  nextYearBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    pickerYear++;
+    renderCustomMonthPicker();
+  });
+
+  header.append(prevYearBtn, yearTitle, nextYearBtn);
+  customPicker.append(header);
+
+  // Grille des 12 mois
+  const grid = el("div", "picker-grid");
+  const monthNames = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+
+  monthNames.forEach((mName, idx) => {
+    const mNum = idx + 1;
+    const mBtn = el("button", "picker-month-btn", mName);
+    const mStr = String(mNum).padStart(2, "0");
+    
+    if (pickerYear === parseInt(ym.split("-")[0], 10) && mNum === currentMonthNum) {
+      mBtn.classList.add("active");
+    }
+
+    mBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      playThemeSound(theme);
+      ym = `${pickerYear}-${mStr}`;
+      customPicker.style.display = "none";
+      updateDateButtonText();
+      load();
+    });
+    grid.append(mBtn);
+  });
+
+  customPicker.append(grid);
+}
+
+// Mettre à jour le texte initial au chargement
+updateDateButtonText();
+  
 load();
 </script>
 </body>
