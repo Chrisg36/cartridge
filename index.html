@@ -1818,8 +1818,7 @@ async function load() {
   render();
   hideSplash();
   
-}tTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
-}
+setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 
 async function searchGlobal(query) {
   if (!query || query.length < 2) { searchResults = null; render(); return; }
