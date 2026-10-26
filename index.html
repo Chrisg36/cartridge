@@ -678,20 +678,26 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
+/* 🎨 Sélecteur de date 100% réactif aux thèmes dynamiques */
 input[type="month"]#dateSelect {
   background-color: var(--bg-card, #1a1512);
-  border: 1px solid var(--border-color, #ff7b0033);
-  color: #ffb700;
+  border: 1px solid var(--border-color, rgba(255, 123, 0, 0.2));
+  color: var(--text-color, #ffffff); /* 👈 S'adapte au thème actif ! */
   padding: 10px 14px;
   border-radius: 12px;
   outline: none;
   cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: 0.5px;
   transition: all 0.2s ease;
 }
 
-input[type="month"]#dateSelect:hover {
-  border-color: #ff7b00;
-  box-shadow: 0 0 10px rgba(255, 123, 0, 0.2);
+/* Effet au survol et au focus adapté à l'accent du thème */
+input[type="month"]#dateSelect:hover,
+input[type="month"]#dateSelect:focus {
+  border-color: var(--accent-color, #ff7b00);
+  box-shadow: 0 0 10px var(--accent-glow, rgba(255, 123, 0, 0.25));
 }
   
 </style>
