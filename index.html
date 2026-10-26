@@ -2548,17 +2548,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
  // Détection iOS
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-const dateInput = $("#dateSelect");
-const customPicker = $("#customMonthPicker");
-
-let pickerYear = parseInt((ym || "2026-10").split("-")[0], 10);
-
 if (!isIOS && dateInput && customPicker) {
-  // Sur PC/Mac : on active le popover personnalisé au lieu du calendrier moche
-  dateInput.addEventListener("mousedown", (e) => {
+  // Sur PC/Mac : on intercepte le clic pour bloquer le menu natif et ouvrir notre grille
+  dateInput.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (typeof playThemeSound === "function") playThemeSound(theme);
 
     if (customPicker.style.display === "block") {
