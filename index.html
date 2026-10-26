@@ -678,33 +678,33 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* 🎨 Bordure 100% adaptée au style et aux couleurs de chaque thème */
+/* 🎯 Le champ de date copie 100% du style de .platform-select de ton thème */
 input[type="month"]#dateSelect {
-  appearance: none;
+  /* Supprime l'apparence native pour laisser le thème s'appliquer */
   -webkit-appearance: none;
-  
-  /* Fond et texte du thème */
-  background-color: var(--bg-card, inherit) !important;
-  color: var(--text-color, inherit) !important;
-  
-  /* 🎯 Force la bordure à copier la couleur de bordure du thème actif */
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2)) !important;
-  
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Ne met AUCUN border-radius ou border en dur : laisse hériter ! */
+  border-radius: inherit !important;
+  border: inherit !important;
+  background: inherit !important;
+  color: inherit !important;
+  font-family: inherit !important;
+
+  /* Seuls les ajustements de disposition interne */
+  box-sizing: border-box;
   padding: 10px 14px;
-  border-radius: 12px;
   outline: none;
   cursor: pointer;
-  font-family: inherit;
-  font-weight: 800;
-  letter-spacing: 0.5px;
   transition: all 0.2s ease;
 }
 
-/* Survol / Focus avec la couleur d'accent du thème */
-input[type="month"]#dateSelect:hover,
-input[type="month"]#dateSelect:focus {
-  border-color: var(--accent-color, var(--border-color)) !important;
-  box-shadow: 0 0 8px var(--accent-glow, transparent);
+/* Ajuste l'icône calendrier native pour qu'elle s'accorde au texte */
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.8);
+  opacity: 0.7;
 }
   
 </style>
