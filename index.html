@@ -2199,17 +2199,13 @@ async function openSheet(it) {
   categoryBadge.style.color = "var(--acc)";
   categoryBadge.style.marginTop = "4px";
 
-  const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
+const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
 
-  // 💰 Gestion et affichage du prix du jeu
-  let priceVal = it.g.price !== undefined ? it.g.price : null;
+  // 💰 Affichage du prix uniquement si l'API le fournit
   let priceText = "";
-  if (priceVal !== null) {
-    priceText = priceVal === 0 ? "💰 Prix : Gratuit / F2P" : `💰 Prix : ${priceVal} €`;
-  } else {
-    // Si l'API ne renvoie pas de prix exact, on met un prix standard indicatif (ou tu peux laisser vide si tu preferes)
-    priceText = "💰 Prix : ~59.99 € (Standard)";
+  if (it.g.price !== undefined && it.g.price !== null) {
+    priceText = it.g.price === 0 ? "💰 Prix : Gratuit / F2P" : `💰 Prix : ${it.g.price} €`;
   }
 
   const companyInfo = el("p", "m", [devText, pubText, priceText].filter(Boolean).join("\n"));
