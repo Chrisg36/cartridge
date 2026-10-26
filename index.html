@@ -2467,6 +2467,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
+  // 📅 Écouteurs pour le choix dynamique du mois et de l'année
+const monthSelect = $("#monthSelect");
+const yearSelect = $("#yearSelect");
+
+if (monthSelect && yearSelect) {
+  const handleDateChange = () => {
+    playThemeSound(theme);
+    ym = `${yearSelect.value}-${monthSelect.value}`;
+    load();
+  };
+
+  monthSelect.addEventListener("change", handleDateChange);
+  yearSelect.addEventListener("change", handleDateChange);
+}
+
 load();
 </script>
 </body>
