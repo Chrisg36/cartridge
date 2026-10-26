@@ -973,10 +973,9 @@ input[type="month"]#dateSelect:hover {
   </div>
   <div id="list"></div>
 </main>
-
-<!-- 📱 AJOUTE LA NAVBAR ICI -->
+<!-- 📱 BARRE DE NAVIGATION EN BAS -->
 <nav class="bottom-nav">
-  <button class="nav-item active" id="navHome">
+  <button class="nav-item active" id="navArcade" title="Arcade (En construction)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
       <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -1006,10 +1005,10 @@ input[type="month"]#dateSelect:hover {
 
   <button class="nav-item" id="navSettings">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
     </svg>
-    <span>Réglages</span>
+    <span>Profil / Réglages</span>
   </button>
 </nav>
 
@@ -2611,7 +2610,7 @@ for (let i = 0; i < 20; i++) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const navHome = document.getElementById("navHome");
+  const navArcade = document.getElementById("navArcade");
   const navShop = document.getElementById("navShop");
   const navMuseum = document.getElementById("navMuseum");
   const navSettings = document.getElementById("navSettings");
@@ -2621,12 +2620,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn) btn.classList.add("active");
   }
 
-  if (navHome) {
-    navHome.addEventListener("click", () => {
+  if (navArcade) {
+    navArcade.addEventListener("click", () => {
       if (typeof playThemeSound === "function") playThemeSound(theme);
-      setActiveNav(navHome);
+      setActiveNav(navArcade);
       if (typeof closeSheet === "function") closeSheet();
       window.scrollTo({ top: 0, behavior: "smooth" });
+      // Optionnel : petite alerte ou redirection vers l'accueil principal
+      // alert("🎮 Section Arcade en construction !");
     });
   }
 
