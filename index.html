@@ -680,11 +680,11 @@
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
 /* 🎨 Sélecteur de date 100% réactif aux thèmes dynamiques */
 /* Sélecteur de date 100% réactif à tous les thèmes (clair & sombre) */
+/* Sélecteur de mois parfaitement intégré aux thèmes */
 input[type="month"]#dateSelect {
-  background: inherit !important;
-  background-color: transparent !important;
-  color: inherit !important;
-  border: none !important;
+  background-color: var(--bg-card, #1a1512) !important;
+  color: var(--text-color, #ff7b00) !important;
+  border: 1px solid var(--border-color, rgba(255, 123, 0, 0.3)) !important;
   padding: 10px 14px;
   border-radius: 12px;
   outline: none;
@@ -695,12 +695,11 @@ input[type="month"]#dateSelect {
   transition: all 0.2s ease;
 }
 
-/* On s'assure que le conteneur englobant utilise le style standard des inputs de ton app */
-.date-picker-container {
-  display: flex;
-  align-items: center;
+input[type="month"]#dateSelect:hover,
+input[type="month"]#dateSelect:focus {
+  border-color: var(--accent-color, #ff7b00) !important;
+  box-shadow: 0 0 10px var(--accent-glow, rgba(255, 123, 0, 0.25));
 }
-  
 </style>
 </head>
 <body>
