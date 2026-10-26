@@ -1792,8 +1792,15 @@ function renderShimmerLoader() {
 
 async function load() {
   updateStaticTexts();
+  
+  // 📅 Synchronise les menus déroulants avec la variable ym actuelle
+  const [currentYear, currentMonth] = ym.split("-");
+  const monthSel = $("#monthSelect");
+  const yearSel = $("#yearSelect");
+  if (monthSel) monthSel.value = currentMonth;
+  if (yearSel) yearSel.value = currentYear;
+
   const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  $("#title").textContent = monthTitle;
   const editionBadge = $("#editionDateBadge");
   if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
 
