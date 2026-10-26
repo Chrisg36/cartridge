@@ -678,13 +678,10 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* 🎨 Sélecteur de date 100% réactif aux thèmes dynamiques */
-/* Sélecteur de date 100% réactif à tous les thèmes (clair & sombre) */
-/* Sélecteur de mois parfaitement intégré aux thèmes */
-/* 🎨 Le texte et l'icône s'adaptent dynamiquement au thème actif */
+/* Sélecteur de date parfaitement lisible et aux couleurs du thème */
 input[type="month"]#dateSelect {
   background-color: var(--bg-card, #1a1512) !important;
-  color: var(--accent-color, inherit) !important; /* 👈 Prend la couleur principale du thème */
+  color: var(--text-color, #ffffff) !important; /* 👈 Utilise la vraie couleur du texte du thème */
   border: 1px solid var(--border-color, rgba(255, 123, 0, 0.3)) !important;
   padding: 10px 14px;
   border-radius: 12px;
@@ -696,15 +693,15 @@ input[type="month"]#dateSelect {
   transition: all 0.2s ease;
 }
 
-/* 🎯 Colore aussi l'icône du petit calendrier natif dans la couleur du thème */
 input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  filter: drop-shadow(0px 0px 1px var(--accent-color));
+  filter: invert(1); /* Assure que l'icône calendrier reste bien visible peu importe le fond */
+  opacity: 0.8;
 }
 
 input[type="month"]#dateSelect:hover,
 input[type="month"]#dateSelect:focus {
-  border-color: var(--accent-color, currentColor) !important;
+  border-color: var(--accent-color, #ff7b00) !important;
   box-shadow: 0 0 10px var(--accent-glow, rgba(255, 123, 0, 0.25));
 }
   
