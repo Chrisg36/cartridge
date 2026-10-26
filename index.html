@@ -678,12 +678,6 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-input[type="month"]#dateSelect {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: var(--bg-card) !important;
-  color: var(--text-color) !important;
-  
 input[type="month"]#dateSelect.chip {
   -webkit-appearance: none;
   appearance: none;
@@ -692,11 +686,11 @@ input[type="month"]#dateSelect.chip {
   box-sizing: border-box;
   width: 100%;
   
-  /* 🎯 Utilise la classe ou la variable de fond exacte des autres chips/boutons */
-  background: var(--bg-card, transparent) !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--border-radius, 12px) !important;
+  /* 🎯 Force l'input à prendre exactement le même fond et la même couleur que les autres chips */
+  background-color: inherit !important;
+  color: inherit !important;
+  border: inherit !important;
+  border-radius: inherit !important;
   box-shadow: none !important;
   
   font-family: inherit !important;
