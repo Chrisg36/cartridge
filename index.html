@@ -784,33 +784,8 @@
       <span id="editionDateBadge">MONTHLY RELEASES</span>
     </div>
 
-   <div class="header-bottom">
-      <!-- 📅 Sélecteurs dynamiques de mois et d'année à la place du titre fixe -->
-      <div class="date-picker-container" style="display: flex; gap: 4px; flex: 1; margin-right: 6px;">
-        <select id="monthSelect" class="platform-select" aria-label="Choisir le mois" style="flex: 1.3;">
-          <option value="01">Janvier</option>
-          <option value="02">Février</option>
-          <option value="03">Mars</option>
-          <option value="04">Avril</option>
-          <option value="05">Mai</option>
-          <option value="06">Juin</option>
-          <option value="07">Juillet</option>
-          <option value="08">Août</option>
-          <option value="09">Septembre</option>
-          <option value="10">Octobre</option>
-          <option value="11">Novembre</option>
-          <option value="12">Décembre</option>
-        </select>
-
-        <select id="yearSelect" class="platform-select" aria-label="Choisir l'année" style="flex: 1;">
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-          <option value="2026">2026</option>
-          <option value="2027">2027</option>
-          <option value="2028">2028</option>
-        </select>
-      </div>
-
+    <div class="header-bottom">
+      <h1 id="title"></h1>
       <div class="month-nav">
         <!-- 🕹️ FLÈCHES RÉTRO FORCÉES EN SVG PIXEL / ANGLE DROIT -->
         <button class="chip" id="prev" aria-label="Mois précédent">
@@ -1436,17 +1411,14 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-// Mémoire permanente anti-triche (ne s'efface jamais quand on enlève un favori)
-let rewardedFavorites = [];
-try { rewardedFavorites = JSON.parse(localStorage.getItem("rewardedFavorites") || "[]"); } catch (e) { rewardedFavorites = []; }
-
 let showFavoritesOnly = false;
 
-function isFavorite(rawId) {
-  const id = Number(rawId);
-  return favorites.map(Number).includes(id);
+// 1. Déclare bien isicale ici en premier
+function isFavorite(id) { 
+  return favorites.map(Number).includes(Number(id)); 
 }
 
+// 2. Ensuite la fonction sécurisée anti-farm de crédits
 let isToggling = false;
 function toggleFavorite(rawId) {
   if (isToggling) return;
@@ -1457,22 +1429,11 @@ function toggleFavorite(rawId) {
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
-    // On retire le jeu des favoris (AUCUN point gagné)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    // On ajoute le jeu aux favoris
     currentFavs.push(id);
     favorites = currentFavs;
-
-    // VÉRIFICATION ANTI-FARM : Est-ce que ce jeu a déjà donné des points par le passé ?
-    let currentRewarded = rewardedFavorites.map(Number);
-    if (!currentRewarded.includes(id)) {
-      currentRewarded.push(id);
-      rewardedFavorites = currentRewarded;
-      try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
-      
-      addCoins(10); // +10 points accordés une et une seule fois pour ce jeu !
-    }
+    addCoins(10); 
   }
   
   try { 
@@ -1484,6 +1445,7 @@ function toggleFavorite(rawId) {
 
   setTimeout(() => { isToggling = false; }, 150);
 }
+
 let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
@@ -1791,18 +1753,13 @@ function renderShimmerLoader() {
 
 async function load() {
   updateStaticTexts();
-  
-  // Synchronise les menus déroulants Mois / Année avec la variable ym actuelle
-  const [currentYear, currentMonth] = ym.split("-");
-  const monthSel = $("#monthSelect");
-  const yearSel = $("#yearSelect");
-  if (monthSel) monthSel.value = currentMonth;
-  if (yearSel) yearSel.value = currentYear;
-
-  const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "short", year: "numeric", timeZone: "UTC" });
+  const monthTitle = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  $("#title").textContent = monthTitle;
   const editionBadge = $("#editionDateBadge");
   if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
 
+  renderShimmerLoader();
+  const startTime = Date.now();
   try {
     if (!cache[ym]) {
       const res = await fetch(`${API}/?month=${ym}`);
@@ -1811,14 +1768,11 @@ async function load() {
       cache[ym] = data;
     }
   } catch (e) {
-    $("#list").replaceChildren(el("p", "msg", t('netError')));
-    hideSplash();
+    setTimeout(() => { $("#list").replaceChildren(el("p", "msg", t('netError'))); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
     return;
   }
-  render();
-  hideSplash();
-  
-setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
+  setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
+}
 
 async function searchGlobal(query) {
   if (!query || query.length < 2) { searchResults = null; render(); return; }
@@ -1834,8 +1788,6 @@ async function searchGlobal(query) {
     $("#list").replaceChildren(el("p", "msg", t('searchError')));
   }
 }
-
-let currentGenreFilter = "Tous"; // 🏷️ À déclarer avec tes autres variables globales (comme currentFilter)
 
 function itemsFor(games) {
   const out = [];
@@ -1860,34 +1812,6 @@ function itemsFor(games) {
       });
     }
     if (!rel.length) continue;
-
-    // 🏷️ FILTRE PAR GENRE / STYLE (Ajouté ici)
-    if (currentGenreFilter !== "Tous") {
-      const GENRE_FR = {
-        "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
-        "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
-        "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
-        "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
-        "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade"
-      };
-
-      let genresRaw = g.genres || g.genre || g.category || ["Action"];
-      let gameGenres = [];
-      if (Array.isArray(genresRaw)) {
-        gameGenres = genresRaw.map(genreObj => {
-          const name = typeof genreObj === 'object' ? (genreObj.name || '') : genreObj;
-          return GENRE_FR[name] || name;
-        });
-      } else if (typeof genresRaw === 'string') {
-        gameGenres = [GENRE_FR[genresRaw] || genresRaw];
-      }
-
-      const matchGenre = gameGenres.some(genreStr => 
-        genreStr.toLowerCase().includes(currentGenreFilter.toLowerCase())
-      );
-      if (!matchGenre) continue;
-    }
-
     out.push({ g, rel, date: rel[0].date });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date) || b.g.hypes - a.g.hypes);
@@ -2467,21 +2391,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
-  // 📅 Écouteurs pour le choix dynamique du mois et de l'année
-const monthSelect = $("#monthSelect");
-const yearSelect = $("#yearSelect");
-
-if (monthSelect && yearSelect) {
-  const handleDateChange = () => {
-    playThemeSound(theme);
-    ym = `${yearSelect.value}-${monthSelect.value}`;
-    load();
-  };
-
-  monthSelect.addEventListener("change", handleDateChange);
-  yearSelect.addEventListener("change", handleDateChange);
-}
-
+load();
 </script>
 </body>
 </html>
