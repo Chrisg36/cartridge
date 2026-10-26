@@ -680,9 +680,9 @@
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
 /* 🎨 Sélecteur de date 100% réactif aux thèmes dynamiques */
 input[type="month"]#dateSelect {
-  background-color: var(--bg-card, #1a1512);
-  border: 1px solid var(--border-color, rgba(255, 123, 0, 0.2));
-  color: var(--text-color, #ffffff); /* 👈 S'adapte au thème actif ! */
+  background-color: var(--bg-card, #1a1512) !important;
+  border: 1px solid var(--border-color, rgba(255, 123, 0, 0.2)) !important;
+  color: var(--text-color, #ffb700) !important; /* Force la couleur du texte du thème */
   padding: 10px 14px;
   border-radius: 12px;
   outline: none;
@@ -693,10 +693,9 @@ input[type="month"]#dateSelect {
   transition: all 0.2s ease;
 }
 
-/* Effet au survol et au focus adapté à l'accent du thème */
 input[type="month"]#dateSelect:hover,
 input[type="month"]#dateSelect:focus {
-  border-color: var(--accent-color, #ff7b00);
+  border-color: var(--accent-color, #ff7b00) !important;
   box-shadow: 0 0 10px var(--accent-glow, rgba(255, 123, 0, 0.25));
 }
   
