@@ -760,9 +760,11 @@ input[type="month"]#dateSelect:hover {
 }
 
 .picker-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .picker-month-btn {
