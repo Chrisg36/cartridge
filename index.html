@@ -2541,59 +2541,66 @@ for (let i = 0; i < 20; i++) {
   particlesContainer.append(p);
 }
 
+// Récupération correcte des boutons de la barre du bas
+const navHome = document.getElementById("navHome");
+const navShelf = document.getElementById("navShelf");
+const navShopArcade = document.getElementById("navShopArcade");
+const navMuseum = document.getElementById("navMuseum");
+const navSettings = document.getElementById("navSettings");
+
 function setActiveNav(btn) {
-    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => item.classList.remove("active"));
-    if (btn) btn.classList.add("active");
-  }
+  document.querySelectorAll(".bottom-nav .nav-item").forEach(item => item.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+}
 
 if (navHome) {
-    navHome.addEventListener("click", () => {
-      if (typeof playThemeSound === "function") playThemeSound(theme);
-      setActiveNav(navHome);
-      if (typeof closeSheet === "function") closeSheet();
-      
-      const shopPage = document.getElementById("shopMainPage");
-      const homeContent = document.getElementById("homeMainContent");
-      
-      if (shopPage) shopPage.style.display = "none";
-      if (homeContent) homeContent.style.display = "block";
+  navHome.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navHome);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    const shopPage = document.getElementById("shopMainPage");
+    const homeContent = document.getElementById("homeMainContent");
+    
+    if (shopPage) shopPage.style.display = "none";
+    if (homeContent) homeContent.style.display = "block";
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
-  if (navShopArcade) {
-    navShopArcade.addEventListener("click", () => {
-      if (typeof playThemeSound === "function") playThemeSound(theme);
-      setActiveNav(navShopArcade);
-      if (typeof closeSheet === "function") closeSheet();
-      
-      const homeContent = document.getElementById("homeMainContent");
-      const shopPage = document.getElementById("shopMainPage");
-      
-      if (homeContent) homeContent.style.display = "none";
-      if (shopPage) {
-        shopPage.style.display = "block";
-        renderShopMainPage();
-      }
+if (navShopArcade) {
+  navShopArcade.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navShopArcade);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    const homeContent = document.getElementById("homeMainContent");
+    const shopPage = document.getElementById("shopMainPage");
+    
+    if (homeContent) homeContent.style.display = "none";
+    if (shopPage) {
+      shopPage.style.display = "block";
+      renderShopMainPage();
+    }
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
-  if (navMuseum) {
-    navMuseum.addEventListener("click", () => {
-      setActiveNav(navMuseum);
-      if (typeof openConsoleVitrine === "function") openConsoleVitrine();
-    });
-  }
+if (navMuseum) {
+  navMuseum.addEventListener("click", () => {
+    setActiveNav(navMuseum);
+    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+  });
+}
 
-  if (navSettings) {
-    navSettings.addEventListener("click", () => {
-      setActiveNav(navSettings);
-      if (typeof openSettings === "function") openSettings();
-    });
-  }
+if (navSettings) {
+  navSettings.addEventListener("click", () => {
+    setActiveNav(navSettings);
+    if (typeof openSettings === "function") openSettings();
+  });
+}
 
 // --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
 
