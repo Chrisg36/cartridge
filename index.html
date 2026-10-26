@@ -671,6 +671,85 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   display: flex;
   flex-direction: column;
 }
+
+/* --- VISUELS DE PACKS PROS & BOOSTERS 3D --- */
+.booster-pack-card {
+  width: 170px;
+  height: 240px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, #1e1b2e 0%, #0d0a14 100%);
+  border: 2px solid var(--acc);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 20px color-mix(in srgb, var(--acc) 40%, transparent);
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.booster-pack-card:hover {
+  transform: scale(1.05) translateY(-4px);
+  filter: brightness(1.15);
+}
+
+.booster-logo-badge {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff;
+  background: var(--card);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--acc);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 80%, transparent);
+  width: 100%;
+  text-align: center;
+}
+
+.booster-art-center {
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--acc) 60%, transparent) 0%, transparent 70%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 25px var(--acc);
+}
+
+.booster-foil-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  pointer-events: none;
+  animation: foilShine 3s infinite linear;
+}
+
+@keyframes foilShine {
+  0% { transform: translateX(-150%) rotate(25deg); }
+  100% { transform: translateX(150%) rotate(25deg); }
+}
+
+.rarity-tag {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  color: #000;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  letter-spacing: 1px;
+}
   
 </style>
 </head>
@@ -1063,16 +1142,27 @@ async function triggerRandomPackDraw(type, category = "standard") {
   const p = $("#panel");
   p.replaceChildren();
   
-  // Étape 1 : Le booster apparaît et tremble (effet d'énergie)
-  const boosterBox = el("div");
-  boosterBox.className = "pack-animating";
-  boosterBox.style.cssText = "text-align:center; padding: 40px 0; cursor: pointer;";
-  boosterBox.innerHTML = `
-    <div style="font-size: 70px; margin-bottom: 12px; filter: drop-shadow(0 0 15px var(--acc));">📦</div>
-    <h2 style="font-family:'Orbitron',sans-serif; color:var(--acc); margin-bottom:6px;">Pack ${type} Prêt !</h2>
-    <p class="m">Concentration d'énergie rétro en cours...</p>
+  // Étape 1 : Le vrai visuel de booster pro qui vibre en attendant la génération
+  const loadingContainer = el("div");
+  loadingContainer.style.cssText = "text-align:center; padding: 20px 0;";
+
+  const boosterVisual = el("div", "booster-pack-card pack-animating");
+  boosterVisual.innerHTML = `
+    <div class="booster-foil-overlay"></div>
+    <div class="booster-logo-badge">CR EDITION</div>
+    <div class="booster-art-center">
+      <span style="font-size: 28px;">📦</span>
+    </div>
+    <div style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--acc); letter-spacing:1px;">
+      PACK ${type.toUpperCase()}
+    </div>
   `;
-  p.append(boosterBox);
+
+  const loadText = el("p", "m", "Ouverture du booster en cours...");
+  loadText.style.marginTop = "14px";
+
+  loadingContainer.append(boosterVisual, loadText);
+  p.append(loadingContainer);
   $("#sheet").classList.add("on");
 
   let randomGame;
@@ -1123,30 +1213,36 @@ async function triggerRandomPackDraw(type, category = "standard") {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Petit délai de suspense (1.5 seconde de vibration)
+  // Temps de suspense visuel (1.5s)
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // Étape 2 : Affichage du conteneur avec la carte face cachée qui va se retourner
+  // Étape 2 : Écran de révélation pro avec la carte 3D à retourner
   p.replaceChildren();
 
   const revealContainer = el("div");
   revealContainer.style.cssText = "text-align: center; animation: fadeInList 0.4s ease-out;";
 
   const celebrationTitle = el("h2", "", `🎉 ${type.toUpperCase()} OUVERT ! 🎉`);
-  celebrationTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--acc); font-size:18px; margin-bottom:14px; text-shadow:0 0 10px var(--acc);";
+  celebrationTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--acc); font-size:18px; margin-bottom:10px; text-shadow:0 0 10px var(--acc);";
 
-  // Structure 3D Flip
+  const rarityBadge = el("div", "rarity-tag", category.includes("retro") ? "⭐ LÉGENDAIRE RÉTRO" : "✨ CARTE OFFICIELLE");
+  rarityBadge.style.display = "inline-block";
+  rarityBadge.style.marginBottom = "14px";
+
+  // Conteneur Flip 3D
   const flipContainer = el("div", "card-flip-container");
   const flipper = el("div", "card-flipper");
 
-  // Face cachée (avant le clic / retournement)
+  // Face cachée (Le dos de carte pro siglé CR)
   const cardFront = el("div", "card-front");
   cardFront.innerHTML = `
-    <div style="font-size: 40px; margin-bottom: 8px;">✨🎮✨</div>
-    <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--acc);">TOUCHER POUR RÉVÉLER</b>
+    <div style="width: 50px; height: 50px; border-radius: 12px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 15px var(--acc); margin-bottom:10px;">
+      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:18px; color:var(--on);">CR</span>
+    </div>
+    <b style="font-family:'Orbitron',sans-serif; font-size:11px; color:var(--txt); letter-spacing:1px;">TOUCHER POUR RETOURNER</b>
   `;
 
-  // Face visible (la jaquette du jeu gagné)
+  // Face visible (La jaquette du jeu)
   const cardBack = el("div", "card-back");
   const img = el("img");
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
@@ -1159,7 +1255,6 @@ async function triggerRandomPackDraw(type, category = "standard") {
   flipper.append(cardFront, cardBack);
   flipContainer.append(flipper);
 
-  // Déclenchement du retournement au clic sur la carte cachée
   let isRevealed = false;
   flipContainer.addEventListener("click", () => {
     if (!isRevealed) {
@@ -1167,13 +1262,12 @@ async function triggerRandomPackDraw(type, category = "standard") {
       playThemeSound(theme);
       flipper.classList.add("flipped");
     } else {
-      // Si déjà révélé, un deuxième clic ouvre la fiche détaillée
       playThemeSound(theme);
       openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
     }
   });
 
-  const infoText = el("p", "m", "Touchez la carte mystère pour la retourner !");
+  const infoText = el("p", "m", "Appuyez sur la carte pour découvrir votre jaquette !");
   infoText.style.marginBottom = "14px";
 
   const btnGroup = el("div");
@@ -1194,7 +1288,7 @@ async function triggerRandomPackDraw(type, category = "standard") {
   });
 
   btnGroup.append(detailBtn, backBtn);
-  revealContainer.append(celebrationTitle, flipContainer, infoText, btnGroup);
+  revealContainer.append(celebrationTitle, rarityBadge, flipContainer, infoText, btnGroup);
   p.append(revealContainer);
 }
 function openCollectionShelf() {
