@@ -2497,14 +2497,7 @@ for (let i = 0; i < 20; i++) {
   particlesContainer.append(p);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const navHome = document.getElementById("navHome");
-  const navShelf = document.getElementById("navShelf");
-  const navShopArcade = document.getElementById("navShopArcade");
-  const navMuseum = document.getElementById("navMuseum");
-  const navSettings = document.getElementById("navSettings");
-
-  function setActiveNav(btn) {
+function setActiveNav(btn) {
     document.querySelectorAll(".bottom-nav .nav-item").forEach(item => item.classList.remove("active"));
     if (btn) btn.classList.add("active");
   }
@@ -2514,6 +2507,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof playThemeSound === "function") playThemeSound(theme);
       setActiveNav(navHome);
       if (typeof closeSheet === "function") closeSheet();
+      
+      // On masque la page boutique et on réaffiche l'accueil normal
+      const shopPage = document.getElementById("shopMainPage");
+      if (shopPage) shopPage.style.display = "none";
+      
+      const homeMain = document.querySelector("main:not(#shopMainPage)");
+      if (homeMain) homeMain.style.display = "block";
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
@@ -2525,32 +2526,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-if (navShopArcade) {
+  if (navShopArcade) {
     navShopArcade.addEventListener("click", () => {
       if (typeof playThemeSound === "function") playThemeSound(theme);
       setActiveNav(navShopArcade);
       if (typeof closeSheet === "function") closeSheet();
       
-      // On masque l'accueil et on affiche la grande page Boutique
-      document.querySelector("main:not(#shopMainPage)").style.display = "none";
+      // On masque l'accueil normal
+      const homeMain = document.querySelector("main:not(#shopMainPage)");
+      if (homeMain) homeMain.style.display = "none";
+      
+      // On affiche la grande page Boutique
       const shopPage = document.getElementById("shopMainPage");
-      shopPage.style.display = "block";
-      
-      // On charge le contenu de la grande page Boutique
-      renderShopMainPage();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
+      if (shopPage) {
+        shopPage.style.display = "block";
+        renderShopMainPage();
+      }
 
-  // Et quand on clique sur "Home", on remet l'accueil
-  if (navHome) {
-    navHome.addEventListener("click", () => {
-      if (typeof playThemeSound === "function") playThemeSound(theme);
-      setActiveNav(navHome);
-      if (typeof closeSheet === "function") closeSheet();
-      
-      document.getElementById("shopMainPage").style.display = "none";
-      document.querySelector("main:not(#shopMainPage)").style.display = "block";
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
@@ -2568,7 +2560,6 @@ if (navShopArcade) {
       if (typeof openSettings === "function") openSettings();
     });
   }
-});
 
 // --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
 
