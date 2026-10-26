@@ -1047,25 +1047,40 @@ async function triggerRandomPackDraw(type) {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Affichage de la jaquette gagnée
+  // Affichage de la jaquette gagnée avec interactivité
   p.replaceChildren();
   p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
-  p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
+  p.append(el("p", "m", `Pack ${type} ouvert avec succès ! Clique sur la carte pour voir les détails :`));
 
   const cardPreview = el("div", "collection-item-card");
   cardPreview.style.maxWidth = "160px";
-  cardPreview.style.margin = "16px auto";
+  cardPreview.style.margin = "14px auto";
+  cardPreview.style.cursor = "pointer";
   
   const img = el("img"); 
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
   
   const title = el("div", "collection-item-title", randomGame.name);
   cardPreview.append(img, title);
+
+  // Permet de cliquer sur la carte pour ouvrir la fiche complète du jeu
+  cardPreview.addEventListener("click", () => {
+    playThemeSound(theme);
+    openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
+  });
+
   p.append(cardPreview);
+
+  const viewDetailsBtn = el("button", "cta-sec", "🔍 Voir la fiche détaillée du jeu");
+  viewDetailsBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
+  });
 
   const backBtn = el("button", "cta", "← Retour à la Boutique");
   backBtn.addEventListener("click", () => openShopModal());
-  p.append(backBtn);
+
+  p.append(viewDetailsBtn, backBtn);
 }
 function openCollectionShelf() {
   playThemeSound(theme);
