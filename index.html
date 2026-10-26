@@ -1002,32 +1002,37 @@ async function triggerRandomPackDraw(type) {
   const p = $("#panel");
   p.replaceChildren();
   p.append(el("h2", "", "🎉 Tirage en cours..."));
-  p.append(el("p", "m", "Ouverture du pack mystère mondial..."));
+  p.append(el("p", "m", "Ouverture du pack mystère..."));
 
   let randomGame;
   
   try {
-    // On pioche d'abord dans les jeux déjà en cache si disponibles pour être instantané
-    const allLoadedGames = [];
-    Object.values(cache).forEach(monthList => {
-      if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
-    });
-
-    // Si on a moins de 5 jeux en cache, on va chercher une liste aléatoire mondiale sur le Worker
-    if (allLoadedGames.length < 5) {
+    // On essaie d'interroger l'API globale si elle existe
+    if (typeof API !== 'undefined') {
       const randomYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
       const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
       const res = await fetch(`${API}/?month=${randomYear}-${randomMonth}`);
       const data = await res.json();
-      if (Array.isArray(data)) allLoadedGames.push(...data);
+      if (Array.isArray(data) && data.length > 0) {
+        randomGame = data[Math.floor(Math.random() * data.length)];
+      }
     }
+  } catch (err) {
+    console.warn("Erreur réseau API, passage au cache local.", err);
+  }
 
+  // Si l'API n'a rien renvoyé, on pioche dans le cache local des mois chargés
+  if (!randomGame) {
+    const allLoadedGames = [];
+    Object.values(cache).forEach(monthList => {
+      if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
+    });
     if (allLoadedGames.length > 0) {
       randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
     }
-  } catch (err) {}
+  }
 
-  // Sécurité ultime si tout le reste échoue
+  // Sécurité ultime de secours si tout est vide
   if (!randomGame) {
     randomGame = {
       id: Math.floor(Math.random() * 100000),
