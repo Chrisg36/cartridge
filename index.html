@@ -733,6 +733,62 @@ input[type="month"]#dateSelect:hover {
     cursor: pointer;
   }
 }
+
+/* Style du Popover personnalisé sur navigateur PC */
+.custom-month-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 280px;
+  background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: var(--font);
+  font-weight: bold;
+  color: var(--txt);
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.picker-month-btn {
+  background: color-mix(in srgb, var(--acc) 10%, transparent);
+  color: var(--txt);
+  border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+  border-radius: var(--radius);
+  padding: 8px 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.picker-month-btn:hover {
+  background: color-mix(in srgb, var(--acc) 30%, transparent);
+  border-color: var(--acc);
+}
+
+.picker-month-btn.active {
+  background: var(--acc);
+  color: #000;
+  border-color: var(--acc);
+}
   
 </style>
 </head>
@@ -2489,19 +2545,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+ // Détection iOS
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
 const dateInput = $("#dateSelect");
 const customPicker = $("#customMonthPicker");
 
-let pickerYear = parseInt(ym.split("-")[0], 10);
+let pickerYear = parseInt((ym || "2026-10").split("-")[0], 10);
 
 if (!isIOS && dateInput && customPicker) {
-  // Sur PC : on bloque l'ouverture native et on affiche ton popover personnalisé
-  dateInput.addEventListener("click", (e) => {
-    // Si on est sur un navigateur PC, on empêche le comportement natif
+  // Sur PC/Mac : on active le popover personnalisé au lieu du calendrier moche
+  dateInput.addEventListener("mousedown", (e) => {
     e.preventDefault();
-    playThemeSound(theme);
-    
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+
     if (customPicker.style.display === "block") {
       customPicker.style.display = "none";
     } else {
@@ -2511,7 +2568,6 @@ if (!isIOS && dateInput && customPicker) {
     }
   });
 
-  // Fermer le popover si on clique en dehors
   document.addEventListener("click", (e) => {
     if (!customPicker.contains(e.target) && !dateInput.contains(e.target)) {
       customPicker.style.display = "none";
@@ -2524,7 +2580,7 @@ function renderCustomMonthPicker() {
   const currentMonthNum = parseInt(ym.split("-")[1], 10);
   customPicker.replaceChildren();
 
-  // En-tête année
+  // En-tête (Changement d'année)
   const header = el("div", "picker-header");
   const prevYearBtn = el("button", "chip", "◀");
   prevYearBtn.style.padding = "4px 8px";
@@ -2550,7 +2606,7 @@ function renderCustomMonthPicker() {
   header.append(prevYearBtn, yearTitle, nextYearBtn);
   customPicker.append(header);
 
-  // Grille des mois
+  // Grille des mois (3 colonnes)
   const grid = el("div", "picker-grid");
   const monthNames = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 
@@ -2558,18 +2614,18 @@ function renderCustomMonthPicker() {
     const mNum = idx + 1;
     const mBtn = el("button", "picker-month-btn", mName);
     const mStr = String(mNum).padStart(2, "0");
-    
+
     if (pickerYear === parseInt(ym.split("-")[0], 10) && mNum === currentMonthNum) {
       mBtn.classList.add("active");
     }
 
     mBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      playThemeSound(theme);
+      if (typeof playThemeSound === "function") playThemeSound(theme);
       ym = `${pickerYear}-${mStr}`;
       customPicker.style.display = "none";
       if (dateInput) dateInput.value = ym;
-      load();
+      if (typeof load === "function") load();
     });
     grid.append(mBtn);
   });
@@ -2577,9 +2633,9 @@ function renderCustomMonthPicker() {
   customPicker.append(grid);
 }
 
-// Synchro initiale de la valeur
+// Initialisation de la valeur
 if (dateInput) dateInput.value = ym;
-
+  
 load();
 </script>
 </body>
