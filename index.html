@@ -826,85 +826,145 @@ function openShopModal() {
   p.className = "panel";
   p.replaceChildren();
 
-  // On s'assure d'actualiser la connexion du jour au passage
   if (typeof checkDailyConnection === "function") {
     checkDailyConnection();
   }
-  let cData = loadChallengesData();
 
-  p.append(el("h2", "", "🎁 Boutique & Défis Arcade"));
+  // Titre principal
+  p.append(el("h2", "", "🕹️ Boutique Arcade & Quêtes"));
   p.append(el("p", "m", `Mes crédits disponibles : ${userCoins} 🪙 | Jaquettes possédées : ${myCollection.length}`));
 
-  // --- SECTION BOUTIQUE (Packs) ---
-  const banner = el("div", "shop-banner");
-  banner.innerHTML = `
-    <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
-    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante !</p>
-  `;
+  // --- SOUS-NAVIGATION INTERNE (ONGLETS) ---
+  const subNav = el("div");
+  subNav.style.cssText = "display:flex; gap:6px; margin:14px 0; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
-  const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
-  drawFreeBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    const todayStr = new Date().toISOString().slice(0, 10);
-    if (localStorage.getItem("lastFreePackDate") === todayStr) {
-      alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
-      return;
-    }
-    localStorage.setItem("lastFreePackDate", todayStr);
-    triggerRandomPackDraw("Gratuit");
+  const tabShop = el("button", "chip", "🏬 Boutique (Bientôt)");
+  const tabPacks = el("button", "chip", "🎟️ Packs Mystères");
+  const tabChallenges = el("button", "chip", "🎯 Défis & Quêtes");
+
+  [tabShop, tabPacks, tabChallenges].forEach(btn => {
+    btn.style.flex = "1";
+    btn.style.fontSize = "10px";
   });
 
-  const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
-  drawPaidBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    if (userCoins < 50) {
-      alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou accomplissez des défis.");
-      return;
-    }
-    userCoins -= 50;
-    updateCoinsUI();
-    triggerRandomPackDraw("Acheté");
-  });
+  const contentArea = el("div");
+  contentArea.style.cssText = "margin-top:10px;";
 
-  banner.append(drawFreeBtn, drawPaidBtn);
-  p.append(banner);
+  // --- CONTENU 1 : BOUTIQUE (EN CONSTRUCTION) ---
+  function renderShopTab() {
+    tabShop.setAttribute("aria-pressed", "true");
+    tabPacks.setAttribute("aria-pressed", "false");
+    tabChallenges.setAttribute("aria-pressed", "false");
 
-  // --- SECTION DÉFIS & QUÊTES ---
-  const challengesSection = el("div");
-  challengesSection.style.cssText = "margin-top:20px; background:var(--card); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:14px;";
-  
-  challengesSection.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; font-size:14px; color:var(--acc); margin-top:0; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
-      🎯 Défis & Quêtes Actifs
-    </h3>
-    <div style="font-size:12px; font-weight:600; display:flex; flex-direction:column; gap:8px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>🔥 Série de connexion : <b>${cData.loginStreak} jour(s)</b></span>
-        <span style="font-size:10px; color:var(--acc);">+10 🪙 / jour</span>
+    contentArea.replaceChildren();
+    const constructionBanner = el("div", "shop-banner");
+    constructionBanner.style.cssText = "border-style:dashed; opacity:0.85; padding:30px 20px; text-align:center;";
+    constructionBanner.innerHTML = `
+      <h3 style="font-size:20px; margin-bottom:8px;">🚧 EN CONSTRUCTION 🚧</h3>
+      <p style="font-size:13px; font-weight:600; line-height:1.5; color:var(--mut);">
+        Bientôt disponible ! Tu pourras y acheter des thèmes exclusifs, des bordures de cartes légendaires et des bonus spéciaux avec tes crédits 🪙.
+      </p>
+    `;
+    contentArea.append(constructionBanner);
+  }
+
+  // --- CONTENU 2 : ACHAT DE PACKS (DISTRIBUTEUR) ---
+  function renderPacksTab() {
+    tabShop.setAttribute("aria-pressed", "false");
+    tabPacks.setAttribute("aria-pressed", "true");
+    tabChallenges.setAttribute("aria-pressed", "false");
+
+    contentArea.replaceChildren();
+    const banner = el("div", "shop-banner");
+    banner.innerHTML = `
+      <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
+      <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante !</p>
+    `;
+
+    const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
+    drawFreeBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      const todayStr = new Date().toISOString().slice(0, 10);
+      if (localStorage.getItem("lastFreePackDate") === todayStr) {
+        alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
+        return;
+      }
+      localStorage.setItem("lastFreePackDate", todayStr);
+      triggerRandomPackDraw("Gratuit");
+    });
+
+    const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
+    drawPaidBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      if (userCoins < 50) {
+        alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou accomplissez des défis.");
+        return;
+      }
+      userCoins -= 50;
+      updateCoinsUI();
+      triggerRandomPackDraw("Acheté");
+    });
+
+    banner.append(drawFreeBtn, drawPaidBtn);
+    contentArea.append(banner);
+  }
+
+  // --- CONTENU 3 : DÉFIS & QUÊTES ---
+  function renderChallengesTab() {
+    tabShop.setAttribute("aria-pressed", "false");
+    tabPacks.setAttribute("aria-pressed", "false");
+    tabChallenges.setAttribute("aria-pressed", "true");
+
+    contentArea.replaceChildren();
+    let cData = loadChallengesData();
+
+    const challengesSection = el("div");
+    challengesSection.style.cssText = "background:var(--card); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:14px;";
+    
+    challengesSection.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:14px; color:var(--acc); margin-top:0; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+        🎯 Tableau de Bord des Quêtes
+      </h3>
+      <div style="font-size:12px; font-weight:600; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>🔥 Série de connexion : <b>${cData.loginStreak} jour(s)</b></span>
+          <span style="font-size:10px; color:var(--acc);">+10 🪙 / jour</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>🔍 Le Curieux du Jour : <b>${cData.dailyProgress.curious ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>❤️ Coup de Cœur : <b>${cData.dailyProgress.favorite ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>🌍 Globe-trotter : <b>${cData.dailyProgress.filterConsole ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>📦 Collectionneur (3 packs hebdo) : <b>${cData.weeklyProgress.packsOpened}/3</b></span>
+          <span style="font-size:10px; color:var(--acc);">+20 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+          <span>🏆 Série 7 Jours Légendaire : <b>${cData.loginStreak}/7</b></span>
+          <span style="font-size:10px; color:var(--acc);">2 Packs Gratuits !</span>
+        </div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>🔍 Le Curieux du Jour : <b>${cData.dailyProgress.curious ? "✅ Validé" : "❌ À faire"}</b></span>
-        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>❤️ Coup de Cœur : <b>${cData.dailyProgress.favorite ? "✅ Validé" : "❌ À faire"}</b></span>
-        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>🌍 Globe-trotter : <b>${cData.dailyProgress.filterConsole ? "✅ Validé" : "❌ À faire"}</b></span>
-        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>📦 Collectionneur (3 packs hebdo) : <b>${cData.weeklyProgress.packsOpened}/3</b></span>
-        <span style="font-size:10px; color:var(--acc);">+20 🪙</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
-        <span>🏆 Série 7 Jours Légendaire : <b>${cData.loginStreak}/7</b></span>
-        <span style="font-size:10px; color:var(--acc);">2 Packs Gratuits !</span>
-      </div>
-    </div>
-  `;
-  p.append(challengesSection);
+    `;
+    contentArea.append(challengesSection);
+  }
+
+  // Écouteurs d'onglets
+  tabShop.addEventListener("click", () => { playThemeSound(theme); renderShopTab(); });
+  tabPacks.addEventListener("click", () => { playThemeSound(theme); renderPacksTab(); });
+  tabChallenges.addEventListener("click", () => { playThemeSound(theme); renderChallengesTab(); });
+
+  subNav.append(tabShop, tabPacks, tabChallenges);
+  p.append(subNav, contentArea);
+
+  // Par défaut, on ouvre directement sur l'onglet Boutique principale (en construction)
+  renderShopTab();
 
   const close = el("button", "close", t('close'));
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -912,7 +972,7 @@ function openShopModal() {
 
   $("#sheet").classList.add("on");
 }
-
+  
 function triggerRandomPackDraw(type) {
   // 🎯 AJOUTE CE BLOC ICI :
   let cData = loadChallengesData();
