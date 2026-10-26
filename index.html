@@ -694,10 +694,14 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 <!-- 🪙 LA GRANDE PAGE BOUTIQUE (Affichée ou masquée) -->
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
-      <div class="header-top">
-        <!-- 🎮 TITRE CARTRIDGE ICI SUR LA PREMIÈRE LIGNE -->
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Texte de gauche -->
+        <div class="neon-logo">🪙 BOUTIQUE ARCADE & QUÊTES</div>
+        
+        <!-- 🎮 CARTRIDGE BIEN AU CENTRE -->
         <div class="neon-logo" id="shop-sub-title">🎮 CARTRIDGE</div>
         
+        <!-- Badge de pièces à droite -->
         <div class="nav">
           <div class="header-currency-badge">
             🪙 <span id="shopPageCoins">100</span>
@@ -710,10 +714,7 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
       </div>
     </div>
     
-    <!-- (Et tu supprimes le bloc centré qui était en trop plus bas) -->
-    <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
-  </div>
-
+    <!-- Contenu de la boutique -->
     <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
   <!-- 🎮 TON ACCUEIL NORMAL (En-tête + Liste des jeux) -->
