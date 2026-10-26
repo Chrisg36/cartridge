@@ -678,41 +678,44 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-input[type="month"]#dateSelect.chip {
+/* 🎯 Copie 100% exacte des propriétés de la classe .chip de ton application */
+input[type="month"]#dateSelect {
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
-  display: inline-flex;
-  align-items: center;
+  
   box-sizing: border-box;
   width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
   
-  /* 🎯 Force un fond opaque et cohérent avec tous les thèmes */
-  background-color: var(--bg-card, #1a1512) !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--border-radius, 12px) !important;
-  box-shadow: none !important;
+  /* Utilise les vraies variables CSS de ton fichier HTML */
+  background: var(--card) !important;
+  color: var(--txt) !important;
+  border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent) !important;
+  border-radius: var(--radius) !important;
   
-  font-family: inherit !important;
-  font-size: 11px !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
   font-weight: 700 !important;
-  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase;
   
-  padding: 8px 12px;
   outline: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-input[type="month"]#dateSelect.chip::-webkit-calendar-picker-indicator {
+/* Alignement de l'icône calendrier native */
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: invert(1);
   opacity: 0.6;
-  margin-left: auto;
 }
 
-input[type="month"]#dateSelect.chip:hover {
-  border-color: var(--accent-color) !important;
+/* Survol identique aux autres chips */
+input[type="month"]#dateSelect:hover {
+  border-color: var(--acc) !important;
 }
   
 </style>
