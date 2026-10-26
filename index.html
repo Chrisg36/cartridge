@@ -678,24 +678,41 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* Force l'input de date à adopter strictement le style des autres blocs du thème */
-input[type="month"]#dateSelect.chip {
+input[type="month"]#dateSelect {
   -webkit-appearance: none;
   appearance: none;
-  background-color: var(--bg-card, inherit) !important;
-  color: var(--text-color, inherit) !important;
-  border: 1px solid var(--border-color, currentColor) !important;
+  background-color: var(--bg-card) !important;
+  color: var(--text-color) !important;
+  
+  /* 🎯 On force une bordure propre, fine, de la couleur exacte du thème */
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15)) !important;
+  border-radius: 12px !important;
+  
+  /* Supprime l'effet d'ombre blanche agressive du navigateur */
+  box-shadow: none !important; 
+  
+  padding: 10px 14px;
   outline: none;
   cursor: pointer;
-  padding: 8px 12px;
+  font-family: inherit;
+  font-weight: 800;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-input[type="month"]#dateSelect.chip::-webkit-calendar-picker-indicator {
+/* S'assure que l'icône calendrier s'intègre discrètement */
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: inherit;
-  opacity: 0.7;
+  opacity: 0.6;
 }
-  
+
+/* Effet au survol / focus identique au reste de l'app */
+input[type="month"]#dateSelect:hover,
+input[type="month"]#dateSelect:focus {
+  border-color: var(--accent-color, var(--border-color)) !important;
+  box-shadow: 0 0 8px var(--accent-glow, transparent) !important;
+}
 </style>
 </head>
 <body>
