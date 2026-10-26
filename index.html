@@ -826,13 +826,20 @@ function openShopModal() {
   p.className = "panel";
   p.replaceChildren();
 
-  p.append(el("h2", "", "🎁 Boutique Arcade"));
+  // On s'assure d'actualiser la connexion du jour au passage
+  if (typeof checkDailyConnection === "function") {
+    checkDailyConnection();
+  }
+  let cData = loadChallengesData();
+
+  p.append(el("h2", "", "🎁 Boutique & Défis Arcade"));
   p.append(el("p", "m", `Mes crédits disponibles : ${userCoins} 🪙 | Jaquettes possédées : ${myCollection.length}`));
 
+  // --- SECTION BOUTIQUE (Packs) ---
   const banner = el("div", "shop-banner");
   banner.innerHTML = `
     <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
-    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+    <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante !</p>
   `;
 
   const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
@@ -851,7 +858,7 @@ function openShopModal() {
   drawPaidBtn.addEventListener("click", () => {
     playThemeSound(theme);
     if (userCoins < 50) {
-      alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou revenez demain.");
+      alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou accomplissez des défis.");
       return;
     }
     userCoins -= 50;
@@ -861,6 +868,43 @@ function openShopModal() {
 
   banner.append(drawFreeBtn, drawPaidBtn);
   p.append(banner);
+
+  // --- SECTION DÉFIS & QUÊTES ---
+  const challengesSection = el("div");
+  challengesSection.style.cssText = "margin-top:20px; background:var(--card); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:14px;";
+  
+  challengesSection.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; font-size:14px; color:var(--acc); margin-top:0; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+      🎯 Défis & Quêtes Actifs
+    </h3>
+    <div style="font-size:12px; font-weight:600; display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>🔥 Série de connexion : <b>${cData.loginStreak} jour(s)</b></span>
+        <span style="font-size:10px; color:var(--acc);">+10 🪙 / jour</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>🔍 Le Curieux du Jour : <b>${cData.dailyProgress.curious ? "✅ Validé" : "❌ À faire"}</b></span>
+        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>❤️ Coup de Cœur : <b>${cData.dailyProgress.favorite ? "✅ Validé" : "❌ À faire"}</b></span>
+        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>🌍 Globe-trotter : <b>${cData.dailyProgress.filterConsole ? "✅ Validé" : "❌ À faire"}</b></span>
+        <span style="font-size:10px; color:var(--acc);">+10 🪙</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>📦 Collectionneur (3 packs hebdo) : <b>${cData.weeklyProgress.packsOpened}/3</b></span>
+        <span style="font-size:10px; color:var(--acc);">+20 🪙</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:8px 10px; border-radius:8px;">
+        <span>🏆 Série 7 Jours Légendaire : <b>${cData.loginStreak}/7</b></span>
+        <span style="font-size:10px; color:var(--acc);">2 Packs Gratuits !</span>
+      </div>
+    </div>
+  `;
+  p.append(challengesSection);
 
   const close = el("button", "close", t('close'));
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
