@@ -676,6 +676,24 @@
   .cartridge:nth-child(1) { animation-delay: 0s; } .cartridge:nth-child(2) { animation-delay: 0.2s; } .cartridge:nth-child(3) { animation-delay: 0.4s; } .cartridge:nth-child(4) { animation-delay: 0.6s; }
   @keyframes bounceCartridge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); background: var(--acc); } }
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+  /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
+input[type="month"]#dateSelect {
+  background-color: var(--bg-card, #1a1512);
+  border: 1px solid var(--border-color, #ff7b0033);
+  color: #ffb700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="month"]#dateSelect:hover {
+  border-color: #ff7b00;
+  box-shadow: 0 0 10px rgba(255, 123, 0, 0.2);
+}
+  
 </style>
 </head>
 <body>
