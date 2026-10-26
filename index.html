@@ -2608,14 +2608,23 @@ function renderCustomMonthPicker() {
   header.append(prevYearBtn, yearTitle, nextYearBtn);
   customPicker.append(header);
 
-  // Grille des mois (3 colonnes)
+  // Grille des mois (Forcée strictement à 3 colonnes en JS)
   const grid = el("div", "picker-grid");
+  grid.style.display = "grid";
+  grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+  grid.style.gap = "6px";
+  grid.style.width = "100%";
+
   const monthNames = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
 
   monthNames.forEach((mName, idx) => {
     const mNum = idx + 1;
     const mBtn = el("button", "picker-month-btn", mName);
     const mStr = String(mNum).padStart(2, "0");
+
+    // Force chaque bouton à s'adapter proprement dans sa colonne
+    mBtn.style.width = "100%";
+    mBtn.style.boxSizing = "border-box";
 
     if (pickerYear === parseInt(ym.split("-")[0], 10) && mNum === currentMonthNum) {
       mBtn.classList.add("active");
