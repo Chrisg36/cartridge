@@ -717,80 +717,6 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
 input[type="month"]#dateSelect:hover {
   border-color: var(--acc) !important;
 }
-
-  /* Sur les écrans d'ordinateurs (non tactiles), on désactive le clic natif moche */
-@media (hover: hover) and (pointer: fine) {
-  input[type="month"]#dateSelect {
-    cursor: pointer;
-  }
-  /* Empêche l'ouverture du calendrier moche du navigateur sur PC */
-  input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-  }
-}
-
-/* Style du Popover personnalisé sur navigateur PC */
-.custom-month-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  width: 280px;
-  background: var(--card);
-  border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-  border-radius: var(--radius);
-  padding: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  box-sizing: border-box;
-}
-
-.picker-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-family: var(--font);
-  font-weight: bold;
-  color: var(--txt);
-}
-
-.picker-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 6px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.picker-month-btn {
-  background: color-mix(in srgb, var(--acc) 10%, transparent);
-  color: var(--txt);
-  border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-  border-radius: var(--radius);
-  padding: 8px 4px;
-  font-family: var(--font);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.picker-month-btn:hover {
-  background: color-mix(in srgb, var(--acc) 30%, transparent);
-  border-color: var(--acc);
-}
-
-.picker-month-btn.active {
-  background: var(--acc);
-  color: #000;
-  border-color: var(--acc);
-}
   
 </style>
 </head>
@@ -901,15 +827,12 @@ input[type="month"]#dateSelect:hover {
     </div>
 
 <div class="header-bottom">
-  <!-- 📅 Input natif (utilisé par iOS pour le rouleau) -->
-  <div class="date-picker-container" style="flex: 1; margin-right: 6px; position: relative;">
-    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%;">
-    
-    <!-- Popup personnalisé qui s'affichera UNIQUEMENT sur navigateur PC -->
-    <div id="customMonthPicker" class="custom-month-dropdown" style="display: none;"></div>
+  <!-- 📅 Champ natif Mois + Année (1970 à 2999) -->
+  <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
+    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; box-sizing: border-box;">
   </div>
 
-  <!-- 🕹️ Flèches rétro -->
+  <!-- 🕹️ Un unique bloc de flèches rétro -->
   <div class="month-nav">
     <button class="chip" id="prev" aria-label="Mois précédent">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
@@ -2547,100 +2470,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
- // Détection iOS
-if (!isIOS && dateInput && customPicker) {
-  // Sur PC/Mac : on intercepte le clic pour bloquer le menu natif et ouvrir notre grille
-  dateInput.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof playThemeSound === "function") playThemeSound(theme);
-
-    if (customPicker.style.display === "block") {
-      customPicker.style.display = "none";
-    } else {
-      pickerYear = parseInt(ym.split("-")[0], 10);
-      renderCustomMonthPicker();
-      customPicker.style.display = "block";
-    }
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!customPicker.contains(e.target) && !dateInput.contains(e.target)) {
-      customPicker.style.display = "none";
-    }
-  });
-}
-
-function renderCustomMonthPicker() {
-  if (!customPicker) return;
-  const currentMonthNum = parseInt(ym.split("-")[1], 10);
-  customPicker.replaceChildren();
-
-  // En-tête (Changement d'année)
-  const header = el("div", "picker-header");
-  const prevYearBtn = el("button", "chip", "◀");
-  prevYearBtn.style.padding = "4px 8px";
-  prevYearBtn.style.minHeight = "24px";
-  prevYearBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    pickerYear--;
-    renderCustomMonthPicker();
-  });
-
-  const yearTitle = el("span", "", String(pickerYear));
-  yearTitle.style.fontSize = "13px";
-
-  const nextYearBtn = el("button", "chip", "▶");
-  nextYearBtn.style.padding = "4px 8px";
-  nextYearBtn.style.minHeight = "24px";
-  nextYearBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    pickerYear++;
-    renderCustomMonthPicker();
-  });
-
-  header.append(prevYearBtn, yearTitle, nextYearBtn);
-  customPicker.append(header);
-
-  // Grille des mois (Forcée strictement à 3 colonnes en JS)
-  const grid = el("div", "picker-grid");
-  grid.style.display = "grid";
-  grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-  grid.style.gap = "6px";
-  grid.style.width = "100%";
-
-  const monthNames = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
-
-  monthNames.forEach((mName, idx) => {
-    const mNum = idx + 1;
-    const mBtn = el("button", "picker-month-btn", mName);
-    const mStr = String(mNum).padStart(2, "0");
-
-    // Force chaque bouton à s'adapter proprement dans sa colonne
-    mBtn.style.width = "100%";
-    mBtn.style.boxSizing = "border-box";
-
-    if (pickerYear === parseInt(ym.split("-")[0], 10) && mNum === currentMonthNum) {
-      mBtn.classList.add("active");
-    }
-
-    mBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (typeof playThemeSound === "function") playThemeSound(theme);
-      ym = `${pickerYear}-${mStr}`;
-      customPicker.style.display = "none";
-      if (dateInput) dateInput.value = ym;
-      if (typeof load === "function") load();
-    });
-    grid.append(mBtn);
-  });
-
-  customPicker.append(grid);
-}
-
-// Initialisation de la valeur
-if (dateInput) dateInput.value = ym;
-  
 load();
 </script>
 </body>
