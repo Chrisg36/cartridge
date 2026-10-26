@@ -2374,25 +2374,29 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
-  // Section 4 : Capsule Temporelle
+// Section 4 : Capsule Temporelle réorganisée
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", t('retroLabel')));
-  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
+  
+  // Grille 2x2 pour les boutons d'années
+  const retroGrid = el("div");
+  retroGrid.style.cssText = "display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;";
+  
   [[-1, "-1 An"], [-5, "-5 Ans"], [-10, "-10 Ans"], [-20, "-20 Ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
-    b.style.flex = "1";
+    b.style.width = "100%";
     b.addEventListener("click", () => {
       playThemeSound(theme);
       const [y, m] = ym.split("-").map(Number);
       ym = `${y + years}-${String(m).padStart(2, "0")}`;
       load(); closeSheet();
     });
-    retroGroup.append(b);
+    retroGrid.append(b);
   });
-  secTime.append(retroGroup);
+  secTime.append(retroGrid);
 
   const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
-  resetCurrentBtn.style.marginTop = "8px";
+  resetCurrentBtn.style.marginTop = "0";
   resetCurrentBtn.addEventListener("click", () => {
     playThemeSound(theme);
     ym = new Date().toISOString().slice(0, 7);
