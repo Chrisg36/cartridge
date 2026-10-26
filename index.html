@@ -717,6 +717,38 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
 input[type="month"]#dateSelect:hover {
   border-color: var(--acc) !important;
 }
+
+/* Style rétro pour les boutons de navigation des mois */
+.month-nav .chip {
+  background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent);
+  border-radius: var(--radius);
+  color: var(--txt);
+  padding: 6px 12px;
+  min-height: 36px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--acc) 20%, transparent), 
+              0 3px 0 rgba(0, 0, 0, 0.4); /* Effet relief 3D rétro */
+  transition: all 0.1s ease;
+}
+
+/* Effet d'enfoncement au survol / clic */
+.month-nav .chip:hover {
+  background: color-mix(in srgb, var(--acc) 15%, var(--card));
+  border-color: var(--acc);
+}
+
+.month-nav .chip:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.4), 
+              0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Style des icônes SVG à l'intérieur pour qu'elles épousent la couleur du texte */
+.month-nav .chip svg {
+  stroke: var(--txt);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
   
 </style>
 </head>
