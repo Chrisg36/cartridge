@@ -36,9 +36,9 @@
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
-  body {
+body {
     margin: 0; background-color: var(--bg); background-image: var(--pattern); color: var(--txt);
-    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
     position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased;
   }
 
@@ -747,6 +747,81 @@ input[type="month"]#dateSelect:hover {
   stroke: #000 !important;
   stroke-width: 3.5;
 }
+
+/* Note : Pense aussi à ajouter padding-bottom sur ton body :
+   body { padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important; } 
+*/
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  height: calc(65px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.bottom-nav .nav-item {
+  background: none;
+  border: none;
+  color: var(--mut);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+}
+
+.bottom-nav .nav-item svg {
+  transition: transform 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+}
+
+.bottom-nav .nav-item span {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.bottom-nav .nav-item.active {
+  color: var(--acc);
+}
+
+.bottom-nav .nav-item.active svg {
+  stroke: var(--acc);
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 0 6px var(--acc));
+}
+
+.bottom-nav .nav-item:active {
+  transform: scale(0.92);
+}
+
+.bottom-nav .nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 24px;
+  height: 3px;
+  background: var(--acc);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 0 10px var(--acc);
+}
   
 </style>
 </head>
@@ -885,6 +960,21 @@ input[type="month"]#dateSelect:hover {
   </div>
   <div id="list"></div>
 </main>
+
+    <div class="filter-bar-container">
+      <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
+      <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span>Favoris</span>
+      </button>
+    </div>
+
+    <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
+  </div>
+  <div id="list"></div>
+</main>
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
+
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -2482,6 +2572,48 @@ for (let i = 0; i < 20; i++) {
   particlesContainer.append(p);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const navHome = document.getElementById("navHome");
+  const navShop = document.getElementById("navShop");
+  const navMuseum = document.getElementById("navMuseum");
+  const navSettings = document.getElementById("navSettings");
+
+  function setActiveNav(btn) {
+    document.querySelectorAll(".bottom-nav .nav-item").forEach(item => item.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+  }
+
+  if (navHome) {
+    navHome.addEventListener("click", () => {
+      if (typeof playThemeSound === "function") playThemeSound(theme);
+      setActiveNav(navHome);
+      if (typeof closeSheet === "function") closeSheet();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  if (navShop) {
+    navShop.addEventListener("click", () => {
+      setActiveNav(navShop);
+      if (typeof openShopModal === "function") openShopModal();
+    });
+  }
+
+  if (navMuseum) {
+    navMuseum.addEventListener("click", () => {
+      setActiveNav(navMuseum);
+      if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+    });
+  }
+
+  if (navSettings) {
+    navSettings.addEventListener("click", () => {
+      setActiveNav(navSettings);
+      if (typeof openSettings === "function") openSettings();
+    });
+  }
+});
+  
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
