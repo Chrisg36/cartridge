@@ -38,8 +38,80 @@
   
   body {
     margin: 0; background-color: var(--bg); background-image: var(--pattern); color: var(--txt);
-    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
     position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* 🔻 STYLES DE LA BOTTOM NAV BAR FIXE */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    height: calc(65px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .bottom-nav .nav-item {
+    background: none;
+    border: none;
+    color: var(--mut);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+  }
+
+  .bottom-nav .nav-item svg {
+    transition: transform 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+  }
+
+  .bottom-nav .nav-item span {
+    font-family: var(--font);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .bottom-nav .nav-item.active {
+    color: var(--acc);
+  }
+
+  .bottom-nav .nav-item.active svg {
+    stroke: var(--acc);
+    transform: translateY(-2px) scale(1.1);
+    filter: drop-shadow(0 0 6px var(--acc));
+  }
+
+  .bottom-nav .nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .bottom-nav .nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 3px;
+    background: var(--acc);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 0 10px var(--acc);
   }
 
   body.crt-enabled::after {
@@ -105,12 +177,10 @@
     padding: 5px 6px; font-size: 9px; gap: 2px;
   }
 
-  /* Empêche le header de dépasser de l'écran */
   .sticky-header-container {
     overflow-x: hidden;
   }
   
-  /* Réduit légèrement l'espacement et la taille des boutons de la barre de navigation pour qu'ils rentrent tous */
   .nav {
     gap: 2px;
   }
@@ -544,7 +614,6 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 25%, transparent); letter-spacing: 0.5px;
   }
 
-  /* ⚙️ DESIGN ÉPURÉ DES RÉGLAGES */
   .settings-section {
     background: var(--card);
     border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
@@ -576,7 +645,6 @@
     cursor: pointer;
   }
 
-  /* Grille de thèmes ultra-compacte et élégante */
   .themes-grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -606,7 +674,6 @@
     box-shadow: 0 0 10px var(--acc);
   }
 
-  /* 🪙 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
   .header-currency-badge {
     display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
     border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
@@ -677,77 +744,61 @@
   @keyframes bounceCartridge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); background: var(--acc); } }
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-  /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* 🎯 Copie 100% exacte des propriétés de la classe .chip de ton application */
-input[type="month"]#dateSelect {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
-  
-  /* Utilise les vraies variables CSS de ton fichier HTML */
-  background: var(--card) !important;
-  color: var(--txt) !important;
-  border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent) !important;
-  border-radius: var(--radius) !important;
-  
-  font-family: var(--font) !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.5px !important;
-  text-transform: uppercase;
-  
-  outline: none;
-  cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
+  input[type="month"]#dateSelect {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    background: var(--card) !important;
+    color: var(--txt) !important;
+    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent) !important;
+    border-radius: var(--radius) !important;
+    font-family: var(--font) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
 
-/* Alignement de l'icône calendrier native */
-input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: invert(1);
-  opacity: 0.6;
-}
+  input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+    opacity: 0.6;
+  }
 
-/* Survol identique aux autres chips */
-input[type="month"]#dateSelect:hover {
-  border-color: var(--acc) !important;
-}
+  input[type="month"]#dateSelect:hover {
+    border-color: var(--acc) !important;
+  }
 
-/* Style bouton arcade / rétro en relief 3D aux couleurs du thème */
-.month-nav .chip {
-  background: var(--acc) !important;
-  color: #000 !important; /* Texte ou flèche bien lisible sur fond accentué */
-  border: 2px solid #000 !important; /* Contour net style pixel/rétro */
-  border-radius: var(--radius);
-  padding: 8px 14px;
-  min-height: 38px;
-  cursor: pointer;
-  
-  /* L'effet 3D rétro : une tranche épaisse en bas plus sombre et un reflet lumineux en haut */
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 
-              0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
-  
-  transition: all 0.05s ease-in-out;
-}
+  .month-nav .chip {
+    background: var(--acc) !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    min-height: 38px;
+    cursor: pointer;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 
+                0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
+    transition: all 0.05s ease-in-out;
+  }
 
-/* Effet d'enfoncement instantané quand on clique dessus */
-.month-nav .chip:active {
-  transform: translateY(4px);
-  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.2), 
-              0 0 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
-}
+  .month-nav .chip:active {
+    transform: translateY(4px);
+    box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.2), 
+                0 0 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
+  }
 
-/* Assure-toi que les flèches SVG à l'intérieur s'accordent bien */
-.month-nav .chip svg {
-  stroke: #000 !important;
-  stroke-width: 3.5;
-}
-  
+  .month-nav .chip svg {
+    stroke: #000 !important;
+    stroke-width: 3.5;
+  }
 </style>
 </head>
 <body>
@@ -857,12 +908,10 @@ input[type="month"]#dateSelect:hover {
     </div>
 
 <div class="header-bottom">
-  <!-- 📅 Champ natif Mois + Année (1970 à 2999) -->
   <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
     <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; box-sizing: border-box;">
   </div>
 
-  <!-- 🕹️ Un unique bloc de flèches rétro -->
   <div class="month-nav">
     <button class="chip" id="prev" aria-label="Mois précédent">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
@@ -885,6 +934,52 @@ input[type="month"]#dateSelect:hover {
   </div>
   <div id="list"></div>
 </main>
+
+<!-- 🔻 BOTTOM NAVIGATION BAR FIXE -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="navGames">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+      <path d="M6 12h4"></path><path d="M8 10v4"></path>
+      <circle cx="15" cy="11" r="1"></circle><circle cx="18" cy="13" r="1"></circle>
+    </svg>
+    <span>JEUX</span>
+  </button>
+
+  <button class="nav-item" id="navShop">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <span>BOUTIQUE</span>
+  </button>
+
+  <button class="nav-item" id="navArcade">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
+    <span>ARCADE</span>
+  </button>
+
+  <button class="nav-item" id="navMuseum">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path>
+      <path d="M18 9h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3"></path>
+      <rect x="6" y="3" width="12" height="18" rx="2"></rect>
+    </svg>
+    <span>MUSÉE</span>
+  </button>
+
+  <button class="nav-item" id="navProfile">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+    <span>PROFIL</span>
+  </button>
+</nav>
+
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -1016,7 +1111,6 @@ function openCollectionShelf() {
   p.className = "panel";
   p.replaceChildren();
   
-  // En-tête de la vitrine
   const headerDiv = el("div");
   headerDiv.innerHTML = `
     <h2 style="font-family:'Orbitron',sans-serif; margin-bottom:2px; color:var(--acc);">🏛️ Vitrine de Collection</h2>
@@ -1029,16 +1123,13 @@ function openCollectionShelf() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique 🪙";
     p.append(emptyMsg);
   } else {
-    // Conteneur principal de la grande bibliothèque / vitrine
     const shelfContainer = el("div");
     shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; margin-top:8px; max-height:55vh; overflow-y:auto; padding-right:4px;";
 
-    // Découpage des jeux par rangées de 3 ou 4 pour faire de vraies étagères
     const itemsPerRow = 3;
     for (let i = 0; i < myCollection.length; i += itemsPerRow) {
       const rowItems = myCollection.slice(i, i + itemsPerRow);
 
-      // Structure d'une étagère en bois avec effet de profondeur
       const woodenShelf = el("div");
       woodenShelf.style.cssText = `
         background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
@@ -1049,7 +1140,6 @@ function openCollectionShelf() {
         box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.4);
       `;
 
-      // Les jeux posés sur l'étagère
       const gamesRow = el("div");
       gamesRow.style.cssText = "display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:flex-end;";
 
@@ -1068,10 +1158,8 @@ function openCollectionShelf() {
           cursor: pointer;
         `;
         
-        // Effet au surcroit / clic
         gameBox.addEventListener("click", () => {
           playThemeSound(theme);
-          // Ouvre les détails du jeu si on clique sur sa jaquette dans la vitrine
           openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
         });
 
@@ -1102,7 +1190,6 @@ function openCollectionShelf() {
 
       woodenShelf.append(gamesRow);
 
-      // Planche de bois physique de l'étagère en bas
       const plankBoard = el("div");
       plankBoard.style.cssText = `
         height: 10px;
@@ -1120,7 +1207,6 @@ function openCollectionShelf() {
     p.append(shelfContainer);
   }
 
-  // Boutons de navigation du bas de la modale
   const btnGroup = el("div");
   btnGroup.style.cssText = "display:flex; gap:8px; margin-top:14px;";
 
@@ -1329,7 +1415,6 @@ const WORLD_CONSOLES = [
     sales: "118.69 millions d'exemplaires", impact: "Le monolithe gris indestructible qui a conquis le monde entier grâce à l'autonomie légendaire et Tetris.",
     desc: "Lancée en 1989, la Game Boy a surclassé toutes ses concurrentes techniques grâce à une robustesse légendaire, une consommation de piles minime et le pack-in légendaire de Tetris." 
   },
-
   { 
     name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", 
     cpu: "AMD Zen 2 (8 cœurs @ 3.5 GHz)", gpu: "AMD RDNA 2 (10.28 TFLOPs)", 
@@ -1372,7 +1457,6 @@ const WORLD_CONSOLES = [
     sales: "82 millions d'exemplaires", impact: "La première grande concurrente sérieuse de Nintendo sur le marché portable avec des graphismes dignes de la PS2.",
     desc: "La PlayStation Portable a séduit les joueurs nomades grâce à son grand écran panoramique, ses capacités multimédias (films sur disque UMD, MP3) et des hits inoubliables (Monster Hunter, Crisis Core, GTA Liberty City Stories)." 
   },
-
   { 
     name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#f97316", code: "DC", 
     cpu: "Hitachi SH-4 32-bit RISC (200 MHz)", gpu: "NEC PowerVR2 CLX2", 
@@ -1403,7 +1487,6 @@ const WORLD_CONSOLES = [
     sales: "10.62 millions d'exemplaires", impact: "La réponse portable couleur et rétroéclairée de SEGA à la Game Boy monochrome.",
     desc: "Véritable petit téléviseur de poche (via tuner optionnel), la Game Gear offrait les sensations de la Mega Drive en nomade, malgré une consommation de piles redoutable." 
   },
-
   { 
     name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", code: "XSX", 
     cpu: "AMD Zen 2 8 cœurs @ 3.8 GHz", gpu: "AMD RDNA 2 (12 TFLOPs)", 
@@ -1428,7 +1511,6 @@ const WORLD_CONSOLES = [
     sales: "24 millions d'exemplaires", impact: "L'arrivée fracassante de Microsoft dans le monde des consoles avec un disque dur intégré et Halo: Combat Evolved.",
     desc: "Pionnière du jeu en ligne sur console avec le service Xbox Live et dotée d'une architecture proche d'un PC, la première Xbox a imposé Microsoft comme un acteur incontournable de l'industrie." 
   },
-
   { 
     name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#a8a29e", code: "JAGUAR", 
     cpu: "Processeur Tom 32-bit + Jerry 32-bit", gpu: "Processeur graphique multitâche", 
@@ -1447,7 +1529,6 @@ const WORLD_CONSOLES = [
     sales: "30 millions d'exemplaires", impact: "La pionnière absolue qui a popularisé le système de cartouches interchangeables et lancé l'âge d'or des arcades à la maison.",
     desc: "Véritable ancêtre de toutes nos consoles modernes, l'Atari 2600 a démocratisé le jeu vidéo dans les foyers du monde entier avec des monuments comme Space Invaders et Pac-Man." 
   },
-
   { 
     name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#0d9488", code: "C64", 
     cpu: "MOS Technology 6510 (1.02 MHz)", gpu: "VIC-II (16 couleurs, sprites matériels)", 
@@ -1487,7 +1568,6 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-// Mémoire permanente anti-triche (ne s'efface jamais quand on enlève un favori)
 let rewardedFavorites = [];
 try { rewardedFavorites = JSON.parse(localStorage.getItem("rewardedFavorites") || "[]"); } catch (e) { rewardedFavorites = []; }
 
@@ -1508,21 +1588,18 @@ function toggleFavorite(rawId) {
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
-    // On retire le jeu des favoris (AUCUN point gagné)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    // On ajoute le jeu aux favoris
     currentFavs.push(id);
     favorites = currentFavs;
 
-    // VÉRIFICATION ANTI-FARM : Est-ce que ce jeu a déjà donné des points par le passé ?
     let currentRewarded = rewardedFavorites.map(Number);
     if (!currentRewarded.includes(id)) {
       currentRewarded.push(id);
       rewardedFavorites = currentRewarded;
       try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
       
-      addCoins(10); // +10 points accordés une et une seule fois pour ce jeu !
+      addCoins(10);
     }
   }
   
@@ -1544,186 +1621,14 @@ function playThemeSound(th) {
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
-
-    if (th === "gamecube") {
-      [880, 659.25, 740, 587.33].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.08);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.1, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-        osc.start(startTime); osc.stop(startTime + 0.2);
-      });
-    } else if (th === "ps1") {
-      [130.81, 261.63, 523.25, 659.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = idx < 2 ? "sawtooth" : "sine";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
-        osc.start(startTime); osc.stop(startTime + 0.3);
-      });
-    } else if (th === "gameboy") {
-      [440, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "square";
-        const startTime = now + (idx * 0.1);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.09, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
-    } else if (th === "dreamcast") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(329.63, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
-      osc.start(now); osc.stop(now + 0.32);
-    } else if (th === "n64") {
-      [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.05);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
-        osc.start(startTime); osc.stop(startTime + 0.15);
-      });
-    } else if (th === "nes") {
-      [330, 440, 659.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "square";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
-        osc.start(startTime); osc.stop(startTime + 0.16);
-      });
-    } else if (th === "snes") {
-      [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.06);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
-        osc.start(startTime); osc.stop(startTime + 0.25);
-      });
-    } else if (th === "arcade") {
-      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sawtooth";
-        const startTime = now + (idx * 0.05);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
-        osc.start(startTime); osc.stop(startTime + 0.14);
-      });
-    } else if (th === "atari") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.linearRampToValueAtTime(450, now + 0.15);
-      gain.gain.setValueAtTime(0.09, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.start(now); osc.stop(now + 0.2);
-    } else if (th === "dos") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "square";
-      osc.frequency.setValueAtTime(800, now);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      osc.start(now); osc.stop(now + 0.08);
-    } else if (th === "megadrive") {
-      [261.63, 392, 523.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sawtooth";
-        const startTime = now + (idx * 0.06);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
-    } else if (th === "midnight") {
-      [220, 329.63, 440].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.1);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
-        osc.start(startTime); osc.stop(startTime + 0.3);
-      });
-    } else if (th === "forest") {
-      [349.23, 440, 523.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.08);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
-        osc.start(startTime); osc.stop(startTime + 0.22);
-      });
-    } else if (th === "violet") {
-      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-        osc.start(startTime); osc.stop(startTime + 0.2);
-      });
-    } else if (th === "ruby") {
-      [329.63, 493.88, 587.33].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-        osc.start(startTime); osc.stop(startTime + 0.2);
-      });
-    } else if (th === "light") {
-      [587.33, 739.99, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
-    } else {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(523.25, now);
-      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.start(now); osc.stop(now + 0.2);
-    }
+    const osc = ac.createOscillator(); const gain = ac.createGain();
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
 }
 
@@ -1843,8 +1748,6 @@ function renderShimmerLoader() {
 
 async function load() {
   updateStaticTexts();
-  
-  // 📅 Synchronise le sélecteur natif avec le mois/année actuel
   const dateSel = $("#dateSelect");
   if (dateSel) dateSel.value = ym;
 
@@ -1868,19 +1771,17 @@ async function load() {
   setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
-// 📅 Écouteur pour le sélecteur natif mois + année iOS
 const dateSelect = $("#dateSelect");
 if (dateSelect) {
   dateSelect.addEventListener("change", (e) => {
     if (e.target.value) {
       playThemeSound(theme);
-      ym = e.target.value; // Récupère directement le format "2026-10"
+      ym = e.target.value;
       load();
     }
   });
 }
 
-// Et enfin, le lancement initial de l'application :
 load();
   
 async function searchGlobal(query) {
@@ -1908,7 +1809,6 @@ function itemsFor(games) {
       rel = g.releases.filter((r) => {
         const plat = r.platform.toLowerCase();
         const filt = currentFilter.toLowerCase();
-        
         if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
         if (filt === "playstation 4" || filt === "ps4") return plat === "playstation 4" || plat === "ps4";
         if (filt === "playstation 3" || filt === "ps3") return plat === "playstation 3" || plat === "ps3";
@@ -1916,7 +1816,6 @@ function itemsFor(games) {
         if (filt === "playstation" || filt === "ps1") return plat === "playstation" || plat === "ps1";
         if (filt === "game cube" || filt === "gamecube") return plat.includes("gamecube") || plat.includes("game cube");
         if (filt === "game boy" || filt === "gb") return plat === "game boy" || plat === "gb";
-        
         return plat.includes(filt) || filt.includes(plat);
       });
     }
@@ -2161,28 +2060,15 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // 🏷️ Dictionnaire de traduction des genres en français
   const GENRE_FR = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
+    "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
+    "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
+    "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
+    "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel", "Card & Board Game": "Jeu de cartes"
   };
 
-  // Récupération et traduction des genres du jeu
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
   let categoryText = "Action";
   if (Array.isArray(genresRaw)) {
@@ -2199,16 +2085,9 @@ async function openSheet(it) {
   categoryBadge.style.color = "var(--acc)";
   categoryBadge.style.marginTop = "4px";
 
-const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
+  const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
-
-  // 💰 Affichage du prix uniquement si l'API le fournit
-  let priceText = "";
-  if (it.g.price !== undefined && it.g.price !== null) {
-    priceText = it.g.price === 0 ? "💰 Prix : Gratuit / F2P" : `💰 Prix : ${it.g.price} €`;
-  }
-
-  const companyInfo = el("p", "m", [devText, pubText, priceText].filter(Boolean).join("\n"));
+  const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
   companyInfo.style.whiteSpace = "pre-line";
   companyInfo.style.marginTop = "6px";
 
@@ -2307,7 +2186,6 @@ let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
-// ⚙️ RÉGLAGES ÉPURÉS ET MIEUX RANGÉS
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -2315,7 +2193,6 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  // Section 1 : Thèmes & Consoles Rétro (Grille compacte)
   const secTheme = el("div", "settings-section");
   secTheme.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
   const themesGrid = el("div", "themes-grid-container");
@@ -2333,7 +2210,6 @@ function openSettings() {
   secTheme.append(themesGrid);
   p.append(secTheme);
 
-  // Section 2 : Préférences Audio & Affichage (Côte à côte)
   const secPrefs = el("div", "settings-section");
   secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
   const prefsGrid = el("div", "settings-grid-options");
@@ -2361,7 +2237,6 @@ function openSettings() {
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
-  // Section 3 : Langue (Menu déroulant épuré)
   const secLang = el("div", "settings-section");
   secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
   const langSelect = el("select", "settings-select-clean");
@@ -2381,29 +2256,24 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
-// Section 4 : Capsule Temporelle réorganisée
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", t('retroLabel')));
-  
-  // Grille 2x2 pour les boutons d'années
-  const retroGrid = el("div");
-  retroGrid.style.cssText = "display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;";
-  
+  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
   [[-1, "-1 An"], [-5, "-5 Ans"], [-10, "-10 Ans"], [-20, "-20 Ans"]].forEach(([years, label]) => {
     const b = el("button", "chip", label);
-    b.style.width = "100%";
+    b.style.flex = "1";
     b.addEventListener("click", () => {
       playThemeSound(theme);
       const [y, m] = ym.split("-").map(Number);
       ym = `${y + years}-${String(m).padStart(2, "0")}`;
       load(); closeSheet();
     });
-    retroGrid.append(b);
+    retroGroup.append(b);
   });
-  secTime.append(retroGrid);
+  secTime.append(retroGroup);
 
   const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
-  resetCurrentBtn.style.marginTop = "0";
+  resetCurrentBtn.style.marginTop = "8px";
   resetCurrentBtn.addEventListener("click", () => {
     playThemeSound(theme);
     ym = new Date().toISOString().slice(0, 7);
@@ -2503,6 +2373,49 @@ $("#search").addEventListener("input", (e) => {
 
 $("#prev").addEventListener("click", () => shiftMonth(-1));
 $("#next").addEventListener("click", () => shiftMonth(1));
+
+// 🎮 JAVASCRIPT DE LA BOTTOM NAV BAR
+function setActiveNav(activeId) {
+  document.querySelectorAll(".bottom-nav .nav-item").forEach((btn) => {
+    btn.classList.toggle("active", btn.id === activeId);
+  });
+}
+
+$("#navGames").addEventListener("click", () => {
+  playThemeSound(theme);
+  setActiveNav("navGames");
+  closeSheet();
+});
+
+$("#navShop").addEventListener("click", () => {
+  playThemeSound(theme);
+  setActiveNav("navShop");
+  openShopModal();
+});
+
+$("#navArcade").addEventListener("click", () => {
+  playThemeSound(theme);
+  setActiveNav("navArcade");
+  alert("🕹️ Salle d'Arcade : Prochainement disponible dans Cartridge !");
+});
+
+$("#navMuseum").addEventListener("click", () => {
+  playThemeSound(theme);
+  setActiveNav("navMuseum");
+  openConsoleVitrine();
+});
+
+$("#navProfile").addEventListener("click", () => {
+  playThemeSound(theme);
+  setActiveNav("navProfile");
+  openSettings();
+});
+
+const originalCloseSheet = closeSheet;
+closeSheet = function() {
+  originalCloseSheet();
+  setActiveNav("navGames");
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.getElementById("prev");
