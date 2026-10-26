@@ -1817,6 +1817,7 @@ async function load() {
   }
   render();
   hideSplash();
+  
 }tTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
