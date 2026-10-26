@@ -993,7 +993,7 @@ function openShopModal() {
   $("#sheet").classList.add("on");
 }
   
-async function triggerRandomPackDraw(type) {
+async function triggerRandomPackDraw(type, category = "standard") {
   // 🎯 Validation du défi de packs
   let cData = loadChallengesData();
   cData.weeklyProgress.packsOpened += 1;
@@ -1002,13 +1002,13 @@ async function triggerRandomPackDraw(type) {
   const p = $("#panel");
   p.replaceChildren();
   
-  // Étape 1 : Animation de suspense (distributeur / ouverture)
+  // Animation de suspense
   const openingBox = el("div");
   openingBox.style.cssText = "text-align:center; padding: 30px 0; animation: pulseGlow 1s infinite ease-in-out;";
   openingBox.innerHTML = `
     <div style="font-size: 50px; margin-bottom: 12px;">📦✨</div>
-    <h2 style="font-family:'Orbitron',sans-serif; color:var(--acc); margin-bottom:6px;">Ouverture du Pack ${type}...</h2>
-    <p class="m">Le distributeur s'active et libère une jaquette rare !</p>
+    <h2 style="font-family:'Orbitron',sans-serif; color:var(--acc); margin-bottom:6px;">Ouverture du ${type}...</h2>
+    <p class="m">Le distributeur sélectionne une jaquette de collection...</p>
   `;
   p.append(openingBox);
   $("#sheet").classList.add("on");
@@ -1016,11 +1016,19 @@ async function triggerRandomPackDraw(type) {
   let randomGame;
   
   try {
-    // On interroge l'API globale si elle existe
     if (typeof API !== 'undefined') {
-      const randomYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
+      let targetYear;
+      // Si c'est un pack rétro, on pioche dans les années 80, 90 ou 2000
+      if (category === "retro") {
+        targetYear = Math.floor(Math.random() * (2005 - 1985)) + 1985;
+      } else if (category === "supreme_retro") {
+        targetYear = Math.floor(Math.random() * (1998 - 1980)) + 1980; // Âge d'or absolu du pixel art
+      } else {
+        targetYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
+      }
+
       const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-      const res = await fetch(`${API}/?month=${randomYear}-${randomMonth}`);
+      const res = await fetch(`${API}/?month=${targetYear}-${randomMonth}`);
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         randomGame = data[Math.floor(Math.random() * data.length)];
@@ -1030,7 +1038,7 @@ async function triggerRandomPackDraw(type) {
     console.warn("Erreur réseau API, passage au cache local.", err);
   }
 
-  // Fallback cache local si besoin
+  // Fallback cache local si l'API ne renvoie rien
   if (!randomGame) {
     const allLoadedGames = [];
     Object.values(cache).forEach(monthList => {
@@ -1044,7 +1052,7 @@ async function triggerRandomPackDraw(type) {
   if (!randomGame) {
     randomGame = {
       id: Math.floor(Math.random() * 100000),
-      name: "Jeu Mystère Légendaire",
+      name: "Jeu Rétro Légendaire",
       cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
     };
   }
@@ -1055,19 +1063,17 @@ async function triggerRandomPackDraw(type) {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Petit délai pour laisser l'effet de suspense (1.2 seconde)
   await new Promise(resolve => setTimeout(resolve, 1200));
 
-  // Étape 2 : Révélation explosive de la carte à l'écran !
+  // Révélation de la carte
   p.replaceChildren();
 
   const revealContainer = el("div");
   revealContainer.style.cssText = "text-align: center; animation: fadeInList 0.4s ease-out;";
 
-  const celebrationTitle = el("h2", "", "🎉 NOUVELLE JAQUETTE DÉBLOQUÉE ! 🎉");
+  const celebrationTitle = el("h2", "", `🎉 ${type.toUpperCase()} OUVERT ! 🎉`);
   celebrationTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--acc); font-size:18px; margin-bottom:14px; text-shadow:0 0 10px var(--acc);";
 
-  // Carte interactive géante au centre de l'écran
   const bigCard = el("div");
   bigCard.style.cssText = `
     background: var(--card);
@@ -1092,13 +1098,12 @@ async function triggerRandomPackDraw(type) {
 
   bigCard.append(img, cardTitle);
 
-  // Clic sur la carte ou sur le bouton pour voir les détails complets
   bigCard.addEventListener("click", () => {
     playThemeSound(theme);
     openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
   });
 
-  const infoText = el("p", "m", "Clique sur la carte pour l'inspecter ou l'ajouter à ta vitrine !");
+  const infoText = el("p", "m", "C'est ajouté à ta Vitrine ! Clique pour voir les détails.");
   infoText.style.marginBottom = "14px";
 
   const btnGroup = el("div");
@@ -1113,7 +1118,10 @@ async function triggerRandomPackDraw(type) {
 
   const backBtn = el("button", "cta", "← Boutique");
   backBtn.style.flex = "1";
-  backBtn.addEventListener("click", () => openShopModal());
+  backBtn.addEventListener("click", () => {
+    openShopModal();
+    renderShopMainPage();
+  });
 
   btnGroup.append(detailBtn, backBtn);
   revealContainer.append(celebrationTitle, bigCard, infoText, btnGroup);
@@ -2781,6 +2789,7 @@ function renderShopMainPage() {
   }
 
   // Vue 2 : Distributeur de packs
+// --- CONTENU 2 : ACHAT DE PACKS (DISTRIBUTEUR MULTI-TIERS) ---
   function showPacks() {
     btnShop.setAttribute("aria-pressed", "false");
     btnPacks.setAttribute("aria-pressed", "true");
@@ -2789,37 +2798,45 @@ function renderShopMainPage() {
     displayBox.replaceChildren();
     const banner = el("div", "shop-banner");
     banner.innerHTML = `
-      <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
-      <p style="font-size:13px; font-weight:600; margin-bottom:16px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+      <h3>🎟️ Distributeur de Packs Mystères</h3>
+      <p style="font-size:13px; font-weight:600; margin-bottom:16px;">Choisissez votre pack selon votre budget et tentez de décrocher des pépites rétro !</p>
     `;
 
-    const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
-    drawFreeBtn.addEventListener("click", () => {
-      playThemeSound(theme);
-      const todayStr = new Date().toISOString().slice(0, 10);
-      if (localStorage.getItem("lastFreePackDate") === todayStr) {
-        alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
-        return;
-      }
-      localStorage.setItem("lastFreePackDate", todayStr);
-      triggerRandomPackDraw("Gratuit");
+    // Pack 25 Crédits (Standard)
+    const pack25Btn = el("button", "cta-sec", "🥉 Pack Standard (25 Crédits)");
+    pack25Btn.addEventListener("click", () => {
+      buyAndOpenPack(25, "Standard", "standard");
     });
 
-    const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
-    drawPaidBtn.addEventListener("click", () => {
-      playThemeSound(theme);
-      if (userCoins < 50) {
-        alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou accomplissez des défis.");
-        return;
-      }
-      userCoins -= 50;
-      updateCoinsUI();
-      if (coinSpan) coinSpan.textContent = userCoins;
-      triggerRandomPackDraw("Acheté");
+    // Pack 50 Crédits (Rétro / Spécial)
+    const pack50Btn = el("button", "cta-sec", "🥈 Pack Rétro Classique (50 Crédits)");
+    pack50Btn.style.borderColor = "var(--acc)";
+    pack50Btn.addEventListener("click", () => {
+      buyAndOpenPack(50, "Rétro", "retro");
     });
 
-    banner.append(drawFreeBtn, drawPaidBtn);
+    // Pack 100 Crédits (Légendaire / Collector Rétro)
+    const pack100Btn = el("button", "cta", "🥇 Pack Collector Rétro Supreme (100 Crédits)");
+    pack100Btn.addEventListener("click", () => {
+      buyAndOpenPack(100, "Collector Rétro", "supreme_retro");
+    });
+
+    banner.append(pack25Btn, pack50Btn, pack100Btn);
     displayBox.append(banner);
+  }
+
+  function buyAndOpenPack(cost, typeName, category) {
+    playThemeSound(theme);
+    if (userCoins < cost) {
+      alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙 pour ce pack.`);
+      return;
+    }
+    userCoins -= cost;
+    updateCoinsUI();
+    const coinSpan = document.getElementById("shopPageCoins");
+    if (coinSpan) coinSpan.textContent = userCoins;
+    
+    triggerRandomPackDraw(typeName, category);
   }
 
   // Vue 3 : Tableau de bord des défis
