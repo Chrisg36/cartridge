@@ -1001,13 +1001,22 @@ async function triggerRandomPackDraw(type) {
 
   const p = $("#panel");
   p.replaceChildren();
-  p.append(el("h2", "", "🎉 Tirage en cours..."));
-  p.append(el("p", "m", "Ouverture du pack mystère..."));
+  
+  // Étape 1 : Animation de suspense (distributeur / ouverture)
+  const openingBox = el("div");
+  openingBox.style.cssText = "text-align:center; padding: 30px 0; animation: pulseGlow 1s infinite ease-in-out;";
+  openingBox.innerHTML = `
+    <div style="font-size: 50px; margin-bottom: 12px;">📦✨</div>
+    <h2 style="font-family:'Orbitron',sans-serif; color:var(--acc); margin-bottom:6px;">Ouverture du Pack ${type}...</h2>
+    <p class="m">Le distributeur s'active et libère une jaquette rare !</p>
+  `;
+  p.append(openingBox);
+  $("#sheet").classList.add("on");
 
   let randomGame;
   
   try {
-    // On essaie d'interroger l'API globale si elle existe
+    // On interroge l'API globale si elle existe
     if (typeof API !== 'undefined') {
       const randomYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
       const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
@@ -1021,7 +1030,7 @@ async function triggerRandomPackDraw(type) {
     console.warn("Erreur réseau API, passage au cache local.", err);
   }
 
-  // Si l'API n'a rien renvoyé, on pioche dans le cache local des mois chargés
+  // Fallback cache local si besoin
   if (!randomGame) {
     const allLoadedGames = [];
     Object.values(cache).forEach(monthList => {
@@ -1032,7 +1041,6 @@ async function triggerRandomPackDraw(type) {
     }
   }
 
-  // Sécurité ultime de secours si tout est vide
   if (!randomGame) {
     randomGame = {
       id: Math.floor(Math.random() * 100000),
@@ -1047,40 +1055,69 @@ async function triggerRandomPackDraw(type) {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Affichage de la jaquette gagnée avec interactivité
+  // Petit délai pour laisser l'effet de suspense (1.2 seconde)
+  await new Promise(resolve => setTimeout(resolve, 1200));
+
+  // Étape 2 : Révélation explosive de la carte à l'écran !
   p.replaceChildren();
-  p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
-  p.append(el("p", "m", `Pack ${type} ouvert avec succès ! Clique sur la carte pour voir les détails :`));
 
-  const cardPreview = el("div", "collection-item-card");
-  cardPreview.style.maxWidth = "160px";
-  cardPreview.style.margin = "14px auto";
-  cardPreview.style.cursor = "pointer";
-  
-  const img = el("img"); 
+  const revealContainer = el("div");
+  revealContainer.style.cssText = "text-align: center; animation: fadeInList 0.4s ease-out;";
+
+  const celebrationTitle = el("h2", "", "🎉 NOUVELLE JAQUETTE DÉBLOQUÉE ! 🎉");
+  celebrationTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--acc); font-size:18px; margin-bottom:14px; text-shadow:0 0 10px var(--acc);";
+
+  // Carte interactive géante au centre de l'écran
+  const bigCard = el("div");
+  bigCard.style.cssText = `
+    background: var(--card);
+    border: 3px solid var(--acc);
+    border-radius: 14px;
+    overflow: hidden;
+    max-width: 200px;
+    margin: 0 auto 16px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--acc) 50%, transparent);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  `;
+  bigCard.addEventListener("mouseover", () => bigCard.style.transform = "scale(1.05)");
+  bigCard.addEventListener("mouseout", () => bigCard.style.transform = "scale(1)");
+
+  const img = el("img");
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-  
-  const title = el("div", "collection-item-title", randomGame.name);
-  cardPreview.append(img, title);
+  img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
 
-  // Permet de cliquer sur la carte pour ouvrir la fiche complète du jeu
-  cardPreview.addEventListener("click", () => {
+  const cardTitle = el("div", "", randomGame.name);
+  cardTitle.style.cssText = "background: rgba(0,0,0,0.9); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 8px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+
+  bigCard.append(img, cardTitle);
+
+  // Clic sur la carte ou sur le bouton pour voir les détails complets
+  bigCard.addEventListener("click", () => {
     playThemeSound(theme);
     openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
   });
 
-  p.append(cardPreview);
+  const infoText = el("p", "m", "Clique sur la carte pour l'inspecter ou l'ajouter à ta vitrine !");
+  infoText.style.marginBottom = "14px";
 
-  const viewDetailsBtn = el("button", "cta-sec", "🔍 Voir la fiche détaillée du jeu");
-  viewDetailsBtn.addEventListener("click", () => {
+  const btnGroup = el("div");
+  btnGroup.style.cssText = "display: flex; gap: 8px;";
+
+  const detailBtn = el("button", "cta-sec", "🔍 Voir la Fiche");
+  detailBtn.style.flex = "1";
+  detailBtn.addEventListener("click", () => {
     playThemeSound(theme);
     openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
   });
 
-  const backBtn = el("button", "cta", "← Retour à la Boutique");
+  const backBtn = el("button", "cta", "← Boutique");
+  backBtn.style.flex = "1";
   backBtn.addEventListener("click", () => openShopModal());
 
-  p.append(viewDetailsBtn, backBtn);
+  btnGroup.append(detailBtn, backBtn);
+  revealContainer.append(celebrationTitle, bigCard, infoText, btnGroup);
+  p.append(revealContainer);
 }
 function openCollectionShelf() {
   playThemeSound(theme);
