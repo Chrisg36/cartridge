@@ -62,6 +62,7 @@ body {
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: 6px; margin: 0 -10px; padding-left: 10px; padding-right: 10px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow-x: hidden;
   }
 
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -69,56 +70,81 @@ body {
 
   .neon-logo {
     font-size: 11px; padding: 6px 8px; letter-spacing: 0.5px; white-space: nowrap;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; text-transform: uppercase;
+    color: #fff; background: var(--card); border-radius: var(--radius); border: 1.5px solid var(--acc);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--acc) 60%, transparent), inset 0 0 10px color-mix(in srgb, var(--acc) 40%, transparent);
+    text-shadow: 0 0 8px var(--acc), 0 0 16px var(--acc); display: inline-flex; align-items: center; gap: 6px;
   }
   
   .magazine-edition-banner {
     padding: 3px 8px; margin-bottom: 4px; font-size: 9px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--acc) 25%, var(--card)), var(--card));
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: var(--radius);
+    font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--acc); box-shadow: 0 2px 10px rgba(0,0,0,0.15);
   }
+  .magazine-edition-banner span { display: inline-flex; align-items: center; gap: 4px; }
 
   h1 { 
     font-size: 12px; padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin: 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
+    display: inline-block; background: var(--card); border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--acc) 20%, rgba(0,0,0,0.2)), inset 0 1px 2px rgba(255,255,255,0.1);
+    flex: 1; text-align: center; margin-right: 8px;
   }
 
-  .nav { display: flex; gap: 3px; align-items: center; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .nav { display: flex; gap: 2px; align-items: center; }
   .month-nav { display: flex; gap: 3px; align-items: center; flex: none; }
 
   .chip { 
-    padding: 6px 8px; min-height: 32px; font-size: 11px; 
+    padding: 5px 6px; min-height: 30px; font-size: 11px; font-weight: 700;
+    border: 0; border-radius: var(--radius); background: var(--card); color: var(--txt); white-space: nowrap; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
   }
-  .chip svg { width: 14px; height: 14px; }
+  .chip svg { width: 14px; height: 14px; color: var(--acc); transition: transform 0.2s ease, filter 0.2s ease; }
+  .chip:hover svg { filter: drop-shadow(0 0 6px var(--acc)); transform: scale(1.08); }
+  .chip:active { transform: scale(0.90) translateY(2px); }
+  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
+  .chip[aria-pressed="true"] svg { color: var(--on); }
   
-  .filter-bar-container { display: flex; gap: 4px; margin-bottom: 4px; align-items: center; }
+  .filter-bar-container { display: flex; gap: 4px; margin-top: 4px; margin-bottom: 4px; align-items: center; }
   
   .platform-select {
-    padding: 8px 24px 8px 8px; font-size: 11px;
+    flex: 1; padding: 8px 24px 8px 8px; font-size: 11px;
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
+    color: var(--txt); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: var(--radius);
+    font-family: var(--font); font-weight: 700; outline: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
   }
+  .platform-select:focus { box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2); border-color: var(--acc); }
+  .platform-select option { background-color: var(--card); color: var(--txt); padding: 10px; font-weight: 600; }
 
   .fav-filter-btn {
-    padding: 0 8px; height: 32px; font-size: 10px; gap: 2px;
+    padding: 0 8px; height: 32px; font-size: 10px; gap: 2px; flex: none; background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: var(--radius);
+    display: flex; align-items: center; font-weight: 700; color: var(--txt); cursor: pointer; transition: all 0.2s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
   }
+  .fav-filter-btn:hover { border-color: var(--acc); }
+  .fav-filter-btn:active { transform: scale(0.95); }
+  .fav-filter-btn[aria-pressed="true"] { background: #FF4757; color: #fff; border-color: #FF4757; box-shadow: 0 0 15px rgba(255, 71, 87, 0.5); }
   
   .search-box {
-    padding: 8px 10px; font-size: 12px; margin-bottom: 2px;
+    padding: 8px 10px; font-size: 12px; margin-top: 4px; margin-bottom: 2px; width: 100%; border: 0; border-radius: var(--radius);
+    background: var(--card); color: var(--txt); outline: none; font-family: var(--font); font-weight: 600;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); transition: box-shadow 0.2s ease;
   }
+  .search-box:focus { box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2); border-color: var(--acc); }
+  .search-box::placeholder { color: var(--mut); }
 
   .header-currency-badge {
-    padding: 5px 6px; font-size: 9px; gap: 2px;
+    padding: 5px 6px; font-size: 9px; gap: 2px; display: inline-flex; align-items: center;
+    background: color-mix(in srgb, var(--acc) 20%, var(--card)); border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+    border-radius: var(--radius); font-family: 'Orbitron', sans-serif; font-weight: 900; color: var(--acc); cursor: pointer;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); transition: transform 0.2s ease; min-height: 30px;
   }
-
-  /* Empêche le header de dépasser de l'écran */
-  .sticky-header-container {
-    overflow-x: hidden;
-  }
-  
-  /* Réduit légèrement l'espacement et la taille des boutons de la barre de navigation pour qu'ils rentrent tous */
-  .nav {
-    gap: 2px;
-  }
-  
-  .nav .chip, .nav .header-currency-badge {
-    padding: 5px 6px;
-    min-height: 30px;
-  }
+  .header-currency-badge:hover { transform: scale(1.05); }
 
   .app-bg-cartridges {
     position: fixed; inset: -50px; pointer-events: none; z-index: 0; opacity: 0.12;
@@ -157,112 +183,6 @@ body {
   }
 
   main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .header-bottom { display: flex; justify-content: space-between; align-items: center; }
-
-  .neon-logo {
-    font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
-    color: #fff; background: var(--card); padding: 10px 14px; border-radius: var(--radius); border: 1.5px solid var(--acc);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--acc) 60%, transparent), inset 0 0 10px color-mix(in srgb, var(--acc) 40%, transparent);
-    text-shadow: 0 0 8px var(--acc), 0 0 16px var(--acc); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-  }
-  
-  .magazine-edition-banner {
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--acc) 25%, var(--card)), var(--card));
-    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: var(--radius);
-    padding: 6px 14px; margin-bottom: 10px; font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--acc); box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  }
-  .magazine-edition-banner span { display: inline-flex; align-items: center; gap: 4px; }
-
-  h1 { 
-    margin: 0; font-size: 17px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
-    display: inline-block; white-space: nowrap; padding: 10px 16px; background: var(--card);
-    border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
-    box-shadow: 0 4px 20px color-mix(in srgb, var(--acc) 20%, rgba(0,0,0,0.2)), inset 0 1px 2px rgba(255,255,255,0.1);
-    flex: 1; text-align: center; margin-right: 8px;
-  }
-
-  button { font: inherit; color: inherit; cursor: pointer; }
-  .nav { display: flex; gap: 6px; align-items: center; }
-  .month-nav { display: flex; gap: 6px; align-items: center; flex: none; }
-
-  .chip { 
-    border: 0; border-radius: var(--radius); padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 13px; 
-    background: var(--card); color: var(--txt); white-space: nowrap; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); 
-    letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
-  }
-  .chip svg { color: var(--acc); transition: transform 0.2s ease, filter 0.2s ease; }
-  .chip:hover svg { filter: drop-shadow(0 0 6px var(--acc)); transform: scale(1.08); }
-  .chip:active { transform: scale(0.90) translateY(2px); }
-  .chip[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 15px var(--acc); border-color: transparent; }
-  .chip[aria-pressed="true"] svg { color: var(--on); }
-  
-  .filter-bar-container { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
-  
-  .platform-select {
-    flex: 1;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
-    color: var(--txt);
-    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
-    border-radius: var(--radius);
-    padding: 12px 40px 12px 16px;
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 700;
-    outline: none;
-    cursor: pointer;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  .platform-select:focus {
-    box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2);
-    border-color: var(--acc);
-  }
-  .platform-select option {
-    background-color: var(--card);
-    color: var(--txt);
-    padding: 10px;
-    font-weight: 600;
-  }
-
-  .fav-filter-btn {
-    flex: none;
-    background: var(--card);
-    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
-    border-radius: var(--radius);
-    padding: 0 16px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--txt);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-  }
-  .fav-filter-btn:hover { border-color: var(--acc); }
-  .fav-filter-btn:active { transform: scale(0.95); }
-  .fav-filter-btn[aria-pressed="true"] {
-    background: #FF4757;
-    color: #fff;
-    border-color: #FF4757;
-    box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
-  }
-
-  .search-box {
-    width: 100%; padding: 12px 16px; margin-top: 6px; margin-bottom: 2px; border: 0; border-radius: var(--radius);
-    background: var(--card); color: var(--txt); font-size: 16px; outline: none; font-family: var(--font); font-weight: 600;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); transition: box-shadow 0.2s ease;
-  }
-  .search-box:focus { box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2); border-color: var(--acc); }
-  .search-box::placeholder { color: var(--mut); }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
   
@@ -365,9 +285,7 @@ body {
   }
   
   .panel.settings-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background-image: 
       radial-gradient(circle, color-mix(in srgb, var(--acc) 35%, transparent) 2px, transparent 2.5px),
       linear-gradient(45deg, color-mix(in srgb, var(--acc) 18%, transparent) 1.5px, transparent 1.5px),
@@ -376,25 +294,16 @@ body {
       linear-gradient(90deg, color-mix(in srgb, var(--acc) 12%, transparent) 1px, transparent 1px);
     background-size: 32px 32px, 32px 32px, 32px 32px, 16px 16px, 16px 16px;
     background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.7;
-    border-radius: 28px 28px 0 0;
+    pointer-events: none; z-index: 0; opacity: 0.7; border-radius: 28px 28px 0 0;
   }
 
   .panel > * { position: relative; z-index: 1; }
 
   .panel .big { 
-    width: 100%; 
-    aspect-ratio: 16 / 9; 
-    max-height: 260px;
-    object-fit: cover; 
-    object-position: center;
-    border-radius: var(--radius); 
-    background: var(--cov); 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    display: block;
+    width: 100%; aspect-ratio: 16 / 9; max-height: 260px;
+    object-fit: cover; object-position: center; border-radius: var(--radius); 
+    background: var(--cov); box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); display: block;
   }
 
   .panel h2 { margin: 16px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
@@ -417,26 +326,20 @@ body {
   .console-vitrine-card {
     background: linear-gradient(145deg, color-mix(in srgb, var(--console-color, var(--card)) 25%, var(--card)), var(--card));
     border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
-    border-radius: calc(var(--radius) + 2px);
-    padding: 14px 10px;
+    border-radius: calc(var(--radius) + 2px); padding: 14px 10px;
     display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -2px 6px rgba(0,0,0,0.5);
-    cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease;
+    cursor: pointer; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease;
   }
   
   .console-vitrine-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--console-color, #fff) 80%, transparent), transparent);
-    z-index: 2;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--console-color, #fff) 80%, transparent), transparent); z-index: 2;
   }
 
   .console-vitrine-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    border-color: var(--console-color, var(--acc));
+    transform: translateY(-5px) scale(1.02); border-color: var(--console-color, var(--acc));
     box-shadow: 0 16px 35px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent), inset 0 1px 2px rgba(255,255,255,0.4);
   }
   .console-vitrine-card:active { transform: scale(0.96); }
@@ -444,8 +347,7 @@ body {
   .console-photo-container {
     width: 100%; height: 86px; border-radius: 10px;
     background: linear-gradient(135deg, rgba(0,0,0,0.75), color-mix(in srgb, var(--console-color, #000) 25%, #101016));
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 30%, rgba(255,255,255,0.1));
     box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 1px 2px rgba(255,255,255,0.05);
     padding: 4px; position: relative;
@@ -546,85 +448,39 @@ body {
 
   /* ⚙️ DESIGN ÉPURÉ DES RÉGLAGES */
   .settings-section {
-    background: var(--card);
-    border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
-    border-radius: var(--radius);
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    background: var(--card); border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   }
   .settings-section-title {
     font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--acc);
     margin-bottom: 10px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
   }
-  .settings-grid-options {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-  }
+  .settings-grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .settings-select-clean {
-    width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
+    width: 100%; appearance: none; -webkit-appearance: none;
     background: var(--cov) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;
-    color: var(--txt);
-    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    border-radius: var(--radius);
-    padding: 10px 16px;
-    font-family: var(--font);
-    font-size: 13px;
-    font-weight: 700;
-    outline: none;
-    cursor: pointer;
+    color: var(--txt); border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    border-radius: var(--radius); padding: 10px 16px; font-family: var(--font); font-size: 13px; font-weight: 700; outline: none; cursor: pointer;
   }
 
   /* Grille de thèmes ultra-compacte et élégante */
-  .themes-grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
+  .themes-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .theme-mini-btn {
-    background: var(--cov);
-    border: 1px solid transparent;
-    border-radius: 10px;
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--txt);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    background: var(--cov); border: 1px solid transparent; border-radius: 10px; padding: 8px 10px;
+    font-size: 11px; font-weight: 700; color: var(--txt); display: flex; align-items: center; gap: 6px;
+    cursor: pointer; transition: all 0.2s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .theme-mini-btn:hover { border-color: var(--acc); }
-  .theme-mini-btn[aria-pressed="true"] {
-    background: var(--acc);
-    color: var(--on);
-    box-shadow: 0 0 10px var(--acc);
-  }
+  .theme-mini-btn[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
 
   /* 🪙 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
-  .header-currency-badge {
-    display: inline-flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--acc) 20%, var(--card));
-    border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); border-radius: var(--radius); padding: 8px 12px;
-    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 900; color: var(--acc); cursor: pointer;
-    box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); transition: transform 0.2s ease;
-  }
-  .header-currency-badge:hover { transform: scale(1.05); }
-
-  .collection-shelf-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;
-  }
+  .collection-shelf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
   @media(min-width: 500px) { .collection-shelf-grid { grid-template-columns: repeat(4, 1fr); } }
 
   .collection-item-card {
     background: var(--card); border: 2px solid var(--acc); border-radius: 10px; overflow: hidden;
     display: flex; flex-direction: column; align-items: center; position: relative;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
-    animation: fadeInList 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2); animation: fadeInList 0.3s ease;
   }
   .collection-item-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
   .collection-item-title {
@@ -678,152 +534,55 @@ body {
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* 🎯 Copie 100% exacte des propriétés de la classe .chip de ton application */
 input[type="month"]#dateSelect {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
-  
-  /* Utilise les vraies variables CSS de ton fichier HTML */
-  background: var(--card) !important;
-  color: var(--txt) !important;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  box-sizing: border-box; width: 100%; min-height: 32px; padding: 6px 10px;
+  background: var(--card) !important; color: var(--txt) !important;
   border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent) !important;
-  border-radius: var(--radius) !important;
-  
-  font-family: var(--font) !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.5px !important;
-  text-transform: uppercase;
-  
-  outline: none;
-  cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: var(--radius) !important; font-family: var(--font) !important;
+  font-size: 11px !important; font-weight: 700 !important; letter-spacing: 0.5px !important;
+  text-transform: uppercase; outline: none; cursor: pointer; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Alignement de l'icône calendrier native */
-input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: invert(1);
-  opacity: 0.6;
-}
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(1); opacity: 0.6; }
+input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 
-/* Survol identique aux autres chips */
-input[type="month"]#dateSelect:hover {
-  border-color: var(--acc) !important;
-}
-
-/* Style bouton arcade / rétro en relief 3D aux couleurs du thème */
 .month-nav .chip {
-  background: var(--acc) !important;
-  color: #000 !important; /* Texte ou flèche bien lisible sur fond accentué */
-  border: 2px solid #000 !important; /* Contour net style pixel/rétro */
-  border-radius: var(--radius);
-  padding: 8px 14px;
-  min-height: 38px;
-  cursor: pointer;
-  
-  /* L'effet 3D rétro : une tranche épaisse en bas plus sombre et un reflet lumineux en haut */
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 
-              0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
-  
+  background: var(--acc) !important; color: #000 !important; border: 2px solid #000 !important;
+  border-radius: var(--radius); padding: 4px 10px; min-height: 32px; cursor: pointer;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
   transition: all 0.05s ease-in-out;
 }
 
-/* Effet d'enfoncement instantané quand on clique dessus */
 .month-nav .chip:active {
   transform: translateY(4px);
-  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.2), 
-              0 0 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.2), 0 0 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
 }
-
-/* Assure-toi que les flèches SVG à l'intérieur s'accordent bien */
-.month-nav .chip svg {
-  stroke: #000 !important;
-  stroke-width: 3.5;
-}
-
-/* Note : Pense aussi à ajouter padding-bottom sur ton body :
-   body { padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important; } 
-*/
+.month-nav .chip svg { stroke: #000 !important; stroke-width: 3.5; }
 
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 90;
-  height: calc(65px + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-top: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+  height: calc(65px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); display: flex; align-items: center; justify-content: space-around;
   box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .bottom-nav .nav-item {
-  background: none;
-  border: none;
-  color: var(--mut);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  flex: 1;
-  height: 100%;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  position: relative;
+  background: none; border: none; color: var(--mut); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px; flex: 1; height: 100%; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative;
 }
 
-.bottom-nav .nav-item svg {
-  transition: transform 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
-}
-
-.bottom-nav .nav-item span {
-  font-family: var(--font);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.bottom-nav .nav-item.active {
-  color: var(--acc);
-}
-
-.bottom-nav .nav-item.active svg {
-  stroke: var(--acc);
-  transform: translateY(-2px) scale(1.1);
-  filter: drop-shadow(0 0 6px var(--acc));
-}
-
-.bottom-nav .nav-item:active {
-  transform: scale(0.92);
-}
-
+.bottom-nav .nav-item svg { transition: transform 0.2s ease, stroke 0.2s ease, filter 0.2s ease; }
+.bottom-nav .nav-item span { font-family: var(--font); font-size: 9px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap; }
+.bottom-nav .nav-item.active { color: var(--acc); }
+.bottom-nav .nav-item.active svg { stroke: var(--acc); transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 0 6px var(--acc)); }
+.bottom-nav .nav-item:active { transform: scale(0.92); }
 .bottom-nav .nav-item.active::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 24px;
-  height: 3px;
-  background: var(--acc);
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 0 10px var(--acc);
+  content: ''; position: absolute; top: 0; width: 24px; height: 3px; background: var(--acc);
+  border-radius: 0 0 4px 4px; box-shadow: 0 0 10px var(--acc);
 }
-  
 </style>
 </head>
 <body>
@@ -930,7 +689,7 @@ input[type="month"]#dateSelect:hover {
 <div class="header-bottom">
   <!-- 📅 Champ natif Mois + Année (1970 à 2999) -->
   <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
-    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; box-sizing: border-box;">
+    <input type="month" id="dateSelect" min="1970-01" max="2999-12">
   </div>
 
   <!-- 🕹️ Un unique bloc de flèches rétro -->
@@ -957,18 +716,6 @@ input[type="month"]#dateSelect:hover {
   <div id="list"></div>
 </main>
 
-    <div class="filter-bar-container">
-      <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
-      <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        <span>Favoris</span>
-      </button>
-    </div>
-
-  <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
-  </div>
-  <div id="list"></div>
-</main>
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="navHome">
@@ -1015,6 +762,7 @@ input[type="month"]#dateSelect:hover {
     <span>Profil / Réglages</span>
   </button>
 </nav>
+
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -1146,7 +894,6 @@ function openCollectionShelf() {
   p.className = "panel";
   p.replaceChildren();
   
-  // En-tête de la vitrine
   const headerDiv = el("div");
   headerDiv.innerHTML = `
     <h2 style="font-family:'Orbitron',sans-serif; margin-bottom:2px; color:var(--acc);">🏛️ Vitrine de Collection</h2>
@@ -1159,16 +906,13 @@ function openCollectionShelf() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique 🪙";
     p.append(emptyMsg);
   } else {
-    // Conteneur principal de la grande bibliothèque / vitrine
     const shelfContainer = el("div");
     shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; margin-top:8px; max-height:55vh; overflow-y:auto; padding-right:4px;";
 
-    // Découpage des jeux par rangées de 3 ou 4 pour faire de vraies étagères
     const itemsPerRow = 3;
     for (let i = 0; i < myCollection.length; i += itemsPerRow) {
       const rowItems = myCollection.slice(i, i + itemsPerRow);
 
-      // Structure d'une étagère en bois avec effet de profondeur
       const woodenShelf = el("div");
       woodenShelf.style.cssText = `
         background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
@@ -1179,7 +923,6 @@ function openCollectionShelf() {
         box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.4);
       `;
 
-      // Les jeux posés sur l'étagère
       const gamesRow = el("div");
       gamesRow.style.cssText = "display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:flex-end;";
 
@@ -1198,10 +941,8 @@ function openCollectionShelf() {
           cursor: pointer;
         `;
         
-        // Effet au surcroit / clic
         gameBox.addEventListener("click", () => {
           playThemeSound(theme);
-          // Ouvre les détails du jeu si on clique sur sa jaquette dans la vitrine
           openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
         });
 
@@ -1232,7 +973,6 @@ function openCollectionShelf() {
 
       woodenShelf.append(gamesRow);
 
-      // Planche de bois physique de l'étagère en bas
       const plankBoard = el("div");
       plankBoard.style.cssText = `
         height: 10px;
@@ -1250,7 +990,6 @@ function openCollectionShelf() {
     p.append(shelfContainer);
   }
 
-  // Boutons de navigation du bas de la modale
   const btnGroup = el("div");
   btnGroup.style.cssText = "display:flex; gap:8px; margin-top:14px;";
 
@@ -1617,7 +1356,6 @@ function t(key, param) {
 let favorites = [];
 try { favorites = JSON.parse(localStorage.getItem("favorites") || "[]"); } catch (e) { favorites = []; }
 
-// Mémoire permanente anti-triche (ne s'efface jamais quand on enlève un favori)
 let rewardedFavorites = [];
 try { rewardedFavorites = JSON.parse(localStorage.getItem("rewardedFavorites") || "[]"); } catch (e) { rewardedFavorites = []; }
 
@@ -1638,21 +1376,18 @@ function toggleFavorite(rawId) {
   const wasFav = currentFavs.includes(id);
 
   if (wasFav) { 
-    // On retire le jeu des favoris (AUCUN point gagné)
     favorites = currentFavs.filter(favId => favId !== id); 
   } else { 
-    // On ajoute le jeu aux favoris
     currentFavs.push(id);
     favorites = currentFavs;
 
-    // VÉRIFICATION ANTI-FARM : Est-ce que ce jeu a déjà donné des points par le passé ?
     let currentRewarded = rewardedFavorites.map(Number);
     if (!currentRewarded.includes(id)) {
       currentRewarded.push(id);
       rewardedFavorites = currentRewarded;
       try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
       
-      addCoins(10); // +10 points accordés une et une seule fois pour ce jeu !
+      addCoins(10);
     }
   }
   
@@ -1974,7 +1709,6 @@ function renderShimmerLoader() {
 async function load() {
   updateStaticTexts();
   
-  // 📅 Synchronise le sélecteur natif avec le mois/année actuel
   const dateSel = $("#dateSelect");
   if (dateSel) dateSel.value = ym;
 
@@ -1998,21 +1732,17 @@ async function load() {
   setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
-// 📅 Écouteur pour le sélecteur natif mois + année iOS
 const dateSelect = $("#dateSelect");
 if (dateSelect) {
   dateSelect.addEventListener("change", (e) => {
     if (e.target.value) {
       playThemeSound(theme);
-      ym = e.target.value; // Récupère directement le format "2026-10"
+      ym = e.target.value;
       load();
     }
   });
 }
 
-// Et enfin, le lancement initial de l'application :
-load();
-  
 async function searchGlobal(query) {
   if (!query || query.length < 2) { searchResults = null; render(); return; }
   renderShimmerLoader();
@@ -2235,8 +1965,6 @@ function openConsoleDetail(consoleItem) {
   p.append(banner, storyBox, backBtn, closeBtn);
 }
 
-$("#vitrineBtn").addEventListener("click", openConsoleVitrine);
-
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -2291,7 +2019,6 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
 
-  // 🏷️ Dictionnaire de traduction des genres en français
   const GENRE_FR = {
     "Action": "Action",
     "Adventure": "Aventure",
@@ -2312,7 +2039,6 @@ async function openSheet(it) {
     "Card & Board Game": "Jeu de cartes"
   };
 
-  // Récupération et traduction des genres du jeu
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
   let categoryText = "Action";
   if (Array.isArray(genresRaw)) {
@@ -2430,7 +2156,6 @@ let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
-// ⚙️ RÉGLAGES ÉPURÉS ET MIEUX RANGÉS
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -2438,7 +2163,6 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  // Section 1 : Thèmes & Consoles Rétro (Grille compacte)
   const secTheme = el("div", "settings-section");
   secTheme.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
   const themesGrid = el("div", "themes-grid-container");
@@ -2456,7 +2180,6 @@ function openSettings() {
   secTheme.append(themesGrid);
   p.append(secTheme);
 
-  // Section 2 : Préférences Audio & Affichage (Côte à côte)
   const secPrefs = el("div", "settings-section");
   secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
   const prefsGrid = el("div", "settings-grid-options");
@@ -2484,7 +2207,6 @@ function openSettings() {
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
-  // Section 3 : Langue (Menu déroulant épuré)
   const secLang = el("div", "settings-section");
   secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
   const langSelect = el("select", "settings-select-clean");
@@ -2504,7 +2226,6 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
-  // Section 4 : Capsule Temporelle
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", t('retroLabel')));
   const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
@@ -2538,7 +2259,6 @@ function openSettings() {
 
   $("#sheet").classList.add("on");
 }
-$("#settings").addEventListener("click", openSettings);
 
 function renderPlatformDropdown() {
   const select = $("#platformSelect");
@@ -2624,7 +2344,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn) btn.classList.add("active");
   }
 
-  // 1. Home (Ferme la fiche/modale et remonte en haut)
   if (navHome) {
     navHome.addEventListener("click", () => {
       if (typeof playThemeSound === "function") playThemeSound(theme);
@@ -2634,7 +2353,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. Vitrine (Ouvre l'étagère de jaquettes possédées)
   if (navShelf) {
     navShelf.addEventListener("click", () => {
       setActiveNav(navShelf);
@@ -2642,7 +2360,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Boutique Arcade (Ouvre la boutique & gacha jaquettes)
   if (navShopArcade) {
     navShopArcade.addEventListener("click", () => {
       setActiveNav(navShopArcade);
@@ -2650,7 +2367,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4. Musée (Ouvre la vitrine des consoles & micros)
   if (navMuseum) {
     navMuseum.addEventListener("click", () => {
       setActiveNav(navMuseum);
@@ -2658,7 +2374,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. Profil / Réglages (Ouvre la fenêtre de réglages et thèmes)
   if (navSettings) {
     navSettings.addEventListener("click", () => {
       setActiveNav(navSettings);
