@@ -686,11 +686,11 @@ input[type="month"]#dateSelect.chip {
   box-sizing: border-box;
   width: 100%;
   
-  /* 🎯 Force l'input à prendre exactement le même fond et la même couleur que les autres chips */
-  background-color: inherit !important;
-  color: inherit !important;
-  border: inherit !important;
-  border-radius: inherit !important;
+  /* 🎯 Force un fond opaque et cohérent avec tous les thèmes */
+  background-color: var(--bg-card, #1a1512) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius, 12px) !important;
   box-shadow: none !important;
   
   font-family: inherit !important;
@@ -714,6 +714,7 @@ input[type="month"]#dateSelect.chip::-webkit-calendar-picker-indicator {
 input[type="month"]#dateSelect.chip:hover {
   border-color: var(--accent-color) !important;
 }
+  
 </style>
 </head>
 <body>
