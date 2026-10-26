@@ -685,33 +685,43 @@ input[type="month"]#dateSelect {
   color: var(--text-color) !important;
   
   /* 🎯 On force une bordure propre, fine, de la couleur exacte du thème */
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15)) !important;
-  border-radius: 12px !important;
-  
-  /* Supprime l'effet d'ombre blanche agressive du navigateur */
-  box-shadow: none !important; 
-  
-  padding: 10px 14px;
-  outline: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 800;
+input[type="month"]#dateSelect.chip {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
   box-sizing: border-box;
   width: 100%;
+  
+  /* Force l'utilisation exacte des variables du thème des chips */
+  background-color: var(--bg-card) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius, 12px) !important;
+  box-shadow: none !important;
+  
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  
+  padding: 8px 12px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* S'assure que l'icône calendrier s'intègre discrètement */
-input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
+/* S'assure que l'icône calendrier ne perturbe pas le style de la chip */
+input[type="month"]#dateSelect.chip::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: inherit;
-  opacity: 0.6;
+  opacity: 0.7;
+  margin-left: auto;
 }
 
-/* Effet au survol / focus identique au reste de l'app */
-input[type="month"]#dateSelect:hover,
-input[type="month"]#dateSelect:focus {
-  border-color: var(--accent-color, var(--border-color)) !important;
-  box-shadow: 0 0 8px var(--accent-glow, transparent) !important;
+/* Effet hover identique aux chips */
+input[type="month"]#dateSelect.chip:hover {
+  border-color: var(--accent-color) !important;
 }
 </style>
 </head>
