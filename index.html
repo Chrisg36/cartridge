@@ -870,6 +870,10 @@ function openShopModal() {
 }
 
 function triggerRandomPackDraw(type) {
+  // 🎯 AJOUTE CE BLOC ICI :
+  let cData = loadChallengesData();
+  cData.weeklyProgress.packsOpened += 1;
+  saveChallengesData(cData);
   const allLoadedGames = [];
   Object.values(cache).forEach(monthList => {
     if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
@@ -1398,6 +1402,16 @@ function toggleFavorite(rawId) {
   } else { 
     currentFavs.push(id);
     favorites = currentFavs;
+    if (wasFav) { 
+    favorites = currentFavs.filter(favId => favId !== id); 
+  } else { 
+    currentFavs.push(id);
+    favorites = currentFavs;
+
+    // 🎯 AJOUTE CE BLOC ICI :
+    let cData = loadChallengesData();
+    cData.dailyProgress.favorite = true;
+    saveChallengesData(cData);
 
     let currentRewarded = rewardedFavorites.map(Number);
     if (!currentRewarded.includes(id)) {
@@ -2023,6 +2037,14 @@ function openShareModal() {
 $("#shareBtn").addEventListener("click", openShareModal);
 
 async function openSheet(it) {
+  // 🎯 AJOUTE CE BLOC ICI :
+  let cData = loadChallengesData();
+  cData.dailyProgress.curious = true;
+  saveChallengesData(cData);
+
+  playThemeSound(theme);
+  const p = $("#panel");
+  // ... le reste de la fonction ...
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
@@ -2316,7 +2338,11 @@ function renderPlatformDropdown() {
 $("#platformSelect").addEventListener("change", (e) => {
   playThemeSound(theme);
   currentFilter = e.target.value;
-  
+  // 🎯 AJOUTE CE BLOC ICI :
+  let cData = loadChallengesData();
+  cData.dailyProgress.filterConsole = true;
+  cData.weeklyProgress.consolesExplored += 1;
+  saveChallengesData(cData);
   const foundConsole = WORLD_CONSOLES.find(c => c.name === currentFilter);
   if (foundConsole && foundConsole.year) {
     const origYear = foundConsole.year.year || foundConsole.year.split('/')[0].trim();
