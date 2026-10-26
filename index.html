@@ -2531,7 +2531,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 📅 Gestion intelligente et unifiée du sélecteur de date (iOS / PC)
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (typeof isIOS === 'undefined') {
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
 
 const iosInput = $("#iosDateInput");
 const desktopBtn = $("#dateSelect");
@@ -2643,40 +2645,6 @@ function renderCustomMonthPicker() {
 
 // Mise à jour initiale du texte
 updateDateButtonText();
-
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-const iosInput = $("#iosDateInput");
-const desktopBtn = $("#dateSelect");
-const customPicker = $("#customMonthPicker");
-
-if (isIOS && iosInput) {
-  // Sur iOS : on active l'input natif pour avoir le rouleau tactile
-  iosInput.style.display = "block";
-  desktopBtn.style.display = "none"; // Cache le bouton PC
-  
-  iosInput.value = ym;
-  iosInput.addEventListener("change", (e) => {
-    if (e.target.value) {
-      playThemeSound(theme);
-      ym = e.target.value;
-      load();
-    }
-  });
-} else {
-  // Sur PC / Navigateur classique : on garde ton popover pro sur-mesure
-  desktopBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    playThemeSound(theme);
-    if (customPicker.style.display === "block") {
-      customPicker.style.display = "none";
-    } else {
-      pickerYear = parseInt(ym.split("-")[0], 10);
-      renderCustomMonthPicker();
-      customPicker.style.display = "block";
-    }
-  });
-}
   
 load();
 </script>
