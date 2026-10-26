@@ -750,6 +750,90 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
   letter-spacing: 1px;
 }
+
+/* --- MODE PLEIN ÉCRAN PRO & IMMERSIF --- */
+.pack-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #1b2234 0%, #080a0f 100%);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInFullscreen 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInFullscreen {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fullscreen-booster-card {
+  width: 220px;
+  height: 310px;
+  background: linear-gradient(135deg, #151a28 0%, #0d0f17 100%);
+  border: 2px solid var(--acc);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 35px color-mix(in srgb, var(--acc) 50%, transparent);
+}
+
+.fullscreen-card-flip-container {
+  perspective: 1200px;
+  width: 240px;
+  height: 340px;
+  margin: 0 auto 20px;
+}
+
+.fullscreen-card-flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.fullscreen-card-flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+.fs-card-front, .fs-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 30px color-mix(in srgb, var(--acc) 40%, transparent);
+}
+
+.fs-card-front {
+  background: linear-gradient(135deg, var(--card), var(--cov));
+  border: 2px solid var(--acc);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.fs-card-back {
+  background: var(--card);
+  border: 2px solid var(--acc);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+}
   
 </style>
 </head>
@@ -1139,31 +1223,31 @@ async function triggerRandomPackDraw(type, category = "standard") {
   cData.weeklyProgress.packsOpened += 1;
   saveChallengesData(cData);
 
-  const p = $("#panel");
-  p.replaceChildren();
+  // Création du conteneur Plein Écran dédié
+  const fsOverlay = el("div", "pack-fullscreen-overlay");
   
-  // Étape 1 : Le vrai visuel de booster pro qui vibre en attendant la génération
-  const loadingContainer = el("div");
-  loadingContainer.style.cssText = "text-align:center; padding: 20px 0;";
+  // Étape 1 : Visuel du Booster en train de vibrer
+  const loadingWrapper = el("div");
+  loadingWrapper.style.cssText = "text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;";
 
-  const boosterVisual = el("div", "booster-pack-card pack-animating");
+  const boosterVisual = el("div", "fullscreen-booster-card pack-animating");
   boosterVisual.innerHTML = `
     <div class="booster-foil-overlay"></div>
-    <div class="booster-logo-badge">CR EDITION</div>
-    <div class="booster-art-center">
-      <span style="font-size: 28px;">📦</span>
+    <div class="booster-logo-badge">SYSTEM // SECURE</div>
+    <div class="booster-art-center" style="width:80px; height:80px;">
+      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:14px; color:var(--acc);">CR-26</span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--acc); letter-spacing:1px;">
-      PACK ${type.toUpperCase()}
+    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--acc); letter-spacing:2px; text-transform:uppercase;">
+      ${type}
     </div>
   `;
 
-  const loadText = el("p", "m", "Ouverture du booster en cours...");
-  loadText.style.marginTop = "14px";
+  const loadText = el("p", "", "INITIALISATION DU FLUX DE DONNÉES...");
+  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
 
-  loadingContainer.append(boosterVisual, loadText);
-  p.append(loadingContainer);
-  $("#sheet").classList.add("on");
+  loadingWrapper.append(boosterVisual, loadText);
+  fsOverlay.append(loadingWrapper);
+  document.body.append(fsOverlay);
 
   let randomGame;
   
@@ -1213,83 +1297,92 @@ async function triggerRandomPackDraw(type, category = "standard") {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Temps de suspense visuel (1.5s)
+  // Temps de suspense (1.5s)
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // Étape 2 : Écran de révélation pro avec la carte 3D à retourner
-  p.replaceChildren();
+  // Étape 2 : Écran de révélation plein écran avec la carte 3D à retourner
+  fsOverlay.replaceChildren();
 
-  const revealContainer = el("div");
-  revealContainer.style.cssText = "text-align: center; animation: fadeInList 0.4s ease-out;";
+  const revealWrapper = el("div");
+  revealWrapper.style.cssText = "text-align: center; display:flex; flex-direction:column; align-items:center; width:100%; max-width:400px; animation: fadeInList 0.4s ease-out;";
 
-  const celebrationTitle = el("h2", "", `🎉 ${type.toUpperCase()} OUVERT ! 🎉`);
-  celebrationTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--acc); font-size:18px; margin-bottom:10px; text-shadow:0 0 10px var(--acc);";
+  const topTitle = el("h2", "", `ACQUISITION TERMINÉE`);
+  topTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--txt); font-size:14px; font-weight:900; letter-spacing:3px; margin-bottom:6px; text-transform:uppercase;";
 
-  const rarityBadge = el("div", "rarity-tag", category.includes("retro") ? "⭐ LÉGENDAIRE RÉTRO" : "✨ CARTE OFFICIELLE");
-  rarityBadge.style.display = "inline-block";
-  rarityBadge.style.marginBottom = "14px";
+  const rarityTag = el("div", "", category.includes("retro") ? "ARCHIVE LÉGENDAIRE" : "INDEX STANDARD");
+  rarityTag.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:20px; background:color-mix(in srgb, var(--acc) 15%, transparent); padding:4px 10px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 40%, transparent);";
 
-  // Conteneur Flip 3D
-  const flipContainer = el("div", "card-flip-container");
-  const flipper = el("div", "card-flipper");
+  // Conteneur Flip 3D Plein Écran
+  const flipContainer = el("div", "fullscreen-card-flip-container");
+  const flipper = el("div", "fullscreen-card-flipper");
 
-  // Face cachée (Le dos de carte pro siglé CR)
-  const cardFront = el("div", "card-front");
+  // Face cachée (Design pro siglé CR)
+  const cardFront = el("div", "fs-card-front");
   cardFront.innerHTML = `
-    <div style="width: 50px; height: 50px; border-radius: 12px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 15px var(--acc); margin-bottom:10px;">
-      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:18px; color:var(--on);">CR</span>
+    <div style="width:64px; height:64px; border-radius:14px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px var(--acc); margin-bottom:14px;">
+      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:22px; color:var(--on);">CR</span>
     </div>
-    <b style="font-family:'Orbitron',sans-serif; font-size:11px; color:var(--txt); letter-spacing:1px;">TOUCHER POUR RETOURNER</b>
+    <div style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
   `;
 
-  // Face visible (La jaquette du jeu)
-  const cardBack = el("div", "card-back");
+  // Face visible (Jaquette du jeu)
+  const cardBack = el("div", "fs-card-back");
   const img = el("img");
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
   img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
 
   const cardTitle = el("div", "", randomGame.name);
-  cardTitle.style.cssText = "background: rgba(0,0,0,0.9); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 8px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 10px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
 
   cardBack.append(img, cardTitle);
   flipper.append(cardFront, cardBack);
   flipContainer.append(flipper);
 
   let isRevealed = false;
-  flipContainer.addEventListener("click", () => {
+  flipper.addEventListener("click", () => {
     if (!isRevealed) {
       isRevealed = true;
       playThemeSound(theme);
       flipper.classList.add("flipped");
     } else {
       playThemeSound(theme);
+      fsOverlay.remove();
       openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
     }
   });
 
-  const infoText = el("p", "m", "Appuyez sur la carte pour découvrir votre jaquette !");
-  infoText.style.marginBottom = "14px";
+  const instructionText = el("p", "", "Touchez le boîtier pour lancer le décodage visuel");
+  instructionText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700; color:var(--mut); letter-spacing:1px; text-transform:uppercase; margin: 16px 0 20px;";
 
   const btnGroup = el("div");
-  btnGroup.style.cssText = "display: flex; gap: 8px;";
+  btnGroup.style.cssText = "display: flex; gap: 10px; width: 100%;";
 
-  const detailBtn = el("button", "cta-sec", "🔍 Voir la Fiche");
+  const detailBtn = el("button", "cta-sec", "INSPECTION FICHE");
   detailBtn.style.flex = "1";
+  detailBtn.style.fontFamily = "'Orbitron', sans-serif";
+  detailBtn.style.fontSize = "11px";
+  detailBtn.style.letterSpacing = "1px";
   detailBtn.addEventListener("click", () => {
     playThemeSound(theme);
+    fsOverlay.remove();
     openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
   });
 
-  const backBtn = el("button", "cta", "← Boutique");
+  const backBtn = el("button", "cta", "FERMER & RETOUR");
   backBtn.style.flex = "1";
+  backBtn.style.fontFamily = "'Orbitron', sans-serif";
+  backBtn.style.fontSize = "11px";
+  backBtn.style.letterSpacing = "1px";
   backBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    fsOverlay.remove();
     openShopModal();
     renderShopMainPage();
   });
 
   btnGroup.append(detailBtn, backBtn);
-  revealContainer.append(celebrationTitle, rarityBadge, flipContainer, infoText, btnGroup);
-  p.append(revealContainer);
+  revealWrapper.append(topTitle, rarityTag, flipContainer, instructionText, btnGroup);
+  fsOverlay.append(revealWrapper);
 }
 function openCollectionShelf() {
   playThemeSound(theme);
