@@ -826,7 +826,7 @@ function openShopModal() {
   p.className = "panel";
   p.replaceChildren();
 
-  p.append(el("h2", "", "🎁 Boutique & Vitrine Géante"));
+  p.append(el("h2", "", "🎁 Boutique Arcade"));
   p.append(el("p", "m", `Mes crédits disponibles : ${userCoins} 🪙 | Jaquettes possédées : ${myCollection.length}`));
 
   const banner = el("div", "shop-banner");
@@ -859,14 +859,7 @@ function openShopModal() {
     triggerRandomPackDraw("Acheté");
   });
 
-  const viewShelfBtn = el("button", "cta-sec", "📚 Voir ma Vitrine / Étagère de Jaquettes");
-  viewShelfBtn.style.marginTop = "10px";
-  viewShelfBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    openCollectionShelf();
-  });
-
-  banner.append(drawFreeBtn, drawPaidBtn, viewShelfBtn);
+  banner.append(drawFreeBtn, drawPaidBtn);
   p.append(banner);
 
   const close = el("button", "close", t('close'));
