@@ -2578,6 +2578,13 @@ if (navMuseum) {
   });
 }
 
+if (navShelf) {
+  navShelf.addEventListener("click", () => {
+    setActiveNav(navShelf);
+    if (typeof openCollectionShelf === "function") openCollectionShelf();
+  });
+}
+  
 if (navSettings) {
   navSettings.addEventListener("click", () => {
     setActiveNav(navSettings);
