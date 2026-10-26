@@ -1402,13 +1402,8 @@ function toggleFavorite(rawId) {
   } else { 
     currentFavs.push(id);
     favorites = currentFavs;
-    if (wasFav) { 
-    favorites = currentFavs.filter(favId => favId !== id); 
-  } else { 
-    currentFavs.push(id);
-    favorites = currentFavs;
 
-    // 🎯 AJOUTE CE BLOC ICI :
+    // Validation du défi quotidien "Coup de Cœur"
     let cData = loadChallengesData();
     cData.dailyProgress.favorite = true;
     saveChallengesData(cData);
