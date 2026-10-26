@@ -691,6 +691,30 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 </div>
 
 <main>
+
+  <!-- 🏬 GRANDE PAGE BOUTIQUE ARCADE -->
+<main id="shopMainPage" style="display: none;">
+  <div class="sticky-header-container">
+    <div class="header-top">
+      <div class="neon-logo">🪙 BOUTIQUE ARCADE & QUÊTES</div>
+      <div class="nav">
+        <div class="header-currency-badge">
+          🪙 <span id="shopPageCoins">100</span>
+        </div>
+      </div>
+    </div>
+    <div class="magazine-edition-banner">
+      <span>🕹️ ARCADE ZONE</span>
+      <span>HUB PRINCIPAL</span>
+    </div>
+  </div>
+
+  <!-- Contenu de la page Boutique -->
+  <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;">
+    <!-- Les sections s'afficheront ici -->
+  </div>
+</main>
+  
 <div class="sticky-header-container">
       <div class="header-top">
         <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
@@ -2501,10 +2525,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (navShopArcade) {
+if (navShopArcade) {
     navShopArcade.addEventListener("click", () => {
+      if (typeof playThemeSound === "function") playThemeSound(theme);
       setActiveNav(navShopArcade);
-      if (typeof openShopModal === "function") openShopModal();
+      if (typeof closeSheet === "function") closeSheet();
+      
+      // On masque l'accueil et on affiche la grande page Boutique
+      document.querySelector("main:not(#shopMainPage)").style.display = "none";
+      const shopPage = document.getElementById("shopMainPage");
+      shopPage.style.display = "block";
+      
+      // On charge le contenu de la grande page Boutique
+      renderShopMainPage();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // Et quand on clique sur "Home", on remet l'accueil
+  if (navHome) {
+    navHome.addEventListener("click", () => {
+      if (typeof playThemeSound === "function") playThemeSound(theme);
+      setActiveNav(navHome);
+      if (typeof closeSheet === "function") closeSheet();
+      
+      document.getElementById("shopMainPage").style.display = "none";
+      document.querySelector("main:not(#shopMainPage)").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 
