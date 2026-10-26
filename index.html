@@ -2399,6 +2399,95 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
+
+function loadChallengesData() {
+  const data = localStorage.getItem("cartridge_challenges");
+  const today = new Date().toISOString().slice(0, 10);
+  
+  let defaultData = {
+    lastLoginDate: "",
+    loginStreak: 0,
+    weeklyLoginsCount: 0,
+    dailyProgress: {
+      curious: false,      // Ouvrir la fiche d'un jeu
+      favorite: false,     // Mettre un cœur
+      filterConsole: false // Filtrer par console
+    },
+    weeklyProgress: {
+      packsOpened: 0,      // Objectif : 3 packs
+      consolesExplored: 0, // Objectif : explorer les consoles
+      login3Days: false,   // 3 jours de connexion
+      login7Days: false    // 7 jours d'affilée
+    },
+    claimedRewards: {
+      dailyLogin: false,
+      daily1: false,
+      daily2: false,
+      daily3: false,
+      weekly1: false,
+      weekly2: false,
+      weekly3: false,
+      weekly4: false
+    },
+    lastResetDate: today
+  };
+
+  if (!data) return defaultData;
+  try {
+    let parsed = JSON.parse(data);
+    // Réinitialisation journalière automatique
+    if (parsed.lastResetDate !== today) {
+      parsed.dailyProgress = { curious: false, favorite: false, filterConsole: false };
+      parsed.claimedRewards.dailyLogin = false;
+      parsed.claimedRewards.daily1 = false;
+      parsed.claimedRewards.daily2 = false;
+      parsed.claimedRewards.daily3 = false;
+      parsed.lastResetDate = today;
+    }
+    return parsed;
+  } catch (e) {
+    return defaultData;
+  }
+}
+
+function saveChallengesData(data) {
+  localStorage.setItem("cartridge_challenges", JSON.stringify(data));
+}
+
+// Vérifie la connexion du jour au lancement de l'app
+function checkDailyConnection() {
+  let cData = loadChallengesData();
+  const today = new Date().toISOString().slice(0, 10);
+
+  if (cData.lastLoginDate !== today) {
+    const lastDate = cData.lastLoginDate ? new Date(cData.lastLoginDate) : null;
+    const currentDate = new Date(today);
+    const diffTime = lastDate ? Math.abs(currentDate - lastDate) : null;
+    const diffDays = diffTime ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : 999;
+
+    if (diffDays === 1) {
+      cData.loginStreak += 1;
+    } else if (diffDays > 1) {
+      cData.loginStreak = 1;
+    } else {
+      cData.loginStreak = 1;
+    }
+
+    cData.lastLoginDate = today;
+    cData.weeklyLoginsCount += 1;
+
+    if (cData.weeklyLoginsCount >= 3) cData.weeklyProgress.login3Days = true;
+    if (cData.loginStreak >= 7) cData.weeklyProgress.login7Days = true;
+
+    // Bonus de connexion automatique (10 crédits)
+    userCoins += 10;
+    if (typeof updateCoinsUI === "function") updateCoinsUI();
+    
+    saveChallengesData(cData);
+  }
+}
   
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
