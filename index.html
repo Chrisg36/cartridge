@@ -2037,17 +2037,14 @@ function openShareModal() {
 $("#shareBtn").addEventListener("click", openShareModal);
 
 async function openSheet(it) {
-  // 🎯 AJOUTE CE BLOC ICI :
   let cData = loadChallengesData();
   cData.dailyProgress.curious = true;
   saveChallengesData(cData);
 
   playThemeSound(theme);
   const p = $("#panel");
-  // ... le reste de la fonction ...
-  playThemeSound(theme);
-  const p = $("#panel");
   p.className = "panel";
+  
   const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -2058,7 +2055,8 @@ async function openSheet(it) {
   const favCta = el("button", "cta-sec");
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
-
+  
+  // ... le reste de ta fonction continue ici ...
   const GENRE_FR = {
     "Action": "Action",
     "Adventure": "Aventure",
