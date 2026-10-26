@@ -678,33 +678,28 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
+/* Force l'input de date à adopter strictement le style des autres blocs du thème */
 input[type="month"]#dateSelect {
   -webkit-appearance: none;
   appearance: none;
-  
-  /* Force l'utilisation des variables exactes de ton thème actif */
   background-color: var(--bg-card) !important;
   color: var(--text-color) !important;
-  border: 1px solid var(--border-color) !important;
-  
-  /* Reprend le même arrondi et espacement que tes autres blocs */
-  border-radius: 12px !important;
+  border: var(--border-width, 1px) solid var(--border-color) !important;
+  border-radius: var(--border-radius, 12px) !important;
+  box-shadow: var(--box-shadow, none) !important;
   padding: 10px 14px;
   outline: none;
   cursor: pointer;
   font-family: inherit;
   font-weight: 800;
-  letter-spacing: 0.5px;
   box-sizing: border-box;
-  width: 100%;
-  transition: all 0.2s ease;
 }
 
-/* Effet au survol / focus aligné sur l'accent du thème */
-input[type="month"]#dateSelect:hover,
-input[type="month"]#dateSelect:focus {
-  border-color: var(--accent-color) !important;
-  box-shadow: 0 0 8px var(--accent-glow, rgba(255, 123, 0, 0.25));
+/* S'assure que l'icône calendrier s'intègre bien */
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 0.6;
 }
   
 </style>
@@ -818,7 +813,7 @@ input[type="month"]#dateSelect:focus {
 <div class="header-bottom">
   <!-- 📅 Champ natif Mois + Année (1970 à 2999) -->
   <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
-    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="platform-select" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+    <input type="month" id="dateSelect" min="1970-01" max="2999-12" class="chip" style="width: 100%; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; box-sizing: border-box;">
   </div>
 
   <!-- 🕹️ Un unique bloc de flèches rétro -->
