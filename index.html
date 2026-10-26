@@ -2201,7 +2201,18 @@ async function openSheet(it) {
 
   const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
   const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
-  const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
+
+  // 💰 Gestion et affichage du prix du jeu
+  let priceVal = it.g.price !== undefined ? it.g.price : null;
+  let priceText = "";
+  if (priceVal !== null) {
+    priceText = priceVal === 0 ? "💰 Prix : Gratuit / F2P" : `💰 Prix : ${priceVal} €`;
+  } else {
+    // Si l'API ne renvoie pas de prix exact, on met un prix standard indicatif (ou tu peux laisser vide si tu preferes)
+    priceText = "💰 Prix : ~59.99 € (Standard)";
+  }
+
+  const companyInfo = el("p", "m", [devText, pubText, priceText].filter(Boolean).join("\n"));
   companyInfo.style.whiteSpace = "pre-line";
   companyInfo.style.marginTop = "6px";
 
