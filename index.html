@@ -1820,6 +1820,24 @@ async function load() {
   setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
 }
 
+  // 📅 Écouteurs pour le choix dynamique du mois et de l'année
+const monthSelect = $("#monthSelect");
+const yearSelect = $("#yearSelect");
+
+if (monthSelect && yearSelect) {
+  const handleDateChange = () => {
+    playThemeSound(theme);
+    ym = `${yearSelect.value}-${monthSelect.value}`;
+    load();
+  };
+
+  monthSelect.addEventListener("change", handleDateChange);
+  yearSelect.addEventListener("change", handleDateChange);
+}
+
+// Et enfin, le lancement initial de l'application :
+load();
+  
 async function searchGlobal(query) {
   if (!query || query.length < 2) { searchResults = null; render(); return; }
   renderShimmerLoader();
