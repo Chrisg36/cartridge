@@ -678,18 +678,17 @@
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
   /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
-/* Sélecteur de date parfaitement lisible et aux couleurs du thème */
-/* Forcer l'input type="month" à copier exactement la classe .platform-select */
-input[type="month"]#dateSelect.platform-select {
-  /* Annule le style par défaut du navigateur */
-  -webkit-appearance: none;
-  -moz-appearance: none;
+/* 🎨 Bordure 100% adaptée au style et aux couleurs de chaque thème */
+input[type="month"]#dateSelect {
   appearance: none;
+  -webkit-appearance: none;
   
-  /* Force l'héritage des couleurs de la classe .platform-select de ton thème */
+  /* Fond et texte du thème */
   background-color: var(--bg-card, inherit) !important;
   color: var(--text-color, inherit) !important;
-  border-color: var(--border-color, inherit) !important;
+  
+  /* 🎯 Force la bordure à copier la couleur de bordure du thème actif */
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2)) !important;
   
   padding: 10px 14px;
   border-radius: 12px;
@@ -701,11 +700,11 @@ input[type="month"]#dateSelect.platform-select {
   transition: all 0.2s ease;
 }
 
-/* Colore la petite flèche/calendrier avec la couleur du texte du thème */
-input[type="month"]#dateSelect::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: inherit;
-  opacity: 0.7;
+/* Survol / Focus avec la couleur d'accent du thème */
+input[type="month"]#dateSelect:hover,
+input[type="month"]#dateSelect:focus {
+  border-color: var(--accent-color, var(--border-color)) !important;
+  box-shadow: 0 0 8px var(--accent-glow, transparent);
 }
   
 </style>
