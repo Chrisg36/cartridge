@@ -1002,28 +1002,36 @@ async function triggerRandomPackDraw(type) {
   const p = $("#panel");
   p.replaceChildren();
   p.append(el("h2", "", "🎉 Tirage en cours..."));
-  p.append(el("p", "m", "Connexion à la base de données mondiale IGDB 🌍..."));
+  p.append(el("p", "m", "Ouverture du pack mystère mondial..."));
 
   let randomGame;
+  
   try {
-    const randomOffset = Math.floor(Math.random() * 5000);
-    const res = await fetch(`${API}/?search=a&offset=${randomOffset}`);
-    const data = await res.json();
-
-    if (Array.isArray(data) && data.length > 0) {
-      randomGame = data[Math.floor(Math.random() * data.length)];
-    }
-  } catch (err) {}
-
-  // Secours si l'API ne répond pas ou renvoie vide
-  if (!randomGame) {
+    // On pioche d'abord dans les jeux déjà en cache si disponibles pour être instantané
     const allLoadedGames = [];
     Object.values(cache).forEach(monthList => {
       if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
     });
-    randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)] || {
-      id: 9991, 
-      name: "The Legend of Zelda: Ocarina of Time", 
+
+    // Si on a moins de 5 jeux en cache, on va chercher une liste aléatoire mondiale sur le Worker
+    if (allLoadedGames.length < 5) {
+      const randomYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
+      const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+      const res = await fetch(`${API}/?month=${randomYear}-${randomMonth}`);
+      const data = await res.json();
+      if (Array.isArray(data)) allLoadedGames.push(...data);
+    }
+
+    if (allLoadedGames.length > 0) {
+      randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
+    }
+  } catch (err) {}
+
+  // Sécurité ultime si tout le reste échoue
+  if (!randomGame) {
+    randomGame = {
+      id: Math.floor(Math.random() * 100000),
+      name: "Jeu Mystère Légendaire",
       cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
     };
   }
@@ -1034,7 +1042,7 @@ async function triggerRandomPackDraw(type) {
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Affichage de la jaquette gagnée et du bouton de retour
+  // Affichage de la jaquette gagnée
   p.replaceChildren();
   p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
   p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
