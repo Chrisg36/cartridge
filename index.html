@@ -2658,6 +2658,152 @@ function checkDailyConnection() {
     saveChallengesData(cData);
   }
 }
+
+function renderShopMainPage() {
+  const contentArea = document.getElementById("shopPageContent");
+  contentArea.replaceChildren();
+
+  // Actualisation des crédits sur la page
+  const coinSpan = document.getElementById("shopPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  if (typeof checkDailyConnection === "function") {
+    checkDailyConnection();
+  }
+
+  // --- BARRE DE NAVIGATION INTERNE STYLE ONGLETS ---
+  const subNav = el("div");
+  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
+
+  const btnShop = el("button", "chip", "🏬 Boutique (Bientôt)");
+  const btnPacks = el("button", "chip", "🎟️ Packs Mystères");
+  const btnChallenges = el("button", "chip", "🎯 Défis & Quêtes");
+
+  [btnShop, btnPacks, btnChallenges].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "38px";
+    b.style.fontSize = "11px";
+  });
+
+  const displayBox = el("div");
+  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
+
+  // Vue 1 : Boutique en construction (par défaut en grand)
+  function showMainShop() {
+    btnShop.setAttribute("aria-pressed", "true");
+    btnPacks.setAttribute("aria-pressed", "false");
+    btnChallenges.setAttribute("aria-pressed", "false");
+
+    displayBox.replaceChildren();
+    const constructionBanner = el("div", "shop-banner");
+    constructionBanner.style.cssText = "border-style:dashed; padding:40px 20px; text-align:center;";
+    constructionBanner.innerHTML = `
+      <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
+      <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
+        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs, des bordures de cartes légendaires et des bonus uniques pour ton profil !
+      </p>
+    `;
+    displayBox.append(constructionBanner);
+  }
+
+  // Vue 2 : Distributeur de packs
+  function showPacks() {
+    btnShop.setAttribute("aria-pressed", "false");
+    btnPacks.setAttribute("aria-pressed", "true");
+    btnChallenges.setAttribute("aria-pressed", "false");
+
+    displayBox.replaceChildren();
+    const banner = el("div", "shop-banner");
+    banner.innerHTML = `
+      <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
+      <p style="font-size:13px; font-weight:600; margin-bottom:16px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante de boîtiers officiels !</p>
+    `;
+
+    const drawFreeBtn = el("button", "cta", "🎁 Tirage Quotidien Gratuit (Boîte Mystère)");
+    drawFreeBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      const todayStr = new Date().toISOString().slice(0, 10);
+      if (localStorage.getItem("lastFreePackDate") === todayStr) {
+        alert("⏳ Vous avez déjà récupéré votre tirage gratuit aujourd'hui ! Revenez demain ou achetez un pack.");
+        return;
+      }
+      localStorage.setItem("lastFreePackDate", todayStr);
+      triggerRandomPackDraw("Gratuit");
+    });
+
+    const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
+    drawPaidBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      if (userCoins < 50) {
+        alert("❌ Pas assez de crédits ! Mettez des jeux en favoris ou accomplissez des défis.");
+        return;
+      }
+      userCoins -= 50;
+      updateCoinsUI();
+      if (coinSpan) coinSpan.textContent = userCoins;
+      triggerRandomPackDraw("Acheté");
+    });
+
+    banner.append(drawFreeBtn, drawPaidBtn);
+    displayBox.append(banner);
+  }
+
+  // Vue 3 : Tableau de bord des défis
+  function showChallenges() {
+    btnShop.setAttribute("aria-pressed", "false");
+    btnPacks.setAttribute("aria-pressed", "false");
+    btnChallenges.setAttribute("aria-pressed", "true");
+
+    displayBox.replaceChildren();
+    let cData = loadChallengesData();
+
+    const challengesSection = el("div");
+    challengesSection.style.cssText = "background:var(--card); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:20px;";
+    
+    challengesSection.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; color:var(--acc); margin-top:0; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+        🎯 Tableau de Bord des Quêtes & Défis
+      </h3>
+      <div style="font-size:13px; font-weight:600; display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>🔥 Série de connexion : <b>${cData.loginStreak} jour(s)</b></span>
+          <span style="font-size:11px; color:var(--acc);">+10 🪙 / jour</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>🔍 Le Curieux du Jour : <b>${cData.dailyProgress.curious ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:11px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>❤️ Coup de Cœur : <b>${cData.dailyProgress.favorite ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:11px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>🌍 Globe-trotter : <b>${cData.dailyProgress.filterConsole ? "✅ Validé" : "❌ À faire"}</b></span>
+          <span style="font-size:11px; color:var(--acc);">+10 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>📦 Collectionneur (3 packs hebdo) : <b>${cData.weeklyProgress.packsOpened}/3</b></span>
+          <span style="font-size:11px; color:var(--acc);">+20 🪙</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cov); padding:10px 14px; border-radius:8px;">
+          <span>🏆 Série 7 Jours Légendaire : <b>${cData.loginStreak}/7</b></span>
+          <span style="font-size:11px; color:var(--acc);">2 Packs Gratuits !</span>
+        </div>
+      </div>
+    `;
+    displayBox.append(challengesSection);
+  }
+
+  btnShop.addEventListener("click", () => { playThemeSound(theme); showMainShop(); });
+  btnPacks.addEventListener("click", () => { playThemeSound(theme); showPacks(); });
+  btnChallenges.addEventListener("click", () => { playThemeSound(theme); showChallenges(); });
+
+  subNav.append(btnShop, btnPacks, btnChallenges);
+  contentArea.append(subNav, displayBox);
+
+  // Par défaut, on affiche la boutique principale en construction
+  showMainShop();
+}
   
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
