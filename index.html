@@ -1004,62 +1004,56 @@ async function triggerRandomPackDraw(type) {
   p.append(el("h2", "", "🎉 Tirage en cours..."));
   p.append(el("p", "m", "Connexion à la base de données mondiale IGDB 🌍..."));
 
+  let randomGame;
   try {
-    // Génère un décalage aléatoire pour explorer tout le catalogue mondial
     const randomOffset = Math.floor(Math.random() * 5000);
     const res = await fetch(`${API}/?search=a&offset=${randomOffset}`);
     const data = await res.json();
 
-    let randomGame;
     if (Array.isArray(data) && data.length > 0) {
       randomGame = data[Math.floor(Math.random() * data.length)];
-    } else {
-      // Secours si le réseau ne renvoie rien
-      const allLoadedGames = [];
-      Object.values(cache).forEach(monthList => {
-        if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
-      });
-      randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)] || {
-        id: 9991, 
-        name: "The Legend of Zelda: Ocarina of Time", 
-        cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
-      };
     }
+  } catch (err) {}
 
-    // Ajout à la collection personnelle
-    if (!myCollection.some(item => item.id === randomGame.id)) {
-      myCollection.push(randomGame);
-      try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
-    }
-
-    // Affichage de la jaquette gagnée
-    p.replaceChildren();
-    p.append(el("h2", "", "🎉 Jaquette Mondiale Obtenue !"));
-    p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
-
-    const cardPreview = el("div", "collection-item-card");
-    cardPreview.style.maxWidth = "160px";
-    cardPreview.style.margin = "16px auto";
-    const img = el("img"); 
-    img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-    const title = el("div", "collection-item-title", randomGame.name);
-    cardPreview.append(img, title);
-    p.append(cardPreview);
-
-    const backBtn = el("button", "cta", "← Retour à la Boutique");
-    backBtn.addEventListener("click", () => openShopModal());
-    p.append(backBtn);
-
-  } catch (err) {
-    p.replaceChildren();
-    p.append(el("h2", "", "❌ Erreur de tirage"));
-    p.append(el("p", "m", "Impossible de contacter la base mondiale. Vérifie ta connexion."));
-    const backBtn = el("button", "cta", "← Retour");
-    backBtn.addEventListener("click", () => openShopModal());
-    p.append(backBtn);
+  // Secours si l'API ne répond pas ou renvoie vide
+  if (!randomGame) {
+    const allLoadedGames = [];
+    Object.values(cache).forEach(monthList => {
+      if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
+    });
+    randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)] || {
+      id: 9991, 
+      name: "The Legend of Zelda: Ocarina of Time", 
+      cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
+    };
   }
-}
 
+  // Ajout à la collection personnelle
+  if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
+    myCollection.push(randomGame);
+    try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
+  }
+
+  // Affichage de la jaquette gagnée et du bouton de retour
+  p.replaceChildren();
+  p.append(el("h2", "", "🎉 Jaquette Obtenue !"));
+  p.append(el("p", "m", `Pack ${type} ouvert avec succès :`));
+
+  const cardPreview = el("div", "collection-item-card");
+  cardPreview.style.maxWidth = "160px";
+  cardPreview.style.margin = "16px auto";
+  
+  const img = el("img"); 
+  img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+  
+  const title = el("div", "collection-item-title", randomGame.name);
+  cardPreview.append(img, title);
+  p.append(cardPreview);
+
+  const backBtn = el("button", "cta", "← Retour à la Boutique");
+  backBtn.addEventListener("click", () => openShopModal());
+  p.append(backBtn);
+}
 function openCollectionShelf() {
   playThemeSound(theme);
   const p = $("#panel");
