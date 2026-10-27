@@ -1006,6 +1006,27 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   border: none !important;
   box-shadow: none !important;
 }
+
+/* 🏛️ FORCER LA TRANSPARENCE TOTALE DE TOUT LE BLOC MUSÉE (BANNIÈRE INCLUSE) */
+#museumMainPage,
+#museumMainPage > div,
+#museumMainPage .sticky-header-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 📚 FOND BIBLIOTHÈQUE FIXE EN PLEIN ÉCRAN */
+#museumMainPage .retro-library-bg {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
  
 </style>
 </head>
