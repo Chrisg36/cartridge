@@ -3173,22 +3173,17 @@ function renderShopMainPage() {
     const todayStr = new Date().toISOString().slice(0, 10);
     cData.claimed[challengeId] = challengeId === 'login' ? todayStr : true;
     
-    // Sauvegarder les données des défis modifiées
     saveChallengesData(cData);
 
-    // Créditer l'utilisateur selon le type de récompense
     if (type === "coins") {
-      // Ajustez selon votre variable globale de pièces (ex: userCoins += amount ou équivalent)
       if (typeof userCoins !== 'undefined') {
         userCoins += amount;
         if (typeof saveUserData === 'function') saveUserData();
       } else {
-        // Fallback si votre variable s'appelle autrement, ex: localStorage
         let currentCoins = parseInt(localStorage.getItem("user_coins") || "0") + amount;
         localStorage.setItem("user_coins", currentCoins);
       }
     } else if (type === "packs") {
-      // Incrémenter le nombre de packs gratuits
       if (typeof userPacks !== 'undefined') {
         userPacks += amount;
         if (typeof saveUserData === 'function') saveUserData();
@@ -3198,17 +3193,16 @@ function renderShopMainPage() {
       }
     }
 
-    // Rafraîchir l'affichage de l'interface des défis et les compteurs globaux
     if (typeof updateHeaderCoins === 'function') updateHeaderCoins();
     
-    // Relancer la fonction d'affichage active pour actualiser instantanément le bouton en "VALIDÉ"
-    if (typeof showChallenges === 'function' && document.body.contains(displayBox)) {
+    if (typeof showChallenges === 'function') {
       showChallenges();
     } else if (typeof renderChallengesTab === 'function') {
       renderChallengesTab();
     }
   }
-  
+} // <-- ACCOLADE DE FERMETURE POUR openShopModal()
+
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
