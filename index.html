@@ -3202,11 +3202,37 @@ function renderShopMainPage() {
   }
 
   function showPacks() {
-    // Si tu as déjà la fonction showPacks dans ton script d'origine, laisse-la ici
+    btnShop.setAttribute("aria-pressed", "false");
+    btnPacks.setAttribute("aria-pressed", "true");
+    btnChallenges.setAttribute("aria-pressed", "false");
+
+    displayBox.replaceChildren();
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
+    
+    const headerTitle = el("div");
+    headerTitle.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
+      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
+    `;
+    banner.append(headerTitle);
+    displayBox.append(banner);
   }
 
   function showChallenges() {
-    // Si tu as déjà la fonction showChallenges dans ton script d'origine, laisse-la ici
+    btnShop.setAttribute("aria-pressed", "false");
+    btnPacks.setAttribute("aria-pressed", "false");
+    btnChallenges.setAttribute("aria-pressed", "true");
+
+    displayBox.replaceChildren();
+    let cData = loadChallengesData();
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
+    
+    const headerBox = el("div");
+    headerBox.innerHTML = `<h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>`;
+    banner.append(headerBox);
+    displayBox.append(banner);
   }
 
   btnShop.addEventListener("click", () => { playThemeSound(theme); showMainShop(); });
@@ -3216,10 +3242,9 @@ function renderShopMainPage() {
   subNav.append(btnShop, btnPacks, btnChallenges);
   contentArea.append(subNav, displayBox);
   showMainShop();
-} // <--- 🛑 TRÈS IMPORTANT : FERMETURE DE renderShopMainPage ICI !
+}
 
-
-// --- 2. FONCTION DE RENDU DE LA GRANDE PAGE VITRINE (BIEN SÉPARÉE) ---
+// --- 2. FONCTION DE RENDU DE LA GRANDE PAGE VITRINE ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3274,19 +3299,9 @@ function renderVitrineMainPage() {
           flex-direction: column;
           align-items: center;
           box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
           cursor: pointer;
         `;
         
-        gameBox.addEventListener("mouseenter", () => {
-          gameBox.style.transform = "translateY(-4px) scale(1.03)";
-          gameBox.style.boxShadow = `0 12px 25px rgba(0,0,0,0.8), 0 0 15px color-mix(in srgb, var(--acc) 50%, transparent)`;
-        });
-        gameBox.addEventListener("mouseleave", () => {
-          gameBox.style.transform = "translateY(0) scale(1)";
-          gameBox.style.boxShadow = "0 8px 20px rgba(0,0,0,0.6)";
-        });
-
         gameBox.addEventListener("click", () => {
           playThemeSound(theme);
           openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
@@ -3311,7 +3326,6 @@ function renderVitrineMainPage() {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          letter-spacing: 0.5px;
         `;
         spine.textContent = item.name;
 
@@ -3328,16 +3342,12 @@ function renderVitrineMainPage() {
         margin: 8px -12px -6px -12px;
         border-radius: 0 0 10px 10px;
         border-top: 1px solid #5a4434;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.9);
       `;
       woodenShelf.append(plankBoard);
-
       shelfContainer.append(woodenShelf);
     }
-
     banner.append(shelfContainer);
   }
-
   contentArea.append(banner);
 }
   const contentArea = document.getElementById("shopPageContent");
