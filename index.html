@@ -1057,26 +1057,22 @@ body[data-holo-effect="true"] .card-holo-effect::after {
 
 /* --- MODE PIXEL ART (OPTIMISÉ MOBILE & LISIBLE) --- */
 [data-layout-style="pixel art"] {
-  /* On bascule sur VT323 qui reste ultra net et lisible en petite taille sur mobile */
   --font: 'VT323', monospace !important;
   font-family: var(--font) !important;
   --radius: 0px !important;
 }
 
-/* Taille de texte normale et propre (plus besoin de réduire à 72%) */
 [data-layout-style="pixel art"] * {
   font-size: 16px !important;
   letter-spacing: 0.5px;
 }
 
-/* Titres et en-têtes */
 [data-layout-style="pixel art"] h1, 
 [data-layout-style="pixel art"] h2, 
 [data-layout-style="pixel art"] .settings-section-title {
   font-size: 20px !important;
 }
 
-/* Boutons, cartes et champs */
 [data-layout-style="pixel art"] button,
 [data-layout-style="pixel art"] .card,
 [data-layout-style="pixel art"] .booster-shop-card,
@@ -1088,24 +1084,20 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   font-size: 15px !important;
 }
 
-/* Noms des jeux dans les listes */
 [data-layout-style="pixel art"] .game-title,
 [data-layout-style="pixel art"] h3 {
   font-size: 18px !important;
 }
 
-/* Ajustement sur-mesure pour la navbar du bas */
 [data-layout-style="pixel art"] nav button,
 [data-layout-style="pixel art"] .bottom-nav button,
 [data-layout-style="pixel art"] footer button {
-  font-size: 10px !important;       /* On descend à 10px pour que les longs mots rentrent */
-  letter-spacing: -0.8px !important; /* On resserre les lettres */
-  padding: 4px 1px !important;       /* On réduit les marges internes pour gagner de la place */
-  white-space: nowrap !important;    /* Interdit au texte de sauter à la ligne */
-}
+  font-size: 10px !important;
+  letter-spacing: -0.8px !important;
+  padding: 4px 1px !important;
+  white-space: nowrap !important;
 }
 
-/* Petits badges (Switch 2, Hype, etc.) */
 [data-layout-style="pixel art"] .badge,
 [data-layout-style="pixel art"] span[class*="tag"] {
   font-size: 13px !important;
