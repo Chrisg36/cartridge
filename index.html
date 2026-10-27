@@ -2678,7 +2678,7 @@ function renderMuseumMainPage() {
     section.append(brandTitle);
 
     // Une seule variable "grid" propre pour éviter l'erreur de syntaxe
-    const grid = el("div", "vitrine-grid");
+   const grid = el("div", "vitrine-grid");
     for (const consoleItem of consoles) {
       const card = el("div", "console-vitrine-card");
       card.style.setProperty('--console-color', consoleItem.bg);
@@ -2687,8 +2687,6 @@ function renderMuseumMainPage() {
       
       const photoBox = el("div", "console-photo-container");
       const img = el("img", "console-real-img");
-      
-      // Récupère l'image depuis museumConsoles si elle existe
       const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name === consoleItem.name) : null;
       img.src = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       img.alt = consoleItem.name;
@@ -2701,6 +2699,16 @@ function renderMuseumMainPage() {
       infoGroup.append(name, year);
 
       card.append(brandTag, photoBox, infoGroup);
+      
+      // 🎯 FORCER L'OUVERTURE DE LA FICHE DIRECTEMENT AU CLIC
+      card.onclick = (e) => {
+        e.stopPropagation();
+        playThemeSound(theme);
+        openConsoleDetail(consoleItem);
+      };
+      
+      grid.append(card);
+    }
       
       // Écouteur de clic pour ouvrir l'histoire, les specs et les composants
       card.addEventListener("click", () => {
