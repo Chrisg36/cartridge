@@ -4399,7 +4399,11 @@ function playCartridgeBreathSound() {
   }
 }
 
-// --- PERSONNALISATION : STRUCTURE & EFFET LUMINEUX ---
+// --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
+  const secCustom = el("div", "settings-section");
+  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
+  const customGrid = el("div", "settings-grid-options"); // 🎯 Déclaration de la grille ici !
+  
   let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
   const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
   layoutBtn.style.margin = "0";
@@ -4425,6 +4429,8 @@ function playCartridgeBreathSound() {
   document.body.setAttribute("data-holo-effect", holoEffectEnabled);
 
   customGrid.append(layoutBtn, holoBtn);
+  secCustom.append(customGrid);
+  p.append(secCustom);
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
