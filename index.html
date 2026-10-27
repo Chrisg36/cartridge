@@ -3134,7 +3134,7 @@ function openSettings() {
   capsuleDesc.style.marginBottom = "10px";
   secTime.append(capsuleDesc);
 
-  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
+const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
   randomTimeBtn.addEventListener("click", () => {
     playThemeSound(theme);
     const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
@@ -3142,6 +3142,15 @@ function openSettings() {
     const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
     
     ym = `${randomYear}-${randomMonth}`;
+    
+    // 🎯 Force le retour à l'accueil et met à jour la navigation du bas
+    hideAllMainPages();
+    const homeContent = document.getElementById("homeMainContent");
+    if (homeContent) homeContent.style.display = "block";
+    if (typeof setActiveNav === "function") {
+      setActiveNav(document.getElementById("navHome"));
+    }
+
     load();
     closeSheet();
   });
