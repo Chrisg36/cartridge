@@ -2763,19 +2763,18 @@ function renderMuseumMainPage() {
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
 const photoBox = el("div", "console-photo-container");
-      const img = el("img", "console-real-img");
-      
-      // On récupère l'image directement depuis l'objet consoleItem de WORLD_CONSOLES
-      img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-      img.alt = consoleItem.name;
-      img.loading = "lazy";
-      
-      // Sécurité anti-plantage si un lien ne répond pas
-      img.onerror = () => {
-        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-      };
+    const img = el("img", "console-real-img");
+    
+    // Utilise directement l'image intégrée dans WORLD_CONSOLES
+    img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+    img.alt = consoleItem.name;
+    img.loading = "lazy";
+    
+    img.onerror = () => {
+      img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+    };
 
-      photoBox.append(img);
+    photoBox.append(img);
 
       const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
