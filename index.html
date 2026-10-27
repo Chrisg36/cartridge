@@ -845,6 +845,97 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   0% { transform: translateX(-150%) translateY(-150%) rotate(25deg); }
   100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
 }
+
+/* 🏛️ STYLES PRO POUR LE MUSÉE DES CONSOLES */
+.museum-hero-banner {
+  background: linear-gradient(135deg, rgba(20, 24, 33, 0.95), color-mix(in srgb, var(--acc) 15%, #0b0f17));
+  border: 2px solid var(--acc);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7), inset 0 0 25px color-mix(in srgb, var(--acc) 30%, transparent);
+}
+
+.museum-category-section {
+  background: rgba(15, 20, 30, 0.6);
+  border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+}
+
+.museum-console-card {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--console-color, var(--card)) 20%, var(--card)), var(--card));
+  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 70%, transparent);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.museum-console-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--console-color, var(--acc));
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 30px color-mix(in srgb, var(--console-color, var(--acc)) 80%, transparent);
+}
+
+.museum-console-screen {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0,0,0,0.85), color-mix(in srgb, var(--console-color, #000) 30%, #080a0f));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 40%, rgba(255,255,255,0.1));
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.museum-console-badge-code {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid var(--console-color, var(--acc));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--console-color, var(--acc)) 90%, transparent), inset 0 0 10px color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
+  text-shadow: 0 0 10px var(--console-color, var(--acc));
+}
+
+.museum-spec-badge {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt);
+  text-align: left;
+}
+
+.museum-spec-badge span {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  color: var(--acc);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
   
 </style>
 </head>
@@ -2408,7 +2499,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-// --- FONCTIONS DU MUSÉE DES CONSOLES DÉDIÉES ---
+// --- 🏛️ MUSÉE DES CONSOLES : VUE PRINCIPALE PRO ---
 function openConsoleVitrine() {
   playThemeSound(theme);
   
@@ -2419,62 +2510,92 @@ function openConsoleVitrine() {
   if (!contentArea) return;
   contentArea.replaceChildren();
 
-  const banner = el("div", "shop-banner");
-  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+  const container = el("div");
+  container.style.cssText = "display: flex; flex-direction: column; gap: 20px; width: 100%; text-align: left;";
 
-  const headerDiv = el("div");
-  headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
+  // Bannière d'introduction du Musée
+  const hero = el("div", "museum-hero-banner");
+  hero.innerHTML = `
+    <div style="position: absolute; top: -20px; right: -20px; font-size: 90px; opacity: 0.05; pointer-events: none;">🏛️</div>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:6px; color:var(--acc); font-size: 19px; letter-spacing:1.5px; text-shadow: 0 0 10px var(--acc);">🏛️ PANTHÉON MONDIAL DU JEU VIDÉO</h3>
+    <p class="m" style="margin-bottom:0; font-size: 12px; text-transform:uppercase; letter-spacing:1.2px; color:var(--txt); line-height: 1.5;">
+      Explorez l'évolution technologique de l'industrie à travers les âges. Cliquez sur une machine pour consulter ses spécifications d'origine, ses chiffres de vente et son empreinte historique.
+    </p>
   `;
-  banner.append(headerDiv);
+  container.append(hero);
 
+  // Groupement par fabricant
   const groups = {};
   for (const consoleItem of WORLD_CONSOLES) {
     if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
     groups[consoleItem.brand].push(consoleItem);
   }
 
-  const mainContainer = el("div");
-  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
+  const gridWrapper = el("div");
+  gridWrapper.style.cssText = "display: flex; flex-direction: column; gap: 20px; width: 100%;";
 
   for (const [brand, consoles] of Object.entries(groups)) {
-    const section = el("div", "constructor-section");
-    const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
-    section.append(brandTitle);
+    const section = el("div", "museum-category-section");
+    
+    const brandHeader = el("div");
+    brandHeader.style.cssText = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
+    brandHeader.innerHTML = `
+      <span style="font-family:'Orbitron',sans-serif; font-size: 13px; font-weight: 900; color: var(--acc); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px var(--acc);">🎮 ARCHIVES ${brand.toUpperCase()}</span>
+      <span style="font-family:'Orbitron',sans-serif; font-size: 10px; font-weight: 800; color: var(--mut); background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">${consoles.length} machine${consoles.length > 1 ? 's' : ''}</span>
+    `;
+    section.append(brandHeader);
 
-    const grid = el("div", "vitrine-grid");
+    const grid = el("div");
+    const gridCols = window.innerWidth >= 768 ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+    grid.style.cssText = `display: grid; grid-template-columns: ${gridCols}; gap: 14px;`;
+
     for (const consoleItem of consoles) {
-      const card = el("div", "console-vitrine-card");
+      const card = el("div", "museum-console-card");
       card.style.setProperty('--console-color', consoleItem.bg);
       
-      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+      // Tag constructeur en haut à droite
+      const brandTag = el("span");
+      brandTag.style.cssText = `
+        position: absolute; top: 10px; right: 10px; font-family:'Orbitron',sans-serif; font-size: 8px; font-weight: 900;
+        text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: color-mix(in srgb, var(--console-color, var(--acc)) 25%, var(--cov));
+        color: var(--console-color, var(--acc)); letter-spacing: 1px; z-index: 3; border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 50%, transparent);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      `;
+      brandTag.textContent = consoleItem.brand;
+
+      const screenBox = el("div", "museum-console-screen");
+      const badge = el("div", "museum-console-badge-code", consoleItem.code);
+      screenBox.append(badge);
+
+      const infoGroup = el("div");
+      infoGroup.style.cssText = "display: flex; flex-direction: column; gap: 2px;";
       
-      const photoBox = el("div", "console-photo-container");
-      const badge = el("div", "console-icon-badge", consoleItem.code);
-      photoBox.append(badge);
-
-      const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
-      const year = el("span", "", consoleItem.year);
-      infoGroup.append(name, year);
+      name.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 12px; font-weight: 800; color: var(--txt); letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      
+      const year = el("span", "", `Lancement : ${consoleItem.year}`);
+      year.style.cssText = "font-size: 10px; color: var(--mut); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;";
 
-      card.append(brandTag, photoBox, infoGroup);
+      infoGroup.append(name, year);
+      card.append(brandTag, screenBox, infoGroup);
+
       card.addEventListener("click", () => { 
         playThemeSound(theme); 
         openConsoleDetailInPage(consoleItem); 
       });
+
       grid.append(card);
     }
     section.append(grid);
-    mainContainer.append(section);
+    gridWrapper.append(section);
   }
 
-  banner.append(mainContainer);
-  contentArea.append(banner);
+  container.append(gridWrapper);
+  contentArea.append(container);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// --- 📜 FICHE TECHNIQUE DÉTAILLÉE D'UNE CONSOLE ---
 function openConsoleDetailInPage(consoleItem) {
   playThemeSound(theme);
   
@@ -2492,29 +2613,59 @@ function openConsoleDetailInPage(consoleItem) {
   if (!contentArea) return;
   contentArea.replaceChildren();
 
-  const wrapper = el("div", "shop-banner");
-  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 20px; text-align: left;";
+  const wrapper = el("div");
+  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 18px; width: 100%; text-align: left;";
 
-  const banner = el("div", "console-mockup-banner");
-  banner.style.background = consoleItem.bg;
+  // En-tête de la console (Mockup Banner)
+  const banner = el("div");
+  banner.style.cssText = `
+    background: linear-gradient(135deg, color-mix(in srgb, ${consoleItem.bg} 35%, #0d0f17), #0a0d14);
+    border: 2px solid ${consoleItem.bg}; border-radius: 18px; padding: 30px 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; position: relative; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 12px 35px rgba(0,0,0,0.6);
+  `;
 
-  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
-  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
+  const neonTitle = el("div");
+  neonTitle.style.cssText = `
+    font-family:'Orbitron',sans-serif; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
+    color: #fff; background: var(--card); padding: 12px 22px; border-radius: 12px; border: 2px solid ${consoleItem.bg};
+    box-shadow: 0 0 30px ${consoleItem.bg}, inset 0 0 15px color-mix(in srgb, ${consoleItem.bg} 60%, transparent);
+    text-shadow: 0 0 12px ${consoleItem.bg}; margin-bottom: 8px;
+  `;
+  neonTitle.textContent = consoleItem.name;
+
+  const subInfo = el("div", "", `Génération • Sortie : ${consoleItem.year} | Constructeur : ${consoleItem.brand}`);
+  subInfo.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 11px; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;";
+
+  // Grille de spécifications techniques
+  const specsGrid = el("div");
+  specsGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; width: 100%; margin-top: 18px;";
   
-  const specsGrid = el("div", "console-specs-grid");
   specsGrid.innerHTML = `
-    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
-    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
-    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
-    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
+    <div class="museum-spec-badge"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
+    <div class="museum-spec-badge"><span>Architecture / GPU</span>${consoleItem.gpu}</div>
+    <div class="museum-spec-badge"><span>Parc de Ventes</span>${consoleItem.sales}</div>
+    <div class="museum-spec-badge"><span>Héritage & Impact</span>${consoleItem.impact}</div>
   `;
   
   banner.append(neonTitle, subInfo, specsGrid);
 
-  const storyBox = el("div", "console-story-box");
-  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
+  // Boîte d'histoire et contexte
+  const storyBox = el("div");
+  storyBox.style.cssText = `
+    background: var(--card); border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  `;
+  storyBox.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin: 0 0 10px 0; font-size: 14px; font-weight: 900; color: var(--acc); letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px;">
+      📜 HISTOIRE & CONTEXTE HISTORIQUE
+    </h3>
+    <p style="margin: 0; font-size: 13px; font-weight: 600; line-height: 1.7; color: var(--txt);">${consoleItem.desc}</p>
+  `;
 
-  const backBtn = el("button", "cta", "← Retour au Musée");
+  // Bouton de retour
+  const backBtn = el("button", "cta", "← Retour au Panthéon du Musée");
+  backBtn.style.cssText = "font-family:'Orbitron', sans-serif; font-size: 12px; font-weight: 900; letter-spacing: 1px;";
   backBtn.addEventListener("click", () => { 
     playThemeSound(theme); 
     openConsoleVitrine(); 
