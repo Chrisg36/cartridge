@@ -1055,51 +1055,30 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   z-index: 10;
 }
 
-/* --- CORRECTION ULTRA-PROPRE DES THÈMES RÉTRO (GAMEBOY, NES, SNES, ARCADE) SUR MOBILE --- */
-body[data-theme="gameboy"],
-body[data-theme="nes"],
-body[data-theme="snes"],
-body[data-theme="arcade"] {
-  --font: 'Press Start 2P', monospace !important;
-  font-family: var(--font) !important;
-}
-
-/* Réduction stricte de la taille de police pour que tout tienne dans les boîtes */
-body[data-theme="gameboy"] *,
-body[data-theme="nes"] *,
-body[data-theme="snes"] *,
-body[data-theme="arcade"] * {
-  font-size: 9px !important;
-  letter-spacing: -0.5px !important;
-}
-
-/* Titres des jeux et en-têtes principaux */
-body[data-theme="gameboy"] h1, body[data-theme="gameboy"] h2, body[data-theme="gameboy"] h3, body[data-theme="gameboy"] .grid-title, body[data-theme="gameboy"] .t b,
-body[data-theme="nes"] h1, body[data-theme="nes"] h2, body[data-theme="nes"] h3, body[data-theme="nes"] .grid-title, body[data-theme="nes"] .t b,
-body[data-theme="snes"] h1, body[data-theme="snes"] h2, body[data-theme="snes"] h3, body[data-theme="snes"] .grid-title, body[data-theme="snes"] .t b,
-body[data-theme="arcade"] h1, body[data-theme="arcade"] h2, body[data-theme="arcade"] h3, body[data-theme="arcade"] .grid-title, body[data-theme="arcade"] .t b {
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* Boutons de la grille de réglages et choix de thèmes */
-body[data-theme="gameboy"] .theme-mini-btn,
-body[data-theme="nes"] .theme-mini-btn,
-body[data-theme="snes"] .theme-mini-btn,
-body[data-theme="arcade"] .theme-mini-btn {
-  font-size: 8px !important;
-  padding: 6px 4px !important;
-}
-
-/* Navbar du bas */
-body[data-theme="gameboy"] nav button span, body[data-theme="gameboy"] .bottom-nav button span,
-body[data-theme="nes"] nav button span, body[data-theme="nes"] .bottom-nav button span,
-body[data-theme="snes"] nav button span, body[data-theme="snes"] .bottom-nav button span,
-body[data-theme="arcade"] nav button span, body[data-theme="arcade"] .bottom-nav button span {
+/* --- CORRECTION NAVBAR POUR THÈMES RÉTRO (GAMEBOY, NES, SNES, ARCADE) --- */
+body[data-theme="gameboy"] .bottom-nav .nav-item span,
+body[data-theme="nes"] .bottom-nav .nav-item span,
+body[data-theme="snes"] .bottom-nav .nav-item span,
+body[data-theme="arcade"] .bottom-nav .nav-item span {
   font-size: 7px !important;
   letter-spacing: -0.8px !important;
+  white-space: nowrap !important;
+}
+
+body[data-theme="gameboy"] .bottom-nav .nav-item svg,
+body[data-theme="nes"] .bottom-nav .nav-item svg,
+body[data-theme="snes"] .bottom-nav .nav-item svg,
+body[data-theme="arcade"] .bottom-nav .nav-item svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+body[data-theme="gameboy"] .bottom-nav,
+body[data-theme="nes"] .bottom-nav,
+body[data-theme="snes"] .bottom-nav,
+body[data-theme="arcade"] .bottom-nav {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
 }
 </style>
 </head>
