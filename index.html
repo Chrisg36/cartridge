@@ -1449,8 +1449,15 @@ async function triggerRandomPackDraw(type, category = "standard") {
   }
 
 if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
-    // 🎯 C'est cette ligne qu'il faut ajouter ici :
-    randomGame.category = category; 
+    // 🎯 SÉCURITÉ FINALE : On force la bonne catégorie selon le pack ouvert, peu importe l'année du jeu
+    const typeCheck = (type + "").toLowerCase();
+    if (typeCheck.includes("supreme") || typeCheck.includes("collector")) {
+      randomGame.category = "supreme_retro";
+    } else if (typeCheck.includes("rétro") || typeCheck.includes("retro")) {
+      randomGame.category = "retro";
+    } else {
+      randomGame.category = category;
+    }
     
     myCollection.push(randomGame);
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
