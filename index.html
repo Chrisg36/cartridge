@@ -12,7 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Cartridge</title>
 <style>
- :root, [data-theme="dark"] { color-scheme: dark; --bg:#111318; --card:#1B1E26; --cov:#2A2F3B; --txt:#F2F3F5; --mut:#A3A9B8; --acc:#FF7A45; --on:#111318; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
+ 
+:root, [data-theme="dark"] { color-scheme: dark; --bg:#111318; --card:#1B1E26; --cov:#2A2F3B; --txt:#F2F3F5; --mut:#A3A9B8; --acc:#FF7A45; --on:#111318; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="light"] { color-scheme: light; --bg:#F6F7F9; --card:#FFFFFF; --cov:#DDE1E8; --txt:#14161B; --mut:#5A6172; --acc:#C2410C; --on:#FFFFFF; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="midnight"] { color-scheme: dark; --bg:#0B1020; --card:#151C33; --cov:#232C4A; --txt:#EAF0FF; --mut:#9AA7C7; --acc:#5CA8FF; --on:#0B1020; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="forest"] { color-scheme: dark; --bg:#0E1511; --card:#17221B; --cov:#243329; --txt:#EAF5EE; --mut:#9DB5A5; --acc:#4ADE80; --on:#0E1511; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
@@ -142,11 +143,11 @@ body {
     padding: 5px 6px; font-size: 9px; gap: 2px; display: inline-flex; align-items: center;
     background: color-mix(in srgb, var(--acc) 20%, var(--card)); border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
     border-radius: var(--radius); font-family: 'Orbitron', sans-serif; font-weight: 900; color: var(--acc); 
-    cursor: default;
+    cursor: default; /* Change le curseur pour montrer qu'il n'est pas cliquable */
     box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent); 
     min-height: 30px;
   }
-
+  /* On supprime ou vide le style de survol pour qu'il ne bouge plus */
   .app-bg-cartridges {
     position: fixed; inset: -50px; pointer-events: none; z-index: 0; opacity: 0.12;
     display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 40px; padding: 20px; transform: rotate(-12deg) scale(1.3);
@@ -464,6 +465,7 @@ body {
     border-radius: var(--radius); padding: 10px 16px; font-family: var(--font); font-size: 13px; font-weight: 700; outline: none; cursor: pointer;
   }
 
+  /* Grille de thèmes ultra-compacte et élégante */
   .themes-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .theme-mini-btn {
     background: var(--cov); border: 1px solid transparent; border-radius: 10px; padding: 8px 10px;
@@ -473,6 +475,7 @@ body {
   .theme-mini-btn:hover { border-color: var(--acc); }
   .theme-mini-btn[aria-pressed="true"] { background: var(--acc); color: var(--on); box-shadow: 0 0 10px var(--acc); }
 
+  /* 🪙 STYLES BOUTIQUE, CRÉDITS & VITRINE DE JAQUETTES */
   .collection-shelf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
   @media(min-width: 500px) { .collection-shelf-grid { grid-template-columns: repeat(4, 1fr); } }
 
@@ -532,7 +535,8 @@ body {
   @keyframes bounceCartridge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); background: var(--acc); } }
   @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-  input[type="month"]#dateSelect {
+  /* Style rétro unifié pour le sélecteur de mois sur PC & Mobile */
+input[type="month"]#dateSelect {
   -webkit-appearance: none; -moz-appearance: none; appearance: none;
   box-sizing: border-box; width: 100%; min-height: 32px; padding: 6px 10px;
   background: var(--card) !important; color: var(--txt) !important;
@@ -582,15 +586,20 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   border-radius: 0 0 4px 4px; box-shadow: 0 0 10px var(--acc);
 }
 
+/* 🖥️ Version PC / Grand écran : Un vrai site web élargi */
   @media (min-width: 768px) {
     main {
-      max-width: 1200px !important;
+      max-width: 1200px !important; /* Élargit le site à 1200px (tu peux mettre 1300px ou 1400px si tu veux encore plus large) */
       padding: 24px 40px 60px !important;
     }
+
+    /* Augmente le nombre de colonnes pour les grilles de jeux sur PC */
     .games-grid {
-      grid-template-columns: repeat(4, 1fr) !important;
+      grid-template-columns: repeat(4, 1fr) !important; /* Passe à 4 ou 5 colonnes de jeux */
       gap: 16px;
     }
+
+    /* Adapte aussi la grille du musée des consoles sur PC */
     .vitrine-grid {
       grid-template-columns: repeat(4, 1fr) !important;
     }
@@ -598,10 +607,11 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 
   @media (min-width: 1200px) {
     .games-grid {
-      grid-template-columns: repeat(5, 1fr) !important;
+      grid-template-columns: repeat(5, 1fr) !important; /* Encore plus large sur les très grands écrans */
     }
   }
 
+/* --- ANIMATIONS D'OUVERTURE DE PACK --- */
 @keyframes packShake {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   20% { transform: translate(-3px, 0px) rotate(-2deg); }
@@ -663,6 +673,7 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   flex-direction: column;
 }
 
+/* --- VISUELS DE PACKS PROS & BOOSTERS 3D --- */
 .booster-pack-card {
   width: 170px;
   height: 240px;
@@ -741,6 +752,7 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   letter-spacing: 1px;
 }
 
+/* --- MODE PLEIN ÉCRAN PRO & IMMERSIF --- */
 .pack-fullscreen-overlay {
   position: fixed;
   inset: 0;
@@ -824,209 +836,17 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   flex-direction: column;
 }
 
-/* ========================================== */
-/* 🏛️ SECTION MUSÉE & BIBLIOTHÈQUE RÉTRO     */
-/* ========================================== */
-
-#museumMainPage {
-  position: relative !important;
-  min-height: 100vh !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 8px !important;
-  overflow: visible !important;
+@keyframes flashBurst {
+  0% { opacity: 1; transform: scale(0.9); filter: brightness(3); }
+  50% { opacity: 0.8; filter: brightness(2); }
+  100% { opacity: 0; transform: scale(1.1); filter: brightness(1); }
 }
 
-/* 📚 FOND EN PURE CSS : ÉTAGÈRES & BOIS SOMBRE */
-.retro-library-bg {
-  position: fixed !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
-  background-color: #0b0d14 !important;
-  background-image: 
-    radial-gradient(circle at 10% 25%, rgba(255, 140, 40, 0.25) 0%, transparent 45%),
-    radial-gradient(circle at 90% 25%, rgba(255, 140, 40, 0.25) 0%, transparent 45%),
-    linear-gradient(180deg, rgba(12, 10, 18, 0.75) 0%, rgba(6, 5, 10, 0.92) 100%),
-    repeating-linear-gradient(90deg, #18121f 0px, #18121f 35px, #261c30 35px, #261c30 37px, #120e18 37px, #120e18 80px),
-    repeating-linear-gradient(0deg, #22162b 0px, #22162b 110px, #422919 110px, #422919 122px) !important;
-  background-blend-mode: screen, screen, multiply, normal, normal;
+@keyframes foilShine {
+  0% { transform: translateX(-150%) translateY(-150%) rotate(25deg); }
+  100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
 }
 
-/* Ombre atmosphérique pour recentrer le regard au milieu */
-.bookshelf-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 20%, rgba(5, 5, 9, 0.85) 90%);
-}
-
-/* 💡 DESSIN DES LAMPES SUR LES CÔTÉS */
-.lamp {
-  position: absolute;
-  top: 120px;
-  width: 50px;
-  height: 120px;
-  z-index: 1;
-}
-.lamp-left { left: 12px !important; top: 90px !important; }
-.lamp-right { right: 12px !important; top: 90px !important; }
-
-/* Le pied de la lampe antique */
-.lamp-stand {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 75px;
-  background: linear-gradient(90deg, #5c4021, #a37442, #3b2814);
-  border-radius: 3px;
-}
-.lamp-stand::before {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: -12px;
-  width: 32px;
-  height: 10px;
-  background: #6e4e29;
-  border-radius: 5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-}
-
-/* L'ampoule vintage filament */
-.lamp-bulb {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 28px;
-  background: #ffe094;
-  border-radius: 50% 50% 40% 40%;
-  box-shadow: 0 0 18px #ff9d3b, 0 0 35px rgba(255, 157, 59, 0.6), inset 0 0 6px #fff;
-  animation: bulbFlicker 3.5s infinite ease-in-out;
-}
-
-/* Halo lumineux autour des lampes */
-.lamp-glow {
-  position: absolute;
-  top: -30px;
-  left: -65px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(255, 160, 50, 0.4) 0%, rgba(255, 110, 20, 0.12) 50%, transparent 75%);
-  border-radius: 50%;
-  animation: glowFlicker 3.5s infinite ease-in-out;
-}
-
-/* ⚡ ANIMATION DE GRÉSILLEMENT RETRO (FLICKER) */
-@keyframes bulbFlicker {
-  0%, 100% { opacity: 1; filter: brightness(1); }
-  3% { opacity: 0.75; filter: brightness(0.7); }
-  5% { opacity: 1; filter: brightness(1.2); }
-  24% { opacity: 1; }
-  25% { opacity: 0.35; filter: brightness(0.3); }
-  26% { opacity: 1; filter: brightness(1.15); }
-  68% { opacity: 1; }
-  69% { opacity: 0.8; }
-  70% { opacity: 1; }
-}
-
-@keyframes glowFlicker {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  3% { transform: scale(0.96); opacity: 0.75; }
-  5% { transform: scale(1.04); opacity: 1.15; }
-  25% { transform: scale(0.88); opacity: 0.35; }
-  26% { transform: scale(1.02); opacity: 1.1; }
-  69% { opacity: 0.8; }
-  70% { opacity: 1; }
-}
-
-/* 🛡️ S'ASSURER QUE LE CONTENU DU MUSÉE PASSE AU-DESSUS DU DÉCOR */
-#museumMainPage > *:not(.retro-library-bg) {
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-/* ✨ TRANSPARENCE GLOBALE DES BLOCS (VERRE DÉPOLI) */
-.shop-banner, .panel, .console-vitrine-card {
-  background: rgba(15, 20, 30, 0.65) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
-  border-radius: var(--radius);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 20px color-mix(in srgb, var(--acc) 25%, transparent);
-}
-
-.console-vitrine-card {
-  background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
-  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
-}
-
-/* 1. On s'assure que les bannières et cartes gardent leur style normal sur le reste du site */
-.shop-banner, .panel {
-  background: var(--card) !important;
-  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
-}
-
-/* 2. On applique l'effet de transparence et le style "verre dépoli" UNIQUEMENT à l'intérieur du Musée (#museumMainPage) */
-#museumMainPage .shop-banner, 
-#museumMainPage .panel, 
-#museumMainPage .console-vitrine-card {
-  background: rgba(15, 20, 30, 0.65) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
-  border-radius: var(--radius);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 20px color-mix(in srgb, var(--acc) 25%, transparent);
-}
-
-#museumMainPage .console-vitrine-card {
-  background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
-  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent) !important;
-}
-
-/* 3. On neutralise complètement le grand cadre conteneur du Musée pour qu'il n'affiche aucune bordure globale */
-#museumMainPage {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* On supprime le fond noir de l'en-tête/bannière du musée pour laisser voir la bibliothèque */
-#museumMainPage > div:first-child,
-.shop-banner {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* 🏛️ FORCER LA TRANSPARENCE TOTALE DE TOUT LE BLOC MUSÉE (BANNIÈRE INCLUSE) */
-#museumMainPage,
-#museumMainPage > div,
-#museumMainPage .sticky-header-container {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* 📚 FOND BIBLIOTHÈQUE FIXE EN PLEIN ÉCRAN */
-#museumMainPage .retro-library-bg {
-  display: block !important;
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: -1 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-}
  
 </style>
 </head>
