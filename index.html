@@ -1057,30 +1057,38 @@ body[data-holo-effect="true"] .card-holo-effect::after {
 
 /* --- MODE PIXEL ART --- */
 [data-layout-style="pixel art"] {
-  /* On force une police rétro (assure-toi d'avoir importé 'Press Start 2P' ou 'VT323' dans tes fonts) */
   --font: 'Press Start 2P', monospace !important;
   font-family: var(--font) !important;
-  
-  /* On supprime les arrondis modernes pour faire carré/rétro */
   --radius: 0px !important;
 }
 
-/* Forcer l'aspect carré et des bordures nettes en mode pixel art */
+/* Réduire la taille globale et le line-height pour que le texte ne soit pas géant */
+[data-layout-style="pixel art"] * {
+  font-size: 85% !important; /* Réduit la taille pour qu'elle tienne bien dans les boutons */
+  letter-spacing: -0.5px;
+}
+
+/* Ajustements spécifiques pour les titres et les boutons */
+[data-layout-style="pixel art"] h1, 
+[data-layout-style="pixel art"] h2, 
+[data-layout-style="pixel art"] .settings-section-title {
+  font-size: 10px !important; /* Garde les titres lisibles sans qu'ils explosent l'écran */
+}
+
 [data-layout-style="pixel art"] button,
 [data-layout-style="pixel art"] .card,
 [data-layout-style="pixel art"] .booster-shop-card,
 [data-layout-style="pixel art"] input,
 [data-layout-style="pixel art"] select {
   border-radius: 0px !important;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8) !important; /* Effet ombre rétro rigide */
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8) !important;
   border: 2px solid var(--txt) !important;
+  font-size: 9px !important; /* Taille parfaite pour du texte dans les boutons rétro */
 }
 
-/* Rendre les images de jaquettes ou de cartes un peu plus "pixel" si souhaité */
 [data-layout-style="pixel art"] img {
   image-rendering: pixelated;
 }
- 
 </style>
 </head>
 <body>
@@ -3348,7 +3356,7 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
   holoBtn.addEventListener("click", () => {
     holoEffectEnabled = !holoEffectEnabled;
     try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
-    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off";
     document.body.setAttribute("data-holo-effect", holoEffectEnabled);
     playThemeSound(theme);
   });
@@ -3357,7 +3365,6 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
   p.append(secCustom);
-
   // --- 5. SYSTÈME DE SAUVEGARDE CARTOUCHE (.SAV) ---
   const secData = el("div", "settings-section");
   secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
