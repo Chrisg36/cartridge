@@ -923,18 +923,17 @@ body[data-card-style="holographique"] .shop-pack-card {
   }
 }
 
-/* Application permanente du reflet sur les packs de la boutique ET les cartes du distributeur */
-body[data-card-style="holographique"] .shop-pack-card,
-body[data-card-style="holographique"] .booster-card, /* Remplace par la classe exacte de tes blocs de boosters si besoin */
-body[data-card-style="holographique"] .panel .cta-sec, /* Si tes blocs utilisent une classe similaire */
-body[data-card-style="holographique"] div[style*="border"] { /* Cible les box du distributeur */
+/* Cible directement tes blocs de boosters du distributeur par leur style ou leur classe */
+body[data-card-style="holographique"] .distributor-booster-box,
+body[data-card-style="holographique"] div[style*="border-color"], /* Cible large si tes boîtes ont des bordures colorées en style inline */
+body[data-card-style="holographique"] .shop-pack-card {
   position: relative;
   overflow: hidden;
 }
 
-/* Génération de la bande lumineuse qui traverse en diagonale en boucle */
-body[data-card-style="holographique"] .shop-pack-card::after,
-body[data-card-style="holographique"] .booster-card::after {
+/* Génère le balayage lumineux continu */
+body[data-card-style="holographique"] .distributor-booster-box::after,
+body[data-card-style="holographique"] .shop-pack-card::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -944,11 +943,12 @@ body[data-card-style="holographique"] .booster-card::after {
   background: linear-gradient(
     45deg,
     transparent 40%,
-    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.3) 50%,
     transparent 60%
   );
   pointer-events: none;
   animation: continuousHoloSweep 2.5s infinite linear;
+  z-index: 10; /* S'assure que le reflet passe bien par-dessus le contenu */
 }
  
 </style>
