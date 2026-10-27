@@ -2647,17 +2647,47 @@ $("#viewModeBtn").addEventListener("click", () => {
 
 function getIgdbConsoleImage(consoleName) {
   const igdbMap = {
+    // --- NINTENDO ---
+    "Nintendo Switch 2": "co1r7f",
     "Nintendo Switch": "co1r7f",
-    "PlayStation 5": "co1vcf",
-    "Xbox Series X": "co2e23",
-    "PlayStation 4": "co1tr8",
+    "Wii U": "co1vcf",
     "Wii": "co1vcf",
-    "Super Nintendo": "co1x7c"
-  };
-  const imageId = igdbMap[consoleName];
-  return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : null;
-}
+    "GameCube": "co1x7c",
+    "Nintendo 64": "co1x7c",
+    "Super Nintendo": "co1x7c",
+    "NES": "co1x7c",
+    "Nintendo 3DS": "co2918",
+    "Nintendo DS": "co2918",
+    "Game Boy Advance": "co2918",
+    "Game Boy Color": "co2918",
+    "Game Boy": "co2918",
 
+    // --- SONY ---
+    "PlayStation 5": "co1vcf",
+    "PlayStation 4": "co1tr8",
+    "PlayStation 3": "co1tr8",
+    "PlayStation 2": "co1tr8",
+    "PlayStation": "co1tr8",
+    "PS Vita": "co2918",
+    "PSP": "co2918",
+
+    // --- SEGA ---
+    "Dreamcast": "co2918",
+    "Saturn": "co2918",
+    "Mega Drive": "co2918",
+    "Master System": "co2918",
+    "Game Gear": "co2918",
+
+    // --- MICROSOFT ---
+    "Xbox Series X": "co2e23",
+    "Xbox One": "co2e23",
+    "Xbox 360": "co2e23",
+    "Xbox": "co2e23"
+  };
+
+  const imageId = igdbMap[consoleName];
+  return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+}
 function renderMuseumMainPage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
