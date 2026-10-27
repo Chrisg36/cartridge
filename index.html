@@ -3049,7 +3049,7 @@ function openSettings() {
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      openSettings(); // Rafraîchit instantanément la modale
+      openSettings();
     });
     modernGrid.append(b);
   });
@@ -3106,7 +3106,70 @@ function openSettings() {
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
-  // --- 4. SECTION LANGUE ---
+  // --- 4. PERSONNALISATION RÉTRO-MODERNE (PARTICULES & ANIMATIONS) ---
+  const secCustom = el("div", "settings-section");
+  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Particules Pixel"));
+  const customGrid = el("div", "settings-grid-options");
+  
+  let particleMode = localStorage.getItem("particleMode") || "normal";
+  const particleBtn = el("button", "cta-sec", `✨ Particules : ${particleMode.toUpperCase()}`);
+  particleBtn.style.margin = "0";
+  particleBtn.addEventListener("click", () => {
+    if (particleMode === "normal") particleMode = "frénésie";
+    else if (particleMode === "frénésie") particleMode = "coupées";
+    else particleMode = "normal";
+    try { localStorage.setItem("particleMode", particleMode); } catch (e) {}
+    particleBtn.textContent = `✨ Particules : ${particleMode.toUpperCase()}`;
+    if (typeof applyParticleDensity === "function") applyParticleDensity(particleMode);
+    playThemeSound(theme);
+  });
+
+  let cardAnimStyle = localStorage.getItem("cardAnimStyle") || "holographique";
+  const animBtn = el("button", "cta-sec", `🎴 Style : ${cardAnimStyle.toUpperCase()}`);
+  animBtn.style.margin = "0";
+  animBtn.addEventListener("click", () => {
+    if (cardAnimStyle === "holographique") cardAnimStyle = "pixel art";
+    else if (cardAnimStyle === "pixel art") cardAnimStyle = "clean";
+    else cardAnimStyle = "holographique";
+    try { localStorage.setItem("cardAnimStyle", cardAnimStyle); } catch (e) {}
+    animBtn.textContent = `🎴 Style : ${cardAnimStyle.toUpperCase()}`;
+    playThemeSound(theme);
+  });
+
+  customGrid.append(particleBtn, animBtn);
+  secCustom.append(customGrid);
+  p.append(secCustom);
+
+  // --- 5. SYSTÈME DE SAUVEGARDE CARTOUCHE (.SAV) ---
+  const secData = el("div", "settings-section");
+  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
+  const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
+  const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
+  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
+  statsText.style.marginBottom = "10px";
+  
+  const dataBtnGroup = el("div");
+  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
+
+  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
+  exportBtn.style.margin = "0";
+  exportBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof exportCartridgeSave === "function") exportCartridgeSave();
+  });
+
+  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
+  importBtn.style.margin = "0";
+  importBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof importCartridgeSave === "function") importCartridgeSave();
+  });
+
+  dataBtnGroup.append(exportBtn, importBtn);
+  secData.append(statsText, dataBtnGroup);
+  p.append(secData);
+
+  // --- 6. SECTION LANGUE ---
   const secLang = el("div", "settings-section");
   secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
   const langSelect = el("select", "settings-select-clean");
@@ -3126,7 +3189,7 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
-  // --- 5. CAPSULE TEMPORELLE (FLASHBACK ALÉATOIRE) ---
+  // --- 7. CAPSULE TEMPORELLE (FLASHBACK ALÉATOIRE) ---
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
   
@@ -3143,7 +3206,6 @@ function openSettings() {
     
     ym = `${randomYear}-${randomMonth}`;
     
-    // Force le retour à l'accueil et met à jour la navigation du bas
     hideAllMainPages();
     const homeContent = document.getElementById("homeMainContent");
     if (homeContent) homeContent.style.display = "block";
