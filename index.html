@@ -3162,38 +3162,130 @@ function renderShopMainPage() {
 
   // Vue 2 : Distributeur de packs
 // --- CONTENU 2 : ACHAT DE PACKS (DISTRIBUTEUR MULTI-TIERS) ---
-  function showPacks() {
+function showPacks() {
     btnShop.setAttribute("aria-pressed", "false");
     btnPacks.setAttribute("aria-pressed", "true");
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
+    
+    // Conteneur principal du distributeur
     const banner = el("div", "shop-banner");
-    banner.innerHTML = `
-      <h3>🎟️ Distributeur de Packs Mystères</h3>
-      <p style="font-size:13px; font-weight:600; margin-bottom:16px;">Choisissez votre pack selon votre budget et tentez de décrocher des pépites rétro !</p>
+    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; text-align: center; padding: 20px;";
+
+    const headerTitle = el("div");
+    headerTitle.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:4px;">🎟️ Distributeur de Packs Mystères</h3>
+      <p style="font-size:12px; font-weight:600; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Sélectionnez votre booster et déoquez des archives rares</p>
     `;
+    banner.append(headerTitle);
 
-    // Pack 25 Crédits (Standard)
-    const pack25Btn = el("button", "cta-sec", "🥉 Pack Standard (25 Crédits)");
-    pack25Btn.addEventListener("click", () => {
-      buyAndOpenPack(25, "Standard", "standard");
+    // Grille des 3 Boosters 3D distincts
+    const boostersGrid = el("div");
+    boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; width: 100%; margin-top: 10px;";
+
+    const packsConfig = [
+      {
+        name: "STANDARD",
+        price: "25 🪙",
+        costNum: 25,
+        type: "Standard",
+        cat: "standard",
+        color: "#94a3b8", // Argenté / Neutre
+        badgeBg: "linear-gradient(135deg, #475569, #1e293b)"
+      },
+      {
+        name: "RÉTRO CLASSIC",
+        price: "50 🪙",
+        costNum: 50,
+        type: "Rétro",
+        cat: "retro",
+        color: "#38bdf8", // Bleu néon
+        badgeBg: "linear-gradient(135deg, #0284c7, #0369a1)"
+      },
+      {
+        name: "SUPREME COLLECTOR",
+        price: "100 🪙",
+        costNum: 100,
+        type: "Collector Rétro",
+        cat: "supreme_retro",
+        color: "#fbbf24", // Or / Doré
+        badgeBg: "linear-gradient(135deg, #d97706, #b45309)"
+      }
+    ];
+
+    packsConfig.forEach(cfg => {
+      const boosterCard = el("div");
+      boosterCard.style.cssText = `
+        background: linear-gradient(145deg, #151a28 0%, #0d0f17 100%);
+        border: 2px solid ${cfg.color};
+        border-radius: 14px;
+        padding: 16px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px ${cfg.color}33;
+        transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+      `;
+
+      // Effet hover stylé
+      boosterCard.addEventListener("mouseenter", () => {
+        boosterCard.style.transform = "translateY(-6px) scale(1.03)";
+        boosterCard.style.boxShadow = `0 16px 35px rgba(0,0,0,0.8), 0 0 25px ${cfg.color}aa`;
+      });
+      boosterCard.addEventListener("mouseleave", () => {
+        boosterCard.style.transform = "translateY(0) scale(1)";
+        boosterCard.style.boxShadow = `0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px ${cfg.color}33`;
+      });
+
+      // Reflet lumineux holographique
+      const foil = el("div");
+      foil.style.cssText = "position:absolute; inset:0; background:linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%); pointer-events:none;";
+      boosterCard.append(foil);
+
+      // En-tête du booster
+      const topBadge = el("div", "", cfg.name);
+      topBadge.style.cssText = `
+        font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:#fff;
+        background:${cfg.badgeBg}; padding:4px 8px; border-radius:6px; border:1px solid ${cfg.color};
+        text-transform:uppercase; letter-spacing:1px; width:100%; text-align:center;
+      `;
+
+      // Visuel central (Icône de cartouche stylisée)
+      const centerArt = el("div");
+      centerArt.style.cssText = `
+        width: 50px; height: 64px; background: var(--card); border: 2px solid ${cfg.color};
+        border-radius: 6px 6px 2px 2px; position: relative; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      `;
+      centerArt.innerHTML = `<span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:11px; color:${cfg.color};">CR</span>`;
+
+      // Bouton d'achat intégré au booster
+      const buyBtn = el("button", "", cfg.price);
+      buyBtn.style.cssText = `
+        font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; padding:8px 10px; border-radius:8px;
+        background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
+        box-shadow: 0 0 10px ${cfg.color}88; transition:filter 0.2s ease;
+      `;
+      buyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
+      });
+
+      boosterCard.append(topBadge, centerArt, buyBtn);
+      boosterCard.addEventListener("click", () => {
+        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
+      });
+
+      boostersGrid.append(boosterCard);
     });
 
-    // Pack 50 Crédits (Rétro / Spécial)
-    const pack50Btn = el("button", "cta-sec", "🥈 Pack Rétro Classique (50 Crédits)");
-    pack50Btn.style.borderColor = "var(--acc)";
-    pack50Btn.addEventListener("click", () => {
-      buyAndOpenPack(50, "Rétro", "retro");
-    });
-
-    // Pack 100 Crédits (Légendaire / Collector Rétro)
-    const pack100Btn = el("button", "cta", "🥇 Pack Collector Rétro Supreme (100 Crédits)");
-    pack100Btn.addEventListener("click", () => {
-      buyAndOpenPack(100, "Collector Rétro", "supreme_retro");
-    });
-
-    banner.append(pack25Btn, pack50Btn, pack100Btn);
+    banner.append(boostersGrid);
     displayBox.append(banner);
   }
 
