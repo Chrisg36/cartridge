@@ -2444,9 +2444,10 @@ let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
 function playThemeSound(th) {
+  // 1. Si le son général est coupé, on s'arrête direct
   if (!soundEnabled) return;
   
-  // 🛑 On vérifie si l'option "FX Cartouche" est désactivée par l'utilisateur
+  // 2. Si l'option "FX Cartouche" est désactivée dans les réglages, on ne joue pas ces bips-là
   if (localStorage.getItem("cartridgeFx") === "false") return;
 
   try {
