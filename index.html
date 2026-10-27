@@ -3169,115 +3169,126 @@ function showPacks() {
 
     displayBox.replaceChildren();
     
-    // Conteneur principal du distributeur
     const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; text-align: center; padding: 20px;";
+    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
 
     const headerTitle = el("div");
     headerTitle.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:4px;">🎟️ Distributeur de Packs Mystères</h3>
-      <p style="font-size:12px; font-weight:600; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Sélectionnez votre booster et déoquez des archives rares</p>
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
+      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
     banner.append(headerTitle);
 
-    // Grille des 3 Boosters 3D distincts
     const boostersGrid = el("div");
-    boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; width: 100%; margin-top: 10px;";
+    boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; width: 100%; margin-top: 10px;";
 
     const packsConfig = [
       {
         name: "STANDARD",
+        sub: "Série Commune",
         price: "25 🪙",
         costNum: 25,
         type: "Standard",
         cat: "standard",
-        color: "#94a3b8", // Argenté / Neutre
-        badgeBg: "linear-gradient(135deg, #475569, #1e293b)"
+        color: "#94a3b8",
+        glow: "rgba(148, 163, 184, 0.4)",
+        gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)",
+        badgeBg: "rgba(148, 163, 184, 0.2)"
       },
       {
         name: "RÉTRO CLASSIC",
+        sub: "Série Rare 1985-2005",
         price: "50 🪙",
         costNum: 50,
         type: "Rétro",
         cat: "retro",
-        color: "#38bdf8", // Bleu néon
-        badgeBg: "linear-gradient(135deg, #0284c7, #0369a1)"
+        color: "#38bdf8",
+        glow: "rgba(56, 189, 248, 0.5)",
+        gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)",
+        badgeBg: "rgba(56, 189, 248, 0.2)"
       },
       {
         name: "SUPREME COLLECTOR",
+        sub: "Édition Holographique Ultime",
         price: "100 🪙",
         costNum: 100,
         type: "Collector Rétro",
         cat: "supreme_retro",
-        color: "#fbbf24", // Or / Doré
-        badgeBg: "linear-gradient(135deg, #d97706, #b45309)"
+        color: "#fbbf24",
+        glow: "rgba(251, 191, 36, 0.6)",
+        gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)",
+        badgeBg: "rgba(251, 191, 36, 0.25)"
       }
     ];
 
     packsConfig.forEach(cfg => {
       const boosterCard = el("div");
       boosterCard.style.cssText = `
-        background: linear-gradient(145deg, #151a28 0%, #0d0f17 100%);
+        background: ${cfg.gradient};
         border: 2px solid ${cfg.color};
-        border-radius: 14px;
-        padding: 16px 10px;
+        border-radius: 16px;
+        padding: 18px 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        gap: 14px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px ${cfg.color}33;
-        transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, filter 0.3s ease;
       `;
 
-      // Effet hover stylé
       boosterCard.addEventListener("mouseenter", () => {
         boosterCard.style.transform = "translateY(-6px) scale(1.03)";
-        boosterCard.style.boxShadow = `0 16px 35px rgba(0,0,0,0.8), 0 0 25px ${cfg.color}aa`;
+        boosterCard.style.boxShadow = `0 18px 40px rgba(0,0,0,0.85), 0 0 30px ${cfg.color}`;
       });
       boosterCard.addEventListener("mouseleave", () => {
         boosterCard.style.transform = "translateY(0) scale(1)";
-        boosterCard.style.boxShadow = `0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px ${cfg.color}33`;
+        boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
       });
 
-      // Reflet lumineux holographique
+      // Effet de brillance holographique permanente en diagonale
       const foil = el("div");
-      foil.style.cssText = "position:absolute; inset:0; background:linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%); pointer-events:none;";
+      foil.style.cssText = "position:absolute; inset:0; background:linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.15) 50%, transparent 80%); pointer-events:none; animation: foilShine 4s infinite linear;";
       boosterCard.append(foil);
 
       // En-tête du booster
-      const topBadge = el("div", "", cfg.name);
-      topBadge.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:#fff;
-        background:${cfg.badgeBg}; padding:4px 8px; border-radius:6px; border:1px solid ${cfg.color};
-        text-transform:uppercase; letter-spacing:1px; width:100%; text-align:center;
+      const headerBox = el("div");
+      headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
+      headerBox.innerHTML = `
+        <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
+        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
       `;
 
-      // Visuel central (Icône de cartouche stylisée)
+      // Visuel central d'une cartouche holographique 3D
       const centerArt = el("div");
       centerArt.style.cssText = `
-        width: 50px; height: 64px; background: var(--card); border: 2px solid ${cfg.color};
-        border-radius: 6px 6px 2px 2px; position: relative; display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        width: 64px; height: 82px; background: rgba(0,0,0,0.6); border: 2px solid ${cfg.color};
+        border-radius: 8px 8px 4px 4px; position: relative; display: flex; flex-direction:column; align-items: center; justify-content: center;
+        box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 0 15px ${cfg.glow}; z-index:2;
       `;
-      centerArt.innerHTML = `<span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:11px; color:${cfg.color};">CR</span>`;
+      centerArt.innerHTML = `
+        <div style="width:40px; height:20px; background:${cfg.color}33; border:1px solid ${cfg.color}; border-radius:3px; margin-bottom:6px;"></div>
+        <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:12px; color:${cfg.color}; text-shadow:0 0 6px ${cfg.color};">CR-26</span>
+      `;
 
-      // Bouton d'achat intégré au booster
+      // Bouton d'achat stylisé
       const buyBtn = el("button", "", cfg.price);
       buyBtn.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; padding:8px 10px; border-radius:8px;
+        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
         background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
-        box-shadow: 0 0 10px ${cfg.color}88; transition:filter 0.2s ease;
+        box-shadow: 0 0 15px ${cfg.color}; transition:filter 0.2s ease, transform 0.1s ease; z-index:2; letter-spacing:1px;
       `;
       buyBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
       });
+      buyBtn.addEventListener("mousedown", () => { buyBtn.style.transform = "scale(0.95)"; });
+      buyBtn.addEventListener("mouseup", () => { buyBtn.style.transform = "scale(1)"; });
 
-      boosterCard.append(topBadge, centerArt, buyBtn);
+      boosterCard.append(headerBox, centerArt, buyBtn);
       boosterCard.addEventListener("click", () => {
         buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
       });
@@ -3288,7 +3299,6 @@ function showPacks() {
     banner.append(boostersGrid);
     displayBox.append(banner);
   }
-
   function buyAndOpenPack(cost, typeName, category) {
     playThemeSound(theme);
     if (userCoins < cost) {
