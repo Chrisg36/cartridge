@@ -3155,7 +3155,6 @@ function checkDailyConnection() {
 }
 
 // --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
 function renderShopMainPage() {
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
@@ -3205,34 +3204,14 @@ function renderShopMainPage() {
     btnShop.setAttribute("aria-pressed", "false");
     btnPacks.setAttribute("aria-pressed", "true");
     btnChallenges.setAttribute("aria-pressed", "false");
-
     displayBox.replaceChildren();
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
-    
-    const headerTitle = el("div");
-    headerTitle.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
-    `;
-    banner.append(headerTitle);
-    displayBox.append(banner);
   }
 
   function showChallenges() {
     btnShop.setAttribute("aria-pressed", "false");
     btnPacks.setAttribute("aria-pressed", "false");
     btnChallenges.setAttribute("aria-pressed", "true");
-
     displayBox.replaceChildren();
-    let cData = loadChallengesData();
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
-    
-    const headerBox = el("div");
-    headerBox.innerHTML = `<h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>`;
-    banner.append(headerBox);
-    displayBox.append(banner);
   }
 
   btnShop.addEventListener("click", () => { playThemeSound(theme); showMainShop(); });
@@ -3350,6 +3329,7 @@ function renderVitrineMainPage() {
   }
   contentArea.append(banner);
 }
+  
   const contentArea = document.getElementById("shopPageContent");
   contentArea.replaceChildren();
 
@@ -3721,6 +3701,7 @@ function showPacks() {
   showMainShop();
 }
   
+// --- BLOC DE RECHERCHE ET ÉCOUTEURS ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
