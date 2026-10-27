@@ -3210,6 +3210,8 @@ theme = applyTheme(theme);
 function openSettings() {
   playThemeSound(theme);
   const p = $("#panel");
+  if (!p) return;
+
   p.className = "panel settings-panel";
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
@@ -3282,7 +3284,6 @@ function openSettings() {
     playThemeSound(theme);
   });
 
-// 🔊 ICI : On ajoute le bouton FX Souffle de Cartouche !
   let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") === "true";
   const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Off");
   fxBtn.style.margin = "0";
@@ -3294,47 +3295,40 @@ function openSettings() {
     playThemeSound(theme);
   });
 
-  prefsGrid.append(soundBtn, crtBtn, fxBtn); // On groupe les trois boutons
+  prefsGrid.append(soundBtn, crtBtn, fxBtn);
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
-  // --- 4. PERSONNALISATION RÉTRO-MODERNE (PARTICULES & ANIMATIONS) ---
+  // --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
   const secCustom = el("div", "settings-section");
-  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Particules Pixel"));
+  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
   const customGrid = el("div", "settings-grid-options");
   
-  let particleMode = localStorage.getItem("particleMode") || "normal";
-  const particleBtn = el("button", "cta-sec", `✨ Particules : ${particleMode.toUpperCase()}`);
-  particleBtn.style.margin = "0";
-  particleBtn.addEventListener("click", () => {
-    if (particleMode === "normal") particleMode = "frénésie";
-    else if (particleMode === "frénésie") particleMode = "coupées";
-    else particleMode = "normal";
-    try { localStorage.setItem("particleMode", particleMode); } catch (e) {}
-    particleBtn.textContent = `✨ Particules : ${particleMode.toUpperCase()}`;
-    if (typeof applyParticleDensity === "function") applyParticleDensity(particleMode);
+  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
+  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
+  layoutBtn.style.margin = "0";
+  layoutBtn.addEventListener("click", () => {
+    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
+    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
+    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
+    document.body.setAttribute("data-layout-style", layoutStyle);
     playThemeSound(theme);
   });
+  document.body.setAttribute("data-layout-style", layoutStyle);
 
-let cardAnimStyle = localStorage.getItem("cardAnimStyle") || "holographique";
-  const animBtn = el("button", "cta-sec", `🎴 Style : ${cardAnimStyle.toUpperCase()}`);
-  animBtn.style.margin = "0";
-  animBtn.addEventListener("click", () => {
-    if (cardAnimStyle === "holographique") cardAnimStyle = "pixel art";
-    else if (cardAnimStyle === "pixel art") cardAnimStyle = "clean";
-    else cardAnimStyle = "holographique";
-
-    try { localStorage.setItem("cardAnimStyle", cardAnimStyle); } catch (e) {}
-    animBtn.textContent = `🎴 Style : ${cardAnimStyle.toUpperCase()}`;
-    
-    // Applique l'attribut global pour le CSS
-    document.body.setAttribute("data-card-style", cardAnimStyle);
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
+  holoBtn.style.margin = "0";
+  holoBtn.addEventListener("click", () => {
+    holoEffectEnabled = !holoEffectEnabled;
+    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
     playThemeSound(theme);
   });
+  document.body.setAttribute("data-holo-effect", holoEffectEnabled);
 
-  // Applique le style au chargement initial de la page
-  document.body.setAttribute("data-card-style", cardAnimStyle);
-  customGrid.append(particleBtn, animBtn);
+  customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
   p.append(secCustom);
 
