@@ -3156,94 +3156,7 @@ function checkDailyConnection() {
 }
 
 // --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
-function renderShopMainPage() {
-  const contentArea = document.getElementById("shopPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const coinSpan = document.getElementById("shopPageCoins");
-  if (coinSpan) coinSpan.textContent = userCoins;
-
-  if (typeof checkDailyConnection === "function") {
-    checkDailyConnection();
-  }
-
-  const subNav = el("div");
-  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
-
-  const btnShop = el("button", "chip", "🏬 Boutique (Bientôt)");
-  const btnPacks = el("button", "chip", "🎟️ Packs Mystères");
-  const btnChallenges = el("button", "chip", "🎯 Défis & Quêtes");
-
-  [btnShop, btnPacks, btnChallenges].forEach(b => {
-    b.style.flex = "1";
-    b.style.minHeight = "38px";
-    b.style.fontSize = "11px";
-  });
-
-  const displayBox = el("div");
-  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
-
-  function showMainShop() {
-    btnShop.setAttribute("aria-pressed", "true");
-    btnPacks.setAttribute("aria-pressed", "false");
-    btnChallenges.setAttribute("aria-pressed", "false");
-
-    displayBox.replaceChildren();
-    const constructionBanner = el("div", "shop-banner");
-    constructionBanner.style.cssText = "border-style:dashed; padding:40px 20px; text-align:center;";
-    constructionBanner.innerHTML = `
-      <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
-      <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
-        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs, des bordures de cartes légendaires et des bonus uniques pour ton profil !
-      </p>
-    `;
-    displayBox.append(constructionBanner);
-  }
-
-  function showPacks() {
-    btnShop.setAttribute("aria-pressed", "false");
-    btnPacks.setAttribute("aria-pressed", "true");
-    btnChallenges.setAttribute("aria-pressed", "false");
-
-    displayBox.replaceChildren();
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
-    
-    const headerTitle = el("div");
-    headerTitle.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
-    `;
-    banner.append(headerTitle);
-    displayBox.append(banner);
-  }
-
-  function showChallenges() {
-    btnShop.setAttribute("aria-pressed", "false");
-    btnPacks.setAttribute("aria-pressed", "false");
-    btnChallenges.setAttribute("aria-pressed", "true");
-
-    displayBox.replaceChildren();
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
-    
-    const headerBox = el("div");
-    headerBox.innerHTML = `<h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>`;
-    banner.append(headerBox);
-    displayBox.append(banner);
-  }
-
-  btnShop.addEventListener("click", () => { playThemeSound(theme); showMainShop(); });
-  btnPacks.addEventListener("click", () => { playThemeSound(theme); showPacks(); });
-  btnChallenges.addEventListener("click", () => { playThemeSound(theme); showChallenges(); });
-
-  subNav.append(btnShop, btnPacks, btnChallenges);
-  contentArea.append(subNav, displayBox);
-  showMainShop();
-}
-
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE (PROPRE, SANS VITRINE) ---
+// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE (100% INDÉPENDANTE) ---
 function renderShopMainPage() {
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
@@ -3598,7 +3511,6 @@ function buyAndOpenPack(cost, typeName, category) {
     triggerRandomPackDraw(typeName, category);
   }
 }
-
 // --- 2. FONCTION DE RENDU DE LA VITRINE (RÉPARTITION FORCÉE DES 32 JEUX) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
