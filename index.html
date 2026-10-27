@@ -2721,7 +2721,63 @@ function openShareModal() {
   $("#sheet").classList.add("on");
 }
 $("#shareBtn").addEventListener("click", openShareModal);
+function openConsoleDetailInPage(consoleItem) {
+  playThemeSound(theme);
+  
+  // 🛡️ SÉCURITÉ : On s'assure qu'on reste bien sur la grande page Musée et qu'on cache le reste
+  const homeContent = document.getElementById("homeMainContent");
+  const shopPage = document.getElementById("shopMainPage");
+  const vitrinePage = document.getElementById("vitrineMainPage");
+  const museumPage = document.getElementById("museumMainPage");
+  
+  if (homeContent) homeContent.style.display = "none";
+  if (shopPage) shopPage.style.display = "none";
+  if (vitrinePage) vitrinePage.style.display = "none";
+  if (museumPage) museumPage.style.display = "block";
 
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const wrapper = el("div", "shop-banner");
+  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 20px; text-align: left;";
+
+  const banner = el("div", "console-mockup-banner");
+  banner.style.background = consoleItem.bg;
+
+  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
+  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
+  
+  const specsGrid = el("div", "console-specs-grid");
+  specsGrid.innerHTML = `
+    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
+    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
+    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
+    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
+  `;
+  
+  banner.append(neonTitle, subInfo, specsGrid);
+
+  const storyBox = el("div", "console-story-box");
+  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
+
+  const backBtn = el("button", "cta", "← Retour au Musée");
+  backBtn.addEventListener("click", () => { 
+    playThemeSound(theme); 
+    openConsoleVitrine(); // Recharge la grille principale du musée dans la page
+  });
+
+  wrapper.append(banner, storyBox, backBtn);
+  contentArea.append(wrapper);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ⬇️ C'EST ICI QUE COMMENCE TA FONCTION EXISTANTE openShareModal() :
+function openShareModal() {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  // ... (la suite de ton code d'origine)
 async function openSheet(it) {
   let cData = loadChallengesData();
   cData.dailyProgress.curious = true;
