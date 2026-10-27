@@ -3102,7 +3102,19 @@ function openSettings() {
     playThemeSound(theme);
   });
 
-  prefsGrid.append(soundBtn, crtBtn);
+// 🔊 ICI : On ajoute le bouton FX Souffle de Cartouche !
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") === "true";
+  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Off");
+  fxBtn.style.margin = "0";
+  fxBtn.addEventListener("click", () => {
+    cartridgeFxEnabled = !cartridgeFxEnabled;
+    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
+    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Off";
+    if (cartridgeFxEnabled && typeof playCartridgeBreathSound === "function") playCartridgeBreathSound();
+    playThemeSound(theme);
+  });
+
+  prefsGrid.append(soundBtn, crtBtn, fxBtn); // On groupe les trois boutons
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
@@ -4166,6 +4178,40 @@ function importCartridgeSave() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+// Générateur de souffle et bruit analogique de cartouche
+function playCartridgeBreathSound() {
+  if (typeof soundEnabled !== 'undefined' && !soundEnabled) return;
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufferSize = audioCtx.sampleRate * 0.15; // 150ms de souffle
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = buffer.getChannelData(0);
+    
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1; // Bruit blanc
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1000; // Son feutré style vieille console
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+    whiteNoise.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    whiteNoise.start();
+  } catch (e) {
+    // Ignore si l'AudioContext est bloqué par le navigateur
+  }
 }
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
