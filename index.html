@@ -1179,45 +1179,57 @@ function openShopModal() {
 
     const challengesList = [
       {
+        id: "dailyLogin",
         title: "SÉRIE DE CONNEXION",
         desc: `SYNCHRONISATION ACTIVE : ${cData.loginStreak || 1} JOUR(S)`,
         reward: "+10 🪙 / JOUR",
-        status: isCheckedInToday ? "VALIDÉ" : "ACTIF",
+        rewardAmount: 10,
+        isDone: isCheckedInToday,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`
       },
       {
+        id: "dailyExploration",
         title: "PROTOCOLE EXPLORATION",
         desc: "CONSULTATION DE DONNÉES ARCHIVES",
         reward: "+10 🪙",
-        status: cData.dailyProgress?.curious ? "VALIDÉ" : "EN COURS",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.curious,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
       },
       {
+        id: "dailyFavorite",
         title: "INDEXATION FAVORIS",
         desc: "MARQUAGE DE DONNÉES PRIORITAIRES",
         reward: "+10 🪙",
-        status: cData.dailyProgress?.favorite ? "VALIDÉ" : "EN COURS",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.favorite,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
       },
       {
+        id: "dailyConsoleFilter",
         title: "BALAYAGE GLOBAL SECTEUR",
         desc: "NAVIGATION MULTI-ZONES CONSOLES",
         reward: "+10 🪙",
-        status: cData.dailyProgress?.filterConsole ? "VALIDÉ" : "À FAIRE",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.filterConsole,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
       },
       {
+        id: "weeklyPacks",
         title: "ARCHIVAGE HEBDOMADAIRE",
         desc: `PAKS OUVERTS : ${cData.weeklyProgress?.packsOpened || 0} / 3`,
         reward: "+20 🪙",
-        status: (cData.weeklyProgress?.packsOpened || 0) >= 3 ? "VALIDÉ" : "EN COURS",
+        rewardAmount: 20,
+        isDone: (cData.weeklyProgress?.packsOpened || 0) >= 3,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
       },
       {
+        id: "streak7Days",
         title: "SYNCHRONISATION 7 JOURS",
         desc: "OBJECTIF DE CONNEXION CONTINUE",
         reward: "2 PACKS GRATUITS",
-        status: `${cData.loginStreak || 1} / 7`,
+        rewardAmount: 0,
+        isDone: (cData.loginStreak || 0) >= 7,
         iconSvg: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`
       }
     ];
@@ -1255,17 +1267,47 @@ function openShopModal() {
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:3px 6px; border-radius:5px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
-      const statusBadge = el("span", "", item.status);
-      const isCompleted = item.status === "VALIDÉ";
-      statusBadge.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:3px 6px; border-radius:5px;
-        background: ${isCompleted ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)'};
-        color: ${isCompleted ? '#22c55e' : 'var(--mut)'};
-        border: 1px solid ${isCompleted ? 'rgba(34, 197, 94, 0.4)' : 'color-mix(in srgb, var(--mut) 30%, transparent)'};
-        white-space: nowrap;
-      `;
+      // Gestion dynamique de l'état (Réclamé, Prêt à réclamer, ou En attente)
+      const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
+      const statusBtn = el("button");
 
-      rightGroup.append(rewardBadge, statusBadge);
+      if (isClaimed) {
+        statusBtn.textContent = "VALIDÉ";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
+          cursor: default; white-space: nowrap;
+        `;
+      } else if (item.isDone) {
+        statusBtn.textContent = "RÉCLAMER";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; padding:4px 8px; border-radius:5px;
+          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
+          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
+        `;
+        statusBtn.addEventListener("click", () => {
+          if (!cData.claimedRewards) cData.claimedRewards = {};
+          cData.claimedRewards[item.id] = true;
+          saveChallengesData(cData);
+
+          if (item.rewardAmount > 0) {
+            addCoins(item.rewardAmount);
+            if (typeof updateCoinsUI === "function") updateCoinsUI();
+          }
+
+          if (typeof playThemeSound === "function") playThemeSound(theme);
+          renderChallengesTab();
+        });
+      } else {
+        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
+          cursor: default; white-space: nowrap;
+        `;
+      }
+
+      rightGroup.append(rewardBadge, statusBtn);
       row.append(leftGroup, rightGroup);
       banner.append(row);
     });
