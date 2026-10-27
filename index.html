@@ -2645,6 +2645,19 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
+function getIgdbConsoleImage(consoleName) {
+  const igdbMap = {
+    "Nintendo Switch": "co1r7f",
+    "PlayStation 5": "co1vcf",
+    "Xbox Series X": "co2e23",
+    "PlayStation 4": "co1tr8",
+    "Wii": "co1vcf",
+    "Super Nintendo": "co1x7c"
+  };
+  const imageId = igdbMap[consoleName];
+  return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : null;
+}
+
 function renderMuseumMainPage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
@@ -2686,8 +2699,11 @@ function renderMuseumMainPage() {
       
       const photoBox = el("div", "console-photo-container");
       const img = el("img", "console-real-img");
+      
       const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name === consoleItem.name) : null;
-      img.src = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      const igdbDirectUrl = getIgdbConsoleImage(consoleItem.name);
+      
+      img.src = (foundMuseumItem ? foundMuseumItem.image : null) || igdbDirectUrl || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       img.alt = consoleItem.name;
       img.loading = "lazy";
       photoBox.append(img);
