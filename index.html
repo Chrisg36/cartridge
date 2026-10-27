@@ -1139,7 +1139,7 @@ function openShopModal() {
     contentArea.append(constructionBanner);
   }
 
-  // --- CONTENU 2 : ACHAT DE PACKS (DISTRIBUTEUR) ---
+// --- CONTENU 2 : ACHAT DE PACKS (DISTRIBUTEUR) ---
   function renderPacksTab() {
     tabShop.setAttribute("aria-pressed", "false");
     tabPacks.setAttribute("aria-pressed", "true");
@@ -1161,7 +1161,7 @@ function openShopModal() {
         return;
       }
       localStorage.setItem("lastFreePackDate", todayStr);
-      triggerRandomPackDraw("Gratuit");
+      triggerRandomPackDraw("Gratuit", "standard");
     });
 
     const drawPaidBtn = el("button", "cta-sec", "🪙 Acheter un Pack Mystère (50 Crédits)");
@@ -1173,13 +1173,28 @@ function openShopModal() {
       }
       userCoins -= 50;
       updateCoinsUI();
-      triggerRandomPackDraw("Acheté");
+      triggerRandomPackDraw("Acheté", "standard");
     });
 
-    banner.append(drawFreeBtn, drawPaidBtn);
+    // 🌟 C'est ICI qu'il faut coller ton bloc Supreme Collector :
+    const drawSupremeBtn = el("button", "cta", "✨ Acheter un Pack Supreme Collector (100 Crédits)");
+    drawSupremeBtn.style.background = "linear-gradient(135deg, #d97706, #fbbf24)"; // Style doré
+    drawSupremeBtn.style.color = "#000"; // Texte en noir pour bien lire sur le doré
+    drawSupremeBtn.addEventListener("click", () => {
+      playThemeSound(theme);
+      if (userCoins < 100) {
+        alert("❌ Pas assez de crédits pour un Pack Supreme Collector !");
+        return;
+      }
+      userCoins -= 100;
+      updateCoinsUI();
+      triggerRandomPackDraw("Supreme Collector", "supreme_retro"); // 🎯 On passe explicitement la bonne catégorie ici !
+    });
+
+    // On ajoute tous les boutons d'un coup à la bannière
+    banner.append(drawFreeBtn, drawPaidBtn, drawSupremeBtn);
     contentArea.append(banner);
   }
-
 // --- CONTENU 3 : DÉFIS & QUÊTES (AVEC LOGOS SVG) ---
   function renderChallengesTab() {
     tabShop.setAttribute("aria-pressed", "false");
