@@ -2445,6 +2445,10 @@ try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
 function playThemeSound(th) {
   if (!soundEnabled) return;
+  
+  // 🛑 On vérifie si l'option "FX Cartouche" est désactivée par l'utilisateur
+  if (localStorage.getItem("cartridgeFx") === "false") return;
+
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
@@ -2630,7 +2634,6 @@ function playThemeSound(th) {
     }
   } catch (e) {}
 }
-
 function getPlatformBadgeClass(plat) {
   const p = plat.toLowerCase();
   if (p.includes("ps5")) return "badge-ps5";
@@ -3344,15 +3347,21 @@ function openSettings() {
     playThemeSound(theme);
   });
 
-  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") === "true";
-  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Off");
+// 1. Récupération de l'état enregistré (par défaut à true ou false selon ton choix)
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") !== "false"; // true par défaut
+
+  // Dans ton menu des réglages où tu construis le bouton FX :
+  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
   fxBtn.style.margin = "0";
+
   fxBtn.addEventListener("click", () => {
     cartridgeFxEnabled = !cartridgeFxEnabled;
-    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
-    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Off";
-    if (cartridgeFxEnabled && typeof playCartridgeBreathSound === "function") playCartridgeBreathSound();
-    playThemeSound(theme);
+    try { 
+      localStorage.setItem("cartridgeFx", cartridgeFxEnabled); 
+    } catch (e) {}
+    
+    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔊 FX Cartouche : Désactivé";
+    playThemeSound(theme); // Joue un petit son de test si tu veux
   });
 
   prefsGrid.append(soundBtn, crtBtn, fxBtn);
