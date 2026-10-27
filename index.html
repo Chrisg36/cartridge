@@ -965,6 +965,39 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
   border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
 }
+
+/* 1. On s'assure que les bannières et cartes gardent leur style normal sur le reste du site */
+.shop-banner, .panel {
+  background: var(--card) !important;
+  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
+}
+
+/* 2. On applique l'effet de transparence et le style "verre dépoli" UNIQUEMENT à l'intérieur du Musée (#museumMainPage) */
+#museumMainPage .shop-banner, 
+#museumMainPage .panel, 
+#museumMainPage .console-vitrine-card {
+  background: rgba(15, 20, 30, 0.65) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 20px color-mix(in srgb, var(--acc) 25%, transparent);
+}
+
+#museumMainPage .console-vitrine-card {
+  background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
+  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent) !important;
+}
+
+/* 3. On neutralise complètement le grand cadre conteneur du Musée pour qu'il n'affiche aucune bordure globale */
+#museumMainPage {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+ 
 </style>
 </head>
 <body>
