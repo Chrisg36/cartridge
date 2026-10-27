@@ -923,17 +923,16 @@ body[data-card-style="holographique"] .shop-pack-card {
   }
 }
 
-/* Cible directement tes blocs de boosters du distributeur par leur style ou leur classe */
-body[data-card-style="holographique"] .distributor-booster-box,
-body[data-card-style="holographique"] div[style*="border-color"], /* Cible large si tes boîtes ont des bordures colorées en style inline */
-body[data-card-style="holographique"] .shop-pack-card {
+/* Cible les packs de la boutique ET les cartes du distributeur */
+body[data-card-style="holographique"] .shop-pack-card,
+body[data-card-style="holographique"] .booster-shop-card {
   position: relative;
   overflow: hidden;
 }
 
-/* Génère le balayage lumineux continu */
-body[data-card-style="holographique"] .distributor-booster-box::after,
-body[data-card-style="holographique"] .shop-pack-card::after {
+/* Génère le balayage lumineux continu en diagonale */
+body[data-card-style="holographique"] .shop-pack-card::after,
+body[data-card-style="holographique"] .booster-shop-card::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -948,7 +947,7 @@ body[data-card-style="holographique"] .shop-pack-card::after {
   );
   pointer-events: none;
   animation: continuousHoloSweep 2.5s infinite linear;
-  z-index: 10; /* S'assure que le reflet passe bien par-dessus le contenu */
+  z-index: 10;
 }
  
 </style>
@@ -3698,8 +3697,8 @@ function renderShopMainPage() {
       }
     ];
 
-    packsConfig.forEach(cfg => {
-      const boosterCard = el("div");
+ packsConfig.forEach(cfg => {
+      const boosterCard = el("div", "booster-shop-card"); // 🎯 Ajout de la classe ici
       boosterCard.style.cssText = `
         background: ${cfg.gradient};
         border: 2px solid ${cfg.color};
@@ -3725,7 +3724,6 @@ function renderShopMainPage() {
         boosterCard.style.transform = "translateY(0) scale(1)";
         boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
       });
-
       const headerBox = el("div");
       headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
       headerBox.innerHTML = `
