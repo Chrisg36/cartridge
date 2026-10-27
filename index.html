@@ -2678,15 +2678,21 @@ function renderMuseumMainPage() {
     section.append(brandTitle);
 
     const grid = el("div", "vitrine-grid");
+const grid = el("div", "vitrine-grid");
     for (const consoleItem of consoles) {
       const card = el("div", "console-vitrine-card");
       card.style.setProperty('--console-color', consoleItem.bg);
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
+      // --- REMPLACEMENT DU BADGE TEXTE PAR LA VRAIE PHOTO ---
       const photoBox = el("div", "console-photo-container");
-      const badge = el("div", "console-icon-badge", consoleItem.code);
-      photoBox.append(badge);
+      const img = el("img", "console-real-img");
+      img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      img.alt = consoleItem.name;
+      img.loading = "lazy";
+      photoBox.append(img);
+      // -----------------------------------------------------
 
       const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
@@ -2694,10 +2700,13 @@ function renderMuseumMainPage() {
       infoGroup.append(name, year);
 
       card.append(brandTag, photoBox, infoGroup);
+      
+      // Le clic pour ouvrir l'histoire et les composants reste bien actif ici :
       card.addEventListener("click", () => {
         playThemeSound(theme);
         openConsoleDetail(consoleItem);
       });
+      
       grid.append(card);
     }
     section.append(grid);
