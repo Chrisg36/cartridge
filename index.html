@@ -874,6 +874,44 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   transform: scale(1.1) translateY(-2px);
   filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.9)), drop-shadow(0 0 10px var(--console-color, var(--acc)));
 }
+
+/* Effet holographique brillant pour les cartes et packs de la boutique */
+.card-holo-effect, .shop-pack-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Reflet lumineux animé au survol si le style holographique est actif */
+body[data-card-style="holographique"] .card-holo-effect::after,
+body[data-card-style="holographique"] .shop-pack-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 55%
+  );
+  transform: rotate(35deg);
+  pointer-events: none;
+  transition: transform 0.7s ease;
+}
+
+body[data-card-style="holographique"] .card-holo-effect:hover::after,
+body[data-card-style="holographique"] .shop-pack-card:hover::after {
+  transform: rotate(35deg) translate(50%, 50%);
+}
+
+/* Effet néon/lumineux permanent pour la boutique en mode holographique */
+body[data-card-style="holographique"] .shop-pack-card {
+  box-shadow: 0 0 15px rgba(var(--acc-rgb, 255, 100, 0), 0.3);
+  border-color: var(--acc);
+}
  
 </style>
 </head>
@@ -3136,18 +3174,24 @@ function openSettings() {
     playThemeSound(theme);
   });
 
-  let cardAnimStyle = localStorage.getItem("cardAnimStyle") || "holographique";
+let cardAnimStyle = localStorage.getItem("cardAnimStyle") || "holographique";
   const animBtn = el("button", "cta-sec", `🎴 Style : ${cardAnimStyle.toUpperCase()}`);
   animBtn.style.margin = "0";
   animBtn.addEventListener("click", () => {
     if (cardAnimStyle === "holographique") cardAnimStyle = "pixel art";
     else if (cardAnimStyle === "pixel art") cardAnimStyle = "clean";
     else cardAnimStyle = "holographique";
+
     try { localStorage.setItem("cardAnimStyle", cardAnimStyle); } catch (e) {}
     animBtn.textContent = `🎴 Style : ${cardAnimStyle.toUpperCase()}`;
+    
+    // Applique l'attribut global pour le CSS
+    document.body.setAttribute("data-card-style", cardAnimStyle);
     playThemeSound(theme);
   });
 
+  // Applique le style au chargement initial de la page
+  document.body.setAttribute("data-card-style", cardAnimStyle);
   customGrid.append(particleBtn, animBtn);
   secCustom.append(customGrid);
   p.append(secCustom);
