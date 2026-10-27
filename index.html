@@ -912,6 +912,42 @@ body[data-card-style="holographique"] .shop-pack-card {
   box-shadow: 0 0 15px rgba(var(--acc-rgb, 255, 100, 0), 0.3);
   border-color: var(--acc);
 }
+
+/* Animation continue du reflet lumineux en diagonale */
+@keyframes continuousHoloSweep {
+  0% {
+    transform: rotate(35deg) translate(-100%, -100%);
+  }
+  100% {
+    transform: rotate(35deg) translate(100%, 100%);
+  }
+}
+
+/* Application permanente sur les packs de la boutique en mode holographique */
+body[data-card-style="holographique"] .shop-pack-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(var(--acc-rgb, 255, 100, 0), 0.3);
+  border-color: var(--acc);
+}
+
+body[data-card-style="holographique"] .shop-pack-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+  /* L'animation tourne en boucle toute seule toutes les 2.5 secondes */
+  animation: continuousHoloSweep 2.5s infinite linear;
+}
  
 </style>
 </head>
