@@ -845,7 +845,51 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   0% { transform: translateX(-150%) translateY(-150%) rotate(25deg); }
   100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
 }
-  
+
+/* 🏛️ FOND DE LA BIBLIOTHÈQUE RÉTRO (UNIQUEMENT POUR LE MUSÉE) */
+#museumMainPage {
+  background: #0b0f19 url('bibliotheque-retro.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+}
+
+/* Effet de grésillement lumineux des lampes cantonné au Musée */
+@keyframes lampFlicker {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(255, 122, 69, 0.4)); }
+  3%, 97% { opacity: 1; }
+  4% { opacity: 0.85; filter: drop-shadow(0 0 5px rgba(255, 122, 69, 0.2)); }
+  5% { opacity: 1; filter: drop-shadow(0 0 18px rgba(255, 122, 69, 0.5)); }
+  48% { opacity: 1; }
+  49% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+#museumMainPage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 15% 50%, rgba(255, 150, 50, 0.15), transparent 40%),
+              radial-gradient(circle at 85% 50%, rgba(255, 150, 50, 0.15), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+  animation: lampFlicker 6s infinite ease-in-out;
+}
+
+/* ✨ TRANSPARENCE GLOBALE DES BLOCS (VERRE DÉPOLI) PARTOUT */
+.shop-banner, .panel, .console-vitrine-card {
+  background: rgba(15, 20, 30, 0.65) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent) !important;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 20px color-mix(in srgb, var(--acc) 25%, transparent);
+}
+
+.console-vitrine-card {
+  background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
+  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
+}
+ 
 </style>
 </head>
 <body>
