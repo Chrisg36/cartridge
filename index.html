@@ -1015,9 +1015,10 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 </main>
 
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
+<!-- 📱 BARRE DE NAVIGATION EN BOS (8 ONGLETS) -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="navHome">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
       <polyline points="9 22 9 12 15 12 15 22"></polyline>
     </svg>
@@ -1025,7 +1026,7 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   </button>
 
   <button class="nav-item" id="navShelf">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
     </svg>
@@ -1033,16 +1034,16 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   </button>
 
   <button class="nav-item" id="navShopArcade" title="Boutique Arcade">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
       <line x1="3" y1="6" x2="21" y2="6"></line>
       <path d="M16 10a4 4 0 0 1-8 0"></path>
     </svg>
-    <span>Boutique Arcade</span>
+    <span>Boutique</span>
   </button>
 
   <button class="nav-item" id="navMuseum">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="6" width="20" height="12" rx="2"></rect>
       <path d="M6 12h4"></path>
       <path d="M8 10v4"></path>
@@ -1052,17 +1053,47 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
     <span>Musée</span>
   </button>
 
+  <button class="nav-item" id="navArcadeRoom">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+      <line x1="7" y1="2" x2="7" y2="22"></line>
+      <line x1="17" y1="2" x2="17" y2="22"></line>
+      <line x1="2" y1="12" x2="22" y2="12"></line>
+      <line x1="2" y1="7" x2="7" y2="7"></line>
+      <line x1="2" y1="17" x2="7" y2="17"></line>
+      <line x1="17" y1="17" x2="22" y2="17"></line>
+      <line x1="17" y1="7" x2="22" y2="7"></line>
+    </svg>
+    <span>Arcade</span>
+  </button>
+
+  <button class="nav-item" id="navEsport">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16M10 14.66V17c0 .55-.45 1-1 1H7M14 14.66V17c0 .55.45 1 1 1h2"></path>
+      <path d="M18 4H6v7a6 6 0 0 0 12 0V4z"></path>
+    </svg>
+    <span>Esport</span>
+  </button>
+
+  <button class="nav-item" id="navPromo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+      <line x1="7" y1="7" x2="7.01" y2="7"></line>
+    </svg>
+    <span>Promos</span>
+  </button>
+
   <button class="nav-item" id="navSettings">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
       <circle cx="12" cy="7" r="4"></circle>
     </svg>
-    <span>Profil / Réglages</span>
+    <span>Profil</span>
   </button>
 </nav>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
-
 <script>
 let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
 let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
@@ -3692,6 +3723,64 @@ function renderVitrineMainPage() {
   }
   contentArea.append(banner);
 }
+
+// Fonction pour afficher les pages "En construction" proprement
+function showConstructionPage(title, icon) {
+  closeSheet();
+  document.getElementById("homeMainContent").style.display = "none";
+  const sPage = document.getElementById("shopMainPage");
+  const vPage = document.getElementById("vitrineMainPage");
+  const mPage = document.getElementById("museumMainPage");
+  
+  if (sPage) sPage.style.display = "none";
+  if (vPage) vPage.style.display = "none";
+  if (mPage) mPage.style.display = "none";
+
+  // On utilise la page boutique/conteneur principal pour afficher le message
+  if (sPage) {
+    sPage.style.display = "block";
+    const content = document.getElementById("shopPageContent");
+    if (content) {
+      content.innerHTML = `
+        <div class="shop-banner" style="border-style: dashed; padding: 40px 20px; text-align: center; margin-top: 20px;">
+          <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">${icon} ${title.toUpperCase()} ${icon}</h3>
+          <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">🚧 SECTION EN CONSTRUCTION 🚧</p>
+          <p style="font-size: 12px; color: var(--mut); line-height: 1.5;">Cette fonctionnalité arrive très bientôt dans une prochaine mise à jour de Cartridge !</p>
+        </div>
+      `;
+    }
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Branchement des clics pour les 3 nouveaux boutons
+const navArcadeRoom = document.getElementById("navArcadeRoom");
+if (navArcadeRoom) {
+  navArcadeRoom.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navArcadeRoom);
+    showConstructionPage("Salle Arcade", "🕹️");
+  });
+}
+
+const navEsport = document.getElementById("navEsport");
+if (navEsport) {
+  navEsport.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navEsport);
+    showConstructionPage("Esport & Tournois", "🏆");
+  });
+}
+
+const navPromo = document.getElementById("navPromo");
+if (navPromo) {
+  navPromo.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navPromo);
+    showConstructionPage("Bons Plans & Promos", "🏷️");
+  });
+}
+  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
