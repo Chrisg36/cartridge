@@ -3062,10 +3062,22 @@ if (navShopArcade) {
   });
 }
 
+const navMuseum = document.getElementById("navMuseum");
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
+    playThemeSound(theme);
     setActiveNav(navMuseum);
-    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+    closeSheet();
+    document.getElementById("homeMainContent").style.display = "none";
+    document.getElementById("shopMainPage").style.display = "none";
+    document.getElementById("vitrineMainPage").style.display = "none";
+    
+    // 🏛️ C'est ici qu'on active et affiche la page du Musée :
+    const mPage = document.getElementById("museumMainPage");
+    mPage.style.display = "block";
+    renderMuseumMainPage(); 
+    
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
@@ -3711,6 +3723,202 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
+// ==========================================
+// MODULE : PANTHÉON MONDIAL DES CONSOLES (MUSÉE)
+// ==========================================
+
+const WORLD_CONSOLES_FULL_DATABASE = [
+  { 
+    name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#ff3b30", code: "SWITCH 2", 
+    cpu: "NVIDIA Tegra custom (Ampere/Ada)", gpu: "Ray Tracing & DLSS 3.5", 
+    sales: "Lancement historique", impact: "L'évolution ultime du concept hybride portable/salon.",
+    desc: "La tant attendue console de nouvelle génération de Nintendo, conçue pour propulser le jeu nomade dans une nouvelle dimension graphique." 
+  },
+  { 
+    name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", code: "SWITCH", 
+    cpu: "NVIDIA Tegra X1 personnalisé", gpu: "Architecture NVIDIA Maxwell", 
+    sales: "140+ millions", impact: "Le concept hybride parfait salon et portable avec les Joy-Con.",
+    desc: "Un triomphe mondial qui a fusionné le jeu de salon et la portabilité, immortalisé par Breath of the Wild." 
+  },
+  { 
+    name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", 
+    cpu: "AMD Zen 2 (8 cœurs)", gpu: "AMD RDNA 2 (10.28 TFLOPs)", 
+    sales: "55+ millions", impact: "Révolution du SSD ultra-rapide et immersion haptique DualSense.",
+    desc: "La neuvième génération selon Sony, axée sur l'élimination des temps de chargement et le retour haptique immersif." 
+  },
+  { 
+    name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#0284c7", code: "PS2", 
+    cpu: "Emotion Engine cadencé à 294 MHz", gpu: "Graphics Synthesizer", 
+    sales: "155+ millions", impact: "La console la plus vendue de l'histoire et démocratisation du DVD.",
+    desc: "Un mastodonte absolu doté d'une ludothèque gigantesque et intemporelle couvrant tous les genres." 
+  },
+  { 
+    name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#22c55e", code: "X360", 
+    cpu: "IBM PowerPC Xenon (3 cœurs)", gpu: "ATI Xenos", 
+    sales: "84 millions", impact: "L'âge d'or du jeu en ligne sur console, du Xbox Live et de la HD.",
+    desc: "La console qui a forgé la culture HD moderne et introduit des licences cultes comme Gears of War et Halo 3." 
+  },
+  { 
+    name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#8b5cf6", code: "SNES", 
+    cpu: "Ricoh 5A22 16-bit", gpu: "Coprocesseur Mode 7 et puces graphiques", 
+    sales: "49.10 millions", impact: "L'apogée absolue du pixel art et des RPGs légendaires.",
+    desc: "Considérée par beaucoup comme la reine incontestée du 16-bits (Chrono Trigger, Super Metroid)." 
+  },
+  { 
+    name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#f43f5e", code: "MD", 
+    cpu: "Motorola 68000 16/32-bit", gpu: "VDP dérivé de l'arcade System 16", 
+    sales: "30.75 millions", impact: "L'ère rebelle, le Blast Processing et Sonic the Hedgehog.",
+    desc: "Le symbole de la culture pop des années 90, célèbre pour ses musiques FM et son ton incisif." 
+  },
+  { 
+    name: "PlayStation", brand: "Sony", year: "1994", bg: "#475569", code: "PS1", 
+    cpu: "R3000A 32-bit RISC", gpu: "Geometry Engine (calculs 3D)", 
+    sales: "102.4 millions", impact: "La démocratisation massive de la 3D polygonale et du CD-ROM.",
+    desc: "A transformé le jeu vidéo en divertissement grand public pour tous les âges (Metal Gear Solid, Final Fantasy VII)." 
+  }
+];
+
+function renderMuseumMainPage() {
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const coinSpan = document.getElementById("museumPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const container = el("div");
+  container.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%;";
+
+  // Bannière d'en-tête du Musée
+  const hero = el("div", "shop-banner");
+  hero.style.cssText = "display: flex; flex-direction: column; gap: 8px; width: 100%; text-align: left; padding: 20px;";
+  hero.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1.5px; text-shadow: 0 0 10px var(--acc);">🏛️ PANTHÉON MONDIAL DES CONSOLES</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11.5px; text-transform:uppercase; letter-spacing:1px; color:var(--txt); line-height: 1.6;">
+      Explorez l'histoire vivante et l'évolution technologique de l'industrie. Cliquez sur n'importe quelle machine pour plonger dans ses archives et ses specs.
+    </p>
+  `;
+  container.append(hero);
+
+  // Barre de filtre rapide par fabricant
+  const filterBar = el("div");
+  filterBar.style.cssText = "display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; width: 100%;";
+  const brands = ["Tous", "Nintendo", "Sony", "Microsoft", "SEGA"];
+  
+  brands.forEach(b => {
+    const btn = el("button", "chip", b);
+    btn.style.flex = "none";
+    btn.addEventListener("click", () => {
+      playThemeSound(theme);
+      filterMuseumGrid(b, container);
+    });
+    filterBar.append(btn);
+  });
+  container.append(filterBar);
+
+  // Grille des consoles
+  const gridWrapper = el("div");
+  gridWrapper.id = "museumDynamicGrid";
+  gridWrapper.style.cssText = "display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; margin-top: 10px;";
+  if (window.innerWidth >= 768) {
+    gridWrapper.style.gridTemplateColumns = "repeat(4, 1fr)";
+  }
+
+  populateMuseumCards(WORLD_CONSOLES_FULL_DATABASE, gridWrapper);
+  container.append(gridWrapper);
+  contentArea.append(container);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function populateMuseumCards(consolesList, wrapper) {
+  wrapper.replaceChildren();
+  for (const consoleItem of consolesList) {
+    const card = el("div", "console-vitrine-card");
+    card.style.setProperty('--console-color', consoleItem.bg);
+    
+    const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+    const screenBox = el("div", "console-photo-container");
+    const badge = el("div", "console-icon-badge", consoleItem.code);
+    screenBox.append(badge);
+
+    const infoGroup = el("div", "console-info-group");
+    const name = el("b", "", consoleItem.name);
+    const year = el("span", "", `Sortie : ${consoleItem.year}`);
+
+    infoGroup.append(name, year);
+    card.append(brandTag, screenBox, infoGroup);
+
+    card.addEventListener("click", () => { 
+      playThemeSound(theme); 
+      openMuseumConsoleDetail(consoleItem); 
+    });
+
+    wrapper.append(card);
+  }
+}
+
+function filterMuseumGrid(brand, container) {
+  const grid = container.querySelector("#museumDynamicGrid");
+  if (!grid) return;
+  if (brand === "Tous") {
+    populateMuseumCards(WORLD_CONSOLES_FULL_DATABASE, grid);
+  } else {
+    const filtered = WORLD_CONSOLES_FULL_DATABASE.filter(c => c.brand.toLowerCase() === brand.toLowerCase());
+    populateMuseumCards(filtered, grid);
+  }
+}
+
+function openMuseumConsoleDetail(consoleItem) {
+  playThemeSound(theme);
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const wrapper = el("div");
+  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding-bottom: 40px;";
+
+  const banner = el("div", "console-mockup-banner");
+  banner.style.background = `linear-gradient(135deg, color-mix(in srgb, ${consoleItem.bg} 35%, #0d0f17), #0a0d14)`;
+  banner.style.borderColor = consoleItem.bg;
+
+  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
+  neonTitle.style.borderColor = consoleItem.bg;
+  neonTitle.style.boxShadow = `0 0 25px ${consoleItem.bg}, inset 0 0 12px color-mix(in srgb, ${consoleItem.bg} 50%, transparent)`;
+  neonTitle.style.textShadow = `0 0 10px ${consoleItem.bg}, 0 0 20px ${consoleItem.bg}`;
+
+  const subInfo = el("div", "", `Constructeur : ${consoleItem.brand} | Année : ${consoleItem.year}`);
+  subInfo.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 11px; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.9; position: relative; z-index: 2; margin-bottom: 8px;";
+
+  const specsGrid = el("div", "console-specs-grid");
+  specsGrid.innerHTML = `
+    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
+    <div class="console-spec-chip"><span>Architecture / GPU</span>${consoleItem.gpu}</div>
+    <div class="console-spec-chip"><span>Parc de Ventes</span>${consoleItem.sales}</div>
+    <div class="console-spec-chip"><span>Héritage & Impact</span>${consoleItem.impact}</div>
+  `;
+  
+  banner.append(neonTitle, subInfo, specsGrid);
+
+  const storyBox = el("div", "console-story-box");
+  storyBox.innerHTML = `
+    <h3 style="display: flex; align-items: center; gap: 8px; font-family:'Orbitron',sans-serif;">📜 HISTOIRE & ÉPOPÉE INDUSTRIELLE</h3>
+    <p style="margin-top:8px; line-height:1.6;">${consoleItem.desc}</p>
+  `;
+
+  const backBtn = el("button", "cta", "← Retour au Panthéon du Musée");
+  backBtn.style.fontFamily = "'Orbitron', sans-serif";
+  backBtn.style.fontSize = "12px";
+  backBtn.style.letterSpacing = "1.5px";
+  backBtn.addEventListener("click", () => { 
+    playThemeSound(theme); 
+    renderMuseumMainPage(); 
+  });
+
+  wrapper.append(banner, storyBox, backBtn);
+  contentArea.append(wrapper);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+  
 load();
 </script>
 </body>
