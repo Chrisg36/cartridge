@@ -3134,7 +3134,7 @@ function openSettings() {
   capsuleDesc.style.marginBottom = "10px";
   secTime.append(capsuleDesc);
 
-const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
+  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
   randomTimeBtn.addEventListener("click", () => {
     playThemeSound(theme);
     const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
@@ -3143,7 +3143,7 @@ const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire")
     
     ym = `${randomYear}-${randomMonth}`;
     
-    // 🎯 Force le retour à l'accueil et met à jour la navigation du bas
+    // Force le retour à l'accueil et met à jour la navigation du bas
     hideAllMainPages();
     const homeContent = document.getElementById("homeMainContent");
     if (homeContent) homeContent.style.display = "block";
@@ -4038,6 +4038,73 @@ const museumConsoles = [
   { name: "Xbox", brand: "Microsoft", year: 2001, color: "#15803d", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Xbox-Console-Set.png/400px-Xbox-Console-Set.png" }
 ];
 
+
+// Gère la densité des particules de fond
+function applyParticleDensity(mode) {
+  const container = $("#particles");
+  if (!container) return;
+  container.replaceChildren();
+
+  let count = 20; // Normal
+  if (mode === "frénésie") count = 50;
+  if (mode === "coupées") count = 0;
+
+  for (let i = 0; i < count; i++) {
+    const p = el("div", "pixel-particle");
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = (4 + Math.random() * 6) + "s";
+    p.style.animationDelay = (Math.random() * 5) + "s";
+    container.append(p);
+  }
+}
+
+// Exporte les données de collection sous forme de fichier .sav (JSON)
+function exportCartridgeSave() {
+  const saveData = {
+    userCoins: userCoins,
+    myCollection: myCollection,
+    favorites: favorites,
+    theme: theme,
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `cartridge-save-${Date.now()}.sav`;
+  document.body.append(a); a.click(); a.remove();
+}
+
+// Importe un fichier .sav de sauvegarde
+function importCartridgeSave() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".sav,.json";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        if (data.userCoins !== undefined) userCoins = data.userCoins;
+        if (data.myCollection) myCollection = data.myCollection;
+        if (data.favorites) favorites = data.favorites;
+        
+        localStorage.setItem("userCoins", userCoins);
+        localStorage.setItem("myCollection", JSON.stringify(myCollection));
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+        
+        updateCoinsUI();
+        alert("✅ Sauvegarde (.sav) importée avec succès ! Bon retour collectionneur.");
+        openSettings();
+      } catch (err) {
+        alert("❌ Erreur lors de l'importation du fichier de sauvegarde.");
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
