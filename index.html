@@ -3085,19 +3085,28 @@ function setActiveNav(btn) {
   if (btn) btn.classList.add("active");
 }
 
+// Fonction utilitaire pour masquer toutes les pages principales d'un coup
+function hideAllMainPages() {
+  const homeContent = document.getElementById("homeMainContent");
+  const shopPage = document.getElementById("shopMainPage");
+  const vitrinePage = document.getElementById("vitrineMainPage");
+  const museumPage = document.getElementById("museumMainPage");
+
+  if (homeContent) homeContent.style.display = "none";
+  if (shopPage) shopPage.style.display = "none";
+  if (vitrinePage) vitrinePage.style.display = "none";
+  if (museumPage) museumPage.style.display = "none";
+}
+
 if (navHome) {
   navHome.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navHome);
     if (typeof closeSheet === "function") closeSheet();
     
+    hideAllMainPages();
     const homeContent = document.getElementById("homeMainContent");
-    const shopPage = document.getElementById("shopMainPage");
-    const vitrinePage = document.getElementById("vitrineMainPage");
-    
     if (homeContent) homeContent.style.display = "block";
-    if (shopPage) shopPage.style.display = "none";
-    if (vitrinePage) vitrinePage.style.display = "none";
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -3109,12 +3118,8 @@ if (navShopArcade) {
     setActiveNav(navShopArcade);
     if (typeof closeSheet === "function") closeSheet();
     
-    const homeContent = document.getElementById("homeMainContent");
+    hideAllMainPages();
     const shopPage = document.getElementById("shopMainPage");
-    const vitrinePage = document.getElementById("vitrineMainPage");
-    
-    if (homeContent) homeContent.style.display = "none";
-    if (vitrinePage) vitrinePage.style.display = "none";
     if (shopPage) {
       shopPage.style.display = "block";
       renderShopMainPage();
@@ -3124,21 +3129,14 @@ if (navShopArcade) {
   });
 }
 
-const navMuseum = document.getElementById("navMuseum");
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navMuseum);
     if (typeof closeSheet === "function") closeSheet();
     
-    const homeContent = document.getElementById("homeMainContent");
-    const shopPage = document.getElementById("shopMainPage");
-    const vitrinePage = document.getElementById("vitrineMainPage");
+    hideAllMainPages();
     const museumPage = document.getElementById("museumMainPage");
-    
-    if (homeContent) homeContent.style.display = "none";
-    if (shopPage) shopPage.style.display = "none";
-    if (vitrinePage) vitrinePage.style.display = "none";
     if (museumPage) {
       museumPage.style.display = "block";
       renderMuseumMainPage();
@@ -3147,19 +3145,16 @@ if (navMuseum) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-// --- MISE À JOUR DE LA NAVIGATION : CLic sur l'onglet Vitrine ---
+
+// --- MISE À JOUR DE LA NAVIGATION : Clic sur l'onglet Vitrine ---
 if (navShelf) {
   navShelf.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navShelf);
     if (typeof closeSheet === "function") closeSheet();
     
-    const homeContent = document.getElementById("homeMainContent");
-    const shopPage = document.getElementById("shopMainPage");
+    hideAllMainPages();
     const vitrinePage = document.getElementById("vitrineMainPage");
-    
-    if (homeContent) homeContent.style.display = "none";
-    if (shopPage) shopPage.style.display = "none";
     if (vitrinePage) {
       vitrinePage.style.display = "block";
       renderVitrineMainPage();
