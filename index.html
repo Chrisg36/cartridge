@@ -3034,23 +3034,51 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
-  const secTheme = el("div", "settings-section");
-  secTheme.append(el("div", "settings-section-title", "🎨 " + t('themeLabel')));
-  const themesGrid = el("div", "themes-grid-container");
-  for (const [key, [label, , acc]] of Object.entries(THEMES)) {
+  // --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
+  const secModern = el("div", "settings-section");
+  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
+  const modernGrid = el("div", "themes-grid-container");
+  
+  const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby"];
+  modernKeys.forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
     const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      themesGrid.querySelectorAll(".theme-mini-btn").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+      openSettings(); // Rafraîchit instantanément la modale
     });
-    themesGrid.append(b);
-  }
-  secTheme.append(themesGrid);
-  p.append(secTheme);
+    modernGrid.append(b);
+  });
+  secModern.append(modernGrid);
+  p.append(secModern);
 
+  // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
+  const secRetroThemes = el("div", "settings-section");
+  secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
+  const retroGrid = el("div", "themes-grid-container");
+  
+  const retroKeys = ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
+  retroKeys.forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      openSettings();
+    });
+    retroGrid.append(b);
+  });
+  secRetroThemes.append(retroGrid);
+  p.append(secRetroThemes);
+
+  // --- 3. SECTION CONFORT & AUDIO ---
   const secPrefs = el("div", "settings-section");
   secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
   const prefsGrid = el("div", "settings-grid-options");
@@ -3078,6 +3106,7 @@ function openSettings() {
   secPrefs.append(prefsGrid);
   p.append(secPrefs);
 
+  // --- 4. SECTION LANGUE ---
   const secLang = el("div", "settings-section");
   secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
   const langSelect = el("select", "settings-select-clean");
@@ -3097,21 +3126,26 @@ function openSettings() {
   secLang.append(langSelect);
   p.append(secLang);
 
+  // --- 5. CAPSULE TEMPORELLE (FLASHBACK ALÉATOIRE) ---
   const secTime = el("div", "settings-section");
-  secTime.append(el("div", "settings-section-title", t('retroLabel')));
-  const retroGroup = el("div", "chips"); retroGroup.style.flexWrap = "wrap";
-  [[-1, "-1 An"], [-5, "-5 Ans"], [-10, "-10 Ans"], [-20, "-20 Ans"]].forEach(([years, label]) => {
-    const b = el("button", "chip", label);
-    b.style.flex = "1";
-    b.addEventListener("click", () => {
-      playThemeSound(theme);
-      const [y, m] = ym.split("-").map(Number);
-      ym = `${y + years}-${String(m).padStart(2, "0")}`;
-      load(); closeSheet();
-    });
-    retroGroup.append(b);
+  secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
+  
+  const capsuleDesc = el("p", "m", "Téléportez-vous instantanément vers un mois mythique de l'histoire du jeu vidéo !");
+  capsuleDesc.style.marginBottom = "10px";
+  secTime.append(capsuleDesc);
+
+  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
+  randomTimeBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
+    const randomYear = cultYears[Math.floor(Math.random() * cultYears.length)];
+    const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
+    
+    ym = `${randomYear}-${randomMonth}`;
+    load();
+    closeSheet();
   });
-  secTime.append(retroGroup);
+  secTime.append(randomTimeBtn);
 
   const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
   resetCurrentBtn.style.marginTop = "8px";
@@ -3130,7 +3164,6 @@ function openSettings() {
 
   $("#sheet").classList.add("on");
 }
-
 function renderPlatformDropdown() {
   const select = $("#platformSelect");
   select.replaceChildren();
