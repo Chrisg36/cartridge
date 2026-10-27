@@ -1055,27 +1055,28 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   z-index: 10;
 }
 
-/* --- MODE PIXEL ART (OPTIMISÉ MOBILE) --- */
+/* --- MODE PIXEL ART (OPTIMISÉ MOBILE & LISIBLE) --- */
 [data-layout-style="pixel art"] {
-  --font: 'Press Start 2P', monospace !important;
+  /* On bascule sur VT323 qui reste ultra net et lisible en petite taille sur mobile */
+  --font: 'VT323', monospace !important;
   font-family: var(--font) !important;
   --radius: 0px !important;
 }
 
-/* Réduction globale de la taille sur mobile pour que ça tienne partout */
+/* Taille de texte normale et propre (plus besoin de réduire à 72%) */
 [data-layout-style="pixel art"] * {
-  font-size: 72% !important;
-  letter-spacing: -0.5px;
+  font-size: 16px !important;
+  letter-spacing: 0.5px;
 }
 
 /* Titres et en-têtes */
 [data-layout-style="pixel art"] h1, 
 [data-layout-style="pixel art"] h2, 
 [data-layout-style="pixel art"] .settings-section-title {
-  font-size: 9px !important;
+  font-size: 20px !important;
 }
 
-/* Boutons et champs de saisie */
+/* Boutons, cartes et champs */
 [data-layout-style="pixel art"] button,
 [data-layout-style="pixel art"] .card,
 [data-layout-style="pixel art"] .booster-shop-card,
@@ -1084,22 +1085,27 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   border-radius: 0px !important;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8) !important;
   border: 2px solid var(--txt) !important;
-  font-size: 8px !important;
+  font-size: 15px !important;
 }
 
-/* Ajustement spécifique pour la barre de navigation du bas sur mobile */
+/* Noms des jeux dans les listes */
+[data-layout-style="pixel art"] .game-title,
+[data-layout-style="pixel art"] h3 {
+  font-size: 18px !important;
+}
+
+/* Barre de navigation du bas sur mobile */
 [data-layout-style="pixel art"] nav button,
 [data-layout-style="pixel art"] .bottom-nav button,
 [data-layout-style="pixel art"] footer button {
-  font-size: 6.5% !important; /* Pour que les noms comme "VITRINE" ou "BOUTIQUE" tiennent sans se couper */
-  padding: 4px 2px !important;
+  font-size: 12px !important;
 }
 
-/* Correction des petits badges (ex: Switch 2, Hype, Meta) */
+/* Petits badges (Switch 2, Hype, etc.) */
 [data-layout-style="pixel art"] .badge,
 [data-layout-style="pixel art"] span[class*="tag"] {
-  font-size: 7px !important;
-  padding: 2px 4px !important;
+  font-size: 13px !important;
+  padding: 2px 5px !important;
 }
 
 [data-layout-style="pixel art"] img {
