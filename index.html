@@ -1112,6 +1112,23 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   position: relative;
   z-index: 2;
 }
+
+/* On supprime le fond et la bordure de la grande boîte du musée pour laisser place à la bibliothèque */
+#museumMainPage {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 10px;
+}
+
+/* Le fond bibliothèque s'étale sur tout l'écran derrière */
+.retro-library-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* Derrière tout le reste */
+  background-color: #0b0d14;
+  /* (le reste de ton style bibliothèque CSS avec les dégradés et les lampes) */
+}
   
 </style>
 </head>
