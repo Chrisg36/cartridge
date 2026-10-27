@@ -946,6 +946,27 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
         <span>HUB PRINCIPAL</span>
       </div>
     </div>
+
+<!-- 🏛️ LA GRANDE PAGE VITRINE DE COLLECTION -->
+  <div id="vitrineMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ VITRINE DE COLLECTION</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="vitrinePageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>📚 ARCHIVES PERSONNELLES</span>
+        <span>GALERIE GLOBALE</span>
+      </div>
+    </div>
+    
+    <!-- Contenu de la vitrine en grand format -->
+    <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
     
     <!-- Contenu de la boutique -->
     <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
@@ -3021,10 +3042,25 @@ if (navMuseum) {
   });
 }
 
+// --- MISE À JOUR DE LA NAVIGATION : CLic sur l'onglet Vitrine ---
 if (navShelf) {
   navShelf.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navShelf);
-    if (typeof openCollectionShelf === "function") openCollectionShelf();
+    if (typeof closeSheet === "function") closeSheet();
+    
+    const homeContent = document.getElementById("homeMainContent");
+    const shopPage = document.getElementById("shopMainPage");
+    const vitrinePage = document.getElementById("vitrineMainPage");
+    
+    if (homeContent) homeContent.style.display = "none";
+    if (shopPage) shopPage.style.display = "none";
+    if (vitrinePage) {
+      vitrinePage.style.display = "block";
+      renderVitrineMainPage(); // <--- Appel de la fonction de rendu grand format
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
   
@@ -3125,6 +3161,127 @@ function checkDailyConnection() {
 }
 
 function renderShopMainPage() {
+  // --- FONCTION DE RENDU DE LA GRANDE PAGE VITRINE ---
+function renderVitrineMainPage() {
+  const contentArea = document.getElementById("vitrinePageContent");
+  contentArea.replaceChildren();
+
+  // Synchronisation des pièces
+  const coinSpan = document.getElementById("vitrinePageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left; padding: 18px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:2px; color:var(--acc); font-size: 15px;">🏛️ Galerie des Jaquettes</h3>
+    <p class="m" style="margin-bottom:6px; font-size: 11px;">Total possédé : <b>${myCollection.length}</b> jaquette${myCollection.length > 1 ? 's' : ''}</p>
+  `;
+  banner.append(headerDiv);
+
+  if (myCollection.length === 0) {
+    const emptyMsg = el("div", "msg");
+    emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
+    banner.append(emptyMsg);
+  } else {
+    const shelfContainer = el("div");
+    shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; margin-top:8px; width: 100%;";
+
+    const itemsPerRow = window.innerWidth >= 768 ? 5 : 3;
+    for (let i = 0; i < myCollection.length; i += itemsPerRow) {
+      const rowItems = myCollection.slice(i, i + itemsPerRow);
+
+      const woodenShelf = el("div");
+      woodenShelf.style.cssText = `
+        background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
+        border: 1px solid #3d2f24;
+        border-radius: 12px;
+        padding: 16px 12px 6px;
+        position: relative;
+        box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.4);
+      `;
+
+      const gamesRow = el("div");
+      gamesRow.style.cssText = `display:grid; grid-template-columns:repeat(${itemsPerRow}, 1fr); gap:12px; align-items:flex-end;`;
+
+      for (const item of rowItems) {
+        const gameBox = el("div");
+        gameBox.style.cssText = `
+          background: var(--card);
+          border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent);
+          border-radius: 10px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          cursor: pointer;
+        `;
+        
+        gameBox.addEventListener("mouseenter", () => {
+          gameBox.style.transform = "translateY(-4px) scale(1.03)";
+          gameBox.style.boxShadow = `0 12px 25px rgba(0,0,0,0.8), 0 0 15px color-mix(in srgb, var(--acc) 50%, transparent)`;
+        });
+        gameBox.addEventListener("mouseleave", () => {
+          gameBox.style.transform = "translateY(0) scale(1)";
+          gameBox.style.boxShadow = "0 8px 20px rgba(0,0,0,0.6)";
+        });
+
+        gameBox.addEventListener("click", () => {
+          playThemeSound(theme);
+          openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
+        });
+
+        const img = el("img");
+        img.src = item.cover;
+        img.loading = "lazy";
+        img.style.cssText = "width:100%; aspect-ratio:3/4; object-fit:cover; display:block;";
+
+        const spine = el("div");
+        spine.style.cssText = `
+          font-family: 'Orbitron', sans-serif;
+          font-size: 9px;
+          font-weight: 800;
+          text-transform: uppercase;
+          width: 100%;
+          text-align: center;
+          background: rgba(0,0,0,0.9);
+          color: #fff;
+          padding: 6px 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          letter-spacing: 0.5px;
+        `;
+        spine.textContent = item.name;
+
+        gameBox.append(img, spine);
+        gamesRow.append(gameBox);
+      }
+
+      woodenShelf.append(gamesRow);
+
+      const plankBoard = el("div");
+      plankBoard.style.cssText = `
+        height: 12px;
+        background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
+        margin: 8px -12px -6px -12px;
+        border-radius: 0 0 10px 10px;
+        border-top: 1px solid #5a4434;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.9);
+      `;
+      woodenShelf.append(plankBoard);
+
+      shelfContainer.append(woodenShelf);
+    }
+
+    banner.append(shelfContainer);
+  }
+
+  contentArea.append(banner);
+}
   const contentArea = document.getElementById("shopPageContent");
   contentArea.replaceChildren();
 
