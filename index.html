@@ -947,30 +947,24 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   </div>
 
   <!-- 🏛️ 2. LA GRANDE PAGE VITRINE DE COLLECTION -->
+  <div id="vitrineMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ VITRINE DE COLLECTION</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="vitrinePageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>📚 ARCHIVES PERSONNELLES</span>
+        <span>GALERIE GLOBALE</span>
       </div>
     </div>
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-<!-- 🏛️ 4. LA GRANDE PAGE DU MUSÉE DES CONSOLES -->
-  <div id="museumMainPage" style="display: none;">
-    <div class="sticky-header-container">
-      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ PANTHÉON MONDIAL DES CONSOLES</div>
-        <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="museumPageCoins">100</span>
-          </div>
-        </div>
-      </div>
-      <div class="magazine-edition-banner">
-        <span>📜 HISTORIQUE & ARCHIVES</span>
-        <span>PANTHÉON GLOBAL</span>
-      </div>
-    </div>
-    <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
-  </div>
-  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -3070,26 +3064,11 @@ if (navShopArcade) {
 
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navMuseum);
-    if (typeof closeSheet === "function") closeSheet();
-    
-    const homeContent = document.getElementById("homeMainContent");
-    const shopPage = document.getElementById("shopMainPage");
-    const vitrinePage = document.getElementById("vitrineMainPage");
-    const museumPage = document.getElementById("museumMainPage");
-    
-    if (homeContent) homeContent.style.display = "none";
-    if (shopPage) shopPage.style.display = "none";
-    if (vitrinePage) vitrinePage.style.display = "none";
-    if (museumPage) {
-      museumPage.style.display = "block";
-      renderMuseumMainPage(); // 🎯 Lance le rendu de la grande page
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
   });
 }
+
 // --- MISE À JOUR DE LA NAVIGATION : CLic sur l'onglet Vitrine ---
 if (navShelf) {
   navShelf.addEventListener("click", () => {
@@ -3383,148 +3362,6 @@ function renderShopMainPage() {
     displayBox.append(banner);
   }
 
-// --- 🏛️ FONCTION DE RENDU DE LA GRANDE PAGE DU MUSÉE ---
-function renderMuseumMainPage() {
-  const contentArea = document.getElementById("museumPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const coinSpan = document.getElementById("museumPageCoins");
-  if (coinSpan) coinSpan.textContent = userCoins;
-
-  const container = el("div", "museum-page-container");
-
-  // Bannière Héroïque
-  const hero = el("div", "shop-banner");
-  hero.style.cssText = "display: flex; flex-direction: column; gap: 8px; width: 100%; text-align: left; padding: 20px; position: relative; overflow: hidden;";
-  hero.innerHTML = `
-    <div style="position: absolute; top: -10px; right: -10px; font-size: 90px; opacity: 0.05; pointer-events: none;">🏛️</div>
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1.5px; text-shadow: 0 0 10px var(--acc);">🏛️ PANTHÉON MONDIAL DES CONSOLES</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11.5px; text-transform:uppercase; letter-spacing:1px; color:var(--txt); line-height: 1.6;">
-      Explorez l'histoire vivante et l'évolution technologique de l'industrie. Cliquez sur n'importe quelle machine pour plonger dans ses archives secrètes, ses spécifications d'origine et son empreinte historique.
-    </p>
-  `;
-  container.append(hero);
-
-  // Groupement par fabricant
-  const groups = {};
-  for (const consoleItem of WORLD_CONSOLES) {
-    if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
-    groups[consoleItem.brand].push(consoleItem);
-  }
-
-  const gridWrapper = el("div");
-  gridWrapper.style.cssText = "display: flex; flex-direction: column; gap: 20px; width: 100%; margin-top: 10px;";
-
-  for (const [brand, consoles] of Object.entries(groups)) {
-    const section = el("div");
-    section.style.cssText = `
-      background: rgba(11, 15, 22, 0.5);
-      border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    `;
-    
-    const brandHeader = el("div");
-    brandHeader.style.cssText = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 25%, transparent); padding-bottom: 8px;";
-    brandHeader.innerHTML = `
-      <span style="font-family:'Orbitron',sans-serif; font-size: 12px; font-weight: 900; color: var(--acc); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px var(--acc);">🎮 ARCHIVES ${brand.toUpperCase()}</span>
-      <span style="font-family:'Orbitron',sans-serif; font-size: 10px; font-weight: 800; color: var(--mut); background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">${consoles.length} machine${consoles.length > 1 ? 's' : ''}</span>
-    `;
-    section.append(brandHeader);
-
-    // Utilisation de la grille responsive (vitrine-grid)
-    const grid = el("div", "vitrine-grid");
-
-    for (const consoleItem of consoles) {
-      const card = el("div", "console-vitrine-card");
-      card.style.setProperty('--console-color', consoleItem.bg);
-      
-      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
-
-      const screenBox = el("div", "console-photo-container");
-      const badge = el("div", "console-icon-badge", consoleItem.code);
-      screenBox.append(badge);
-
-      const infoGroup = el("div", "console-info-group");
-      const name = el("b", "", consoleItem.name);
-      const year = el("span", "", `Lancement : ${consoleItem.year}`);
-
-      infoGroup.append(name, year);
-      card.append(brandTag, screenBox, infoGroup);
-
-      card.addEventListener("click", () => { 
-        if (typeof playThemeSound === "function") playThemeSound(theme); 
-        openConsoleDetailInPage(consoleItem); 
-      });
-
-      grid.append(card);
-    }
-    section.append(grid);
-    gridWrapper.append(section);
-  }
-
-  container.append(gridWrapper);
-  contentArea.append(container);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// --- 📜 FICHE DÉTAILLÉE PLEINE PAGE D'UNE CONSOLE ---
-function openConsoleDetailInPage(consoleItem) {
-  if (typeof playThemeSound === "function") playThemeSound(theme);
-  
-  const contentArea = document.getElementById("museumPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const wrapper = el("div");
-  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%;";
-
-  const banner = el("div", "console-mockup-banner");
-  banner.style.background = `linear-gradient(135deg, color-mix(in srgb, ${consoleItem.bg} 35%, #0d0f17), #0a0d14)`;
-  banner.style.borderColor = consoleItem.bg;
-
-  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
-  neonTitle.style.borderColor = consoleItem.bg;
-  neonTitle.style.boxShadow = `0 0 25px ${consoleItem.bg}, inset 0 0 12px color-mix(in srgb, ${consoleItem.bg} 50%, transparent)`;
-  neonTitle.style.textShadow = `0 0 10px ${consoleItem.bg}, 0 0 20px ${consoleItem.bg}`;
-
-  const subInfo = el("div", "", `Génération • Sortie : ${consoleItem.year} | Constructeur : ${consoleItem.brand}`);
-  subInfo.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 11px; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.9; position: relative; z-index: 2;";
-
-  const specsGrid = el("div", "console-specs-grid");
-  specsGrid.innerHTML = `
-    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
-    <div class="console-spec-chip"><span>Architecture / GPU</span>${consoleItem.gpu}</div>
-    <div class="console-spec-chip"><span>Parc de Ventes</span>${consoleItem.sales}</div>
-    <div class="console-spec-chip"><span>Héritage & Impact</span>${consoleItem.impact}</div>
-  `;
-  
-  banner.append(neonTitle, subInfo, specsGrid);
-
-  const storyBox = el("div", "console-story-box");
-  storyBox.innerHTML = `
-    <h3 style="display: flex; align-items: center; gap: 8px;">
-      📜 HISTOIRE & ÉPOPÉE INDUSTRIELLE
-    </h3>
-    <p>${consoleItem.desc}</p>
-  `;
-
-  const backBtn = el("button", "cta", "← Retour au Panthéon du Musée");
-  backBtn.style.fontFamily = "'Orbitron', sans-serif";
-  backBtn.style.fontSize = "12px";
-  backBtn.style.letterSpacing = "1.5px";
-  backBtn.addEventListener("click", () => { 
-    if (typeof playThemeSound === "function") playThemeSound(theme); 
-    renderMuseumMainPage(); 
-  });
-
-  wrapper.append(banner, storyBox, backBtn);
-  contentArea.append(wrapper);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-  
   function showChallenges() {
     btnShop.setAttribute("aria-pressed", "false");
     btnPacks.setAttribute("aria-pressed", "false");
