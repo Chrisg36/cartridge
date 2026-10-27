@@ -2715,22 +2715,6 @@ function renderMuseumMainPage() {
   banner.append(mainContainer);
   contentArea.append(banner);
 }
-      
-      // Écouteur de clic pour ouvrir l'histoire, les specs et les composants
-      card.addEventListener("click", () => {
-        playThemeSound(theme);
-        openConsoleDetail(consoleItem);
-      });
-      
-      grid.append(card);
-    }
-    section.append(grid);
-    mainContainer.append(section);
-  }
-
-  banner.append(mainContainer);
-  contentArea.append(banner);
-}
 
 function openConsoleDetail(consoleItem) {
   playThemeSound(theme);
