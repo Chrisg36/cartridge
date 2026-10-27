@@ -1360,10 +1360,13 @@ function openShopModal() {
 }
   
 async function triggerRandomPackDraw(type, category = "standard") {
-  let cData = loadChallengesData();
-  cData.weeklyProgress.packsOpened += 1;
-  saveChallengesData(cData);
-
+  // 🛡️ SÉCURITÉ : Si le type ou la catégorie contient rétro/collector, on force la bonne étiquette
+  const typeLower = (type + "").toLowerCase();
+  if (typeLower.includes("rétro") || typeLower.includes("retro")) {
+    category = "retro";
+  } else if (typeLower.includes("collector") || typeLower.includes("supreme")) {
+    category = "supreme_retro";
+  }
   const fsOverlay = el("div", "pack-fullscreen-overlay");
   
   // Étape 1 : Vibration et suspense du booster
