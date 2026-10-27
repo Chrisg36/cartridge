@@ -2762,19 +2762,10 @@ function renderMuseumMainPage() {
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
+      // 🎯 RETOUR DU BADGE NÉON RÉTRO (Sans image externe)
       const photoBox = el("div", "console-photo-container");
-      const img = el("img", "console-real-img");
-      
-      // 🎯 ON UTILISE DIRECTEMENT L'IMAGE DE WORLD_CONSOLES
-      img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-      img.alt = consoleItem.name;
-      img.loading = "lazy";
-      
-      img.onerror = () => {
-        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-      };
-
-      photoBox.append(img);
+      const badge = el("div", "console-icon-badge", consoleItem.code || consoleItem.name);
+      photoBox.append(badge);
 
       const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
@@ -2798,7 +2789,6 @@ function renderMuseumMainPage() {
   banner.append(mainContainer);
   contentArea.append(banner);
 }
-
 function openConsoleDetail(consoleItem) {
   playThemeSound(theme);
   const p = $("#panel");
