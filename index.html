@@ -2727,21 +2727,20 @@ function renderMuseumMainPage() {
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
-   const photoBox = el("div", "console-photo-container");
+  const photoBox = el("div", "console-photo-container");
       const img = el("img", "console-real-img");
       
-      // On cherche directement l'image dans le tableau global museumConsoles ou via l'objet consoleItem
+      // On cherche la console dans le tableau museumConsoles
       const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name.toLowerCase() === consoleItem.name.toLowerCase()) : null;
       
-      const targetImage = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image;
-      
-      img.src = targetImage && !targetImage.includes('upload/thumb') ? targetImage : "https://images.igdb.com/igdb/image/upload/t_cover_big/co2918.jpg";
+      // On prend directement l'image propre du tableau sans aucun filtre restrictif
+      img.src = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       img.alt = consoleItem.name;
       img.loading = "lazy";
       
-      // Si l'image charge mal, on bascule sur une image de secours sûre
+      // Sécurité anti-plantage si jamais un lien ne répond pas
       img.onerror = () => {
-        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/co2918.jpg";
+        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       };
 
       photoBox.append(img);
