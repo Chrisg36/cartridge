@@ -3001,11 +3001,13 @@ if (navHome) {
     setActiveNav(navHome);
     if (typeof closeSheet === "function") closeSheet();
     
-    const shopPage = document.getElementById("shopMainPage");
     const homeContent = document.getElementById("homeMainContent");
+    const shopPage = document.getElementById("shopMainPage");
+    const vitrinePage = document.getElementById("vitrineMainPage");
     
-    if (shopPage) shopPage.style.display = "none";
     if (homeContent) homeContent.style.display = "block";
+    if (shopPage) shopPage.style.display = "none";
+    if (vitrinePage) vitrinePage.style.display = "none";
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -3019,8 +3021,10 @@ if (navShopArcade) {
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
+    const vitrinePage = document.getElementById("vitrineMainPage");
     
     if (homeContent) homeContent.style.display = "none";
+    if (vitrinePage) vitrinePage.style.display = "none";
     if (shopPage) {
       shopPage.style.display = "block";
       renderShopMainPage();
