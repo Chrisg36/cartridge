@@ -845,97 +845,6 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   0% { transform: translateX(-150%) translateY(-150%) rotate(25deg); }
   100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
 }
-
-/* 🏛️ STYLES PRO POUR LE MUSÉE DES CONSOLES */
-.museum-hero-banner {
-  background: linear-gradient(135deg, rgba(20, 24, 33, 0.95), color-mix(in srgb, var(--acc) 15%, #0b0f17));
-  border: 2px solid var(--acc);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.7), inset 0 0 25px color-mix(in srgb, var(--acc) 30%, transparent);
-}
-
-.museum-category-section {
-  background: rgba(15, 20, 30, 0.6);
-  border: 1px solid color-mix(in srgb, var(--acc) 25%, transparent);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-  margin-bottom: 20px;
-}
-
-.museum-console-card {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--console-color, var(--card)) 20%, var(--card)), var(--card));
-  border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 70%, transparent);
-  border-radius: 14px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15);
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.museum-console-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  border-color: var(--console-color, var(--acc));
-  box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 30px color-mix(in srgb, var(--console-color, var(--acc)) 80%, transparent);
-}
-
-.museum-console-screen {
-  width: 100%;
-  height: 100px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(0,0,0,0.85), color-mix(in srgb, var(--console-color, #000) 30%, #080a0f));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 40%, rgba(255,255,255,0.1));
-  box-shadow: inset 0 4px 15px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.4);
-  position: relative;
-}
-
-.museum-console-badge-code {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 14px;
-  font-weight: 900;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  background: var(--card);
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 2px solid var(--console-color, var(--acc));
-  box-shadow: 0 0 20px color-mix(in srgb, var(--console-color, var(--acc)) 90%, transparent), inset 0 0 10px color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
-  text-shadow: 0 0 10px var(--console-color, var(--acc));
-}
-
-.museum-spec-badge {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--txt);
-  text-align: left;
-}
-
-.museum-spec-badge span {
-  display: block;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 9px;
-  color: var(--acc);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
   
 </style>
 </head>
@@ -1056,26 +965,6 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-<!-- 🏛️ 4. LA GRANDE PAGE MUSÉE DES CONSOLES -->
-  <div id="museumMainPage" style="display: none;">
-    <div class="sticky-header-container">
-      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ MUSÉE DES CONSOLES</div>
-        <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="museumPageCoins">100</span>
-          </div>
-        </div>
-      </div>
-      <div class="magazine-edition-banner">
-        <span>📜 ARCHIVES HISTORIQUES</span>
-        <span>PATRIMOINE MONDIAL</span>
-      </div>
-    </div>
-    <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
-  </div>
-
-  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -1898,218 +1787,219 @@ const WORLD_CONSOLES = [
     name: "Nintendo Switch 2", brand: "Nintendo", year: "2025", bg: "#ff3b30", code: "SWITCH 2", 
     cpu: "NVIDIA Tegra personnalisé (Architecture Ampere / Ada)", gpu: "Ray Tracing matériel & DLSS", 
     sales: "Lancement générationnel majeur", impact: "L'évolution ultime du concept hybride de Nintendo, taillée pour le jeu haute fidélité en mode portable et salon grâce au DLSS.",
-    desc: "Alors que le marché se divisaient entre consoles de salon surpuissantes et PC portables encombrants, Nintendo a fait le pari audacieux de capitaliser sur l'incroyable succès de sa formule hybride. La Switch 2 incarne le fruit de plusieurs années d'ingénierie pour intégrer l'intelligence artificielle (via le DLSS de NVIDIA) dans un format nomade. Son histoire est celle de la consécration d'une vision : prouver qu'on peut allier la flexibilité du jeu en mobilité et la claque visuelle des blockbusters modernes sans s'enfermer dans un salon." 
+    desc: "Successeure très attendue de la console hybride à succès de Nintendo, la Switch 2 repousse les frontières techniques du jeu nomade en intégrant des technologies de pointe comme le support du DLSS de NVIDIA pour des performances visuelles spectaculaires." 
   },
   { 
     name: "Nintendo Switch", brand: "Nintendo", year: "2017", bg: "#e60012", code: "SWITCH", 
     cpu: "NVIDIA Tegra X1 personnalisé", gpu: "Architecture NVIDIA Maxwell", 
     sales: "140+ millions d'exemplaires", impact: "Le concept hybride parfait combinant console de salon et portable avec des Joy-Con détachables.",
-    desc: "L'histoire de la Switch est avant tout celle d'une rédemption historique. En 2017, Nintendo sort de l'échec cuisant de la Wii U, une console incomprise du grand public. La firme de Kyoto joue alors son va-tout avec un pari fou : fusionner pour la première fois de l'histoire du jeu vidéo le marché des consoles de salon et celui des portables. Portée par le chef-d'œuvre absolu *The Legend of Zelda: Breath of the Wild*, la Switch s'est transformée en un raz-de-marée culturel planétaire, rappelant au monde le génie créatif de son créateur, Satoru Iwata, disparu peu avant son lancement." 
+    desc: "Véritable triomphe après l'échec de la Wii U, la Switch a réuni les marchés de salon et portable en un seul appareil, propulsée par des chefs-d'œuvre historiques comme The Legend of Zelda: Breath of the Wild et Super Mario Odyssey." 
   },
   { 
     name: "Wii U", brand: "Nintendo", year: "2012", bg: "#0099ff", code: "WII U", 
     cpu: "IBM PowerPC 'Espresso' 3 cœurs", gpu: "AMD Radeon 'Latte'", 
     sales: "13.56 millions d'exemplaires", impact: "Précurseur du jeu nomade sur tablette tactile et pionnier de la HD chez Nintendo.",
-    desc: "La Wii U porte l'une des histoires les plus tragiques et instructives de l'industrie : celle du malentendu marketing. Pensée pour succéder au mastodonte Wii en y ajoutant une murette tactile (le GamePad), le grand public a cru qu'il s'agissait d'une simple tablette pour la console précédente. Pourtant, malgré son bide commercial, la Wii U a été un véritable laboratoire d'idées : c'est elle qui a posé toutes les briques logistiques et conceptuelles qui feront le triomphe de la Switch quelques années plus tard." 
+    desc: "Malgré un échec commercial dû à un manque de clarté dans son marketing, la Wii U a posé les bases conceptuelles de la Switch et offert des pépites acclamées (Mario Kart 8, Super Mario 3D World) qui ont été portées plus tard avec succès." 
   },
   { 
     name: "Wii", brand: "Nintendo", year: "2006", bg: "#94a3b8", code: "WII", 
     cpu: "IBM PowerPC 'Broadway' (729 MHz)", gpu: "ATI 'Hollywood'", 
     sales: "101.63 millions d'exemplaires", impact: "Phénomène sociologique mondial ayant ouvert le jeu vidéo à un public familial et intergénérationnel grâce au contrôle de mouvement.",
-    desc: "Au milieu des années 2000, englué dans une guerre de puissance brute face à Sony et Microsoft, Nintendo choisit la voie du 'Blue Ocean' (créer un marché sans concurrence). Nommée un temps 'Revolution', la Wii arrive avec une télécommande révolutionnaire, la Wiimote. C'est un séisme sociologique : dans les maisons de retraite, les hôpitaux et les salons familiaux, des millions de personnes qui n'avaient jamais touché une manette se mettent à jouer à *Wii Sports*. Nintendo redéfinit, le temps d'une génération, ce que signifie 'jouer ensemble'." 
+    desc: "En misant sur le gameplay par mouvements de la Wiimote plutôt que sur la puissance brute en haute définition, Nintendo a conquis les grands-parents, les enfants et les joueurs occasionnels avec Wii Sports." 
   },
   { 
     name: "GameCube", brand: "Nintendo", year: "2001", bg: "#6747ed", code: "GC", 
     cpu: "IBM PowerPC 'Gekko' (485 MHz)", gpu: "ATI 'Flipper' (162 MHz)", 
     sales: "21.74 millions d'exemplaires", impact: "La cube violette iconique aux mini-disques optiques, robuste et dotée d'une ergonomie de manette légendaire.",
-    desc: "La GameCube marque un tournant historique pour Nintendo : c'est la première fois que la marque abandonne les cartouches pour un format disque... mais pas n'importe lequel. Pour lutter contre le piratage, Nintendo opte pour de petits mini-DVD propriétaires d'1,5 Go. Malheureusement, l'impossibilité de lire des films DVD (contrairement à la PS2) couplée à un look jugé trop enfantin la marginalise face au rouleau compresseur de Sony. Elle n'en reste pas moins culte, chérie par les puristes pour ses innovations d'orfèvre et des jeux mythiques comme *Super Smash Bros. Melee* et *Resident Evil 4*." 
+    desc: "Malgré des ventes en retrait face à la PS2, la GameCube a marqué les esprits par sa robustesse, sa poignée de transport et des créations intemporelles de Nintendo (Super Smash Bros. Melee, Metroid Prime, Resident Evil 4)." 
   },
   { 
     name: "Nintendo 64", brand: "Nintendo", year: "1996", bg: "#f5b201", code: "N64", 
     cpu: "NEC VR4300 64-bit (93.3 MHz)", gpu: "Silicon Graphics Reality Coprocessor", 
     sales: "32.93 millions d'exemplaires", impact: "Pionnier absolu de la 3D en relief avec stick analogique et multijoueur local révolutionnaire (GoldenEye, Mario Kart 64).",
-    desc: "L'histoire de la N64 est celle d'un choix technologique lourd de conséquences. Alors que la concurrence passe massivement au CD-ROM (plus grand, moins cher à produire), Shigeru Miyamoto et Nintendo s'entêtent à conserver la cartouche pour éliminer les temps de chargement. Si cela a froissé certains grands éditeurs tiers (comme Square et son *Final Fantasy VII* parti chez Sony), cela a permis à Nintendo de signer des chefs-d'œuvre intemporels de la 3D organique comme *Super Mario 64* et *Ocarina of Time*, tout en inventant la manette à stick analogique moderne." 
+    desc: "La N64 a redéfini le jeu en 3D grâce à Super Mario 64 et The Legend of Zelda: Ocarina of Time. Son design de manette à trois branches et ses 4 ports manettes ont inventé le vrai multijoueur de salon." 
   },
   { 
     name: "Super Nintendo", brand: "Nintendo", year: "1990", bg: "#8b5cf6", code: "SNES", 
     cpu: "Ricoh 5A22 16-bit (3.58 MHz)", gpu: "Coprocesseur graphique Mode 7", 
     sales: "49.10 millions d'exemplaires", impact: "Le sommet absolu de la 2D 16-bits avec une palette sonore et graphique intemporelle (Mode 7, puces spéciales).",
-    desc: "La Super Nintendo (ou SNES) est le théâtre de l'une des guerres marketing les plus féroces de l'histoire face à SEGA. Alors que la Mega Drive mise sur l'attitude et la vitesse, Nintendo répond par l'excellence technique absolue et le raffinement artistique. Grâce à des innovations comme le 'Mode 7' (qui simule de la 3D en faisant pivoter des décors 2D) et l'intégration de puces graphiques additionnelles dans les cartouches de certains jeux, la SNES s'impose comme le parangon indétrônable de l'âge d'or du pixel-art." 
+    desc: "La SNES est considérée par beaucoup comme l'âge d'or du jeu vidéo traditionnel, avec des RPGs et des jeux de plateforme légendaires (Chrono Trigger, Super Mario World, Super Metroid, Donkey Kong Country)." 
   },
   { 
     name: "NES", brand: "Nintendo", year: "1983", bg: "#ef4444", code: "NES", 
     cpu: "Ricoh 2A03 8-bit (1.79 MHz)", gpu: "Picture Processing Unit (PPU)", 
     sales: "61.91 millions d'exemplaires", impact: "Le sauveur de l'industrie vidéoludique après le krach de 1983 et créateur de la culture des mascottes.",
-    desc: "Sans la NES, le jeu vidéo tel qu'on le connaît aujourd'hui nexisterait peut-être plus. En 1983, l'industrie américaine s'effondre lors du cataclysmique 'Krach du jeu vidéo' causé par une surabondance de jeux de très mauvaise qualité. Nintendo débarque en Occident avec sa Famicom relookée en NES, instaurant un système strict de contrôle de qualité (le fameux sceau d'approbation officiel) et redéfinissant le divertissement électronique mondial avec un petit plombier moustachu." 
+    desc: "La Famicom au Japon et la NES en Occident ont redéfini les règles du jeu vidéo moderne avec des cartouches interchangeables, un pad rectangulaire iconique et la naissance de Super Mario Bros." 
   },
   { 
     name: "Nintendo 3DS", brand: "Nintendo", year: "2011", bg: "#dc2626", code: "3DS", 
     cpu: "Dual-core ARM11 + Core Cortex-A9", gpu: "DMP PICA200", 
     sales: "75.94 millions d'exemplaires", impact: "La première console portable stéréoscopique affichant de la 3D relief sans lunettes.",
-    desc: "L'histoire de la 3DS est celle d'un redressement magistral. Lancée au prix fort en 2011 avec une technologie de 3D en relief autostéréoscopique (sans lunettes) qui laisse le public perplexe, la machine connaît un démarrage poussif. Satoru Iwata prend alors une décision radicale et historique : baisser drastiquement le prix de la console de 30% quelques mois seulement après sa sortie, quitte à vendre à perte, et offrir des jeux cultes aux premiers acheteurs (le programme Ambassadeur). Un coup de poker payant qui sauvera la console." 
+    desc: "Portée par une ludothèque gigantesque et la rétrocompatibilité DS, la 3DS a su corriger un lancement difficile pour devenir un incontournable du jeu nomade (Pokemon X/Y, Fire Emblem Awakening, Animal Crossing)." 
   },
   { 
     name: "Nintendo DS", brand: "Nintendo", year: "2004", bg: "#06b6d4", code: "DS", 
     cpu: "ARM9 + ARM7 dual-core", gpu: "Moteur 3D matérialisé matériellement", 
     sales: "154.02 millions d'exemplaires", impact: "Le double écran tactile révolutionnaire qui a redéfini le jeu nomade et conquis un public de non-joueurs.",
-    desc: "Lorsque Nintendo dévoile la DS, tout le monde croit à une blague ou à un prototype transitoire censé succéder à la Game Boy avant une 'vraie' console portable. Son nom même, 'Dual Screen', intrigue. Pourtant, en misant sur l'écran tactile, le micro et le double affichage, la DS va déjouer tous les pronostics. Elle devient un phénomène de société intergénérationnel absolu, s'écoulant à plus de 154 millions d'exemplaires et prouvant que l'innovation ergonomique lamine la simple puissance brute." 
+    desc: "L'un des plus grands succès commerciaux de l'histoire du jeu vidéo, la DS a introduit le tactile accessible, le micro intégré et des concepts originaux comme Nintendogs ou le Programme d'entraînement cérébral du Dr Kawashima." 
   },
   { 
     name: "Game Boy Advance", brand: "Nintendo", year: "2001", bg: "#6366f1", code: "GBA", 
     cpu: "ARM7TDMI 32-bit (16.8 MHz)", gpu: "Processeur graphique 2D intégré", 
     sales: "81.51 millions d'exemplaires", impact: "La puissance d'une Super Nintendo dans la poche avec un format paysage ergonomique et coloré.",
-    desc: "La GBA représente le grand bond technologique du jeu portable de poche. En abandonnant le format vertical de la Game Boy classique pour un design horizontal moderne, Nintendo y glisse la puissance équivalente à une Super Nintendo 16-bits. C'est le paradis absolu des développeurs de pixel-art, qui y portèrent les plus grands classiques du jeu de rôle et d'action, bien que l'absence de rétroéclairage sur le modèle original ait poussé les joueurs à s'acheter des lampes loupes accessoires." 
+    desc: "Véritable paradis de la 2D pixel-art, la GBA a accueilli les meilleures adaptations de classiques rétro ainsi que des chefs-d'œuvre originaux (Metroid Fusion, Pokémon Rubis/Saphir, The Legend of Zelda: The Minish Cap)." 
   },
   { 
     name: "Game Boy Color", brand: "Nintendo", year: "1998", bg: "#a855f7", code: "GBC", 
     cpu: "Sharp LR35902 8-bit boosté", gpu: "Processeur graphique couleur", 
     sales: "118.69 millions d'exemplaires (combiné GB/GBC)", impact: "L'arrivée salvatrice et colorée de la couleur sur la console portable la plus célèbre de la planète.",
-    desc: "À la fin des années 90, la vénérable Game Boy commence à accuser le poids des ans face à une concurrence qui affiche de la couleur. Plutôt que de lancer une toute nouvelle console complexe, Nintendo sort la Game Boy Color, capable d'afficher des milliers de teintes tout en restant rétrocompatible avec les vieilles cartouches monochromes. C'est le tremplin parfait qui accueille l'ouragan mondial *Pokémon Or et Argent*." 
+    desc: "Rétrocompatible avec toute la ludothèque de la Game Boy originale tout en affichant une palette de 32 000 couleurs, elle a abrité le raz-de-marée mondial Pokémon Or et Argent." 
   },
   { 
     name: "Game Boy", brand: "Nintendo", year: "1989", bg: "#84cc16", code: "GB", 
     cpu: "Sharp LR35902 8-bit (4.19 MHz)", gpu: "Écran LCD matrice monochrome 4 nuances", 
     sales: "118.69 millions d'exemplaires", impact: "Le monolithe gris indestructible qui a conquis le monde entier grâce à l'autonomie légendaire et Tetris.",
-    desc: "L'histoire de la Game Boy est une leçon de design industriel. Gunpei Yokoi, son inventeur, refuse d'inclure un écran couleur ou des composants surpuissants qui auraient flingué la batterie et fait exploser le prix. Il opte pour un écran vert monochrome rudimentaire mais ultra-économe. Couplée au coup de génie d'inclure le jeu *Tetris* dans la boîte (destiné à séduire aussi bien les enfants que les hommes d'affaires russes et américains), la Game Boy devient l'objet pop-culturel ultime, allant même jusqu'à survivre à des bombardements pendant la guerre du Golfe." 
+    desc: "Lancée en 1989, la Game Boy a surclassé toutes ses concurrentes techniques grâce à une robustesse légendaire, une consommation de piles minime et le pack-in légendaire de Tetris." 
   },
 
   { 
     name: "PlayStation 5", brand: "Sony", year: "2020", bg: "#003087", code: "PS5", 
     cpu: "AMD Zen 2 (8 cœurs @ 3.5 GHz)", gpu: "AMD RDNA 2 (10.28 TFLOPs)", 
     sales: "Plus de 55 millions d'exemplaires", impact: "Révolution du stockage SSD ultra-rapide sans temps de chargement et immersion totale grâce au retour haptique de la manette DualSense.",
-    desc: "Lancée en pleine crise sanitaire mondiale en 2020 au milieu de pénuries de puces électroniques historiques, la PS5 s'est imposée malgré un parcours du combattant pour s'en procurer une. Sa véritable révolution n'est pas qu'esthétique avec son design monolithique blanc, mais technique : son SSD ultra-rapide personnalisé permet de s'affranchir des temps de chargement et de repenser la structure même du game design, épaulé par une manette DualSense qui redéfinit le sens du toucher en jeu." 
+    desc: "Lancée en novembre 2020, la PlayStation 5 marque l'entrée de Sony dans la neuvième génération. Elle se distingue par son design futuriste bicolore et son architecture axée sur la suppression totale des temps de chargement grâce à un SSD propriétaire ultra-rapide." 
   },
   { 
     name: "PlayStation 4", brand: "Sony", year: "2013", bg: "#003791", code: "PS4", 
     cpu: "AMD Jaguar 8 cœurs 1.6 GHz", gpu: "AMD Radeon GCN (1.84 TFLOPs)", 
     sales: "117 millions d'exemplaires", impact: "Le mastodonte incontesté de la 8e génération, roi absolu des blockbusters narratifs et des expériences cinématographiques solo.",
-    desc: "La genèse de la PS4 est une leçon de stratégie d'entreprise. Échaudé par les erreurs d'arrogance commises au lancement de la PS3, Sony aborde l'année 2013 en écoutant religieusement les studios et les joueurs. En proposant une architecture simple, une console 100 dollars moins chère que sa rivale de chez Microsoft et un focus total sur le jeu solo narratif, la PS4 écrase sa génération et devient le foyer des plus grands contes vidéoludiques modernes." 
+    desc: "Sortie fin 2013, la PS4 a dominé sa génération grâce à un positionnement gaming pur et dur, une architecture x86 facile à programmer pour les studios et un catalogue de jeux exclusifs légendaires (God of War, Uncharted 4, Bloodborne)." 
   },
   { 
     name: "PlayStation 3", brand: "Sony", year: "2006", bg: "#2563eb", code: "PS3", 
     cpu: "Processeur Cell Broadband Engine", gpu: "NVIDIA RSX Reality Synthesizer", 
     sales: "87.4 millions d'exemplaires", impact: "Pionnière du jeu en HD, intégration du lecteur Blu-ray et gratuité du service en ligne PlayStation Network à ses débuts.",
-    desc: "L'histoire de la PS3 est celle d'un triomphe arraché de haute lutte après un faux départ cauchemardesque. Vendu à un prix exorbitant (599/600 euros) en raison de l'intégration d'un lecteur Blu-ray de salon et d'un processeur ultra-complexe (le 'Cell' conçu avec IBM et Toshiba), les développeurs s'arrachent les cheveux pour coder dessus. Pourtant, portée par la baisse de son prix, l'arrivée tardive de chefs-d'œuvre comme *The Last of Us* et la démocratisation de la haute définition, la PS3 finira par rattraper son retard." 
+    desc: "La PS3 a connu un démarrage difficile en raison de la complexité de son processeur Cell, mais elle s'est rattrapée de manière spectaculaire avec des exclusivités cultes (The Last of Us, Uncharted, Metal Gear Solid 4) et l'adoption massive du format Blu-ray." 
   },
   { 
     name: "PlayStation 2", brand: "Sony", year: "2000", bg: "#0284c7", code: "PS2", 
     cpu: "Emotion Engine 294 MHz", gpu: "Graphics Synthesizer", 
     sales: "155+ millions d'exemplaires (Record absolu)", impact: "La console la plus vendue de l'histoire, reine incontestée de la rétrocompatibilité et démocratisation du DVD de salon.",
-    desc: "La PS2 est le plus grand rouleau compresseur commercial de l'histoire du divertissement. Annoncée avec des promesses graphiques vertigineuses grâce à son processeur 'Emotion Engine', elle profite surtout d'un timing parfait : c'est la période où le format DVD explose dans le monde. En l'intégrant directement dans la console comme lecteur multimédia bon marché, Sony s'invite dans des millions de foyers où les parents l'achètent comme lecteur de salon tandis que les enfants y voient la console ultime." 
+    desc: "Véritable rouleau kompresseur de l'industrie, la PS2 a profité de sa compatibilité avec les jeux de la première PlayStation et du lecteur DVD intégré pour s'imposer dans tous les foyers de la planète pendant plus d'une décennie." 
   },
   { 
     name: "PlayStation", brand: "Sony", year: "1994", bg: "#475569", code: "PS1", 
     cpu: "R3000A 32-bit RISC (33.86 MHz)", gpu: "Geometry Engine (360k polygones/sec)", 
     sales: "102.4 millions d'exemplaires", impact: "Le coup de maître absolu de Sony qui a fait basculer l'industrie du jeu vidéo de la 2D vers la 3D sur CD-ROM.",
-    desc: "L'arrivée de Sony dans le jeu vidéo est le fruit d'une trahison historique. Alors que Nintendo s'associe d'abord avec Sony pour créer un lecteur CD pour la Super Nintendo, la firme de Kyoto annule le partenariat au dernier moment au profit de Philips. Humilié, Ken Kutaragi (le père de la PlayStation) convainc la direction de Sony de faire cavalier seul. Bien leur en a pris : en s'associant avec la culture branchée, la musique électronique et en démocratisant la 3D texturée sur CD, la première PlayStation pulvérise les codes ringards du jouet pour enfants." 
+    desc: "Née d'un partenariat avorté avec Nintendo pour un lecteur CD, la première PlayStation a redéfini la culture pop des années 90 en s'adressant à un public plus âgé et branché (Tekken, Gran Turismo, Final Fantasy VII)." 
   },
   { 
     name: "PS Vita", brand: "Sony", year: "2011", bg: "#0ea5e9", code: "PS VITA", 
     cpu: "ARM Cortex-A9 MPCore (4 cœurs)", gpu: "PowerVR SGX543MP4+", 
     sales: "Est. 15 millions d'exemplaires", impact: "Bijou technologique portable doté de doubles joysticks analogiques et d'un écran tactile OLED somptueux.",
-    desc: "La PS Vita est la chronique d'un chef-d'œuvre technologique incompris. Dotée d'un écran OLED magnifique, de deux vrais joysticks et d'un pavé tactile arrière, elle offrait des graphismes quasi dignes d'une PS3 dans la poche. Malheureusement, plombée par des choix stratégiques désastreux de Sony (comme l'obligation d'acheter des cartes mémoires propriétaires hors de prix) et l'explosion fulgurante du jeu sur smartphone, elle fut abandonnée trop tôt par son créateur, devenant malgré elle le paradis culte des joueurs de jeux indépendants et nippons." 
+    desc: "Malgré un succès commercial en deçà des attentes face aux smartphones, la PS Vita reste chérie par les connaisseurs pour sa ludothèque indépendante, ses jeux japonais et sa puissance technique inégalée en format de poche." 
   },
   { 
     name: "PSP", brand: "Sony", year: "2004", bg: "#38bdf8", code: "PSP", 
     cpu: "MIPS R4000 (333 MHz)", gpu: "Sony Graphics Synthesizer", 
     sales: "82 millions d'exemplaires", impact: "La première grande concurrente sérieuse de Nintendo sur le marché portable avec des graphismes dignes de la PS2.",
-    desc: "Pour la première fois de l'histoire, Nintendo trouve à qui parler sur le terrain portable. La PSP débarque en 2004 avec un look de communicateur spatial futuriste et un magnifique écran large. C'est la première console portable à utiliser un format disque optique propriétaire, l'UMD, qui permettait aussi de regarder des films en déplacement. Un immense succès populaire qui a marqué toute une génération de joueurs grâce à des bombes portables comme *Crisis Core: Final Fantasy VII* et *Monster Hunter Freedom*." 
+    desc: "La PlayStation Portable a séduit les joueurs nomades grâce à son grand écran panoramique, ses capacités multimédias (films sur disque UMD, MP3) et des hits inoubliables (Monster Hunter, Crisis Core, GTA Liberty City Stories)." 
   },
 
   { 
     name: "Dreamcast", brand: "SEGA", year: "1998", bg: "#f97316", code: "DC", 
     cpu: "Hitachi SH-4 32-bit RISC (200 MHz)", gpu: "NEC PowerVR2 CLX2", 
     sales: "9.13 millions d'exemplaires", impact: "La console avant-gardiste de SEGA, pionnière du jeu en ligne sur console avec modem intégré et arcade à la maison.",
-    desc: "La Dreamcast est l'une des machines les plus aimées et les plus tragiques de l'histoire. En avance sur son temps, elle intègre dès sa sortie un modem pour jouer en réseau mondial et propose des adaptations d'arcade d'une fidélité insolente. Mais SEGA, financièrement épuisé par les échecs commerciaux de la Saturn et de la 32X, ne peut lutter face au rouleau compresseur médiatique que prépare Sony avec la future PS2. La mort dans l'âme, SEGA jette l'éponge en 2001, quitte définitivement le marché des fabricants de consoles et se reconvertit uniquement en éditeur de jeux." 
+    desc: "Dernière console de SEGA, la Dreamcast était une merveille technologique en avance sur son temps. Elle a proposé des jeux d'arcade parfaits (Soulcalibur, Crazy Taxi, Shenmue) et une carte mémoire munie d'un écran LCD (VMU)." 
   },
   { 
     name: "Saturn", brand: "SEGA", year: "1994", bg: "#475569", code: "SATURN", 
     cpu: "Architecture double processeur Hitachi SH-2", gpu: "Double VDP (Video Display Processor)", 
     sales: "9.26 millions d'exemplaires", impact: "Une bête de course absolue en 2D et reine des conversions d'arcade mythiques de SEGA.",
-    desc: "L'histoire de la Saturn est celle d'un sabotage interne et d'une précipitation stratégique. Terré par l'arrivée imminente de Sony, SEGA of Japan décide d'avancer la sortie de la Saturn en catimini lors d'une surprise générale en 1994, prenant de court ses propres partenaires américains et les développeurs. Pire, son architecture interne à base de doubles processeurs est un cauchemar absolu à programmer. Si elle reste une console extraordinaire pour les amoureux de superbes jeux de combat en 2D au Japon, c'est un échec cuisant en Occident." 
+    desc: "Très appréciée au Japon pour ses jeux de combat 2D et ses RPGs, la Saturn reste célèbre pour sa complexité d'architecture matérielle qui a rendu son développement difficile en Occident face à la PlayStation." 
   },
   { 
     name: "Mega Drive", brand: "SEGA", year: "1988", bg: "#f43f5e", code: "MD", 
     cpu: "Motorola 68000 16/32-bit (7.67 MHz)", gpu: "Processeur graphique VDP dérivé arcade", 
     sales: "30.75 millions d'exemplaires", impact: "L'ère rebelle du 'Blast Processing' et de Sonic le Hérisson qui a tenu tête à Nintendo.",
-    desc: "La Mega Drive incarne l'âge d'or absolu de SEGA, une époque où la marque incarnait la cool-attitude, le rock'n'roll et la jeunesse rebelle. Face au monopole de Nintendo, SEGA lance une campagne marketing agressive aux États-Unis ('SEGA does what Nintendon't'), casse les codes et propulse un petit hérisson bleu ultra-rapide nommé Sonic sur le devant de la scène. C'est l'époque mythique de la 'console war' originelle, celle qui a forgé la passion de millions de joueurs." 
+    desc: "Symbole de la culture pop des années 90 avec son slogan agressif 'SEGA does what Nintendon't', la Mega Drive a marqué les esprits par sa vitesse d'action, ses musiques FM Yamaha et des licences cultes (Streets of Rage, Golden Axe)." 
   },
   { 
     name: "Master System", brand: "SEGA", year: "1985", bg: "#b91c1c", code: "SMS", 
     cpu: "Zilog Z80 8-bit (4 MHz)", gpu: "SEGA VDP personnalisé", 
     sales: "13 millions d'exemplaires", impact: "La rivale historique de la NES, extrêmement populaire en Europe et au Brésil.",
-    desc: "Souvent perçue injustement comme un simple faire-valoir de la NES en Amérique du Nord, la Master System a pourtant connu une trajectoire historique fascinante. Si elle a peiné face à Nintendo aux USA, elle est devenue un véritable totem culturel absolu en Europe et surtout au Brésil, où l'éditeur local Tectoy l'a maintenue en vie et commercialisée pendant des décennies, façonnant l'industrie vidéoludique de tout un continent." 
+    desc: "Dotée de graphismes aux couleurs plus chatoyantes et d'une ludothèque arcade solide (Alex Kidd, Phantasy Star, Wonder Boy), la Master System a ouvert la voie à l'âge d'or de SEGA." 
   },
   { 
     name: "Game Gear", brand: "SEGA", year: "1990", bg: "#0284c7", code: "GG", 
     cpu: "Zilog Z80 8-bit (3.58 MHz)", gpu: "Processeur couleur 4096 teintes", 
     sales: "10.62 millions d'exemplaires", impact: "La réponse portable couleur et rétroéclairée de SEGA à la Game Boy monochrome.",
-    desc: "Quand SEGA regarde la Game Boy de Nintendo avec son écran monochrome verdâtre, la firme se dit qu'il y a un coup à jouer en proposant du grand luxe : un écran couleur rétroéclairé horizontal splendide. La Game Gear était, sur le papier, infiniment supérieure à sa rivale. Dans les faits, son gros point noir devint sa légende : elle nécessitait 6 piles AA et vidait ses réserves d'énergie en à peine 3 heures d'utilisation, transformant chaque voyage en voiture en chasse frénétique aux prises secteurs." 
+    desc: "Véritable petit téléviseur de poche (via tuner optionnel), la Game Gear offrait les sensations de la Mega Drive en nomade, malgré une consommation de piles redoutable." 
   },
 
   { 
     name: "Xbox Series X", brand: "Microsoft", year: "2020", bg: "#107c10", code: "XSX", 
     cpu: "AMD Zen 2 8 cœurs @ 3.8 GHz", gpu: "AMD RDNA 2 (12 TFLOPs)", 
     sales: "Est. 28+ millions d'exemplaires", impact: "Puissance brute de calcul, service Xbox Game Pass révolutionnaire et rétrocompatibilité totale.",
-    desc: "La Xbox Series X arrive sur le marché avec une promesse simple et directe : être la console la plus puissante de la planète sur le plan brut. Mais la véritable force de frappe de Microsoft ne réside plus seulement dans le monolithe noir aux faux airs de tour PC, mais dans son écosystème global. Portée par le Xbox Game Pass (le 'Netflix du jeu vidéo') et une obsession totale pour la rétrocompatibilité (permettant de jouer à des jeux de la toute première Xbox sortie en 2001), Microsoft redéfinit la façon de consommer le loisir numérique." 
+    desc: "La tour surpuissante de Microsoft conçue pour le jeu en 4K native à haute fréquence d'images, combinée au service d'abonnement Xbox Game Pass qui redéfinit l'accès aux jeux vidéo." 
   },
   { 
     name: "Xbox One", brand: "Microsoft", year: "2013", bg: "#16a34a", code: "XONE", 
     cpu: "AMD Jaguar 8 cœurs", gpu: "AMD Radeon GCN", 
     sales: "Est. 58 millions d'exemplaires", impact: "Le centre de divertissement multimédia et pionnier du jeu cloud et du cloud gaming.",
-    desc: "L'histoire de la Xbox One reste l'un des plus grands faux pas stratégiques de l'histoire du marketing moderne. En 2013, Microsoft présente sa console non pas comme une machine de jeux, mais comme le hub multimédia total du salon, exigeant une connexion internet obligatoire permanente et interdisant le prêt de jeux d'occasion. C'est le tollé général chez les joueurs. Malgré un rétropédalage en catastrophe et l'arrivée salvatrice de Phil Spencer à la tête de la division pour redresser la barre (notamment en créant le Game Pass), la Xbox One trainera ce boulet commercial toute sa génération." 
+    desc: "Conçue à l'origine comme un hub multimédia total pour le salon, la Xbox One a pivoté vers une machine 100% dédiée aux joueurs, introduisant le Xbox Game Pass et les manettes Elite." 
   },
   { 
     name: "Xbox 360", brand: "Microsoft", year: "2005", bg: "#22c55e", code: "X360", 
     cpu: "IBM PowerPC Xenon 3 cœurs (3.2 GHz)", gpu: "ATI Xenos", 
     sales: "84 millions d'exemplaires", impact: "La reine absolue de la génération HD, du jeu en ligne sur le Xbox Live et des succès de Gears of War / Halo 3.",
-    desc: "La Xbox 360 est le chef-d'œuvre absolu de Microsoft dans le domaine du hardware. Arrivée un an avant la concurrence de Sony, elle a totalement dominé la première moitié de la génération HD grâce à une ergonomie de manette légendaire, un service en ligne payant mais d'une fluidité révolutionnaire (le Xbox Live) et la démocratisation des succès/trophées. Malgré le traumatisme technique du fameux 'Anneau Rouge de la Mort' (RRoD) qui toucha des millions de consoles défectueuses, la marque s'en releva grâce à un SAV légendaire et gratuit." 
+    desc: "La Xbox 360 a marqué les esprits par son avance d'un an sur la concurrence, la création des succès (Achievements), un écosystème multijoueur parfait et une ludothèque occidentale majeure." 
   },
   { 
     name: "Xbox", brand: "Microsoft", year: "2001", bg: "#15803d", code: "XBOX", 
     cpu: "Intel Pentium III personnalisé (733 MHz)", gpu: "NVIDIA NV20 (233 MHz)", 
     sales: "24 millions d'exemplaires", impact: "L'arrivée fracassante de Microsoft dans le monde des consoles avec un disque dur intégré et Halo: Combat Evolved.",
-    desc: "Au tournant des années 2000, terrifié à l'idée que le PC ne se fasse cannibaliser par le salon et que Sony ne devienne le maître absolu du divertissement numérique, Bill Gates autorise la création d'une console estampillée Microsoft. Bâtie avec des composants proches d'un PC (un disque dur intégré et un port ethernet pour le futur Xbox Live), la grosse boîte noire et verte débarque avec un messie en kit : *Halo: Combat Evolved*, qui posera les bases modernes du jeu de tir à la première personne sur console." 
+    desc: "Pionnière du jeu en ligne sur console avec le service Xbox Live et dotée d'une architecture proche d'un PC, la première Xbox a imposé Microsoft comme un acteur incontournable de l'industrie." 
   },
 
   { 
     name: "Atari Jaguar", brand: "Atari", year: "1993", bg: "#a8a29e", code: "JAGUAR", 
     cpu: "Processeur Tom 32-bit + Jerry 32-bit", gpu: "Processeur graphique multitâche", 
     sales: "Est. 250 000 exemplaires", impact: "La première console présentée comme '64-bits' de l'histoire du jeu vidéo.",
-    desc: "La Jaguar d'Atari est une tragicomédie industrielle. Pour tenter de damer le pion à ses rivaux, Atari communique à outrance sur une architecture révolutionnaire prétendument '64-bits' (composée en réalité de puces 32-bits accolées nommées Tom et Jerry). En pratique, la console souffre d'une manette cauchemardesque dotée d'un pavé numérique de téléphone fixe et d'un manque criant de jeux de qualité. C'est le chant du cygne tragique pour la marque qui avait inventé l'âge d'or des arcades domestiques." 
+    desc: "Dernière tentative majeure d'Atari sur le marché des consoles de salon, la Jaguar est entrée dans la légende pour son architecture atypique et sa manette au pavé numérique original." 
   },
   { 
     name: "Atari Lynx", brand: "Atari", year: "1989", bg: "#c2410c", code: "LYNX", 
     cpu: "Processeur 16-bit personnalisé", gpu: "Affichage graphique et zoom matériel intégré", 
     sales: "Est. 3 millions d'exemplaires", impact: "La première portable couleur au monde dotée d'un écran rétroéclairé et d'un mode inversé ambidextre.",
-    desc: "Technologiquement fascinante, la Lynx d'Atari était une merveille d'ingénierie pour 1989. C'était la première console portable à offrir un écran couleur rétroéclairé et un processeur gérant des zooms graphiques matériels hallucinants. Mieux encore : son design symétrique permettait de retourner la console sens dessus dessous pour satisfaire instantanément les joueurs gauchers. Malheureusement, son prix trop élevé et une autonomie catastrophique eurent raison de ses ambitions." 
+    desc: "Véritable ovni technique pour l'époque, la Lynx permettait de retourner la console pour les gauchers et affichait des graphismes époustouflants pour 1989." 
   },
   { 
     name: "Atari 2600", brand: "Atari", year: "1977", bg: "#d97706", code: "2600", 
     cpu: "MOS Technology 6507 (1.19 MHz)", gpu: "TIA (Television Interface Adapter)", 
     sales: "30 millions d'exemplaires", impact: "La pionnière absolue qui a popularisé le système de cartouches interchangeables et lancé l'âge d'or des arcades à la maison.",
-    desc: "L'Atari 2600 (originellement appelée VCS) est le Big Bang de la culture vidéoludique populaire. Avant elle, les consoles de salon (comme l'Odyssey) possédaient des jeux figés inscrits en dur dans la machine. En popularisant le concept de cartouches électroniques interchangeables, Atari permet pour la première fois aux joueurs d'acheter de nouveaux jeux à l'unité. C'est l'ancêtre fondateur de notre industrie moderne, immortalisé par des pixels carrés bruts et le mythique joystick à un bouton." 
+    desc: "Véritable ancêtre de toutes nos consoles modernes, l'Atari 2600 a démocratisé le jeu vidéo dans les foyers du monde entier avec des monuments comme Space Invaders et Pac-Man." 
   },
 
   { 
     name: "Commodore 64", brand: "Commodore", year: "1982", bg: "#0d9488", code: "C64", 
     cpu: "MOS Technology 6510 (1.02 MHz)", gpu: "VIC-II (16 couleurs, sprites matériels)", 
     sales: "17+ millions d'exemplaires (Record Guinness)", impact: "L'ordinateur personnel le plus vendu de tous les temps, berceau de la culture démo et des musiques SID.",
-    desc: "Le Commodore 64 n'est pas techniquement une console de salon, mais un ordinateur personnel familial. Pourtant, son empreinte sur l'histoire du jeu vidéo est colossale. Entré dans le livre Guinness des records comme le modèle d'ordinateur individuel le plus vendu de tous les temps, il a permis à une génération entière de découvrir la programmation en BASIC mais aussi de s'émerveiller devant la puce sonore légendaire SID, créant de toutes pièces la culture de la musique 'chiptune'." 
+    desc: "Légende absolue de l'informatique familiale des années 80, le C64 a initié des millions de passionnés à la programmation BASIC et à la création musicale sur puce audio SID." 
   },
   { 
     name: "Neo-Geo AES", brand: "SNK", year: "1990", bg: "#dc2626", code: "NEO-GEO", 
     cpu: "Motorola 68000 (12 MHz) + Z80 (4 MHz)", gpu: "Processeur 2D ultra-puissant spécial arcade", 
     sales: "Est. 1 million d'exemplaires", impact: "La Rolls-Royce absolue de l'arcade à la maison avec des cartouches géantes et une 2D surpuissante sans compromis.",
-    desc: "La Neo-Geo est un objet mythique, fantasmé par tous les adolescents des années 90 lisant les magazines spécialisés. Créée par SNK, son concept était simple et fou : proposer exactement la même machine que celle des bornes d'arcade des salles enfumées directement dans le salon, sans la moindre concession technique. Une bête de course absolue dotée de cartouches géantes pesant parfois plusieurs kilos, vendue à un prix stratosphérique qui la réservait à une élite de passionnés fortunés." 
+    desc: "Offrant exactement la même expérience que les bornes d'arcade des salles enfumées, la Neo-Geo s'adressait aux passionnés fortunés avec des jeux de combat légendaires (King of Fighters, Metal Slug, Samurai Shodown)." 
   },
   { 
     name: "PC Engine", brand: "NEC", year: "1987", bg: "#64748b", code: "PCE", 
     cpu: "HuC6280 8-bit (7.16 MHz)", gpu: "Double moteur graphique 16-bit", 
     sales: "10 millions d'exemplaires", impact: "La console miniature au format carte de crédit (HuCard) pionnière du lecteur CD-ROM.",
-    desc: "Véritable bijou d'ingénierie japonaise, la PC Engine (ou TurboGrafx-16 en Occident) étonnait d'abord par sa taille minuscule, comparable à un livre de poche, et l'utilisation de cartes de jeux souples au format carte de crédit (les HuCards). Véritable reine des jeux d'action et des 'shoot'em up' fulgurants, elle fut aussi la première à démocratiser l'extension d'un lecteur de CD-ROM de salon, ouvrant la voie aux cinématiques parlées et aux musiques symphoniques enregistrées." 
+    desc: "Phénomène de design et de puissance au Japon, la PC Engine a régalé les amateurs de jeux d'action et de shoot'em up fulgurants (R-Type, Castlevania Rondo of Blood)." 
   }
 ];
+
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
 
@@ -2154,6 +2044,7 @@ function toggleFavorite(rawId) {
     currentFavs.push(id);
     favorites = currentFavs;
 
+    // Validation du défi quotidien "Coup de Cœur"
     let cData = loadChallengesData();
     cData.dailyProgress.favorite = true;
     saveChallengesData(cData);
@@ -2163,11 +2054,14 @@ function toggleFavorite(rawId) {
       currentRewarded.push(id);
       rewardedFavorites = currentRewarded;
       try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
+      
       addCoins(10);
     }
   }
   
-  try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
+  try { 
+    localStorage.setItem("favorites", JSON.stringify(favorites)); 
+  } catch (e) {}
 
   playThemeSound(theme);
   render();
@@ -2206,6 +2100,153 @@ function playThemeSound(th) {
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
         osc.start(startTime); osc.stop(startTime + 0.3);
       });
+    } else if (th === "gameboy") {
+      [440, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.09, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "dreamcast") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(329.63, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+      osc.start(now); osc.stop(now + 0.32);
+    } else if (th === "n64") {
+      [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+        osc.start(startTime); osc.stop(startTime + 0.15);
+      });
+    } else if (th === "nes") {
+      [330, 440, 659.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
+        osc.start(startTime); osc.stop(startTime + 0.16);
+      });
+    } else if (th === "snes") {
+      [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+        osc.start(startTime); osc.stop(startTime + 0.25);
+      });
+    } else if (th === "arcade") {
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.05);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
+        osc.start(startTime); osc.stop(startTime + 0.14);
+      });
+    } else if (th === "atari") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.linearRampToValueAtTime(450, now + 0.15);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (th === "dos") {
+      const osc = ac.createOscillator(); const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = "square";
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (th === "megadrive") {
+      [261.63, 392, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sawtooth";
+        const startTime = now + (idx * 0.06);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
+    } else if (th === "midnight") {
+      [220, 329.63, 440].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.1);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        osc.start(startTime); osc.stop(startTime + 0.3);
+      });
+    } else if (th === "forest") {
+      [349.23, 440, 523.25].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.08);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
+        osc.start(startTime); osc.stop(startTime + 0.22);
+      });
+    } else if (th === "violet") {
+      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "ruby") {
+      [329.63, 493.88, 587.33].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "triangle";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+        osc.start(startTime); osc.stop(startTime + 0.2);
+      });
+    } else if (th === "light") {
+      [587.33, 739.99, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "sine";
+        const startTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.07, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+        osc.start(startTime); osc.stop(startTime + 0.18);
+      });
     } else {
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
@@ -2234,7 +2275,7 @@ function getPlatformBadgeClass(plat) {
   if (p.includes("gamecube") || p.includes("game cube")) return "badge-gamecube";
   if (p.includes("nintendo 64") || p.includes("n64")) return "badge-n64";
   if (p.includes("super nintendo") || p.includes("snes")) return "badge-snes";
-  if (p.includes("nes")) return "badge-nes";
+  if (p.includes("nes") || p.includes("nintendo entertainment system")) return "badge-nes";
   if (p.includes("game boy advance") || p.includes("gba")) return "badge-gba";
   if (p.includes("game boy color") || p.includes("gbc")) return "badge-gbc";
   if (p.includes("game boy") || p.includes("gb")) return "badge-gb";
@@ -2392,9 +2433,19 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
+  
       rel = g.releases.filter((r) => {
         const plat = r.platform.toLowerCase();
         const filt = currentFilter.toLowerCase();
+        
+        if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
+        if (filt === "playstation 4" || filt === "ps4") return plat === "playstation 4" || plat === "ps4";
+        if (filt === "playstation 3" || filt === "ps3") return plat === "playstation 3" || plat === "ps3";
+        if (filt === "playstation 2" || filt === "ps2") return plat === "playstation 2" || plat === "ps2";
+        if (filt === "playstation" || filt === "ps1") return plat === "playstation" || plat === "ps1";
+        if (filt === "game cube" || filt === "gamecube") return plat.includes("gamecube") || plat.includes("game cube");
+        if (filt === "game boy" || filt === "gb") return plat === "game boy" || plat === "gb";
+        
         return plat.includes(filt) || filt.includes(plat);
       });
     }
@@ -2498,181 +2549,89 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-// --- 🏛️ MUSÉE DES CONSOLES : VUE PRINCIPALE PRO ---
 function openConsoleVitrine() {
   playThemeSound(theme);
-  
-  const coinSpan = document.getElementById("museumPageCoins");
-  if (coinSpan) coinSpan.textContent = userCoins;
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
 
-  const contentArea = document.getElementById("museumPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
+  p.append(el("h2", "", t('vitrineTitle')));
+  p.append(el("p", "m", t('vitrineDesc')));
 
-  const container = el("div");
-  container.style.cssText = "display: flex; flex-direction: column; gap: 20px; width: 100%; text-align: left;";
-
-  // Bannière d'introduction du Musée
-  const hero = el("div", "museum-hero-banner");
-  hero.innerHTML = `
-    <div style="position: absolute; top: -20px; right: -20px; font-size: 90px; opacity: 0.05; pointer-events: none;">🏛️</div>
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:6px; color:var(--acc); font-size: 19px; letter-spacing:1.5px; text-shadow: 0 0 10px var(--acc);">🏛️ PANTHÉON MONDIAL DU JEU VIDÉO</h3>
-    <p class="m" style="margin-bottom:0; font-size: 12px; text-transform:uppercase; letter-spacing:1.2px; color:var(--txt); line-height: 1.5;">
-      Explorez l'évolution technologique de l'industrie à travers les âges. Cliquez sur une machine pour consulter ses spécifications d'origine, ses chiffres de vente et son empreinte historique.
-    </p>
-  `;
-  container.append(hero);
-
-  // Groupement par fabricant
   const groups = {};
   for (const consoleItem of WORLD_CONSOLES) {
     if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
     groups[consoleItem.brand].push(consoleItem);
   }
 
-  const gridWrapper = el("div");
-  gridWrapper.style.cssText = "display: flex; flex-direction: column; gap: 20px; width: 100%;";
-
   for (const [brand, consoles] of Object.entries(groups)) {
-    const section = el("div", "museum-category-section");
-    
-    const brandHeader = el("div");
-    brandHeader.style.cssText = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
-    brandHeader.innerHTML = `
-      <span style="font-family:'Orbitron',sans-serif; font-size: 13px; font-weight: 900; color: var(--acc); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px var(--acc);">🎮 ARCHIVES ${brand.toUpperCase()}</span>
-      <span style="font-family:'Orbitron',sans-serif; font-size: 10px; font-weight: 800; color: var(--mut); background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">${consoles.length} machine${consoles.length > 1 ? 's' : ''}</span>
-    `;
-    section.append(brandHeader);
+    const section = el("div", "constructor-section");
+    const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
+    section.append(brandTitle);
 
-    const grid = el("div");
-    const gridCols = window.innerWidth >= 768 ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
-    grid.style.cssText = `display: grid; grid-template-columns: ${gridCols}; gap: 14px;`;
-
+    const grid = el("div", "vitrine-grid");
     for (const consoleItem of consoles) {
-      const card = el("div", "museum-console-card");
+      const card = el("div", "console-vitrine-card");
       card.style.setProperty('--console-color', consoleItem.bg);
       
-      // Tag constructeur en haut à droite
-      const brandTag = el("span");
-      brandTag.style.cssText = `
-        position: absolute; top: 10px; right: 10px; font-family:'Orbitron',sans-serif; font-size: 8px; font-weight: 900;
-        text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: color-mix(in srgb, var(--console-color, var(--acc)) 25%, var(--cov));
-        color: var(--console-color, var(--acc)); letter-spacing: 1px; z-index: 3; border: 1px solid color-mix(in srgb, var(--console-color, var(--acc)) 50%, transparent);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      `;
-      brandTag.textContent = consoleItem.brand;
-
-      const screenBox = el("div", "museum-console-screen");
-      const badge = el("div", "museum-console-badge-code", consoleItem.code);
-      screenBox.append(badge);
-
-      const infoGroup = el("div");
-      infoGroup.style.cssText = "display: flex; flex-direction: column; gap: 2px;";
+      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
+      const photoBox = el("div", "console-photo-container");
+      const badge = el("div", "console-icon-badge", consoleItem.code);
+      photoBox.append(badge);
+
+      const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
-      name.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 12px; font-weight: 800; color: var(--txt); letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
-      
-      const year = el("span", "", `Lancement : ${consoleItem.year}`);
-      year.style.cssText = "font-size: 10px; color: var(--mut); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;";
-
+      const year = el("span", "", consoleItem.year);
       infoGroup.append(name, year);
-      card.append(brandTag, screenBox, infoGroup);
 
-      card.addEventListener("click", () => { 
-        playThemeSound(theme); 
-        openConsoleDetailInPage(consoleItem); 
-      });
-
+      card.append(brandTag, photoBox, infoGroup);
+      card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
       grid.append(card);
     }
     section.append(grid);
-    gridWrapper.append(section);
+    p.append(section);
   }
 
-  container.append(gridWrapper);
-  contentArea.append(container);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(closeBtn);
+
+  $("#sheet").classList.add("on");
 }
 
-// --- 📜 FICHE TECHNIQUE DÉTAILLÉE D'UNE CONSOLE ---
-function openConsoleDetailInPage(consoleItem) {
+function openConsoleDetail(consoleItem) {
   playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel";
+  p.replaceChildren();
+
+  const banner = el("div", "console-mockup-banner");
+  banner.style.background = consoleItem.bg;
+
+  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
+  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
   
-  const homeContent = document.getElementById("homeMainContent");
-  const shopPage = document.getElementById("shopMainPage");
-  const vitrinePage = document.getElementById("vitrineMainPage");
-  const museumPage = document.getElementById("museumMainPage");
-  
-  if (homeContent) homeContent.style.display = "none";
-  if (shopPage) shopPage.style.display = "none";
-  if (vitrinePage) vitrinePage.style.display = "none";
-  if (museumPage) museumPage.style.display = "block";
-
-  const contentArea = document.getElementById("museumPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const wrapper = el("div");
-  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 18px; width: 100%; text-align: left;";
-
-  // En-tête de la console (Mockup Banner)
-  const banner = el("div");
-  banner.style.cssText = `
-    background: linear-gradient(135deg, color-mix(in srgb, ${consoleItem.bg} 35%, #0d0f17), #0a0d14);
-    border: 2px solid ${consoleItem.bg}; border-radius: 18px; padding: 30px 20px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; position: relative; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 12px 35px rgba(0,0,0,0.6);
-  `;
-
-  const neonTitle = el("div");
-  neonTitle.style.cssText = `
-    font-family:'Orbitron',sans-serif; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
-    color: #fff; background: var(--card); padding: 12px 22px; border-radius: 12px; border: 2px solid ${consoleItem.bg};
-    box-shadow: 0 0 30px ${consoleItem.bg}, inset 0 0 15px color-mix(in srgb, ${consoleItem.bg} 60%, transparent);
-    text-shadow: 0 0 12px ${consoleItem.bg}; margin-bottom: 8px;
-  `;
-  neonTitle.textContent = consoleItem.name;
-
-  const subInfo = el("div", "", `Génération • Sortie : ${consoleItem.year} | Constructeur : ${consoleItem.brand}`);
-  subInfo.style.cssText = "font-family:'Orbitron',sans-serif; font-size: 11px; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;";
-
-  // Grille de spécifications techniques
-  const specsGrid = el("div");
-  specsGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; width: 100%; margin-top: 18px;";
-  
+  const specsGrid = el("div", "console-specs-grid");
   specsGrid.innerHTML = `
-    <div class="museum-spec-badge"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
-    <div class="museum-spec-badge"><span>Architecture / GPU</span>${consoleItem.gpu}</div>
-    <div class="museum-spec-badge"><span>Parc de Ventes</span>${consoleItem.sales}</div>
-    <div class="museum-spec-badge"><span>Héritage & Impact</span>${consoleItem.impact}</div>
+    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
+    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
+    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
+    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
   `;
   
   banner.append(neonTitle, subInfo, specsGrid);
 
-  // Boîte d'histoire et contexte
-  const storyBox = el("div");
-  storyBox.style.cssText = `
-    background: var(--card); border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-  `;
-  storyBox.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin: 0 0 10px 0; font-size: 14px; font-weight: 900; color: var(--acc); letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px;">
-      📜 HISTOIRE & CONTEXTE HISTORIQUE
-    </h3>
-    <p style="margin: 0; font-size: 13px; font-weight: 600; line-height: 1.7; color: var(--txt);">${consoleItem.desc}</p>
-  `;
+  const storyBox = el("div", "console-story-box");
+  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
 
-  // Bouton de retour
-  const backBtn = el("button", "cta", "← Retour au Panthéon du Musée");
-  backBtn.style.cssText = "font-family:'Orbitron', sans-serif; font-size: 12px; font-weight: 900; letter-spacing: 1px;";
-  backBtn.addEventListener("click", () => { 
-    playThemeSound(theme); 
-    openConsoleVitrine(); 
-  });
+  const backBtn = el("button", "cta", "← Retour au Musée");
+  backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
 
-  wrapper.append(banner, storyBox, backBtn);
-  contentArea.append(wrapper);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const closeBtn = el("button", "close", t('close'));
+  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+
+  p.append(banner, storyBox, backBtn, closeBtn);
 }
 
 function openShareModal() {
@@ -2734,13 +2693,25 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
   
+  // ... le reste de ta fonction continue ici ...
   const GENRE_FR = {
-    "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
-    "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
-    "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
-    "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel", "Card & Board Game": "Jeu de cartes"
+    "Action": "Action",
+    "Adventure": "Aventure",
+    "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir",
+    "Racing": "Course",
+    "Horror": "Horreur",
+    "Strategy": "Stratégie",
+    "Simulation": "Simulation",
+    "Sports": "Sport",
+    "Fighting": "Combat",
+    "Platform": "Plateforme",
+    "Indie": "Indépendant",
+    "Puzzle": "Réflexion",
+    "Music": "Musique",
+    "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel",
+    "Card & Board Game": "Jeu de cartes"
   };
 
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
@@ -3002,6 +2973,7 @@ function renderPlatformDropdown() {
 $("#platformSelect").addEventListener("change", (e) => {
   playThemeSound(theme);
   currentFilter = e.target.value;
+  // 🎯 AJOUTE CE BLOC ICI :
   let cData = loadChallengesData();
   cData.dailyProgress.filterConsole = true;
   cData.weeklyProgress.consolesExplored += 1;
@@ -3016,6 +2988,7 @@ $("#platformSelect").addEventListener("change", (e) => {
       return;
     }
   }
+  
   render();
 });
 
@@ -3038,7 +3011,7 @@ for (let i = 0; i < 20; i++) {
   particlesContainer.append(p);
 }
 
-// --- NAVIGATION PRINCIPALE DE LA BARRE DU BAS ---
+// Récupération correcte des boutons de la barre du bas
 const navHome = document.getElementById("navHome");
 const navShelf = document.getElementById("navShelf");
 const navShopArcade = document.getElementById("navShopArcade");
@@ -3052,42 +3025,17 @@ function setActiveNav(btn) {
 
 if (navHome) {
   navHome.addEventListener("click", () => {
-    playThemeSound(theme);
+    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navHome);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
-    const museumPage = document.getElementById("museumMainPage");
     
     if (homeContent) homeContent.style.display = "block";
     if (shopPage) shopPage.style.display = "none";
     if (vitrinePage) vitrinePage.style.display = "none";
-    if (museumPage) museumPage.style.display = "none";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-if (navShelf) {
-  navShelf.addEventListener("click", () => {
-    playThemeSound(theme);
-    setActiveNav(navShelf);
-    if (typeof closeSheet === "function") closeSheet();
-    
-    const homeContent = document.getElementById("homeMainContent");
-    const shopPage = document.getElementById("shopMainPage");
-    const vitrinePage = document.getElementById("vitrineMainPage");
-    const museumPage = document.getElementById("museumMainPage");
-    
-    if (homeContent) homeContent.style.display = "none";
-    if (shopPage) shopPage.style.display = "none";
-    if (museumPage) museumPage.style.display = "none";
-    if (vitrinePage) {
-      vitrinePage.style.display = "block";
-      renderVitrineMainPage();
-    }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -3095,18 +3043,16 @@ if (navShelf) {
 
 if (navShopArcade) {
   navShopArcade.addEventListener("click", () => {
-    playThemeSound(theme);
+    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navShopArcade);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
-    const museumPage = document.getElementById("museumMainPage");
     
     if (homeContent) homeContent.style.display = "none";
     if (vitrinePage) vitrinePage.style.display = "none";
-    if (museumPage) museumPage.style.display = "none";
     if (shopPage) {
       shopPage.style.display = "block";
       renderShopMainPage();
@@ -3118,27 +3064,33 @@ if (navShopArcade) {
 
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
-    playThemeSound(theme);
     setActiveNav(navMuseum);
+    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+  });
+}
+
+// --- MISE À JOUR DE LA NAVIGATION : CLic sur l'onglet Vitrine ---
+if (navShelf) {
+  navShelf.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navShelf);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
-    const museumPage = document.getElementById("museumMainPage");
-
+    
     if (homeContent) homeContent.style.display = "none";
     if (shopPage) shopPage.style.display = "none";
-    if (vitrinePage) vitrinePage.style.display = "none";
-    if (museumPage) {
-      museumPage.style.display = "block";
-      openConsoleVitrine();
+    if (vitrinePage) {
+      vitrinePage.style.display = "block";
+      renderVitrineMainPage();
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-
+  
 if (navSettings) {
   navSettings.addEventListener("click", () => {
     setActiveNav(navSettings);
@@ -3146,7 +3098,8 @@ if (navSettings) {
   });
 }
 
-// --- SYSTÈME DE DÉFIS & QUÊTES ---
+// --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
+
 function loadChallengesData() {
   const data = localStorage.getItem("cartridge_challenges");
   const today = new Date().toISOString().slice(0, 10);
@@ -3155,18 +3108,40 @@ function loadChallengesData() {
     lastLoginDate: "",
     loginStreak: 0,
     weeklyLoginsCount: 0,
-    dailyProgress: { curious: false, favorite: false, filterConsole: false },
-    weeklyProgress: { packsOpened: 0, consolesExplored: 0, login3Days: false, login7Days: false },
-    claimedRewards: { dailyLogin: false, daily1: false, daily2: false, daily3: false, weekly1: false, weekly2: false, weekly3: false, weekly4: false },
+    dailyProgress: {
+      curious: false,      // Ouvrir la fiche d'un jeu
+      favorite: false,     // Mettre un cœur
+      filterConsole: false // Filtrer par console
+    },
+    weeklyProgress: {
+      packsOpened: 0,      // Objectif : 3 packs
+      consolesExplored: 0, // Objectif : explorer les consoles
+      login3Days: false,   // 3 jours de connexion
+      login7Days: false    // 7 jours d'affilée
+    },
+    claimedRewards: {
+      dailyLogin: false,
+      daily1: false,
+      daily2: false,
+      daily3: false,
+      weekly1: false,
+      weekly2: false,
+      weekly3: false,
+      weekly4: false
+    },
     lastResetDate: today
   };
 
   if (!data) return defaultData;
   try {
     let parsed = JSON.parse(data);
+    // Réinitialisation journalière automatique
     if (parsed.lastResetDate !== today) {
       parsed.dailyProgress = { curious: false, favorite: false, filterConsole: false };
       parsed.claimedRewards.dailyLogin = false;
+      parsed.claimedRewards.daily1 = false;
+      parsed.claimedRewards.daily2 = false;
+      parsed.claimedRewards.daily3 = false;
       parsed.lastResetDate = today;
     }
     return parsed;
@@ -3179,6 +3154,7 @@ function saveChallengesData(data) {
   localStorage.setItem("cartridge_challenges", JSON.stringify(data));
 }
 
+// Vérifie la connexion du jour au lancement de l'app
 function checkDailyConnection() {
   let cData = loadChallengesData();
   const today = new Date().toISOString().slice(0, 10);
@@ -3189,17 +3165,30 @@ function checkDailyConnection() {
     const diffTime = lastDate ? Math.abs(currentDate - lastDate) : null;
     const diffDays = diffTime ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : 999;
 
-    if (diffDays === 1) cData.loginStreak += 1;
-    else cData.loginStreak = 1;
+    if (diffDays === 1) {
+      cData.loginStreak += 1;
+    } else if (diffDays > 1) {
+      cData.loginStreak = 1;
+    } else {
+      cData.loginStreak = 1;
+    }
 
     cData.lastLoginDate = today;
     cData.weeklyLoginsCount += 1;
+
+    if (cData.weeklyLoginsCount >= 3) cData.weeklyProgress.login3Days = true;
+    if (cData.loginStreak >= 7) cData.weeklyProgress.login7Days = true;
+
+    // Bonus de connexion automatique (10 crédits)
     userCoins += 10;
     if (typeof updateCoinsUI === "function") updateCoinsUI();
+    
     saveChallengesData(cData);
   }
 }
 
+// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
+// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE (100% INDÉPENDANTE) ---
 function renderShopMainPage() {
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
@@ -3208,7 +3197,9 @@ function renderShopMainPage() {
   const coinSpan = document.getElementById("shopPageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  checkDailyConnection();
+  if (typeof checkDailyConnection === "function") {
+    checkDailyConnection();
+  }
 
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
@@ -3237,7 +3228,7 @@ function renderShopMainPage() {
     constructionBanner.innerHTML = `
       <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
       <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
-        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs et des bonus uniques !
+        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs, des bordures de cartes légendaires et des bonus uniques pour ton profil !
       </p>
     `;
     displayBox.append(constructionBanner);
@@ -3249,38 +3240,121 @@ function renderShopMainPage() {
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
+    
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
 
-    banner.innerHTML = `
+    const headerTitle = el("div");
+    headerTitle.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
       <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
+    banner.append(headerTitle);
 
     const boostersGrid = el("div");
     boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; width: 100%; margin-top: 10px;";
 
     const packsConfig = [
-      { name: "STANDARD", sub: "Série Commune", price: "25 🪙", costNum: 25, type: "Standard", cat: "standard", color: "#94a3b8", glow: "rgba(148, 163, 184, 0.4)", gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)", badgeBg: "rgba(148, 163, 184, 0.2)" },
-      { name: "RÉTRO CLASSIC", sub: "Série Rare 1985-2005", price: "50 🪙", costNum: 50, type: "Rétro", cat: "retro", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.5)", gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)", badgeBg: "rgba(56, 189, 248, 0.2)" },
-      { name: "SUPREME COLLECTOR", sub: "Édition Holographique Ultime", price: "100 🪙", costNum: 100, type: "Collector Rétro", cat: "supreme_retro", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.6)", gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)", badgeBg: "rgba(251, 191, 36, 0.25)" }
+      {
+        name: "STANDARD",
+        sub: "Série Commune",
+        price: "25 🪙",
+        costNum: 25,
+        type: "Standard",
+        cat: "standard",
+        color: "#94a3b8",
+        glow: "rgba(148, 163, 184, 0.4)",
+        gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)",
+        badgeBg: "rgba(148, 163, 184, 0.2)"
+      },
+      {
+        name: "RÉTRO CLASSIC",
+        sub: "Série Rare 1985-2005",
+        price: "50 🪙",
+        costNum: 50,
+        type: "Rétro",
+        cat: "retro",
+        color: "#38bdf8",
+        glow: "rgba(56, 189, 248, 0.5)",
+        gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)",
+        badgeBg: "rgba(56, 189, 248, 0.2)"
+      },
+      {
+        name: "SUPREME COLLECTOR",
+        sub: "Édition Holographique Ultime",
+        price: "100 🪙",
+        costNum: 100,
+        type: "Collector Rétro",
+        cat: "supreme_retro",
+        color: "#fbbf24",
+        glow: "rgba(251, 191, 36, 0.6)",
+        gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)",
+        badgeBg: "rgba(251, 191, 36, 0.25)"
+      }
     ];
 
     packsConfig.forEach(cfg => {
       const boosterCard = el("div");
       boosterCard.style.cssText = `
-        background: ${cfg.gradient}; border: 2px solid ${cfg.color}; border-radius: 16px; padding: 18px 12px;
-        display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px;
-        cursor: pointer; box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
+        background: ${cfg.gradient};
+        border: 2px solid ${cfg.color};
+        border-radius: 16px;
+        padding: 18px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
       `;
-      boosterCard.innerHTML = `
-        <div style="width:100%; display:flex; flex-direction:column; align-items:center; gap:2px;">
-          <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase;">${cfg.sub}</span>
-          <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; width:100%; text-align:center;">${cfg.name}</div>
-        </div>
-        <button style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px; background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%;">${cfg.price}</button>
+
+      boosterCard.addEventListener("mouseenter", () => {
+        boosterCard.style.transform = "translateY(-6px) scale(1.03)";
+        boosterCard.style.boxShadow = `0 18px 40px rgba(0,0,0,0.85), 0 0 30px ${cfg.color}`;
+      });
+      boosterCard.addEventListener("mouseleave", () => {
+        boosterCard.style.transform = "translateY(0) scale(1)";
+        boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
+      });
+
+      const headerBox = el("div");
+      headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
+      headerBox.innerHTML = `
+        <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
+        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
       `;
-      boosterCard.addEventListener("click", () => buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat));
+
+      const centerArt = el("div");
+      centerArt.style.cssText = `
+        width: 64px; height: 82px; background: rgba(0,0,0,0.6); border: 2px solid ${cfg.color};
+        border-radius: 8px 8px 4px 4px; position: relative; display: flex; flex-direction:column; align-items: center; justify-content: center;
+        box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 0 15px ${cfg.glow}; z-index:2;
+      `;
+      centerArt.innerHTML = `
+        <div style="width:40px; height:20px; background:${cfg.color}33; border:1px solid ${cfg.color}; border-radius:3px; margin-bottom:6px;"></div>
+        <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:12px; color:${cfg.color}; text-shadow:0 0 6px ${cfg.color};">CR-26</span>
+      `;
+
+      const buyBtn = el("button", "", cfg.price);
+      buyBtn.style.cssText = `
+        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
+        background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
+        box-shadow: 0 0 15px ${cfg.color}; z-index:2; letter-spacing:1px;
+      `;
+      buyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
+      });
+
+      boosterCard.append(headerBox, centerArt, buyBtn);
+      boosterCard.addEventListener("click", () => {
+        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
+      });
+
       boostersGrid.append(boosterCard);
     });
 
@@ -3295,9 +3369,153 @@ function renderShopMainPage() {
 
     displayBox.replaceChildren();
     let cData = loadChallengesData();
+
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
-    banner.innerHTML = `<h3 style="font-family:'Orbitron',sans-serif; font-size:13px; color:var(--acc);">SYSTÈME DE QUÊTES</h3>`;
+
+    const headerBox = el("div");
+    headerBox.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
+    headerBox.innerHTML = `
+      <div style="width: 8px; height: 8px; background: var(--acc); box-shadow: 0 0 10px var(--acc); border-radius: 50%;"></div>
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:2px; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>
+    `;
+    banner.append(headerBox);
+
+    const challengesList = [
+      {
+        id: "dailyLogin",
+        title: "SÉRIE DE CONNEXION",
+        desc: `SYNCHRONISATION ACTIVE : ${cData.loginStreak || 1} JOUR(S)`,
+        reward: "+10 🪙 / JOUR",
+        rewardAmount: 10,
+        isDone: true,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`
+      },
+      {
+        id: "dailyExploration",
+        title: "PROTOCOLE EXPLORATION",
+        desc: "CONSULTATION DE DONNÉES ARCHIVES",
+        reward: "+10 🪙",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.curious,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
+      },
+      {
+        id: "dailyFavorite",
+        title: "INDEXATION FAVORIS",
+        desc: "MARQUAGE DE DONNÉES PRIORITAIRES",
+        reward: "+10 🪙",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.favorite,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
+      },
+      {
+        id: "dailyConsoleFilter",
+        title: "BALAYAGE GLOBAL SECTEUR",
+        desc: "NAVIGATION MULTI-ZONES CONSOLES",
+        reward: "+10 🪙",
+        rewardAmount: 10,
+        isDone: !!cData.dailyProgress?.filterConsole,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
+      },
+      {
+        id: "weeklyPacks",
+        title: "ARCHIVAGE HEBDOMADAIRE",
+        desc: `PAKS OUVERTS : ${cData.weeklyProgress?.packsOpened || 0} / 3`,
+        reward: "+20 🪙",
+        rewardAmount: 20,
+        isDone: (cData.weeklyProgress?.packsOpened || 0) >= 3,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
+      },
+      {
+        id: "streak7Days",
+        title: "SYNCHRONISATION 7 JOURS",
+        desc: "OBJECTIF DE CONNEXION CONTINUE",
+        reward: "2 PACKS GRATUITS",
+        rewardAmount: 0,
+        isDone: (cData.loginStreak || 0) >= 7,
+        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`
+      }
+    ];
+
+    challengesList.forEach(item => {
+      const row = el("div");
+      row.style.cssText = `
+        display: flex; align-items: center; justify-content: space-between;
+        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+        border-radius: 10px; padding: 12px 16px; gap: 12px;
+      `;
+
+      const leftGroup = el("div");
+      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; overflow: hidden;";
+
+      const iconBox = el("div");
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.innerHTML = item.iconSvg;
+
+      const textInfo = el("div");
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; overflow: hidden;";
+      
+      const titleEl = el("span", "", item.title);
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+
+      const descEl = el("span", "", item.desc);
+      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
+
+      textInfo.append(titleEl, descEl);
+      leftGroup.append(iconBox, textInfo);
+
+      const rightGroup = el("div");
+      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
+
+      const rewardBadge = el("span", "", item.reward);
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+
+      const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
+      const statusBtn = document.createElement("button");
+      statusBtn.type = "button";
+
+      if (isClaimed) {
+        statusBtn.textContent = "VALIDÉ";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
+          cursor: default; white-space: nowrap;
+        `;
+      } else if (item.isDone) {
+        statusBtn.textContent = "RÉCLAMER";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
+          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
+          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
+        `;
+        statusBtn.addEventListener("click", () => {
+          if (!cData.claimedRewards) cData.claimedRewards = {};
+          cData.claimedRewards[item.id] = true;
+          saveChallengesData(cData);
+
+          if (item.rewardAmount > 0) {
+            addCoins(item.rewardAmount);
+            if (typeof updateCoinsUI === "function") updateCoinsUI();
+          }
+
+          if (typeof playThemeSound === "function") playThemeSound(theme);
+          showChallenges();
+        });
+      } else {
+        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
+          cursor: default; white-space: nowrap;
+        `;
+      }
+
+      rightGroup.append(rewardBadge, statusBtn);
+      row.append(leftGroup, rightGroup);
+      banner.append(row);
+    });
+
     displayBox.append(banner);
   }
 
@@ -3313,7 +3531,7 @@ function renderShopMainPage() {
 function buyAndOpenPack(cost, typeName, category) {
   playThemeSound(theme);
   if (userCoins < cost) {
-    alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙.`);
+    alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙 pour ce pack.`);
     return;
   }
   userCoins -= cost;
@@ -3325,7 +3543,7 @@ function buyAndOpenPack(cost, typeName, category) {
     triggerRandomPackDraw(typeName, category);
   }
 }
-
+// --- FONCTION DE RENDU DE LA VITRINE (TRI STRICT PAR CATÉGORIE ENREGISTRÉE) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3349,8 +3567,10 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
+    // 🎯 TRI STRICT BASÉ SUR LA VRAIE PROPRIÉTÉ ENREGISTRÉE
     const collectorItems = myCollection.filter(item => item.category === "supreme_retro");
     const retroItems = myCollection.filter(item => item.category === "retro");
+    // Tout le reste ou les anciennes sans catégorie vont dans standard
     const standardItems = myCollection.filter(item => !item.category || item.category === "standard");
 
     const categoriesConfig = [
@@ -3363,19 +3583,22 @@ function renderVitrineMainPage() {
     mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
     categoriesConfig.forEach(cat => {
-      if (cat.items.length === 0) return;
+      if (cat.items.length === 0) return; // Ignore la section si elle est vide
 
       const sectionWrapper = el("div");
       sectionWrapper.style.cssText = `
-        background: rgba(11, 15, 22, 0.5); border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
-        border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        background: rgba(11, 15, 22, 0.5);
+        border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px ${cat.glow};
       `;
 
       const catHeader = el("div");
       catHeader.style.cssText = `display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid color-mix(in srgb, ${cat.color} 20%, transparent); padding-bottom:8px;`;
       catHeader.innerHTML = `
-        <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px;">${cat.title}</span>
-        <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px;">${cat.items.length} jaquette(s)</span>
+        <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px; text-shadow:0 0 8px ${cat.color};">${cat.title}</span>
+        <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px; border:1px solid color-mix(in srgb, ${cat.color} 20%, transparent);">${cat.items.length} jaquette${cat.items.length > 1 ? 's' : ''}</span>
       `;
       sectionWrapper.append(catHeader);
 
@@ -3388,8 +3611,12 @@ function renderVitrineMainPage() {
 
         const woodenShelf = el("div");
         woodenShelf.style.cssText = `
-          background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%); border: 1px solid #3d2f24;
-          border-radius: 10px; padding: 14px 10px 4px; position: relative; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);
+          background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
+          border: 1px solid #3d2f24;
+          border-radius: 10px;
+          padding: 14px 10px 4px;
+          position: relative;
+          box-shadow: inset 0 4px 8px rgba(0,0,0,0.9), 0 6px 16px rgba(0,0,0,0.5);
         `;
 
         const gamesRow = el("div");
@@ -3398,8 +3625,16 @@ function renderVitrineMainPage() {
         for (const item of rowItems) {
           const gameBox = el("div");
           gameBox.style.cssText = `
-            background: var(--card); border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
-            border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            background: var(--card);
+            border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow};
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
           `;
           
           gameBox.addEventListener("click", () => {
@@ -3414,9 +3649,19 @@ function renderVitrineMainPage() {
 
           const spine = el("div");
           spine.style.cssText = `
-            font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 800; text-transform: uppercase;
-            width: 100%; text-align: center; background: rgba(0,0,0,0.95); color: #fff; padding: 5px 3px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            width: 100%;
+            text-align: center;
+            background: rgba(0,0,0,0.95);
+            color: #fff;
+            padding: 5px 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-top: 1px solid color-mix(in srgb, ${cat.color} 40%, transparent);
           `;
           spine.textContent = item.name;
 
@@ -3425,6 +3670,17 @@ function renderVitrineMainPage() {
         }
 
         woodenShelf.append(gamesRow);
+
+        const plankBoard = el("div");
+        plankBoard.style.cssText = `
+          height: 10px;
+          background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
+          margin: 6px -10px -4px -10px;
+          border-radius: 0 0 8px 8px;
+          border-top: 1px solid #5a4434;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.8);
+        `;
+        woodenShelf.append(plankBoard);
         shelfContainer.append(woodenShelf);
       }
 
@@ -3436,7 +3692,7 @@ function renderVitrineMainPage() {
   }
   contentArea.append(banner);
 }
-
+// --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
@@ -3447,6 +3703,13 @@ $("#search").addEventListener("input", (e) => {
 
 $("#prev").addEventListener("click", () => shiftMonth(-1));
 $("#next").addEventListener("click", () => shiftMonth(1));
+
+document.addEventListener("DOMContentLoaded", () => {
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  if (prevBtn) prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`;
+  if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
+});
 
 load();
 </script>
