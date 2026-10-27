@@ -2444,12 +2444,29 @@ let soundEnabled = true;
 try { soundEnabled = localStorage.getItem("sound") !== "false"; } catch (e) {}
 
 function playThemeSound(th) {
-  // 1. Si le son général est coupé, on s'arrête direct
   if (!soundEnabled) return;
-  
-  // 2. Si l'option "FX Cartouche" est désactivée dans les réglages, on ne joue pas ces bips-là
-  if (localStorage.getItem("cartridgeFx") === "false") return;
 
+  // 1. Si le FX Cartouche est activé, il prend le dessus sur tous les sons de thèmes !
+  if (localStorage.getItem("cartridgeFx") === "true") {
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ac.currentTime;
+      // Effet "FX Cartouche" (son unique de cartouche qui s'insère)
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = "square";
+        const startTime = now + (idx * 0.04);
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.12);
+        osc.start(startTime); osc.stop(startTime + 0.12);
+      });
+      return; // On coupe net pour ne pas jouer le son du thème par-dessus
+    } catch (e) {}
+  }
+
+  // 2. Si le FX Cartouche est désactivé, on joue normalement le son spécifique du thème choisi
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     const now = ac.currentTime;
