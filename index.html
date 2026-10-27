@@ -1055,30 +1055,29 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   z-index: 10;
 }
 
-/* --- CORRECTION NAVBAR POUR THÈMES RÉTRO (GAMEBOY, NES, SNES, ARCADE) --- */
+/* --- MASQUER LE TEXTE DE LA NAVBAR POUR LES THÈMES RÉTRO (ÉVITTE LES CHEVAUCHEMENTS) --- */
 body[data-theme="gameboy"] .bottom-nav .nav-item span,
 body[data-theme="nes"] .bottom-nav .nav-item span,
 body[data-theme="snes"] .bottom-nav .nav-item span,
 body[data-theme="arcade"] .bottom-nav .nav-item span {
-  font-size: 7px !important;
-  letter-spacing: -0.8px !important;
-  white-space: nowrap !important;
+  display: none !important;
 }
 
-body[data-theme="gameboy"] .bottom-nav .nav-item svg,
-body[data-theme="nes"] .bottom-nav .nav-item svg,
-body[data-theme="snes"] .bottom-nav .nav-item svg,
-body[data-theme="arcade"] .bottom-nav .nav-item svg {
-  width: 16px !important;
-  height: 16px !important;
+/* On centre bien les icônes et on ajuste la hauteur de la navbar pour le gain de place */
+body[data-theme="gameboy"] .bottom-nav .nav-item,
+body[data-theme="nes"] .bottom-nav .nav-item,
+body[data-theme="snes"] .bottom-nav .nav-item,
+body[data-theme="arcade"] .bottom-nav .nav-item {
+  height: 100% !important;
+  justify-content: center !important;
+  gap: 0 !important;
 }
 
 body[data-theme="gameboy"] .bottom-nav,
 body[data-theme="nes"] .bottom-nav,
 body[data-theme="snes"] .bottom-nav,
 body[data-theme="arcade"] .bottom-nav {
-  padding-left: 2px !important;
-  padding-right: 2px !important;
+  height: calc(52px + env(safe-area-inset-bottom)) !important;
 }
 </style>
 </head>
