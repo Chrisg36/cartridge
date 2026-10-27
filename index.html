@@ -834,6 +834,17 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   display: flex;
   flex-direction: column;
 }
+
+@keyframes flashBurst {
+  0% { opacity: 1; transform: scale(0.9); filter: brightness(3); }
+  50% { opacity: 0.8; filter: brightness(2); }
+  100% { opacity: 0; transform: scale(1.1); filter: brightness(1); }
+}
+
+@keyframes foilShine {
+  0% { transform: translateX(-150%) translateY(-150%) rotate(25deg); }
+  100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
+}
   
 </style>
 </head>
@@ -1338,26 +1349,25 @@ async function triggerRandomPackDraw(type, category = "standard") {
   cData.weeklyProgress.packsOpened += 1;
   saveChallengesData(cData);
 
-  // Création du conteneur Plein Écran dédié
   const fsOverlay = el("div", "pack-fullscreen-overlay");
   
-  // Étape 1 : Visuel du Booster en train de vibrer
+  // Étape 1 : Vibration et suspense du booster
   const loadingWrapper = el("div");
-  loadingWrapper.style.cssText = "text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;";
+  loadingWrapper.style.cssText = "text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px; z-index:2;";
 
   const boosterVisual = el("div", "fullscreen-booster-card pack-animating");
   boosterVisual.innerHTML = `
     <div class="booster-foil-overlay"></div>
-    <div class="booster-logo-badge">SYSTEM // SECURE</div>
-    <div class="booster-art-center" style="width:80px; height:80px;">
-      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:14px; color:var(--acc);">CR-26</span>
+    <div class="booster-logo-badge">SYSTÈME // SÉCURISÉ</div>
+    <div class="booster-art-center" style="width:90px; height:90px;">
+      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:16px; color:var(--acc); text-shadow:0 0 10px var(--acc);">CR-26</span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--acc); letter-spacing:2px; text-transform:uppercase;">
-      ${type}
+    <div style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:var(--acc); letter-spacing:3px; text-transform:uppercase;">
+      PACK ${type}
     </div>
   `;
 
-  const loadText = el("p", "", "INITIALISATION DU FLUX DE DONNÉES...");
+  const loadText = el("p", "", "DÉCRYPTAGE DU FLUX DE DONNÉES EN COURS...");
   loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
 
   loadingWrapper.append(boosterVisual, loadText);
@@ -1365,7 +1375,6 @@ async function triggerRandomPackDraw(type, category = "standard") {
   document.body.append(fsOverlay);
 
   let randomGame;
-  
   try {
     if (typeof API !== 'undefined') {
       let targetYear;
@@ -1406,48 +1415,53 @@ async function triggerRandomPackDraw(type, category = "standard") {
     };
   }
 
-  // Ajout à la collection
   if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
     myCollection.push(randomGame);
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
 
-  // Temps de suspense (1.5s)
+  // Temps de suspense avant l'explosion
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // Étape 2 : Écran de révélation plein écran avec la carte 3D à retourner
+  // --- ÉTAPE 2 : EFFET D'EXPLOSION DE LUMIÈRE (FLASH) ---
+  const flashEffect = el("div");
+  flashEffect.style.cssText = `
+    position: fixed; inset: 0; background: #ffffff; z-index: 999999;
+    animation: flashBurst 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; pointer-events: none;
+  `;
+  document.body.append(flashEffect);
+  setTimeout(() => flashEffect.remove(), 600);
+
+  // Étape 3 : Affichage de la carte holographique révélée
   fsOverlay.replaceChildren();
 
   const revealWrapper = el("div");
-  revealWrapper.style.cssText = "text-align: center; display:flex; flex-direction:column; align-items:center; width:100%; max-width:400px; animation: fadeInList 0.4s ease-out;";
+  revealWrapper.style.cssText = "text-align: center; display:flex; flex-direction:column; align-items:center; width:100%; max-width:400px; animation: fadeInList 0.4s ease-out; z-index:2;";
 
-  const topTitle = el("h2", "", `ACQUISITION TERMINÉE`);
-  topTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--txt); font-size:14px; font-weight:900; letter-spacing:3px; margin-bottom:6px; text-transform:uppercase;";
+  const topTitle = el("h2", "", `RÉVÉLATION COLLECTOR`);
+  topTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--txt); font-size:15px; font-weight:900; letter-spacing:3px; margin-bottom:6px; text-transform:uppercase; text-shadow:0 0 10px var(--acc);";
 
-  const rarityTag = el("div", "", category.includes("retro") ? "ARCHIVE LÉGENDAIRE" : "INDEX STANDARD");
-  rarityTag.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:20px; background:color-mix(in srgb, var(--acc) 15%, transparent); padding:4px 10px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 40%, transparent);";
+  const rarityTag = el("div", "", category.includes("retro") ? "✨ ARCHIVE HOLOGRAPHIQUE LÉGENDAIRE" : "💎 INDEX STANDARD");
+  rarityTag.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:18px; background:color-mix(in srgb, var(--acc) 20%, transparent); padding:6px 12px; border-radius:8px; border:1px solid color-mix(in srgb, var(--acc) 50%, transparent); box-shadow:0 0 12px color-mix(in srgb, var(--acc) 30%, transparent);";
 
-  // Conteneur Flip 3D Plein Écran
   const flipContainer = el("div", "fullscreen-card-flip-container");
   const flipper = el("div", "fullscreen-card-flipper");
 
-  // Face cachée (Design pro siglé CR)
   const cardFront = el("div", "fs-card-front");
   cardFront.innerHTML = `
-    <div style="width:64px; height:64px; border-radius:14px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px var(--acc); margin-bottom:14px;">
-      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:22px; color:var(--on);">CR</span>
+    <div style="width:72px; height:72px; border-radius:16px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px var(--acc); margin-bottom:14px;">
+      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:24px; color:var(--on);">CR</span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
+    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
   `;
 
-  // Face visible (Jaquette du jeu)
   const cardBack = el("div", "fs-card-back");
   const img = el("img");
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
   img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
 
   const cardTitle = el("div", "", randomGame.name);
-  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 10px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
+  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
 
   cardBack.append(img, cardTitle);
   flipper.append(cardFront, cardBack);
@@ -1476,7 +1490,6 @@ async function triggerRandomPackDraw(type, category = "standard") {
   detailBtn.style.flex = "1";
   detailBtn.style.fontFamily = "'Orbitron', sans-serif";
   detailBtn.style.fontSize = "11px";
-  detailBtn.style.letterSpacing = "1px";
   detailBtn.addEventListener("click", () => {
     playThemeSound(theme);
     fsOverlay.remove();
@@ -1487,12 +1500,10 @@ async function triggerRandomPackDraw(type, category = "standard") {
   backBtn.style.flex = "1";
   backBtn.style.fontFamily = "'Orbitron', sans-serif";
   backBtn.style.fontSize = "11px";
-  backBtn.style.letterSpacing = "1px";
   backBtn.addEventListener("click", () => {
     playThemeSound(theme);
     fsOverlay.remove();
-    openShopModal();
-    renderShopMainPage();
+    openShopMainPage();
   });
 
   btnGroup.append(detailBtn, backBtn);
