@@ -943,11 +943,10 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
         <span>HUB PRINCIPAL</span>
       </div>
     </div>
-    <!-- Contenu de la boutique -->
     <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-  <!-- 🏛️ LA GRANDE PAGE VITRINE DE COLLECTION (BIEN FERMÉE ICI) -->
+  <!-- 🏛️ LA GRANDE PAGE VITRINE DE COLLECTION -->
   <div id="vitrineMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
@@ -963,11 +962,10 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
         <span>GALERIE GLOBALE</span>
       </div>
     </div>
-    <!-- Contenu de la vitrine en grand format -->
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-  <!-- 🎮 TON ACCUEIL NORMAL (En-tête + Liste des jeux) -->
+  <!-- 🎮 TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
       <div class="header-top">
@@ -1001,20 +999,6 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
           </button>
         </div>
       </div>
-
-      <div class="filter-bar-container">
-        <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
-        <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          <span>Favoris</span>
-        </button>
-      </div>
-
-      <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
-    </div>
-    <div id="list"></div>
-  </div>
-</main>
 
       <div class="filter-bar-container">
         <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
@@ -3172,11 +3156,12 @@ function checkDailyConnection() {
 
 function renderShopMainPage() {
   // --- FONCTION DE RENDU DE LA GRANDE PAGE VITRINE ---
+// --- FONCTION DE RENDU DE LA GRANDE PAGE VITRINE ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
+  if (!contentArea) return;
   contentArea.replaceChildren();
 
-  // Synchronisation des pièces
   const coinSpan = document.getElementById("vitrinePageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
