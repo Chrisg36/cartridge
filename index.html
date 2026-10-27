@@ -1267,17 +1267,50 @@ function openShopModal() {
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:3px 6px; border-radius:5px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
-    const statusBadge = el("span", "", item.status);
-      const isCompleted = item.status === "VALIDÉ";
-      statusBadge.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:3px 6px; border-radius:5px;
-        background: ${isCompleted ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)'};
-        color: ${isCompleted ? '#22c55e' : 'var(--mut)'};
-        border: 1px solid ${isCompleted ? 'rgba(34, 197, 94, 0.4)' : 'color-mix(in srgb, var(--mut) 30%, transparent)'};
-        white-space: nowrap;
-      `;
+const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
+      const statusBtn = el("button");
 
-      rightGroup.append(rewardBadge, statusBadge);
+      if (isClaimed) {
+        statusBtn.textContent = "VALIDÉ";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
+          cursor: default; white-space: nowrap;
+        `;
+      } else if (item.status === "VALIDÉ") {
+        statusBtn.textContent = "RÉCLAMER";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; padding:4px 8px; border-radius:5px;
+          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
+          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
+        `;
+        statusBtn.addEventListener("click", () => {
+          if (!cData.claimedRewards) cData.claimedRewards = {};
+          cData.claimedRewards[item.id] = true;
+          saveChallengesData(cData);
+
+          // Extraction du montant de la récompense (ex: "+10 🪙" -> 10)
+          const rewardMatch = item.reward.match(/\d+/);
+          const rewardAmount = rewardMatch ? parseInt(rewardMatch[0], 10) : 0;
+
+          if (rewardAmount > 0) {
+            addCoins(rewardAmount);
+            if (typeof updateCoinsUI === "function") updateCoinsUI();
+          }
+
+          if (typeof playThemeSound === "function") playThemeSound(theme);
+          renderChallengesTab();
+        });
+      } else {
+        statusBtn.textContent = "EN ATTENTE";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
+          cursor: default; white-space: nowrap;
+        `;
+      }
+
+      rightGroup.append(rewardBadge, statusBtn);
       row.append(leftGroup, rightGroup);
       banner.append(row);
     });
