@@ -1129,6 +1129,50 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   background-color: #0b0d14;
   /* (le reste de ton style bibliothèque CSS avec les dégradés et les lampes) */
 }
+
+/* 🏛️ On rend le grand bloc du musée complètement transparent */
+#museumMainPage {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px !important;
+}
+
+/* 📚 On s'assure que le décor de la bibliothèque couvre tout l'écran en arrière-plan fixe */
+.retro-library-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: #090a10;
+}
+
+/* 1. On supprime le fond et la bordure de la grande boîte centrale du Musée */
+#museumMainPage {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px !important;
+}
+
+/* 2. On fixe le décor de la bibliothèque pour qu'il occupe tout l'écran en arrière-plan */
+.retro-library-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  background-color: #0b0d14 !important;
+  pointer-events: none;
+}
+
+/* 3. On s'assure que les lampes latérales se placent bien sur les bords de l'écran mobile */
+.lamp-left {
+  left: 8px !important;
+  top: 90px !important;
+}
+
+.lamp-right {
+  right: 8px !important;
+  top: 90px !important;
+}
   
 </style>
 </head>
