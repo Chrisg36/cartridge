@@ -1373,11 +1373,14 @@ function openShopModal() {
   subNav.append(tabShop, tabPacks, tabChallenges);
   p.append(subNav, contentArea);
 
-  // Par défaut, on ouvre directement sur l'onglet Boutique principale (en construction)
+// Par défaut, on ouvre directement sur l'onglet Boutique principale
   renderShopTab();
 
   const close = el("button", "close", t('close'));
-  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  close.addEventListener("click", () => { 
+    playThemeSound(theme); 
+    closeSheet(); 
+  });
   p.append(close);
 
   $("#sheet").classList.add("on");
