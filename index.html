@@ -3243,7 +3243,7 @@ function renderShopMainPage() {
   showMainShop();
 }
 
-// --- 2. FONCTION DE RENDU DE LA GRANDE PAGE VITRINE (TRIÉE PAR PACK / ÉDITION) ---
+// --- 2. FONCTION DE RENDU DE LA GRANDE PAGE VITRINE (AVEC DÉTECTION INTELLIGENTE DES CATÉGORIES) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3267,7 +3267,7 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
-    // Définition des catégories / types de packs pour un tri pro
+    // Configuration des sections
     const categoriesConfig = [
       { key: "supreme_retro", title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)" },
       { key: "retro", title: "📼 Séries Rétro Classic", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.3)" },
@@ -3278,9 +3278,22 @@ function renderVitrineMainPage() {
     mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
     categoriesConfig.forEach(cat => {
-      // Filtrer les jeux appartenant à cette catégorie (par défaut 'standard' si non spécifié)
-      const catItems = myCollection.filter(item => (item.category || "standard") === cat.key);
-      if (catItems.length === 0) return; // Ne pas afficher la section si vide
+      // Filtrage intelligent : récupère les items de la catégorie OU assigne par défaut si non défini
+      const catItems = myCollection.filter(item => {
+        const itemCat = item.category || item.packType || "standard";
+        if (cat.key === "standard") {
+          return itemCat === "standard" || itemCat === "Standard" || (!["supreme_retro", "retro", "Collector Rétro", "Rétro"].includes(itemCat));
+        }
+        if (cat.key === "retro") {
+          return itemCat === "retro" || itemCat === "Rétro" || itemCat === "Rétro Classic";
+        }
+        if (cat.key === "supreme_retro") {
+          return itemCat === "supreme_retro" || itemCat === "Collector Rétro" || itemCat === "SUPREME COLLECTOR";
+        }
+        return false;
+      });
+
+      if (catItems.length === 0) return;
 
       const sectionWrapper = el("div");
       sectionWrapper.style.cssText = `
@@ -3291,7 +3304,6 @@ function renderVitrineMainPage() {
         box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px ${cat.glow};
       `;
 
-      // En-tête de la catégorie
       const catHeader = el("div");
       catHeader.style.cssText = `display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid color-mix(in srgb, ${cat.color} 20%, transparent); padding-bottom:8px;`;
       catHeader.innerHTML = `
@@ -3378,7 +3390,6 @@ function renderVitrineMainPage() {
 
         woodenShelf.append(gamesRow);
 
-        // Planche en bois texturée pour l'effet étagère réaliste
         const plankBoard = el("div");
         plankBoard.style.cssText = `
           height: 10px;
