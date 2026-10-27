@@ -847,6 +847,33 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   100% { transform: translateX(150%) translateY(150%) rotate(25deg); }
 }
 
+ /* Conteneur de la photo au milieu de la carte de console */
+.console-photo-container {
+  width: 100%;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, transparent 70%);
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+/* La vraie photo de la console */
+.console-real-img {
+  max-width: 90%;
+  max-height: 75px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Effet de zoom et d'aura lumineuse au survol */
+.console-vitrine-card:hover .console-real-img {
+  transform: scale(1.1) translateY(-2px);
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.9)), drop-shadow(0 0 10px var(--console-color, var(--acc)));
+}
  
 </style>
 </head>
@@ -3841,7 +3868,139 @@ if (navPromo) {
     showConstructionPage("Bons Plans & Promos", "🏷️");
   });
 }
-  
+
+const museumConsoles = [
+  // --- NINTENDO ---
+  {
+    name: "Nintendo Switch 2",
+    brand: "Nintendo",
+    year: 2025,
+    color: "#ff3b30",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/NINTENDO_SWITCH_2.png/640px-NINTENDO_SWITCH_2.png"
+  },
+  {
+    name: "Nintendo Switch",
+    brand: "Nintendo",
+    year: 2017,
+    color: "#e60012",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Nintendo-Switch-Console-Flanked.png/640px-Nintendo-Switch-Console-Flanked.png"
+  },
+  {
+    name: "Wii U",
+    brand: "Nintendo",
+    year: 2012,
+    color: "#00b0ff",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Wii_U_Console_and_Gamepad.png/640px-Wii_U_Console_and_Gamepad.png"
+  },
+  {
+    name: "Wii",
+    brand: "Nintendo",
+    year: 2006,
+    color: "#78909c",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Wii_Console.png/640px-Wii_Console.png"
+  },
+  {
+    name: "GameCube",
+    brand: "Nintendo",
+    year: 2001,
+    color: "#6747ed",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/GameCube-Console-Set.png/640px-GameCube-Console-Set.png"
+  },
+  {
+    name: "Nintendo 64",
+    brand: "Nintendo",
+    year: 1996,
+    color: "#f5b201",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Nintendo-64-Console-Set.png/640px-Nintendo-64-Console-Set.png"
+  },
+  {
+    name: "Super Nintendo",
+    brand: "Nintendo",
+    year: 1990,
+    color: "#6b5cd5",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/SNES-US-Console-Set.png/640px-SNES-US-Console-Set.png"
+  },
+  {
+    name: "NES",
+    brand: "Nintendo",
+    year: 1983,
+    color: "#e52521",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/NES-Console-Set.png/640px-NES-Console-Set.png"
+  },
+  {
+    name: "Nintendo 3DS",
+    brand: "Nintendo",
+    year: 2011,
+    color: "#ce181e",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Nintendo_3DS_Cosmo_Black_Open.png/640px-Nintendo_3DS_Cosmo_Black_Open.png"
+  },
+  {
+    name: "Nintendo DS",
+    brand: "Nintendo",
+    year: 2004,
+    color: "#00bcd4",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nintendo-DS-Open.png/640px-Nintendo-DS-Open.png"
+  },
+  {
+    name: "Game Boy Advance",
+    brand: "Nintendo",
+    year: 2001,
+    color: "#3f51b5",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Game-Boy-Advance-Purple-FL.png/640px-Game-Boy-Advance-Purple-FL.png"
+  },
+  {
+    name: "Game Boy Color",
+    brand: "Nintendo",
+    year: 1998,
+    color: "#9c27b0",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Nintendo-Game-Boy-Color-FL.png/640px-Nintendo-Game-Boy-Color-FL.png"
+  },
+  {
+    name: "Game Boy",
+    brand: "Nintendo",
+    year: 1989,
+    color: "#8bac0f",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Game-Boy-Mono.png/640px-Game-Boy-Mono.png"
+  },
+
+  // --- SONY ---
+  {
+    name: "PlayStation 5",
+    brand: "Sony",
+    year: 2020,
+    color: "#003087",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png"
+  },
+  {
+    name: "PlayStation 4",
+    brand: "Sony",
+    year: 2013,
+    color: "#003791",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PlayStation_4_and_Controller.png/640px-PlayStation_4_and_Controller.png"
+  },
+  {
+    name: "PlayStation 3",
+    brand: "Sony",
+    year: 2006,
+    color: "#66a3ff",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/PS3-Fat-Console.png/640px-PS3-Fat-Console.png"
+  },
+  {
+    name: "PlayStation 2",
+    brand: "Sony",
+    year: 2000,
+    color: "#00a0e9",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/PlayStation-2-Console-Set.png/640px-PlayStation-2-Console-Set.png"
+  },
+  {
+    name: "PlayStation",
+    brand: "Sony",
+    year: 1994,
+    color: "#f5f5f5",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/PlayStationConsole_bkg-transparent.png/640px-PlayStationConsole_bkg-transparent.png"
+  }
+];
+ 
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
