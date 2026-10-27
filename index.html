@@ -2572,78 +2572,80 @@ $("#viewModeBtn").addEventListener("click", () => {
 function openConsoleVitrine() {
   playThemeSound(theme);
   
-  // 1. On cache les autres vues et on affiche la grande page Musée
-  const homeContent = document.getElementById("homeMainContent");
-  const shopPage = document.getElementById("shopMainPage");
-  const vitrinePage = document.getElementById("vitrineMainPage");
-  const museumPage = document.getElementById("museumMainPage");
-  
+// --- GESTION PROPRE DE LA NAVIGATION PRINCIPALE ---
+
+const homeContent = document.getElementById("homeMainContent");
+const shopPage = document.getElementById("shopMainPage");
+const vitrinePage = document.getElementById("vitrineMainPage");
+const museumPage = document.getElementById("museumMainPage");
+
+function hideAllPages() {
   if (homeContent) homeContent.style.display = "none";
   if (shopPage) shopPage.style.display = "none";
   if (vitrinePage) vitrinePage.style.display = "none";
-  if (museumPage) museumPage.style.display = "block";
+  if (museumPage) museumPage.style.display = "none";
+  if (typeof closeSheet === "function") closeSheet();
+}
 
-  const coinSpan = document.getElementById("museumPageCoins");
-  if (coinSpan) coinSpan.textContent = userCoins;
+// 1. Bouton Accueil
+if (navHome) {
+  navHome.addEventListener("click", () => {
+    playThemeSound(theme);
+    setActiveNav(navHome);
+    hideAllPages();
+    if (homeContent) homeContent.style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
-  const contentArea = document.getElementById("museumPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const banner = el("div", "shop-banner");
-  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-
-  const headerDiv = el("div");
-  headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
-  `;
-  banner.append(headerDiv);
-
-  const groups = {};
-  for (const consoleItem of WORLD_CONSOLES) {
-    if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
-    groups[consoleItem.brand].push(consoleItem);
-  }
-
-  const mainContainer = el("div");
-  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
-
-  for (const [brand, consoles] of Object.entries(groups)) {
-    const section = el("div", "constructor-section");
-    const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
-    section.append(brandTitle);
-
-    const grid = el("div", "vitrine-grid");
-    for (const consoleItem of consoles) {
-      const card = el("div", "console-vitrine-card");
-      card.style.setProperty('--console-color', consoleItem.bg);
-      
-      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
-      
-      const photoBox = el("div", "console-photo-container");
-      const badge = el("div", "console-icon-badge", consoleItem.code);
-      photoBox.append(badge);
-
-      const infoGroup = el("div", "console-info-group");
-      const name = el("b", "", consoleItem.name);
-      const year = el("span", "", consoleItem.year);
-      infoGroup.append(name, year);
-
-      card.append(brandTag, photoBox, infoGroup);
-      card.addEventListener("click", () => { 
-        playThemeSound(theme); 
-        openConsoleDetailInPage(consoleItem); 
-      });
-      grid.append(card);
+// 2. Bouton Vitrine
+if (navShelf) {
+  navShelf.addEventListener("click", () => {
+    playThemeSound(theme);
+    setActiveNav(navShelf);
+    hideAllPages();
+    if (vitrinePage) {
+      vitrinePage.style.display = "block";
+      renderVitrineMainPage();
     }
-    section.append(grid);
-    mainContainer.append(section);
-  }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
-  banner.append(mainContainer);
-  contentArea.append(banner);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+// 3. Bouton Boutique Arcade
+if (navShopArcade) {
+  navShopArcade.addEventListener("click", () => {
+    playThemeSound(theme);
+    setActiveNav(navShopArcade);
+    hideAllPages();
+    if (shopPage) {
+      shopPage.style.display = "block";
+      renderShopMainPage();
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+// 4. Bouton Musée
+if (navMuseum) {
+  navMuseum.addEventListener("click", () => {
+    playThemeSound(theme);
+    setActiveNav(navMuseum);
+    hideAllPages();
+    if (museumPage) {
+      museumPage.style.display = "block";
+      openConsoleVitrine(); // Charge le contenu de ton musée dans sa page dédiée
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+// 5. Bouton Profil / Réglages
+if (navSettings) {
+  navSettings.addEventListener("click", () => {
+    setActiveNav(navSettings);
+    if (typeof openSettings === "function") openSettings();
+  });
 }
 
 function openConsoleDetailInPage(consoleItem) {
