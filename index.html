@@ -923,15 +923,18 @@ body[data-card-style="holographique"] .shop-pack-card {
   }
 }
 
-/* Application permanente sur les packs de la boutique en mode holographique */
-body[data-card-style="holographique"] .shop-pack-card {
+/* Application permanente du reflet sur les packs de la boutique ET les cartes du distributeur */
+body[data-card-style="holographique"] .shop-pack-card,
+body[data-card-style="holographique"] .booster-card, /* Remplace par la classe exacte de tes blocs de boosters si besoin */
+body[data-card-style="holographique"] .panel .cta-sec, /* Si tes blocs utilisent une classe similaire */
+body[data-card-style="holographique"] div[style*="border"] { /* Cible les box du distributeur */
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 15px rgba(var(--acc-rgb, 255, 100, 0), 0.3);
-  border-color: var(--acc);
 }
 
-body[data-card-style="holographique"] .shop-pack-card::after {
+/* Génération de la bande lumineuse qui traverse en diagonale en boucle */
+body[data-card-style="holographique"] .shop-pack-card::after,
+body[data-card-style="holographique"] .booster-card::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -945,7 +948,6 @@ body[data-card-style="holographique"] .shop-pack-card::after {
     transparent 60%
   );
   pointer-events: none;
-  /* L'animation tourne en boucle toute seule toutes les 2.5 secondes */
   animation: continuousHoloSweep 2.5s infinite linear;
 }
  
