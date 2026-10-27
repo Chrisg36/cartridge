@@ -1434,7 +1434,7 @@ async function triggerRandomPackDraw(type, category = "standard") {
   }
 
 if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
-    // 🎯 Mets cette ligne ici :
+    // 🎯 C'est cette ligne qu'il faut ajouter ici :
     randomGame.category = category; 
     
     myCollection.push(randomGame);
