@@ -965,6 +965,26 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
+<!-- 🏛️ 4. LA GRANDE PAGE MUSÉE DES CONSOLES -->
+  <div id="museumMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ MUSÉE DES CONSOLES</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="museumPageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>📜 ARCHIVES HISTORIQUES</span>
+        <span>PATRIMOINE MONDIAL</span>
+      </div>
+    </div>
+    <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
+
+  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -2551,18 +2571,43 @@ $("#viewModeBtn").addEventListener("click", () => {
 
 function openConsoleVitrine() {
   playThemeSound(theme);
-  const p = $("#panel");
-  p.className = "panel";
-  p.replaceChildren();
+  
+  // 1. On cache les autres vues et on affiche la grande page Musée
+  const homeContent = document.getElementById("homeMainContent");
+  const shopPage = document.getElementById("shopMainPage");
+  const vitrinePage = document.getElementById("vitrineMainPage");
+  const museumPage = document.getElementById("museumMainPage");
+  
+  if (homeContent) homeContent.style.display = "none";
+  if (shopPage) shopPage.style.display = "none";
+  if (vitrinePage) vitrinePage.style.display = "none";
+  if (museumPage) museumPage.style.display = "block";
 
-  p.append(el("h2", "", t('vitrineTitle')));
-  p.append(el("p", "m", t('vitrineDesc')));
+  const coinSpan = document.getElementById("museumPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
+  `;
+  banner.append(headerDiv);
 
   const groups = {};
   for (const consoleItem of WORLD_CONSOLES) {
     if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
     groups[consoleItem.brand].push(consoleItem);
   }
+
+  const mainContainer = el("div");
+  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
   for (const [brand, consoles] of Object.entries(groups)) {
     const section = el("div", "constructor-section");
@@ -2586,25 +2631,29 @@ function openConsoleVitrine() {
       infoGroup.append(name, year);
 
       card.append(brandTag, photoBox, infoGroup);
-      card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
+      card.addEventListener("click", () => { 
+        playThemeSound(theme); 
+        openConsoleDetailInPage(consoleItem); 
+      });
       grid.append(card);
     }
     section.append(grid);
-    p.append(section);
+    mainContainer.append(section);
   }
 
-  const closeBtn = el("button", "close", t('close'));
-  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-  p.append(closeBtn);
-
-  $("#sheet").classList.add("on");
+  banner.append(mainContainer);
+  contentArea.append(banner);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function openConsoleDetail(consoleItem) {
+function openConsoleDetailInPage(consoleItem) {
   playThemeSound(theme);
-  const p = $("#panel");
-  p.className = "panel";
-  p.replaceChildren();
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const wrapper = el("div", "shop-banner");
+  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 20px;";
 
   const banner = el("div", "console-mockup-banner");
   banner.style.background = consoleItem.bg;
@@ -2628,12 +2677,10 @@ function openConsoleDetail(consoleItem) {
   const backBtn = el("button", "cta", "← Retour au Musée");
   backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
 
-  const closeBtn = el("button", "close", t('close'));
-  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-
-  p.append(banner, storyBox, backBtn, closeBtn);
+  wrapper.append(banner, storyBox, backBtn);
+  contentArea.append(wrapper);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
@@ -3064,8 +3111,11 @@ if (navShopArcade) {
 
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navMuseum);
+    if (typeof closeSheet === "function") closeSheet();
     if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
