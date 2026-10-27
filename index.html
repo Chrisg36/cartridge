@@ -2762,19 +2762,19 @@ function renderMuseumMainPage() {
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
-const photoBox = el("div", "console-photo-container");
-    const img = el("img", "console-real-img");
-    
-    // Utilise directement l'image intégrée dans WORLD_CONSOLES
-    img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-    img.alt = consoleItem.name;
-    img.loading = "lazy";
-    
-    img.onerror = () => {
-      img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-    };
+      const photoBox = el("div", "console-photo-container");
+      const img = el("img", "console-real-img");
+      
+      // 🎯 ON UTILISE DIRECTEMENT L'IMAGE DE WORLD_CONSOLES
+      img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      img.alt = consoleItem.name;
+      img.loading = "lazy";
+      
+      img.onerror = () => {
+        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      };
 
-    photoBox.append(img);
+      photoBox.append(img);
 
       const infoGroup = el("div", "console-info-group");
       const name = el("b", "", consoleItem.name);
@@ -2783,7 +2783,6 @@ const photoBox = el("div", "console-photo-container");
 
       card.append(brandTag, photoBox, infoGroup);
       
-      // 🎯 OUVERTURE DE LA FICHE AU CLIC
       card.onclick = (e) => {
         e.stopPropagation();
         playThemeSound(theme);
