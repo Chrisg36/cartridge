@@ -3342,8 +3342,8 @@ function openSettings() {
   });
   document.body.setAttribute("data-layout-style", layoutStyle);
 
-  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
-  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
+let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off");
   holoBtn.style.margin = "0";
   holoBtn.addEventListener("click", () => {
     holoEffectEnabled = !holoEffectEnabled;
