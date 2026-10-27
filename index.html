@@ -1055,35 +1055,51 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   z-index: 10;
 }
 
-/* --- MODE PIXEL ART --- */
+/* --- MODE PIXEL ART (OPTIMISÉ MOBILE) --- */
 [data-layout-style="pixel art"] {
   --font: 'Press Start 2P', monospace !important;
   font-family: var(--font) !important;
   --radius: 0px !important;
 }
 
-/* Réduire la taille globale et le line-height pour que le texte ne soit pas géant */
+/* Réduction globale de la taille sur mobile pour que ça tienne partout */
 [data-layout-style="pixel art"] * {
-  font-size: 85% !important; /* Réduit la taille pour qu'elle tienne bien dans les boutons */
+  font-size: 72% !important;
   letter-spacing: -0.5px;
 }
 
-/* Ajustements spécifiques pour les titres et les boutons */
+/* Titres et en-têtes */
 [data-layout-style="pixel art"] h1, 
 [data-layout-style="pixel art"] h2, 
 [data-layout-style="pixel art"] .settings-section-title {
-  font-size: 10px !important; /* Garde les titres lisibles sans qu'ils explosent l'écran */
+  font-size: 9px !important;
 }
 
+/* Boutons et champs de saisie */
 [data-layout-style="pixel art"] button,
 [data-layout-style="pixel art"] .card,
 [data-layout-style="pixel art"] .booster-shop-card,
 [data-layout-style="pixel art"] input,
 [data-layout-style="pixel art"] select {
   border-radius: 0px !important;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8) !important;
   border: 2px solid var(--txt) !important;
-  font-size: 9px !important; /* Taille parfaite pour du texte dans les boutons rétro */
+  font-size: 8px !important;
+}
+
+/* Ajustement spécifique pour la barre de navigation du bas sur mobile */
+[data-layout-style="pixel art"] nav button,
+[data-layout-style="pixel art"] .bottom-nav button,
+[data-layout-style="pixel art"] footer button {
+  font-size: 6.5% !important; /* Pour que les noms comme "VITRINE" ou "BOUTIQUE" tiennent sans se couper */
+  padding: 4px 2px !important;
+}
+
+/* Correction des petits badges (ex: Switch 2, Hype, Meta) */
+[data-layout-style="pixel art"] .badge,
+[data-layout-style="pixel art"] span[class*="tag"] {
+  font-size: 7px !important;
+  padding: 2px 4px !important;
 }
 
 [data-layout-style="pixel art"] img {
