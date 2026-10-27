@@ -1234,7 +1234,7 @@ function openShopModal() {
       }
     ];
 
-    challengesList.forEach(item => {
+challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
         display: flex; align-items: center; justify-content: space-between;
@@ -1267,9 +1267,10 @@ function openShopModal() {
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:3px 6px; border-radius:5px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
-      // Gestion dynamique de l'état (Réclamé, Prêt à réclamer, ou En attente)
+      // Utilisation explicite de createElement pour avoir un vrai bouton HTML cliquable
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
-      const statusBtn = el("button");
+      const statusBtn = document.createElement("button");
+      type="button";
 
       if (isClaimed) {
         statusBtn.textContent = "VALIDÉ";
