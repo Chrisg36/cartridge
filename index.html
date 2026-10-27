@@ -2730,24 +2730,31 @@ function openConsoleDetail(consoleItem) {
   
   const specsGrid = el("div", "console-specs-grid");
   specsGrid.innerHTML = `
-    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
-    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
-    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
-    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
+    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu || "Non renseigné"}</div>
+    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu || "Non renseigné"}</div>
+    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales || "Non renseigné"}</div>
+    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact || "Non renseigné"}</div>
   `;
   
   banner.append(neonTitle, subInfo, specsGrid);
 
   const storyBox = el("div", "console-story-box");
-  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
+  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc || "Historique en cours de chargement..."}</p>`;
 
   const backBtn = el("button", "cta", "← Retour au Musée");
-  backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
+  backBtn.addEventListener("click", () => { 
+    playThemeSound(theme); 
+    renderMuseumMainPage(); 
+    closeSheet(); 
+  });
 
   const closeBtn = el("button", "close", t('close'));
   closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
 
   p.append(banner, storyBox, backBtn, closeBtn);
+
+  // 🎯 C'EST CETTE LIGNE QUI FAIT APPARAÎTRE LA MODALE À L'ÉCRAN
+  $("#sheet").classList.add("on");
 }
 
 function openShareModal() {
