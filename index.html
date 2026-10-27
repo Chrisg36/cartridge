@@ -2727,15 +2727,23 @@ function renderMuseumMainPage() {
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
-      const photoBox = el("div", "console-photo-container");
+   const photoBox = el("div", "console-photo-container");
       const img = el("img", "console-real-img");
       
-      const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name === consoleItem.name) : null;
-      const igdbDirectUrl = getIgdbConsoleImage(consoleItem.name);
+      // On cherche directement l'image dans le tableau global museumConsoles ou via l'objet consoleItem
+      const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name.toLowerCase() === consoleItem.name.toLowerCase()) : null;
       
-      img.src = (foundMuseumItem ? foundMuseumItem.image : null) || igdbDirectUrl || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      const targetImage = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image;
+      
+      img.src = targetImage && !targetImage.includes('upload/thumb') ? targetImage : "https://images.igdb.com/igdb/image/upload/t_cover_big/co2918.jpg";
       img.alt = consoleItem.name;
       img.loading = "lazy";
+      
+      // Si l'image charge mal, on bascule sur une image de secours sûre
+      img.onerror = () => {
+        img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/co2918.jpg";
+      };
+
       photoBox.append(img);
 
       const infoGroup = el("div", "console-info-group");
