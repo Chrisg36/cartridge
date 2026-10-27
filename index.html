@@ -2677,8 +2677,7 @@ function renderMuseumMainPage() {
     const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
     section.append(brandTitle);
 
-    // Une seule variable "grid" propre pour éviter l'erreur de syntaxe
-   const grid = el("div", "vitrine-grid");
+    const grid = el("div", "vitrine-grid");
     for (const consoleItem of consoles) {
       const card = el("div", "console-vitrine-card");
       card.style.setProperty('--console-color', consoleItem.bg);
@@ -2700,7 +2699,7 @@ function renderMuseumMainPage() {
 
       card.append(brandTag, photoBox, infoGroup);
       
-      // 🎯 FORCER L'OUVERTURE DE LA FICHE DIRECTEMENT AU CLIC
+      // 🎯 OUVERTURE DE LA FICHE AU CLIC
       card.onclick = (e) => {
         e.stopPropagation();
         playThemeSound(theme);
@@ -2709,6 +2708,13 @@ function renderMuseumMainPage() {
       
       grid.append(card);
     }
+    section.append(grid);
+    mainContainer.append(section);
+  }
+
+  banner.append(mainContainer);
+  contentArea.append(banner);
+}
       
       // Écouteur de clic pour ouvrir l'histoire, les specs et les composants
       card.addEventListener("click", () => {
