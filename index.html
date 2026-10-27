@@ -2650,7 +2650,7 @@ function renderMuseumMainPage() {
       card.append(brandTag, photoBox, infoGroup);
       card.addEventListener("click", () => {
         playThemeSound(theme);
-        openConsoleDetail(consoleItem); // Ouvre la fiche détaillée de la console
+        openConsoleDetail(consoleItem);
       });
       grid.append(card);
     }
@@ -2660,13 +2660,6 @@ function renderMuseumMainPage() {
 
   banner.append(mainContainer);
   contentArea.append(banner);
-}
-
-  const closeBtn = el("button", "close", t('close'));
-  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-  p.append(closeBtn);
-
-  $("#sheet").classList.add("on");
 }
 
 function openConsoleDetail(consoleItem) {
