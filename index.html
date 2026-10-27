@@ -1430,7 +1430,10 @@ async function triggerRandomPackDraw(type, category = "standard") {
     };
   }
 
-  if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
+if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
+    // 🎯 Mets cette ligne ici :
+    randomGame.category = category; 
+    
     myCollection.push(randomGame);
     try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
   }
