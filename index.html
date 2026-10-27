@@ -3087,17 +3087,13 @@ if (navMuseum) {
     playThemeSound(theme);
     setActiveNav(navMuseum);
     closeSheet();
-    
-    // 1. On cache TOUTES les autres sections principales
     document.getElementById("homeMainContent").style.display = "none";
     document.getElementById("shopMainPage").style.display = "none";
     document.getElementById("vitrineMainPage").style.display = "none";
     
-    // 2. On affiche la page du Musée en grand format
+    // 🏛️ C'est ici qu'on active et affiche la page du Musée :
     const mPage = document.getElementById("museumMainPage");
-    mPage.style.display = "block"; // <-- C'est ça qui force l'affichage en grand !
-    
-    // 3. On lance le rendu du musée
+    mPage.style.display = "block";
     renderMuseumMainPage(); 
     
     window.scrollTo({ top: 0, behavior: "smooth" });
