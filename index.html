@@ -889,7 +889,129 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
   background: linear-gradient(145deg, rgba(20, 25, 40, 0.7), rgba(10, 14, 22, 0.85)) !important;
   border: 1.5px solid color-mix(in srgb, var(--console-color, var(--acc)) 60%, transparent);
 }
- 
+
+/* 🏛️ CONTENEUR PRINCIPAL MUSÉE */
+#museumMainPage {
+  position: relative;
+  min-height: 100vh;
+  background: #090a10;
+  overflow: hidden;
+}
+
+/* 📚 FOND EN PURE CSS : ÉTAGÈRES & BOIS SOMBRE */
+.retro-library-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: 
+    /* Texture d'étagères & livres stylisés */
+    linear-gradient(180deg, rgba(10, 8, 15, 0.85) 0%, rgba(5, 5, 8, 0.95) 100%),
+    repeating-linear-gradient(90deg, #15101a 0px, #15101a 40px, #1e1726 40px, #1e1726 42px, #0f0b14 42px, #0f0b14 90px),
+    repeating-linear-gradient(0deg, #1c1322 0px, #1c1322 120px, #362215 120px, #362215 130px);
+  background-blend-mode: multiply;
+}
+
+/* Ombre atmosphérique pour recentrer le regard au milieu */
+.bookshelf-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(4, 4, 7, 0.85) 90%);
+}
+
+/* 💡 DESSIN DES LAMPES SUR LES CÔTÉS */
+.lamp {
+  position: absolute;
+  top: 15%;
+  width: 60px;
+  height: 140px;
+  z-index: 1;
+}
+.lamp-left { left: 4%; }
+.lamp-right { right: 4%; }
+
+/* Le pied de la lampe antique */
+.lamp-stand {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 90px;
+  background: linear-gradient(90deg, #4a341b, #8c6438, #2a1c0e);
+  border-radius: 4px;
+}
+.lamp-stand::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: -12px;
+  width: 32px;
+  height: 10px;
+  background: #6e4e29;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+}
+
+/* L'ampoule vintage filament */
+.lamp-bulb {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 34px;
+  background: #ffc86b;
+  border-radius: 50% 50% 40% 40%;
+  box-shadow: 0 0 15px #ff9d3b, inset 0 0 8px #fff;
+  animation: bulbFlicker 4s infinite ease-in-out;
+}
+
+/* Halo lumineux autour des lampes */
+.lamp-glow {
+  position: absolute;
+  top: -20px;
+  left: -70px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 157, 59, 0.35) 0%, rgba(255, 120, 30, 0.1) 45%, transparent 70%);
+  border-radius: 50%;
+  animation: glowFlicker 4s infinite ease-in-out;
+}
+
+/* ⚡ ANIMATION DE GRÉSILLEMENT RETRO (FLICKER) */
+@keyframes bulbFlicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  2% { opacity: 0.8; filter: brightness(0.7); }
+  4% { opacity: 1; filter: brightness(1.2); }
+  19% { opacity: 1; }
+  20% { opacity: 0.4; filter: brightness(0.4); }
+  21% { opacity: 1; filter: brightness(1.1); }
+  60% { opacity: 1; }
+  61% { opacity: 0.85; }
+  62% { opacity: 1; }
+  85% { opacity: 1; }
+  86% { opacity: 0.7; }
+  87% { opacity: 1; }
+}
+
+@keyframes glowFlicker {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  2% { transform: scale(0.95); opacity: 0.8; }
+  4% { transform: scale(1.05); opacity: 1.1; }
+  20% { transform: scale(0.85); opacity: 0.4; }
+  21% { transform: scale(1); opacity: 1; }
+  61% { opacity: 0.85; }
+  62% { opacity: 1; }
+}
+
+/* 🛡️ S'ASSURER QUE LE CONTENU DU MUSÉE PASSE AU-DESSUS DU DÉCOR */
+#museumMainPage > *:not(.retro-library-bg) {
+  position: relative;
+  z-index: 2;
+}
+
+  
 </style>
 </head>
 <body>
@@ -1011,6 +1133,23 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 
 <!-- 🏛️ 3. LA GRANDE PAGE MUSÉE DES CONSOLES -->
   <div id="museumMainPage" style="display: none;">
+    
+    <!-- 🎨 DÉCOR CSS BIBLIOTHÈQUE RÉTRO -->
+    <div class="retro-library-bg">
+      <div class="lamp lamp-left">
+        <div class="lamp-glow"></div>
+        <div class="lamp-bulb"></div>
+        <div class="lamp-stand"></div>
+      </div>
+      <div class="lamp lamp-right">
+        <div class="lamp-glow"></div>
+        <div class="lamp-bulb"></div>
+        <div class="lamp-stand"></div>
+      </div>
+      <div class="bookshelf-overlay"></div>
+    </div>
+
+    <!-- Contenu existant -->
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ MUSÉE MONDIAL DES CONSOLES</div>
