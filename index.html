@@ -987,6 +987,73 @@ body[data-card-style="pixel art"]::before {
   pointer-events: none;
   z-index: 999;
 }
+
+/* --- 1. STYLE DE STRUCTURE : CLEAN --- */
+body[data-layout-style="clean"] .row,
+body[data-layout-style="clean"] .grid-card,
+body[data-layout-style="clean"] .panel,
+body[data-layout-style="clean"] .shop-pack-card,
+body[data-layout-style="clean"] .booster-shop-card,
+body[data-layout-style="clean"] .chip {
+  border-radius: var(--radius);
+}
+
+/* --- 2. STYLE DE STRUCTURE : PIXEL ART --- */
+body[data-layout-style="pixel art"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body[data-layout-style="pixel art"] .row,
+body[data-layout-style="pixel art"] .grid-card,
+body[data-layout-style="pixel art"] .panel,
+body[data-layout-style="pixel art"] .shop-pack-card,
+body[data-layout-style="pixel art"] .booster-shop-card,
+body[data-layout-style="pixel art"] .chip {
+  border-radius: 2px !important;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8) !important;
+}
+
+body[data-layout-style="pixel art"] .row:hover,
+body[data-layout-style="pixel art"] .grid-card:hover,
+body[data-layout-style="pixel art"] .booster-shop-card:hover {
+  transform: translate(-2px, -2px) !important;
+  transition: none !important;
+  box-shadow: 5px 5px 0px var(--acc) !important;
+}
+
+/* --- 3. EFFET LUMINEUX HOLOGRAPHIQUE (ACTIVABLE PARTOUT) --- */
+@keyframes continuousHoloSweep {
+  0% { transform: rotate(35deg) translate(-100%, -100%); }
+  100% { transform: rotate(35deg) translate(100%, 100%); }
+}
+
+body[data-holo-effect="true"] .shop-pack-card,
+body[data-holo-effect="true"] .booster-shop-card,
+body[data-holo-effect="true"] .card-holo-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-holo-effect="true"] .shop-pack-card::after,
+body[data-holo-effect="true"] .booster-shop-card::after,
+body[data-holo-effect="true"] .card-holo-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+  animation: continuousHoloSweep 2.5s infinite linear;
+  z-index: 10;
+}
  
 </style>
 </head>
@@ -4331,6 +4398,33 @@ function playCartridgeBreathSound() {
     // Ignore si l'AudioContext est bloqué par le navigateur
   }
 }
+
+// --- PERSONNALISATION : STRUCTURE & EFFET LUMINEUX ---
+  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
+  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
+  layoutBtn.style.margin = "0";
+  layoutBtn.addEventListener("click", () => {
+    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
+    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
+    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
+    document.body.setAttribute("data-layout-style", layoutStyle);
+    playThemeSound(theme);
+  });
+  document.body.setAttribute("data-layout-style", layoutStyle);
+
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
+  holoBtn.style.margin = "0";
+  holoBtn.addEventListener("click", () => {
+    holoEffectEnabled = !holoEffectEnabled;
+    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+    playThemeSound(theme);
+  });
+  document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+
+  customGrid.append(layoutBtn, holoBtn);
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
