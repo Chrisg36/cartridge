@@ -1038,10 +1038,19 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
 
 <script>
+  // --- DÉFINITIONS UTILITAIRES EN PREMIER ---
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+};
+// --- TES VARIABLES GLOBALES ---
 let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
 let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
 let lastDailyClaim = localStorage.getItem("lastDailyClaim") || "";
-
+  
 function updateCoinsUI() {
   const badge = $("#userCoins");
   if (badge) badge.textContent = userCoins;
