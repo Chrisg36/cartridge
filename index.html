@@ -3521,7 +3521,7 @@ function buyAndOpenPack(cost, typeName, category) {
     triggerRandomPackDraw(typeName, category);
   }
 }
-// --- FONCTION DE RENDU DE LA GRANDE PAGE VITRINE (100% ISOLÉE) ---
+// --- FONCTION DE RENDU DE LA VITRINE (TRI STRICT PAR CATÉGORIE ENREGISTRÉE) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3545,12 +3545,11 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
-    const totalItems = myCollection.length;
-    
-    // Répartition propre par sections
-    const collectorItems = myCollection.slice(0, Math.min(5, totalItems));
-    const retroItems = totalItems > 5 ? myCollection.slice(5, Math.min(15, totalItems)) : [];
-    const standardItems = totalItems > 15 ? myCollection.slice(15) : (totalItems <= 5 ? [] : myCollection.slice(5));
+    // 🎯 TRI STRICT BASÉ SUR LA VRAIE PROPRIÉTÉ ENREGISTRÉE
+    const collectorItems = myCollection.filter(item => item.category === "supreme_retro");
+    const retroItems = myCollection.filter(item => item.category === "retro");
+    // Tout le reste ou les anciennes sans catégorie vont dans standard
+    const standardItems = myCollection.filter(item => !item.category || item.category === "standard");
 
     const categoriesConfig = [
       { title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)", items: collectorItems },
@@ -3562,7 +3561,7 @@ function renderVitrineMainPage() {
     mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
     categoriesConfig.forEach(cat => {
-      if (cat.items.length === 0) return;
+      if (cat.items.length === 0) return; // Ignore la section si elle est vide
 
       const sectionWrapper = el("div");
       sectionWrapper.style.cssText = `
@@ -3616,15 +3615,6 @@ function renderVitrineMainPage() {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
           `;
           
-          gameBox.addEventListener("mouseenter", () => {
-            gameBox.style.transform = "translateY(-4px)";
-            gamebox.style.boxShadow = `0 14px 30px rgba(0,0,0,0.85), 0 0 15px ${cat.color}`;
-          });
-          gameBox.addEventListener("mouseleave", () => {
-            gameBox.style.transform = "translateY(0)";
-            gameBox.style.boxShadow = `0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}`;
-          });
-
           gameBox.addEventListener("click", () => {
             playThemeSound(theme);
             openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
