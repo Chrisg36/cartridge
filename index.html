@@ -2447,22 +2447,34 @@ function playThemeSound(th) {
   if (!soundEnabled) return;
 
   // 1. Si le FX Cartouche est activé, il prend le dessus sur tous les sons de thèmes !
+// --- EFFET SONORE : PAGE RÉTRO / MAGAZINE ---
   if (localStorage.getItem("cartridgeFx") === "true") {
     try {
       const ac = new (window.AudioContext || window.webkitAudioContext)();
       const now = ac.currentTime;
-      // Effet "FX Cartouche" (son unique de cartouche qui s'insère)
-      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "square";
-        const startTime = now + (idx * 0.04);
+
+      [220, 440, 660, 880].forEach((freq, idx) => {
+        const osc = ac.createOscillator(); 
+        const gain = ac.createGain();
+        
+        osc.connect(gain); 
+        gain.connect(ac.destination);
+        
+        // Onde carrée pour le côté 8-bit / rétro
+        osc.type = "square"; 
+        
+        const startTime = now + (idx * 0.03); // Balayage ultra rapide
+        
         osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.12);
-        osc.start(startTime); osc.stop(startTime + 0.12);
+        osc.frequency.linearRampToValueAtTime(freq * 1.2, startTime + 0.03);
+        
+        gain.gain.setValueAtTime(0.06, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.05);
+        
+        osc.start(startTime); 
+        osc.stop(startTime + 0.05);
       });
-      return; // On coupe net pour ne pas jouer le son du thème par-dessus
+      return; // Coupe les sons de thèmes pour laisser place au FX page rétro
     } catch (e) {}
   }
 
