@@ -2064,7 +2064,6 @@ function toggleFavorite(rawId) {
     currentFavs.push(id);
     favorites = currentFavs;
 
-    // Validation du défi quotidien "Coup de Cœur"
     let cData = loadChallengesData();
     cData.dailyProgress.favorite = true;
     saveChallengesData(cData);
@@ -2074,14 +2073,11 @@ function toggleFavorite(rawId) {
       currentRewarded.push(id);
       rewardedFavorites = currentRewarded;
       try { localStorage.setItem("rewardedFavorites", JSON.stringify(rewardedFavorites)); } catch (e) {}
-      
       addCoins(10);
     }
   }
   
-  try { 
-    localStorage.setItem("favorites", JSON.stringify(favorites)); 
-  } catch (e) {}
+  try { localStorage.setItem("favorites", JSON.stringify(favorites)); } catch (e) {}
 
   playThemeSound(theme);
   render();
@@ -2120,153 +2116,6 @@ function playThemeSound(th) {
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
         osc.start(startTime); osc.stop(startTime + 0.3);
       });
-    } else if (th === "gameboy") {
-      [440, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "square";
-        const startTime = now + (idx * 0.1);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.09, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
-    } else if (th === "dreamcast") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(329.63, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.28);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
-      osc.start(now); osc.stop(now + 0.32);
-    } else if (th === "n64") {
-      [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.05);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
-        osc.start(startTime); osc.stop(startTime + 0.15);
-      });
-    } else if (th === "nes") {
-      [330, 440, 659.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "square";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
-        osc.start(startTime); osc.stop(startTime + 0.16);
-      });
-    } else if (th === "snes") {
-      [392, 523.25, 659.25, 783.99].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.06);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
-        osc.start(startTime); osc.stop(startTime + 0.25);
-      });
-    } else if (th === "arcade") {
-      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sawtooth";
-        const startTime = now + (idx * 0.05);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
-        osc.start(startTime); osc.stop(startTime + 0.14);
-      });
-    } else if (th === "atari") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.linearRampToValueAtTime(450, now + 0.15);
-      gain.gain.setValueAtTime(0.09, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.start(now); osc.stop(now + 0.2);
-    } else if (th === "dos") {
-      const osc = ac.createOscillator(); const gain = ac.createGain();
-      osc.connect(gain); gain.connect(ac.destination);
-      osc.type = "square";
-      osc.frequency.setValueAtTime(800, now);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      osc.start(now); osc.stop(now + 0.08);
-    } else if (th === "megadrive") {
-      [261.63, 392, 523.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sawtooth";
-        const startTime = now + (idx * 0.06);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
-    } else if (th === "midnight") {
-      [220, 329.63, 440].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.1);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
-        osc.start(startTime); osc.stop(startTime + 0.3);
-      });
-    } else if (th === "forest") {
-      [349.23, 440, 523.25].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.08);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22);
-        osc.start(startTime); osc.stop(startTime + 0.22);
-      });
-    } else if (th === "violet") {
-      [440, 554.37, 659.25, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-        osc.start(startTime); osc.stop(startTime + 0.2);
-      });
-    } else if (th === "ruby") {
-      [329.63, 493.88, 587.33].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "triangle";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.08, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-        osc.start(startTime); osc.stop(startTime + 0.2);
-      });
-    } else if (th === "light") {
-      [587.33, 739.99, 880].forEach((freq, idx) => {
-        const osc = ac.createOscillator(); const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = "sine";
-        const startTime = now + (idx * 0.07);
-        osc.frequency.setValueAtTime(freq, startTime);
-        gain.gain.setValueAtTime(0.07, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
-        osc.start(startTime); osc.stop(startTime + 0.18);
-      });
     } else {
       const osc = ac.createOscillator(); const gain = ac.createGain();
       osc.connect(gain); gain.connect(ac.destination);
@@ -2295,7 +2144,7 @@ function getPlatformBadgeClass(plat) {
   if (p.includes("gamecube") || p.includes("game cube")) return "badge-gamecube";
   if (p.includes("nintendo 64") || p.includes("n64")) return "badge-n64";
   if (p.includes("super nintendo") || p.includes("snes")) return "badge-snes";
-  if (p.includes("nes") || p.includes("nintendo entertainment system")) return "badge-nes";
+  if (p.includes("nes")) return "badge-nes";
   if (p.includes("game boy advance") || p.includes("gba")) return "badge-gba";
   if (p.includes("game boy color") || p.includes("gbc")) return "badge-gbc";
   if (p.includes("game boy") || p.includes("gb")) return "badge-gb";
@@ -2453,19 +2302,9 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
-  
       rel = g.releases.filter((r) => {
         const plat = r.platform.toLowerCase();
         const filt = currentFilter.toLowerCase();
-        
-        if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
-        if (filt === "playstation 4" || filt === "ps4") return plat === "playstation 4" || plat === "ps4";
-        if (filt === "playstation 3" || filt === "ps3") return plat === "playstation 3" || plat === "ps3";
-        if (filt === "playstation 2" || filt === "ps2") return plat === "playstation 2" || plat === "ps2";
-        if (filt === "playstation" || filt === "ps1") return plat === "playstation" || plat === "ps1";
-        if (filt === "game cube" || filt === "gamecube") return plat.includes("gamecube") || plat.includes("game cube");
-        if (filt === "game boy" || filt === "gb") return plat === "game boy" || plat === "gb";
-        
         return plat.includes(filt) || filt.includes(plat);
       });
     }
@@ -2569,162 +2408,76 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
+// --- FONCTIONS DU MUSÉE DES CONSOLES DÉDIÉES ---
 function openConsoleVitrine() {
   playThemeSound(theme);
   
-// --- GESTION PROPRE DE LA NAVIGATION PRINCIPALE ---
+  const coinSpan = document.getElementById("museumPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
 
-const homeContent = document.getElementById("homeMainContent");
-const shopPage = document.getElementById("shopMainPage");
-const vitrinePage = document.getElementById("vitrineMainPage");
-const museumPage = document.getElementById("museumMainPage");
-
-function hideAllPages() {
-  if (homeContent) homeContent.style.display = "none";
-  if (shopPage) shopPage.style.display = "none";
-  if (vitrinePage) vitrinePage.style.display = "none";
-  if (museumPage) museumPage.style.display = "none";
-  if (typeof closeSheet === "function") closeSheet();
-}
-
-// 1. Bouton Accueil
-if (navHome) {
-  navHome.addEventListener("click", () => {
-    playThemeSound(theme);
-    setActiveNav(navHome);
-    hideAllPages();
-    if (homeContent) homeContent.style.display = "block";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-// 2. Bouton Vitrine
-if (navShelf) {
-  navShelf.addEventListener("click", () => {
-    playThemeSound(theme);
-    setActiveNav(navShelf);
-    hideAllPages();
-    if (vitrinePage) {
-      vitrinePage.style.display = "block";
-      renderVitrineMainPage();
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-// 3. Bouton Boutique Arcade
-if (navShopArcade) {
-  navShopArcade.addEventListener("click", () => {
-    playThemeSound(theme);
-    setActiveNav(navShopArcade);
-    hideAllPages();
-    if (shopPage) {
-      shopPage.style.display = "block";
-      renderShopMainPage();
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-// 4. Bouton Musée
-if (navMuseum) {
-  navMuseum.addEventListener("click", () => {
-    playThemeSound(theme);
-    setActiveNav(navMuseum);
-    hideAllPages();
-    if (museumPage) {
-      museumPage.style.display = "block";
-      openConsoleVitrine(); // Charge le contenu de ton musée dans sa page dédiée
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-// 5. Bouton Profil / Réglages
-if (navSettings) {
-  navSettings.addEventListener("click", () => {
-    setActiveNav(navSettings);
-    if (typeof openSettings === "function") openSettings();
-  });
-}
-
-function openConsoleDetailInPage(consoleItem) {
-  playThemeSound(theme);
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
   contentArea.replaceChildren();
 
-  const wrapper = el("div", "shop-banner");
-  wrapper.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; padding: 20px;";
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
 
-  const banner = el("div", "console-mockup-banner");
-  banner.style.background = consoleItem.bg;
-
-  const neonTitle = el("div", "console-neon-title-badge", consoleItem.name);
-  const subInfo = el("div", "console-subtitle-info", `Sortie : ${consoleItem.year} • Fabricant : ${consoleItem.brand}`);
-  
-  const specsGrid = el("div", "console-specs-grid");
-  specsGrid.innerHTML = `
-    <div class="console-spec-chip"><span>Processeur / CPU</span>${consoleItem.cpu}</div>
-    <div class="console-spec-chip"><span>Graphismes / GPU</span>${consoleItem.gpu}</div>
-    <div class="console-spec-chip"><span>Ventes estimées</span>${consoleItem.sales}</div>
-    <div class="console-spec-chip"><span>Impact historique</span>${consoleItem.impact}</div>
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
   `;
-  
-  banner.append(neonTitle, subInfo, specsGrid);
+  banner.append(headerDiv);
 
-  const storyBox = el("div", "console-story-box");
-  storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc}</p>`;
+  const groups = {};
+  for (const consoleItem of WORLD_CONSOLES) {
+    if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
+    groups[consoleItem.brand].push(consoleItem);
+  }
 
-  const backBtn = el("button", "cta", "← Retour au Musée");
-  backBtn.addEventListener("click", () => { playThemeSound(theme); openConsoleVitrine(); });
+  const mainContainer = el("div");
+  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
-  wrapper.append(banner, storyBox, backBtn);
-  contentArea.append(wrapper);
+  for (const [brand, consoles] of Object.entries(groups)) {
+    const section = el("div", "constructor-section");
+    const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
+    section.append(brandTitle);
+
+    const grid = el("div", "vitrine-grid");
+    for (const consoleItem of consoles) {
+      const card = el("div", "console-vitrine-card");
+      card.style.setProperty('--console-color', consoleItem.bg);
+      
+      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+      
+      const photoBox = el("div", "console-photo-container");
+      const badge = el("div", "console-icon-badge", consoleItem.code);
+      photoBox.append(badge);
+
+      const infoGroup = el("div", "console-info-group");
+      const name = el("b", "", consoleItem.name);
+      const year = el("span", "", consoleItem.year);
+      infoGroup.append(name, year);
+
+      card.append(brandTag, photoBox, infoGroup);
+      card.addEventListener("click", () => { 
+        playThemeSound(theme); 
+        openConsoleDetailInPage(consoleItem); 
+      });
+      grid.append(card);
+    }
+    section.append(grid);
+    mainContainer.append(section);
+  }
+
+  banner.append(mainContainer);
+  contentArea.append(banner);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-function openShareModal() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  p.className = "panel";
-  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
-  const allGames = cache[ym] || [];
-  const favGames = allGames.filter(g => isFavorite(g.id));
 
-  let shareText = `🎮 Mes jeux favoris de ${monthName} :\n`;
-  if (favGames.length === 0) {
-    shareText += t('noFavShare') + "\n";
-  } else {
-    for (const g of favGames) {
-      const plats = [...new Set(g.releases.map(r => r.platform))].join(", ");
-      shareText += `• ${g.name} (${plats})\n`;
-    }
-  }
-  shareText += "\n" + t('shareFooter');
-
-  const textarea = el("textarea", "share-textarea");
-  textarea.value = shareText; textarea.readOnly = true;
-
-  const copyBtn = el("button", "cta", t('copyBtn'));
-  copyBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    navigator.clipboard.writeText(textarea.value).then(() => {
-      copyBtn.textContent = t('copiedBtn');
-      setTimeout(() => { copyBtn.textContent = t('copyBtn'); }, 3000);
-    });
-  });
-
-  const close = el("button", "close", t('close'));
-  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-
-  p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
-  $("#sheet").classList.add("on");
-}
-$("#shareBtn").addEventListener("click", openShareModal);
 function openConsoleDetailInPage(consoleItem) {
   playThemeSound(theme);
   
-  // 🛡️ SÉCURITÉ : On s'assure qu'on reste bien sur la grande page Musée et qu'on cache le reste
   const homeContent = document.getElementById("homeMainContent");
   const shopPage = document.getElementById("shopMainPage");
   const vitrinePage = document.getElementById("vitrineMainPage");
@@ -2764,7 +2517,7 @@ function openConsoleDetailInPage(consoleItem) {
   const backBtn = el("button", "cta", "← Retour au Musée");
   backBtn.addEventListener("click", () => { 
     playThemeSound(theme); 
-    openConsoleVitrine(); // Recharge la grille principale du musée dans la page
+    openConsoleVitrine(); 
   });
 
   wrapper.append(banner, storyBox, backBtn);
@@ -2772,12 +2525,45 @@ function openConsoleDetailInPage(consoleItem) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ⬇️ C'EST ICI QUE COMMENCE TA FONCTION EXISTANTE openShareModal() :
 function openShareModal() {
   playThemeSound(theme);
   const p = $("#panel");
   p.className = "panel";
-  // ... (la suite de ton code d'origine)
+  const monthName = utc(ym + "-01").toLocaleDateString(currentLang, { month: "long", year: "numeric", timeZone: "UTC" });
+  const allGames = cache[ym] || [];
+  const favGames = allGames.filter(g => isFavorite(g.id));
+
+  let shareText = `🎮 Mes jeux favoris de ${monthName} :\n`;
+  if (favGames.length === 0) {
+    shareText += t('noFavShare') + "\n";
+  } else {
+    for (const g of favGames) {
+      const plats = [...new Set(g.releases.map(r => r.platform))].join(", ");
+      shareText += `• ${g.name} (${plats})\n`;
+    }
+  }
+  shareText += "\n" + t('shareFooter');
+
+  const textarea = el("textarea", "share-textarea");
+  textarea.value = shareText; textarea.readOnly = true;
+
+  const copyBtn = el("button", "cta", t('copyBtn'));
+  copyBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      copyBtn.textContent = t('copiedBtn');
+      setTimeout(() => { copyBtn.textContent = t('copyBtn'); }, 3000);
+    });
+  });
+
+  const close = el("button", "close", t('close'));
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+
+  p.replaceChildren(el("h2", "", t('shareTitle')), el("p", "m", t('shareDesc')), textarea, copyBtn, close);
+  $("#sheet").classList.add("on");
+}
+$("#shareBtn").addEventListener("click", openShareModal);
+
 async function openSheet(it) {
   let cData = loadChallengesData();
   cData.dailyProgress.curious = true;
@@ -2798,25 +2584,13 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
   
-  // ... le reste de ta fonction continue ici ...
   const GENRE_FR = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
+    "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
+    "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
+    "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
+    "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel", "Card & Board Game": "Jeu de cartes"
   };
 
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
@@ -3078,7 +2852,6 @@ function renderPlatformDropdown() {
 $("#platformSelect").addEventListener("change", (e) => {
   playThemeSound(theme);
   currentFilter = e.target.value;
-  // 🎯 AJOUTE CE BLOC ICI :
   let cData = loadChallengesData();
   cData.dailyProgress.filterConsole = true;
   cData.weeklyProgress.consolesExplored += 1;
@@ -3093,7 +2866,6 @@ $("#platformSelect").addEventListener("change", (e) => {
       return;
     }
   }
-  
   render();
 });
 
@@ -3116,7 +2888,7 @@ for (let i = 0; i < 20; i++) {
   particlesContainer.append(p);
 }
 
-// Récupération correcte des boutons de la barre du bas
+// --- NAVIGATION PRINCIPALE DE LA BARRE DU BAS ---
 const navHome = document.getElementById("navHome");
 const navShelf = document.getElementById("navShelf");
 const navShopArcade = document.getElementById("navShopArcade");
@@ -3130,17 +2902,42 @@ function setActiveNav(btn) {
 
 if (navHome) {
   navHome.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
+    playThemeSound(theme);
     setActiveNav(navHome);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
+    const museumPage = document.getElementById("museumMainPage");
     
     if (homeContent) homeContent.style.display = "block";
     if (shopPage) shopPage.style.display = "none";
     if (vitrinePage) vitrinePage.style.display = "none";
+    if (museumPage) museumPage.style.display = "none";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+if (navShelf) {
+  navShelf.addEventListener("click", () => {
+    playThemeSound(theme);
+    setActiveNav(navShelf);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    const homeContent = document.getElementById("homeMainContent");
+    const shopPage = document.getElementById("shopMainPage");
+    const vitrinePage = document.getElementById("vitrineMainPage");
+    const museumPage = document.getElementById("museumMainPage");
+    
+    if (homeContent) homeContent.style.display = "none";
+    if (shopPage) shopPage.style.display = "none";
+    if (museumPage) museumPage.style.display = "none";
+    if (vitrinePage) {
+      vitrinePage.style.display = "block";
+      renderVitrineMainPage();
+    }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -3148,16 +2945,18 @@ if (navHome) {
 
 if (navShopArcade) {
   navShopArcade.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
+    playThemeSound(theme);
     setActiveNav(navShopArcade);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
+    const museumPage = document.getElementById("museumMainPage");
     
     if (homeContent) homeContent.style.display = "none";
     if (vitrinePage) vitrinePage.style.display = "none";
+    if (museumPage) museumPage.style.display = "none";
     if (shopPage) {
       shopPage.style.display = "block";
       renderShopMainPage();
@@ -3169,36 +2968,27 @@ if (navShopArcade) {
 
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
+    playThemeSound(theme);
     setActiveNav(navMuseum);
-    if (typeof closeSheet === "function") closeSheet();
-    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
-// --- MISE À JOUR DE LA NAVIGATION : CLic sur l'onglet Vitrine ---
-if (navShelf) {
-  navShelf.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
-    setActiveNav(navShelf);
     if (typeof closeSheet === "function") closeSheet();
     
     const homeContent = document.getElementById("homeMainContent");
     const shopPage = document.getElementById("shopMainPage");
     const vitrinePage = document.getElementById("vitrineMainPage");
-    
+    const museumPage = document.getElementById("museumMainPage");
+
     if (homeContent) homeContent.style.display = "none";
     if (shopPage) shopPage.style.display = "none";
-    if (vitrinePage) {
-      vitrinePage.style.display = "block";
-      renderVitrineMainPage();
+    if (vitrinePage) vitrinePage.style.display = "none";
+    if (museumPage) {
+      museumPage.style.display = "block";
+      openConsoleVitrine();
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-  
+
 if (navSettings) {
   navSettings.addEventListener("click", () => {
     setActiveNav(navSettings);
@@ -3206,8 +2996,7 @@ if (navSettings) {
   });
 }
 
-// --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
-
+// --- SYSTÈME DE DÉFIS & QUÊTES ---
 function loadChallengesData() {
   const data = localStorage.getItem("cartridge_challenges");
   const today = new Date().toISOString().slice(0, 10);
@@ -3216,40 +3005,18 @@ function loadChallengesData() {
     lastLoginDate: "",
     loginStreak: 0,
     weeklyLoginsCount: 0,
-    dailyProgress: {
-      curious: false,      // Ouvrir la fiche d'un jeu
-      favorite: false,     // Mettre un cœur
-      filterConsole: false // Filtrer par console
-    },
-    weeklyProgress: {
-      packsOpened: 0,      // Objectif : 3 packs
-      consolesExplored: 0, // Objectif : explorer les consoles
-      login3Days: false,   // 3 jours de connexion
-      login7Days: false    // 7 jours d'affilée
-    },
-    claimedRewards: {
-      dailyLogin: false,
-      daily1: false,
-      daily2: false,
-      daily3: false,
-      weekly1: false,
-      weekly2: false,
-      weekly3: false,
-      weekly4: false
-    },
+    dailyProgress: { curious: false, favorite: false, filterConsole: false },
+    weeklyProgress: { packsOpened: 0, consolesExplored: 0, login3Days: false, login7Days: false },
+    claimedRewards: { dailyLogin: false, daily1: false, daily2: false, daily3: false, weekly1: false, weekly2: false, weekly3: false, weekly4: false },
     lastResetDate: today
   };
 
   if (!data) return defaultData;
   try {
     let parsed = JSON.parse(data);
-    // Réinitialisation journalière automatique
     if (parsed.lastResetDate !== today) {
       parsed.dailyProgress = { curious: false, favorite: false, filterConsole: false };
       parsed.claimedRewards.dailyLogin = false;
-      parsed.claimedRewards.daily1 = false;
-      parsed.claimedRewards.daily2 = false;
-      parsed.claimedRewards.daily3 = false;
       parsed.lastResetDate = today;
     }
     return parsed;
@@ -3262,7 +3029,6 @@ function saveChallengesData(data) {
   localStorage.setItem("cartridge_challenges", JSON.stringify(data));
 }
 
-// Vérifie la connexion du jour au lancement de l'app
 function checkDailyConnection() {
   let cData = loadChallengesData();
   const today = new Date().toISOString().slice(0, 10);
@@ -3273,30 +3039,17 @@ function checkDailyConnection() {
     const diffTime = lastDate ? Math.abs(currentDate - lastDate) : null;
     const diffDays = diffTime ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : 999;
 
-    if (diffDays === 1) {
-      cData.loginStreak += 1;
-    } else if (diffDays > 1) {
-      cData.loginStreak = 1;
-    } else {
-      cData.loginStreak = 1;
-    }
+    if (diffDays === 1) cData.loginStreak += 1;
+    else cData.loginStreak = 1;
 
     cData.lastLoginDate = today;
     cData.weeklyLoginsCount += 1;
-
-    if (cData.weeklyLoginsCount >= 3) cData.weeklyProgress.login3Days = true;
-    if (cData.loginStreak >= 7) cData.weeklyProgress.login7Days = true;
-
-    // Bonus de connexion automatique (10 crédits)
     userCoins += 10;
     if (typeof updateCoinsUI === "function") updateCoinsUI();
-    
     saveChallengesData(cData);
   }
 }
 
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE (100% INDÉPENDANTE) ---
 function renderShopMainPage() {
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
@@ -3305,9 +3058,7 @@ function renderShopMainPage() {
   const coinSpan = document.getElementById("shopPageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  if (typeof checkDailyConnection === "function") {
-    checkDailyConnection();
-  }
+  checkDailyConnection();
 
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
@@ -3336,7 +3087,7 @@ function renderShopMainPage() {
     constructionBanner.innerHTML = `
       <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
       <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
-        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs, des bordures de cartes légendaires et des bonus uniques pour ton profil !
+        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs et des bonus uniques !
       </p>
     `;
     displayBox.append(constructionBanner);
@@ -3348,121 +3099,38 @@ function renderShopMainPage() {
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
-    
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
 
-    const headerTitle = el("div");
-    headerTitle.innerHTML = `
+    banner.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
       <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
-    banner.append(headerTitle);
 
     const boostersGrid = el("div");
     boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; width: 100%; margin-top: 10px;";
 
     const packsConfig = [
-      {
-        name: "STANDARD",
-        sub: "Série Commune",
-        price: "25 🪙",
-        costNum: 25,
-        type: "Standard",
-        cat: "standard",
-        color: "#94a3b8",
-        glow: "rgba(148, 163, 184, 0.4)",
-        gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)",
-        badgeBg: "rgba(148, 163, 184, 0.2)"
-      },
-      {
-        name: "RÉTRO CLASSIC",
-        sub: "Série Rare 1985-2005",
-        price: "50 🪙",
-        costNum: 50,
-        type: "Rétro",
-        cat: "retro",
-        color: "#38bdf8",
-        glow: "rgba(56, 189, 248, 0.5)",
-        gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)",
-        badgeBg: "rgba(56, 189, 248, 0.2)"
-      },
-      {
-        name: "SUPREME COLLECTOR",
-        sub: "Édition Holographique Ultime",
-        price: "100 🪙",
-        costNum: 100,
-        type: "Collector Rétro",
-        cat: "supreme_retro",
-        color: "#fbbf24",
-        glow: "rgba(251, 191, 36, 0.6)",
-        gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)",
-        badgeBg: "rgba(251, 191, 36, 0.25)"
-      }
+      { name: "STANDARD", sub: "Série Commune", price: "25 🪙", costNum: 25, type: "Standard", cat: "standard", color: "#94a3b8", glow: "rgba(148, 163, 184, 0.4)", gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)", badgeBg: "rgba(148, 163, 184, 0.2)" },
+      { name: "RÉTRO CLASSIC", sub: "Série Rare 1985-2005", price: "50 🪙", costNum: 50, type: "Rétro", cat: "retro", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.5)", gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)", badgeBg: "rgba(56, 189, 248, 0.2)" },
+      { name: "SUPREME COLLECTOR", sub: "Édition Holographique Ultime", price: "100 🪙", costNum: 100, type: "Collector Rétro", cat: "supreme_retro", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.6)", gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)", badgeBg: "rgba(251, 191, 36, 0.25)" }
     ];
 
     packsConfig.forEach(cfg => {
       const boosterCard = el("div");
       boosterCard.style.cssText = `
-        background: ${cfg.gradient};
-        border: 2px solid ${cfg.color};
-        border-radius: 16px;
-        padding: 18px 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
-        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+        background: ${cfg.gradient}; border: 2px solid ${cfg.color}; border-radius: 16px; padding: 18px 12px;
+        display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px;
+        cursor: pointer; box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
       `;
-
-      boosterCard.addEventListener("mouseenter", () => {
-        boosterCard.style.transform = "translateY(-6px) scale(1.03)";
-        boosterCard.style.boxShadow = `0 18px 40px rgba(0,0,0,0.85), 0 0 30px ${cfg.color}`;
-      });
-      boosterCard.addEventListener("mouseleave", () => {
-        boosterCard.style.transform = "translateY(0) scale(1)";
-        boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
-      });
-
-      const headerBox = el("div");
-      headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
-      headerBox.innerHTML = `
-        <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
-        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
+      boosterCard.innerHTML = `
+        <div style="width:100%; display:flex; flex-direction:column; align-items:center; gap:2px;">
+          <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase;">${cfg.sub}</span>
+          <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; width:100%; text-align:center;">${cfg.name}</div>
+        </div>
+        <button style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px; background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%;">${cfg.price}</button>
       `;
-
-      const centerArt = el("div");
-      centerArt.style.cssText = `
-        width: 64px; height: 82px; background: rgba(0,0,0,0.6); border: 2px solid ${cfg.color};
-        border-radius: 8px 8px 4px 4px; position: relative; display: flex; flex-direction:column; align-items: center; justify-content: center;
-        box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 0 15px ${cfg.glow}; z-index:2;
-      `;
-      centerArt.innerHTML = `
-        <div style="width:40px; height:20px; background:${cfg.color}33; border:1px solid ${cfg.color}; border-radius:3px; margin-bottom:6px;"></div>
-        <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:12px; color:${cfg.color}; text-shadow:0 0 6px ${cfg.color};">CR-26</span>
-      `;
-
-      const buyBtn = el("button", "", cfg.price);
-      buyBtn.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
-        background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
-        box-shadow: 0 0 15px ${cfg.color}; z-index:2; letter-spacing:1px;
-      `;
-      buyBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
-      });
-
-      boosterCard.append(headerBox, centerArt, buyBtn);
-      boosterCard.addEventListener("click", () => {
-        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
-      });
-
+      boosterCard.addEventListener("click", () => buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat));
       boostersGrid.append(boosterCard);
     });
 
@@ -3477,153 +3145,9 @@ function renderShopMainPage() {
 
     displayBox.replaceChildren();
     let cData = loadChallengesData();
-
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
-
-    const headerBox = el("div");
-    headerBox.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
-    headerBox.innerHTML = `
-      <div style="width: 8px; height: 8px; background: var(--acc); box-shadow: 0 0 10px var(--acc); border-radius: 50%;"></div>
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:2px; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>
-    `;
-    banner.append(headerBox);
-
-    const challengesList = [
-      {
-        id: "dailyLogin",
-        title: "SÉRIE DE CONNEXION",
-        desc: `SYNCHRONISATION ACTIVE : ${cData.loginStreak || 1} JOUR(S)`,
-        reward: "+10 🪙 / JOUR",
-        rewardAmount: 10,
-        isDone: true,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`
-      },
-      {
-        id: "dailyExploration",
-        title: "PROTOCOLE EXPLORATION",
-        desc: "CONSULTATION DE DONNÉES ARCHIVES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.curious,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
-      },
-      {
-        id: "dailyFavorite",
-        title: "INDEXATION FAVORIS",
-        desc: "MARQUAGE DE DONNÉES PRIORITAIRES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.favorite,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
-      },
-      {
-        id: "dailyConsoleFilter",
-        title: "BALAYAGE GLOBAL SECTEUR",
-        desc: "NAVIGATION MULTI-ZONES CONSOLES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.filterConsole,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
-      },
-      {
-        id: "weeklyPacks",
-        title: "ARCHIVAGE HEBDOMADAIRE",
-        desc: `PAKS OUVERTS : ${cData.weeklyProgress?.packsOpened || 0} / 3`,
-        reward: "+20 🪙",
-        rewardAmount: 20,
-        isDone: (cData.weeklyProgress?.packsOpened || 0) >= 3,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
-      },
-      {
-        id: "streak7Days",
-        title: "SYNCHRONISATION 7 JOURS",
-        desc: "OBJECTIF DE CONNEXION CONTINUE",
-        reward: "2 PACKS GRATUITS",
-        rewardAmount: 0,
-        isDone: (cData.loginStreak || 0) >= 7,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`
-      }
-    ];
-
-    challengesList.forEach(item => {
-      const row = el("div");
-      row.style.cssText = `
-        display: flex; align-items: center; justify-content: space-between;
-        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 12px 16px; gap: 12px;
-      `;
-
-      const leftGroup = el("div");
-      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; overflow: hidden;";
-
-      const iconBox = el("div");
-      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
-      iconBox.innerHTML = item.iconSvg;
-
-      const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; overflow: hidden;";
-      
-      const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
-
-      const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
-
-      textInfo.append(titleEl, descEl);
-      leftGroup.append(iconBox, textInfo);
-
-      const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
-
-      const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
-
-      const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
-      const statusBtn = document.createElement("button");
-      statusBtn.type = "button";
-
-      if (isClaimed) {
-        statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
-          cursor: default; white-space: nowrap;
-        `;
-      } else if (item.isDone) {
-        statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
-          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
-          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
-        `;
-        statusBtn.addEventListener("click", () => {
-          if (!cData.claimedRewards) cData.claimedRewards = {};
-          cData.claimedRewards[item.id] = true;
-          saveChallengesData(cData);
-
-          if (item.rewardAmount > 0) {
-            addCoins(item.rewardAmount);
-            if (typeof updateCoinsUI === "function") updateCoinsUI();
-          }
-
-          if (typeof playThemeSound === "function") playThemeSound(theme);
-          showChallenges();
-        });
-      } else {
-        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
-          cursor: default; white-space: nowrap;
-        `;
-      }
-
-      rightGroup.append(rewardBadge, statusBtn);
-      row.append(leftGroup, rightGroup);
-      banner.append(row);
-    });
-
+    banner.innerHTML = `<h3 style="font-family:'Orbitron',sans-serif; font-size:13px; color:var(--acc);">SYSTÈME DE QUÊTES</h3>`;
     displayBox.append(banner);
   }
 
@@ -3639,7 +3163,7 @@ function renderShopMainPage() {
 function buyAndOpenPack(cost, typeName, category) {
   playThemeSound(theme);
   if (userCoins < cost) {
-    alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙 pour ce pack.`);
+    alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙.`);
     return;
   }
   userCoins -= cost;
@@ -3651,7 +3175,7 @@ function buyAndOpenPack(cost, typeName, category) {
     triggerRandomPackDraw(typeName, category);
   }
 }
-// --- FONCTION DE RENDU DE LA VITRINE (TRI STRICT PAR CATÉGORIE ENREGISTRÉE) ---
+
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3675,10 +3199,8 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
-    // 🎯 TRI STRICT BASÉ SUR LA VRAIE PROPRIÉTÉ ENREGISTRÉE
     const collectorItems = myCollection.filter(item => item.category === "supreme_retro");
     const retroItems = myCollection.filter(item => item.category === "retro");
-    // Tout le reste ou les anciennes sans catégorie vont dans standard
     const standardItems = myCollection.filter(item => !item.category || item.category === "standard");
 
     const categoriesConfig = [
@@ -3691,22 +3213,19 @@ function renderVitrineMainPage() {
     mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
     categoriesConfig.forEach(cat => {
-      if (cat.items.length === 0) return; // Ignore la section si elle est vide
+      if (cat.items.length === 0) return;
 
       const sectionWrapper = el("div");
       sectionWrapper.style.cssText = `
-        background: rgba(11, 15, 22, 0.5);
-        border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px ${cat.glow};
+        background: rgba(11, 15, 22, 0.5); border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
+        border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       `;
 
       const catHeader = el("div");
       catHeader.style.cssText = `display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid color-mix(in srgb, ${cat.color} 20%, transparent); padding-bottom:8px;`;
       catHeader.innerHTML = `
-        <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px; text-shadow:0 0 8px ${cat.color};">${cat.title}</span>
-        <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px; border:1px solid color-mix(in srgb, ${cat.color} 20%, transparent);">${cat.items.length} jaquette${cat.items.length > 1 ? 's' : ''}</span>
+        <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px;">${cat.title}</span>
+        <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px;">${cat.items.length} jaquette(s)</span>
       `;
       sectionWrapper.append(catHeader);
 
@@ -3719,12 +3238,8 @@ function renderVitrineMainPage() {
 
         const woodenShelf = el("div");
         woodenShelf.style.cssText = `
-          background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
-          border: 1px solid #3d2f24;
-          border-radius: 10px;
-          padding: 14px 10px 4px;
-          position: relative;
-          box-shadow: inset 0 4px 8px rgba(0,0,0,0.9), 0 6px 16px rgba(0,0,0,0.5);
+          background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%); border: 1px solid #3d2f24;
+          border-radius: 10px; padding: 14px 10px 4px; position: relative; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);
         `;
 
         const gamesRow = el("div");
@@ -3733,16 +3248,8 @@ function renderVitrineMainPage() {
         for (const item of rowItems) {
           const gameBox = el("div");
           gameBox.style.cssText = `
-            background: var(--card);
-            border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow};
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: var(--card); border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
+            border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center; cursor: pointer;
           `;
           
           gameBox.addEventListener("click", () => {
@@ -3757,19 +3264,9 @@ function renderVitrineMainPage() {
 
           const spine = el("div");
           spine.style.cssText = `
-            font-family: 'Orbitron', sans-serif;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            width: 100%;
-            text-align: center;
-            background: rgba(0,0,0,0.95);
-            color: #fff;
-            padding: 5px 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-top: 1px solid color-mix(in srgb, ${cat.color} 40%, transparent);
+            font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 800; text-transform: uppercase;
+            width: 100%; text-align: center; background: rgba(0,0,0,0.95); color: #fff; padding: 5px 3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
           `;
           spine.textContent = item.name;
 
@@ -3778,17 +3275,6 @@ function renderVitrineMainPage() {
         }
 
         woodenShelf.append(gamesRow);
-
-        const plankBoard = el("div");
-        plankBoard.style.cssText = `
-          height: 10px;
-          background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
-          margin: 6px -10px -4px -10px;
-          border-radius: 0 0 8px 8px;
-          border-top: 1px solid #5a4434;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.8);
-        `;
-        woodenShelf.append(plankBoard);
         shelfContainer.append(woodenShelf);
       }
 
@@ -3800,7 +3286,7 @@ function renderVitrineMainPage() {
   }
   contentArea.append(banner);
 }
-// --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
+
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
   searchQuery = e.target.value.trim();
@@ -3811,13 +3297,6 @@ $("#search").addEventListener("input", (e) => {
 
 $("#prev").addEventListener("click", () => shiftMonth(-1));
 $("#next").addEventListener("click", () => shiftMonth(1));
-
-document.addEventListener("DOMContentLoaded", () => {
-  const prevBtn = document.getElementById("prev");
-  const nextBtn = document.getElementById("next");
-  if (prevBtn) prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`;
-  if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
-});
 
 load();
 </script>
