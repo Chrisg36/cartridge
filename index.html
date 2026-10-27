@@ -965,6 +965,25 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
+<!-- 🏛️ 3. LA GRANDE PAGE DU MUSÉE DES CONSOLES -->
+  <div id="museumMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ PANTHÉON MONDIAL DES CONSOLES</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="museumPageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>📜 HISTORIQUE & ARCHIVES</span>
+        <span>PANTHÉON GLOBAL</span>
+      </div>
+    </div>
+    <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
+  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -3068,13 +3087,17 @@ if (navMuseum) {
     playThemeSound(theme);
     setActiveNav(navMuseum);
     closeSheet();
+    
+    // 1. On cache TOUTES les autres sections principales
     document.getElementById("homeMainContent").style.display = "none";
     document.getElementById("shopMainPage").style.display = "none";
     document.getElementById("vitrineMainPage").style.display = "none";
     
-    // 🏛️ C'est ici qu'on active et affiche la page du Musée :
+    // 2. On affiche la page du Musée en grand format
     const mPage = document.getElementById("museumMainPage");
-    mPage.style.display = "block";
+    mPage.style.display = "block"; // <-- C'est ça qui force l'affichage en grand !
+    
+    // 3. On lance le rendu du musée
     renderMuseumMainPage(); 
     
     window.scrollTo({ top: 0, behavior: "smooth" });
