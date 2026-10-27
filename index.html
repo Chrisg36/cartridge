@@ -1239,50 +1239,59 @@ challengesList.forEach(item => {
       row.style.cssText = `
         display: flex; align-items: center; justify-content: space-between;
         background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 8px; padding: 10px 12px; gap: 10px;
+        border-radius: 10px; padding: 12px 16px; gap: 12px;
       `;
 
       const leftGroup = el("div");
-      leftGroup.style.cssText = "display: flex; align-items: center; gap: 10px; overflow: hidden;";
+      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; overflow: hidden;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 28px; height: 28px; border-radius: 6px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
       textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; overflow: hidden;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--txt); letter-spacing:0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:9px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
+      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
 
       textInfo.append(titleEl, descEl);
       leftGroup.append(iconBox, textInfo);
 
       const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 8px; flex-shrink: 0;";
+      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
 
       const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:3px 6px; border-radius:5px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
-  // Utilisation explicite de createElement pour avoir un vrai bouton HTML cliquable
+      // --- LOGIQUE INTERACTIVE DU BOUTON ---
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
       statusBtn.type = "button";
 
+      // Détermination dynamique si la quête est finie (basée sur les critères réels)
+      let isDone = false;
+      if (item.title === "SÉRIE DE CONNEXION") isDone = isCheckedInToday;
+      if (item.title === "PROTOCOLE EXPLORATION") isDone = !!cData.dailyProgress?.curious;
+      if (item.title === "INDEXATION FAVORIS") isDone = !!cData.dailyProgress?.favorite;
+      if (item.title === "BALAYAGE GLOBAL SECTEUR") isDone = !!cData.dailyProgress?.filterConsole;
+      if (item.title === "ARCHIVAGE HEBDOMADAIRE") isDone = (cData.weeklyProgress?.packsOpened || 0) >= 3;
+      if (item.title === "SYNCHRONISATION 7 JOURS") isDone = (cData.loginStreak || 0) >= 7;
+
       if (isClaimed) {
         statusBtn.textContent = "VALIDÉ";
         statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
           background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
           cursor: default; white-space: nowrap;
         `;
-      } else if (item.isDone) {
+      } else if (isDone) {
         statusBtn.textContent = "RÉCLAMER";
         statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; padding:4px 8px; border-radius:5px;
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
           background: var(--acc); color: var(--on); border: 1px solid var(--acc);
           cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
         `;
@@ -1291,18 +1300,19 @@ challengesList.forEach(item => {
           cData.claimedRewards[item.id] = true;
           saveChallengesData(cData);
 
-          if (item.rewardAmount > 0) {
-            addCoins(item.rewardAmount);
+          const rewardAmt = item.title.includes("HEBDOMADAIRE") ? 20 : 10;
+          if (rewardAmt > 0) {
+            addCoins(rewardAmt);
             if (typeof updateCoinsUI === "function") updateCoinsUI();
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
-          renderChallengesTab();
+          renderShopMainPage(); // Rafraîchit l'affichage
         });
       } else {
-        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
+        statusBtn.textContent = item.title.includes("7 JOURS") ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
         statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:8px; font-weight:800; padding:4px 8px; border-radius:5px;
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
           background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
           cursor: default; white-space: nowrap;
         `;
@@ -1312,7 +1322,6 @@ challengesList.forEach(item => {
       row.append(leftGroup, rightGroup);
       banner.append(row);
     });
-
     contentArea.append(banner);
   }
 
