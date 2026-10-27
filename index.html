@@ -1094,11 +1094,15 @@ body[data-holo-effect="true"] .card-holo-effect::after {
   font-size: 18px !important;
 }
 
-/* Barre de navigation du bas sur mobile */
+/* Ajustement sur-mesure pour la navbar du bas */
 [data-layout-style="pixel art"] nav button,
 [data-layout-style="pixel art"] .bottom-nav button,
 [data-layout-style="pixel art"] footer button {
-  font-size: 12px !important;
+  font-size: 10px !important;       /* On descend à 10px pour que les longs mots rentrent */
+  letter-spacing: -0.8px !important; /* On resserre les lettres */
+  padding: 4px 1px !important;       /* On réduit les marges internes pour gagner de la place */
+  white-space: nowrap !important;    /* Interdit au texte de sauter à la ligne */
+}
 }
 
 /* Petits badges (Switch 2, Hype, etc.) */
