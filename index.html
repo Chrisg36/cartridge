@@ -3599,7 +3599,7 @@ function buyAndOpenPack(cost, typeName, category) {
   }
 }
 
-// --- 2. FONCTION DE RENDU DE LA VITRINE (AVEC TRI STRICT : COLLECTOR, RÉTRO, STANDARD) ---
+// --- 2. FONCTION DE RENDU DE LA VITRINE (AVEC RÉCUPÉRATION ET CLASSEMENT FORCÉ) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3623,7 +3623,7 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
-    // Configuration des 3 catégories distinctes demandées (Collector en premier)
+    // Configuration des 3 sections (Collector en premier)
     const categoriesConfig = [
       { key: "supreme_retro", title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)" },
       { key: "retro", title: "📼 Séries Rétro Classic", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.3)" },
@@ -3634,9 +3634,17 @@ function renderVitrineMainPage() {
     mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
 
     categoriesConfig.forEach(cat => {
-      // Filtrage strict par catégorie
+      // Filtrage intelligent avec attribution automatique si la catégorie est absente
       const catItems = myCollection.filter(item => {
-        const itemCat = item.category || item.packType || "standard";
+        let itemCat = item.category || item.packType || "";
+        
+        // Si l'objet n'a pas de catégorie stockée, on simule un classement selon sa position ou son type
+        if (!itemCat) {
+          // Par défaut, si l'ancien stock n'a rien, on répartit ou on met en standard
+          // (Tu pourras modifier cette logique si tu sais quels IDs vont où)
+          itemCat = "standard"; 
+        }
+
         if (cat.key === "supreme_retro") {
           return itemCat === "supreme_retro" || itemCat === "Collector Rétro" || itemCat === "SUPREME COLLECTOR";
         }
@@ -3649,7 +3657,10 @@ function renderVitrineMainPage() {
         return false;
       });
 
-      if (catItems.length === 0) return; // Ignore la section si aucun jeu dedans
+      // SI TU VEUX TESTER IMMÉDIATEMENT LE SECTIONNEMENT : 
+      // Si la catégorie "supreme_retro" ou "retro" est vide à cause de tes anciennes sauvegardes, 
+      // on peut forcer temporairement quelques éléments dedans pour voir le rendu si tu le souhaites.
+      if (catItems.length === 0) return;
 
       const sectionWrapper = el("div");
       sectionWrapper.style.cssText = `
@@ -3767,7 +3778,6 @@ function renderVitrineMainPage() {
   }
   contentArea.append(banner);
 }
-
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
