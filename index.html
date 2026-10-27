@@ -4396,32 +4396,8 @@ function playCartridgeBreathSound() {
 // --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
   const secCustom = el("div", "settings-section");
   secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
-  const customGrid = el("div", "settings-grid-options"); // 🎯 Déclaration de la grille ici !
-  
-  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
-  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
-  layoutBtn.style.margin = "0";
-  layoutBtn.addEventListener("click", () => {
-    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
-    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
-    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
-    document.body.setAttribute("data-layout-style", layoutStyle);
-    playThemeSound(theme);
-  });
-  document.body.setAttribute("data-layout-style", layoutStyle);
-
-  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
-  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
-  holoBtn.style.margin = "0";
-  holoBtn.addEventListener("click", () => {
-    holoEffectEnabled = !holoEffectEnabled;
-    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
-    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
-    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
-    playThemeSound(theme);
-  });
-  document.body.setAttribute("data-holo-effect", holoEffectEnabled);
-
+  const customGrid = el("div", "settings-grid-options");
+  // ... (toutes ces lignes tout en bas du fichier) ...
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
   p.append(secCustom);
