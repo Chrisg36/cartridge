@@ -3511,7 +3511,7 @@ function buyAndOpenPack(cost, typeName, category) {
     triggerRandomPackDraw(typeName, category);
   }
 }
-// --- 2. FONCTION DE RENDU DE LA VITRINE (RÉPARTITION FORCÉE DES 32 JEUX) ---
+// --- FONCTION DE RENDU DE LA GRANDE PAGE VITRINE (100% ISOLÉE) ---
 function renderVitrineMainPage() {
   const contentArea = document.getElementById("vitrinePageContent");
   if (!contentArea) return;
@@ -3535,13 +3535,12 @@ function renderVitrineMainPage() {
     emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
     banner.append(emptyMsg);
   } else {
-    // Découpage automatique des 32 jeux existants pour alimenter les 3 sections
     const totalItems = myCollection.length;
     
-    // On répartit les jeux existants pour que chaque section ait ses jaquettes
-    const collectorItems = myCollection.slice(0, Math.min(5, totalItems)); // Les 5 premiers en Collector
-    const retroItems = totalItems > 5 ? myCollection.slice(5, Math.min(15, totalItems)) : []; // Les suivants en Rétro
-    const standardItems = totalItems > 15 ? myCollection.slice(15) : (totalItems <= 5 ? [] : myCollection.slice(5)); // Le reste en Standard
+    // Répartition propre par sections
+    const collectorItems = myCollection.slice(0, Math.min(5, totalItems));
+    const retroItems = totalItems > 5 ? myCollection.slice(5, Math.min(15, totalItems)) : [];
+    const standardItems = totalItems > 15 ? myCollection.slice(15) : (totalItems <= 5 ? [] : myCollection.slice(5));
 
     const categoriesConfig = [
       { title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)", items: collectorItems },
@@ -3609,7 +3608,7 @@ function renderVitrineMainPage() {
           
           gameBox.addEventListener("mouseenter", () => {
             gameBox.style.transform = "translateY(-4px)";
-            gameBox.style.boxShadow = `0 14px 30px rgba(0,0,0,0.85), 0 0 15px ${cat.color}`;
+            gamebox.style.boxShadow = `0 14px 30px rgba(0,0,0,0.85), 0 0 15px ${cat.color}`;
           });
           gameBox.addEventListener("mouseleave", () => {
             gameBox.style.transform = "translateY(0)";
@@ -3644,7 +3643,7 @@ function renderVitrineMainPage() {
           `;
           spine.textContent = item.name;
 
-     gameBox.append(img, spine);
+          gameBox.append(img, spine);
           gamesRow.append(gameBox);
         }
 
