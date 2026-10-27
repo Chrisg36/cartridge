@@ -965,6 +965,25 @@ input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
+<!-- 🏛️ 3. LA GRANDE PAGE MUSÉE DES CONSOLES -->
+  <div id="museumMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ MUSÉE MONDIAL DES CONSOLES</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="museumPageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>📚 ARCHIVES HISTORIQUES</span>
+        <span>GALERIE DES MACHINES</span>
+      </div>
+    </div>
+    <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
+  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -2580,20 +2599,32 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-function openConsoleVitrine() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  p.className = "panel";
-  p.replaceChildren();
+function renderMuseumMainPage() {
+  const contentArea = document.getElementById("museumPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
 
-  p.append(el("h2", "", t('vitrineTitle')));
-  p.append(el("p", "m", t('vitrineDesc')));
+  const coinSpan = document.getElementById("museumPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
+  `;
+  banner.append(headerDiv);
 
   const groups = {};
   for (const consoleItem of WORLD_CONSOLES) {
     if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
     groups[consoleItem.brand].push(consoleItem);
   }
+
+  const mainContainer = el("div");
+  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%; margin-top: 10px;";
 
   for (const [brand, consoles] of Object.entries(groups)) {
     const section = el("div", "constructor-section");
@@ -2617,12 +2648,19 @@ function openConsoleVitrine() {
       infoGroup.append(name, year);
 
       card.append(brandTag, photoBox, infoGroup);
-      card.addEventListener("click", () => { playThemeSound(theme); openConsoleDetail(consoleItem); });
+      card.addEventListener("click", () => {
+        playThemeSound(theme);
+        openConsoleDetail(consoleItem); // Ouvre la fiche détaillée de la console
+      });
       grid.append(card);
     }
     section.append(grid);
-    p.append(section);
+    mainContainer.append(section);
   }
+
+  banner.append(mainContainer);
+  contentArea.append(banner);
+}
 
   const closeBtn = el("button", "close", t('close'));
   closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -3093,10 +3131,27 @@ if (navShopArcade) {
   });
 }
 
+const navMuseum = document.getElementById("navMuseum");
 if (navMuseum) {
   navMuseum.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navMuseum);
-    if (typeof openConsoleVitrine === "function") openConsoleVitrine();
+    if (typeof closeSheet === "function") closeSheet();
+    
+    const homeContent = document.getElementById("homeMainContent");
+    const shopPage = document.getElementById("shopMainPage");
+    const vitrinePage = document.getElementById("vitrineMainPage");
+    const museumPage = document.getElementById("museumMainPage");
+    
+    if (homeContent) homeContent.style.display = "none";
+    if (shopPage) shopPage.style.display = "none";
+    if (vitrinePage) vitrinePage.style.display = "none";
+    if (museumPage) {
+      museumPage.style.display = "block";
+      renderMuseumMainPage();
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
