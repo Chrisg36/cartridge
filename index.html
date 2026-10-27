@@ -2762,18 +2762,15 @@ function renderMuseumMainPage() {
       
       const brandTag = el("span", "console-brand-tag", consoleItem.brand);
       
-  const photoBox = el("div", "console-photo-container");
+const photoBox = el("div", "console-photo-container");
       const img = el("img", "console-real-img");
       
-      // On cherche la console dans le tableau museumConsoles
-      const foundMuseumItem = typeof museumConsoles !== 'undefined' ? museumConsoles.find(mc => mc.name.toLowerCase() === consoleItem.name.toLowerCase()) : null;
-      
-      // On prend directement l'image propre du tableau sans aucun filtre restrictif
-      img.src = (foundMuseumItem ? foundMuseumItem.image : null) || consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+      // On récupère l'image directement depuis l'objet consoleItem de WORLD_CONSOLES
+      img.src = consoleItem.image || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       img.alt = consoleItem.name;
       img.loading = "lazy";
       
-      // Sécurité anti-plantage si jamais un lien ne répond pas
+      // Sécurité anti-plantage si un lien ne répond pas
       img.onerror = () => {
         img.src = "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
       };
