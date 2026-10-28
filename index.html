@@ -4453,14 +4453,6 @@ function showConstructionPage(title, icon) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-const navArcadeRoom = document.getElementById("navArcadeRoom");
-if (navArcadeRoom) {
-  navArcadeRoom.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
-    setActiveNav(navArcadeRoom);
-    showConstructionPage("Salle Arcade", "🕹️");
-  });
-}
 
 // Branchement des clics pour les 3 nouveaux boutons
 const navArcadeRoom = document.getElementById("navArcadeRoom");
