@@ -210,7 +210,7 @@ const CORS = {
 
 async function handlePromosRequest() {
   try {
-    // Appel direct à l'API officielle Steam pour récupérer les featured/discounts du jour
+    // Récupération officielle des jeux en promotion sur Steam
     const response = await fetch("https://store.steampowered.com/api/featuredcategories/?l=french", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CartridgeApp/1.0"
@@ -220,7 +220,6 @@ async function handlePromosRequest() {
     if (!response.ok) throw new Error("Erreur flux officiel Steam");
     const data = await response.json();
 
-    // Steam classe les promos dans différentes catégories (ex: specials)
     const specials = data.specials ? data.specials.items : [];
 
     const steamDeals = specials.map(game => ({
@@ -229,8 +228,8 @@ async function handlePromosRequest() {
       releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Soldes Steam", exact: true }],
       store: "Steam Store",
       cover: game.header_image || game.large_capsule_image,
-      oldPrice: (game.original_price / 100).toFixed(2) + " €",
-      newPrice: (game.final_price / 100).toFixed(2) + " €",
+      oldPrice: game.original_price ? (game.original_price / 100).toFixed(2) + " €" : "0.00 €",
+      newPrice: game.final_price ? (game.final_price / 100).toFixed(2) + " €" : "0.00 €",
       discount: `-${game.discount_percent}%`
     }));
 
@@ -254,7 +253,6 @@ export default {
     return new Response("Not Found", { status: 404, headers: CORS });
   }
 };
-
     let month = url.searchParams.get("month");
     const searchQuery = (url.searchParams.get("search") || "").replace(/["\\;]/g, "").trim();
     const platformParam = url.searchParams.get("platform");
