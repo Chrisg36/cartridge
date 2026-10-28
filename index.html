@@ -2976,7 +2976,7 @@ function getIgdbConsoleImage(consoleName) {
   const imageId = igdbMap[consoleName];
   return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
 }
-function renderMuseumMainPage() {
+function renderMuseumAndVitrinePage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
   contentArea.replaceChildren();
@@ -2984,63 +2984,212 @@ function renderMuseumMainPage() {
   const coinSpan = document.getElementById("museumPageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  const banner = el("div", "shop-banner");
-  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+  // --- SOUS-NAVIGATION INTERNE (ONGLETS STYLE BOUTIQUE) ---
+  const subNav = el("div");
+  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
 
-  const headerDiv = el("div");
-  headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('vitrineTitle')}</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('vitrineDesc')}</p>
-  `;
-  banner.append(headerDiv);
+  const tabVitrine = el("button", "chip", "🏛️ Vitrine de Collection");
+  const tabMuseum = el("button", "chip", "🕹️ Musée des Consoles");
 
-  const groups = {};
-  for (const consoleItem of WORLD_CONSOLES) {
-    if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
-    groups[consoleItem.brand].push(consoleItem);
-  }
+  [tabVitrine, tabMuseum].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "38px";
+    b.style.fontSize = "11px";
+  });
 
-  const mainContainer = el("div");
-  mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%; margin-top: 10px;";
+  const displayBox = el("div");
+  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
 
-  for (const [brand, consoles] of Object.entries(groups)) {
-    const section = el("div", "constructor-section");
-    const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
-    section.append(brandTitle);
+  // --- VUE 1 : LA VITRINE DU JOUEUR (JAQUETTES) ---
+  function showVitrineTab() {
+    tabVitrine.setAttribute("aria-pressed", "true");
+    tabMuseum.setAttribute("aria-pressed", "false");
+    displayBox.replaceChildren();
 
-    const grid = el("div", "vitrine-grid");
-    for (const consoleItem of consoles) {
-      const card = el("div", "console-vitrine-card");
-      card.style.setProperty('--console-color', consoleItem.bg);
-      
-      const brandTag = el("span", "console-brand-tag", consoleItem.brand);
-      
-      // 🎯 RETOUR DU BADGE NÉON RÉTRO (Sans image externe)
-      const photoBox = el("div", "console-photo-container");
-      const badge = el("div", "console-icon-badge", consoleItem.code || consoleItem.name);
-      photoBox.append(badge);
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
 
-      const infoGroup = el("div", "console-info-group");
-      const name = el("b", "", consoleItem.name);
-      const year = el("span", "", consoleItem.year);
-      infoGroup.append(name, year);
+    const headerDiv = el("div");
+    headerDiv.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">📚 Galerie des Jaquettes & Archives</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Total de la collection : <b>${myCollection.length}</b> pièce${myCollection.length > 1 ? 's' : ''}</p>
+    `;
+    banner.append(headerDiv);
 
-      card.append(brandTag, photoBox, infoGroup);
-      
-      card.onclick = (e) => {
-        e.stopPropagation();
-        playThemeSound(theme);
-        openConsoleDetail(consoleItem);
-      };
-      
-      grid.append(card);
+    if (myCollection.length === 0) {
+      const emptyMsg = el("div", "msg");
+      emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
+      banner.append(emptyMsg);
+    } else {
+      const collectorItems = myCollection.filter(item => item.category === "supreme_retro");
+      const retroItems = myCollection.filter(item => item.category === "retro");
+      const standardItems = myCollection.filter(item => !item.category || item.category === "standard");
+
+      const categoriesConfig = [
+        { title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)", items: collectorItems },
+        { title: "📼 Séries Rétro Classic", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.3)", items: retroItems },
+        { title: "📦 Séries Standard & Communes", color: "#94a3b8", glow: "rgba(148, 163, 184, 0.3)", items: standardItems }
+      ];
+
+      const mainContainer = el("div");
+      mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
+
+      categoriesConfig.forEach(cat => {
+        if (cat.items.length === 0) return;
+
+        const sectionWrapper = el("div");
+        sectionWrapper.style.cssText = `
+          background: rgba(11, 15, 22, 0.5);
+          border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
+          border-radius: 14px; padding: 16px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px ${cat.glow};
+        `;
+
+        const catHeader = el("div");
+        catHeader.style.cssText = `display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid color-mix(in srgb, ${cat.color} 20%, transparent); padding-bottom:8px;`;
+        catHeader.innerHTML = `
+          <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px; text-shadow:0 0 8px ${cat.color};">${cat.title}</span>
+          <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px; border:1px solid color-mix(in srgb, ${cat.color} 20%, transparent);">${cat.items.length} jaquette${cat.items.length > 1 ? 's' : ''}</span>
+        `;
+        sectionWrapper.append(catHeader);
+
+        const shelfContainer = el("div");
+        shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; width: 100%;";
+
+        const itemsPerRow = window.innerWidth >= 768 ? 5 : 3;
+        for (let i = 0; i < cat.items.length; i += itemsPerRow) {
+          const rowItems = cat.items.slice(i, i + itemsPerRow);
+
+          const woodenShelf = el("div");
+          woodenShelf.style.cssText = `
+            background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
+            border: 1px solid #3d2f24; border-radius: 10px; padding: 14px 10px 4px; position: relative;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.9), 0 6px 16px rgba(0,0,0,0.5);
+          `;
+
+          const gamesRow = el("div");
+          gamesRow.style.cssText = `display:grid; grid-template-columns:repeat(${itemsPerRow}, 1fr); gap:10px; align-items:flex-end;`;
+
+          for (const item of rowItems) {
+            const gameBox = el("div");
+            gameBox.style.cssText = `
+              background: var(--card); border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
+              border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center;
+              box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}; cursor: pointer; transition: transform 0.2s ease;
+            `;
+            gameBox.addEventListener("click", () => {
+              playThemeSound(theme);
+              openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
+            });
+
+            const img = el("img");
+            img.src = item.cover; img.loading = "lazy";
+            img.style.cssText = "width:100%; aspect-ratio:3/4; object-fit:cover; display:block;";
+
+            const spine = el("div");
+            spine.style.cssText = `
+              font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 800; text-transform: uppercase;
+              width: 100%; text-align: center; background: rgba(0,0,0,0.95); color: #fff; padding: 5px 3px;
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+              border-top: 1px solid color-mix(in srgb, ${cat.color} 40%, transparent);
+            `;
+            spine.textContent = item.name;
+
+            gameBox.append(img, spine);
+            gamesRow.append(gameBox);
+          }
+
+          woodenShelf.append(gamesRow);
+
+          const plankBoard = el("div");
+          plankBoard.style.cssText = `
+            height: 10px; background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
+            margin: 6px -10px -4px -10px; border-radius: 0 0 8px 8px; border-top: 1px solid #5a4434;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.8);
+          `;
+          woodenShelf.append(plankBoard);
+          shelfContainer.append(woodenShelf);
+        }
+
+        sectionWrapper.append(shelfContainer);
+        mainContainer.append(sectionWrapper);
+      });
+
+      banner.append(mainContainer);
     }
-    section.append(grid);
-    mainContainer.append(section);
+    displayBox.append(banner);
   }
 
-  banner.append(mainContainer);
-  contentArea.append(banner);
+  // --- VUE 2 : LE MUSÉE DES CONSOLES HISTORIQUES ---
+  function showMuseumTab() {
+    tabVitrine.setAttribute("aria-pressed", "false");
+    tabMuseum.setAttribute("aria-pressed", "true");
+    displayBox.replaceChildren();
+
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+    const headerDiv = el("div");
+    headerDiv.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏛️ Musée Mondial des Consoles & Micros</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :</p>
+    `;
+    banner.append(headerDiv);
+
+    const groups = {};
+    for (const consoleItem of WORLD_CONSOLES) {
+      if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
+      groups[consoleItem.brand].push(consoleItem);
+    }
+
+    const mainContainer = el("div");
+    mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%; margin-top: 10px;";
+
+    for (const [brand, consoles] of Object.entries(groups)) {
+      const section = el("div", "constructor-section");
+      const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
+      section.append(brandTitle);
+
+      const grid = el("div", "vitrine-grid");
+      for (const consoleItem of consoles) {
+        const card = el("div", "console-vitrine-card");
+        card.style.setProperty('--console-color', consoleItem.bg);
+        
+        const brandTag = el("span", "console-brand-tag", consoleItem.brand);
+        const photoBox = el("div", "console-photo-container");
+        const badge = el("div", "console-icon-badge", consoleItem.code || consoleItem.name);
+        photoBox.append(badge);
+
+        const infoGroup = el("div", "console-info-group");
+        const name = el("b", "", consoleItem.name);
+        const year = el("span", "", consoleItem.year);
+        infoGroup.append(name, year);
+
+        card.append(brandTag, photoBox, infoGroup);
+        card.onclick = (e) => {
+          e.stopPropagation();
+          playThemeSound(theme);
+          openConsoleDetail(consoleItem);
+        };
+        grid.append(card);
+      }
+      section.append(grid);
+      mainContainer.append(section);
+    }
+
+    banner.append(mainContainer);
+    displayBox.append(banner);
+  }
+
+  // Écouteurs pour basculer proprement d'un onglet à l'autre
+  tabVitrine.addEventListener("click", () => { playThemeSound(theme); showVitrineTab(); });
+  tabMuseum.addEventListener("click", () => { playThemeSound(theme); showMuseumTab(); });
+
+  subNav.append(tabVitrine, tabMuseum);
+  contentArea.append(subNav, displayBox);
+  
+  // Par défaut, on ouvre sur la Vitrine
+  showVitrineTab();
 }
 function openConsoleDetail(consoleItem) {
   playThemeSound(theme);
