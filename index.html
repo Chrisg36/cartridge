@@ -1471,6 +1471,27 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div> <!-- 👈 Ce </div> manquait pour fermer arcadeMainPage ! -->
 
+<!-- ⚙️ 4. LA GRANDE PAGE RÉGLAGES / PROFIL -->
+  <div id="settingsMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">⚙️ SYSTÈME & PROFIL</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="settingsPageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>🎮 CONFIGURATION GLOBALE</span>
+        <span>ESPACE JOUEUR</span>
+      </div>
+    </div>
+    <div id="settingsPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 14px;"></div>
+  </div>
+
+ 
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -4060,7 +4081,8 @@ function hideAllMainPages() {
   const museumPage = document.getElementById("museumMainPage");
   const scoresPage = document.getElementById("scoresMainPage");
   const arcadePage = document.getElementById("arcadeMainPage");
-  const animePage = document.getElementById("animeMainPage"); // 👈 Ajout ici
+  const animePage = document.getElementById("animeMainPage");
+  const settingsPage = document.getElementById("settingsMainPage"); // 👈 Ajout ici
 
   if (homeContent) homeContent.style.display = "none";
   if (shopPage) shopPage.style.display = "none";
@@ -4068,7 +4090,8 @@ function hideAllMainPages() {
   if (museumPage) museumPage.style.display = "none";
   if (scoresPage) scoresPage.style.display = "none";
   if (arcadePage) arcadePage.style.display = "none";
-  if (animePage) animePage.style.display = "none"; // 👈 Ajout ici
+  if (animePage) animePage.style.display = "none";
+  if (settingsPage) settingsPage.style.display = "none"; // 👈 Ajout ici
 }
 
 if (navHome) {
@@ -4126,7 +4149,7 @@ if (typeof navSettings !== 'undefined' && navSettings) {
     setActiveNav(navSettings);
     if (typeof closeSheet === "function") closeSheet();
     
-    openSettings(); // 👈 Ouvre la modale des réglages/profil
+    openSettingsMainPage(); // 👈 Ouvre la grande page plein écran pour iOS
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -5359,6 +5382,253 @@ window.addEventListener("DOMContentLoaded", () => {
 // Sécurité supplémentaire si le DOM est déjà chargé
 updateUserBadge();
 
+function openSettingsMainPage() {
+  playThemeSound(theme);
+  hideAllMainPages();
+  if (typeof closeSheet === "function") closeSheet();
+
+  const settingsPage = document.getElementById("settingsMainPage");
+  const contentArea = document.getElementById("settingsPageContent");
+  const coinSpan = document.getElementById("settingsPageCoins");
+
+  if (coinSpan) coinSpan.textContent = userCoins;
+  if (!settingsPage || !contentArea) return;
+
+  settingsPage.style.display = "block";
+  contentArea.replaceChildren();
+
+  // --- NAVIGATION PAR ONGLETS ---
+  const tabNav = el("div");
+  tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
+
+  const btnTabGeneral = el("button", "chip", "⚙️ Général & Look");
+  const btnTabProfile = el("button", "chip", "👤 Profil & Données");
+  const btnTabLegal = el("button", "chip", "⚖️ Légal & Droits");
+
+  [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "36px";
+    b.style.fontSize = "10px";
+    b.style.fontWeight = "800";
+    b.style.textTransform = "uppercase";
+  });
+
+  tabNav.append(btnTabGeneral, btnTabProfile, btnTabLegal);
+  contentArea.append(tabNav);
+
+  const pageGeneral = el("div");
+  const pageProfile = el("div");
+  const pageLegal = el("div");
+
+  // --- ONGLET 1 : GÉNÉRAL & LOOK ---
+  const secModern = el("div", "settings-section");
+  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
+  const modernGrid = el("div", "themes-grid-container");
+  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      openSettingsMainPage();
+    });
+    modernGrid.append(b);
+  });
+  secModern.append(modernGrid);
+
+  const secRetroThemes = el("div", "settings-section");
+  secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
+  const retroGrid = el("div", "themes-grid-container");
+  ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"].forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      openSettingsMainPage();
+    });
+    retroGrid.append(b);
+  });
+  secRetroThemes.append(retroGrid);
+
+  const secCustom = el("div", "settings-section");
+  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
+  const customGrid = el("div", "settings-grid-options");
+  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
+  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
+  layoutBtn.style.margin = "0";
+  layoutBtn.onclick = () => {
+    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
+    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
+    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
+    document.body.setAttribute("data-layout-style", layoutStyle);
+    playThemeSound(theme);
+  };
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
+  holoBtn.style.margin = "0";
+  holoBtn.onclick = () => {
+    holoEffectEnabled = !holoEffectEnabled;
+    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+    playThemeSound(theme);
+  };
+  customGrid.append(layoutBtn, holoBtn);
+  secCustom.append(customGrid);
+
+  const secTime = el("div", "settings-section");
+  secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
+  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
+  randomTimeBtn.onclick = () => {
+    playThemeSound(theme);
+    const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
+    ym = `${cultYears[Math.floor(Math.random() * cultYears.length)]}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, "0")}`;
+    hideAllMainPages();
+    document.getElementById("homeMainContent").style.display = "block";
+    setActiveNav(document.getElementById("navHome"));
+    load();
+  };
+  secTime.append(randomTimeBtn);
+
+  pageGeneral.append(secModern, secRetroThemes, secCustom, secTime);
+
+  // --- ONGLET 2 : PROFIL & SÉCURITÉ ---
+  const secProfile = el("div", "settings-section");
+  secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
+  const savedUser = localStorage.getItem("cartridge_user");
+
+  if (savedUser) {
+    const initial = savedUser.charAt(0).toUpperCase();
+    secProfile.innerHTML += `
+      <div class="player-card-connected">
+        <div class="player-card-header">
+          <div class="player-card-avatar-large">${initial}</div>
+          <div>
+            <div style="font-size:15px; font-weight:800; color:var(--txt);">${savedUser}</div>
+            <div style="font-size:11px; color:#00e676; display:flex; align-items:center; gap:6px; margin-top:2px;">
+              <span class="player-status-dot"></span> Compte synchronisé Cloudflare D1
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <button id="btnLogout" class="cta-sec" style="flex:1; margin:0; border-color:#ff3344; color:#ff3344;">Déconnexion</button>
+        </div>
+      </div>
+    `;
+  } else {
+    secProfile.innerHTML += `
+      <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+          <input type="text" id="settingUsername" class="search-box" placeholder="Entrez votre pseudo..." style="margin:0;" required>
+        </div>
+        <div>
+          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+          <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;" required>
+        </div>
+        <div>
+          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+          <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
+        </div>
+        <button type="submit" class="cta" style="margin-top:6px;">Connexion / Inscription</button>
+      </form>
+      <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+        <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+        <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+      </div>
+    `;
+  }
+
+  const secPrefs = el("div", "settings-section");
+  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
+  const prefsGrid = el("div", "settings-grid-options");
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.style.margin = "0";
+  soundBtn.onclick = () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    if (soundEnabled) playThemeSound(theme);
+  };
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.style.margin = "0";
+  crtBtn.onclick = () => {
+    crtEnabled = !crtEnabled;
+    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
+    document.body.classList.toggle("crt-enabled", crtEnabled);
+    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
+    playThemeSound(theme);
+  };
+  prefsGrid.append(soundBtn, crtBtn);
+  secPrefs.append(prefsGrid);
+
+  pageProfile.append(secProfile, secPrefs);
+
+  // --- ONGLET 3 : LÉGAL ---
+  const secLegal = el("div", "settings-section");
+  secLegal.append(el("div", "settings-section-title", "⚖️ Propriété Intellectuelle & Droits"));
+  secLegal.innerHTML += `
+    <div style="font-size:12px; line-height:1.6; color:var(--mut);">
+      <p style="margin-bottom:10px;"><strong style="color:var(--txt);">1. Conception :</strong> Cartridge est une création originale.</p>
+      <p style="margin-bottom:10px;"><strong style="color:var(--txt);">2. Données & Jaquettes :</strong> Fournies via l'API IGDB.</p>
+      <p><strong style="color:var(--txt);">3. Infrastructure :</strong> Déployé sur Cloudflare Pages & Workers.</p>
+    </div>
+  `;
+  pageLegal.append(secLegal);
+
+  contentArea.append(pageGeneral, pageProfile, pageLegal);
+
+  function showTab(index) {
+    playThemeSound(theme);
+    btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
+    btnTabProfile.setAttribute("aria-pressed", String(index === 1));
+    btnTabLegal.setAttribute("aria-pressed", String(index === 2));
+    pageGeneral.style.display = index === 0 ? "block" : "none";
+    pageProfile.style.display = index === 1 ? "block" : "none";
+    pageLegal.style.display = index === 2 ? "block" : "none";
+  }
+
+  btnTabGeneral.onclick = () => showTab(0);
+  btnTabProfile.onclick = () => showTab(1);
+  btnTabLegal.onclick = () => showTab(2);
+  showTab(0);
+
+  setTimeout(() => {
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.onclick = () => {
+        playThemeSound(theme);
+        localStorage.removeItem("cartridge_user");
+        localStorage.removeItem("cartridge_pass");
+        updateUserBadge();
+        openSettingsMainPage();
+        showRetroAlert("Déconnexion", "Vous êtes déconnecté.");
+      };
+    }
+    const f = document.getElementById("profileFormSetting");
+    if (f) {
+      f.onsubmit = async (e) => {
+        await handleCloudflareAuth(e);
+        updateUserBadge();
+        openSettingsMainPage();
+      };
+    }
+  }, 50);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+ // 🔀 Redirection automatique de tous les anciens appels
+function openSettings() {
+  openSettingsMainPage();
+}
  
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
