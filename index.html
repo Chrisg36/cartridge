@@ -3808,6 +3808,20 @@ if (navMuseum) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
+
+const navSettings = document.getElementById("navSettings");
+if (navSettings) {
+  navSettings.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navSettings);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    openSettings(); // 👈 Ouvre la modale des réglages/profil
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+ 
 // --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
 
 function loadChallengesData() {
