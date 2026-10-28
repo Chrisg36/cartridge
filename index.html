@@ -4866,7 +4866,7 @@ function renderScoresMainPage() {
   });
 }
 
- async function renderAnimeMainPage() {
+async function renderAnimeMainPage() {
   const animePage = document.getElementById("animeMainPage");
   if (!animePage) return;
   
@@ -4884,37 +4884,32 @@ function renderScoresMainPage() {
   const headerDiv = el("div");
   headerDiv.innerHTML = `
     <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🎌 PLANNING DES ANIMES EN DIRECT</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Mises à jour automatiques via MyAnimeList</p>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Mises à jour automatiques via ton Worker Cloudflare</p>
   `;
   banner.append(headerDiv);
 
-  const loadingMsg = el("p", "msg", "⏳ Connexion au flux des animés en cours...");
+  const loadingMsg = el("p", "msg", "⏳ Connexion au flux sécurisé des animés...");
   banner.append(loadingMsg);
   contentArea.append(banner);
 
   let animes = [];
 
   try {
-    // Tentative de récupération via l'API Jikan avec un timeout de 5 secondes
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    const res = await fetch("https://api.jikan.moe/v4/seasons/now", { signal: controller.signal });
-    clearTimeout(timeoutId);
-    
-    const json = await res.json();
-    animes = json.data || [];
+    // On appelle ton propre Worker configuré dans config.js (variable API)
+    const res = await fetch(`${API}/?animes=true`);
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      animes = data;
+    }
   } catch (e) {
-    console.warn("API Jikan inaccessible ou bloquée par CORS, utilisation du catalogue de secours.", e);
+    console.warn("Erreur lors de la récupération via le Worker, utilisation du secours.", e);
   }
 
-  // Si l'API échoue ou est bloquée, on affiche une liste de secours garantie pour que la page ne soit jamais vide
+  // Catalogue de secours si besoin
   if (animes.length === 0) {
     animes = [
       { title: "Solo Leveling - Season 2", score: 8.9, episodes: "En cours", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co67wn.png" } }, url: "https://myanimelist.net" },
-      { title: "Chainsaw Man - The Movie: Reze Arc", score: 9.1, episodes: "Film", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4pva.png" } }, url: "https://myanimelist.net" },
-      { title: "Blue Lock VS. U-20 JAPAN", score: 8.4, episodes: "14 eps", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5j7u.png" } }, url: "https://myanimelist.net" },
-      { title: "Demon Slayer: Infinity Castle", score: 9.3, episodes: "Trilogie", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1x7c.png" } }, url: "https://myanimelist.net" }
+      { title: "Chainsaw Man - The Movie: Reze Arc", score: 9.1, episodes: "Film", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4pva.png" } }, url: "https://myanimelist.net" }
     ];
   }
 
@@ -4922,7 +4917,7 @@ function renderScoresMainPage() {
 
   const grid = el("div", "games-grid");
   
-  animes.slice(0, 20).forEach(anime => {
+  animes.forEach(anime => {
     const card = el("div", "grid-card");
     card.addEventListener("click", () => {
       playThemeSound(theme);
