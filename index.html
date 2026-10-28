@@ -4769,23 +4769,60 @@ function importCartridgeSave() {
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target.result);
-        if (data.userCoins !== undefined) userCoins = data.userCoins;
-        if (data.myCollection) myCollection = data.myCollection;
-        if (data.favorites) favorites = data.favorites;
         
-        localStorage.setItem("userCoins", userCoins);
-        localStorage.setItem("myCollection", JSON.stringify(myCollection));
-        localStorage.setItem("favorites", JSON.stringify(favorites));
+        // 🛡️ VALIDATION DE LA STRUCTURE DU FICHIER DE SAUVEGARDE
+        if (!data || typeof data !== "object") {
+          throw new Error("Format de sauvegarde invalide.");
+        }
+
+        // Vérification des types pour chaque propriété critique
+        if (data.userCoins !== undefined && (typeof data.userCoins !== "number" || isNaN(data.userCoins))) {
+          throw new Error("Valeur de crédits corrompue.");
+        }
+        
+        if (data.myCollection !== undefined && !Array.isArray(data.myCollection)) {
+          throw new Error("Format de la collection invalide.");
+        }
+        
+        if (data.favorites !== undefined && !Array.isArray(data.favorites)) {
+          throw new Error("Format des favoris invalide.");
+        }
+
+        // 💾 Application sécurisée des données validées
+        if (data.userCoins !== undefined) {
+          userCoins = data.userCoins;
+          localStorage.setItem("userCoins", userCoins);
+        }
+        
+        if (data.myCollection !== undefined) {
+          myCollection = data.myCollection;
+          localStorage.setItem("myCollection", JSON.stringify(myCollection));
+        }
+        
+        if (data.favorites !== undefined) {
+          favorites = data.favorites;
+          localStorage.setItem("favorites", JSON.stringify(favorites));
+        }
+
+        if (data.theme && typeof data.theme === "string") {
+          theme = applyTheme(data.theme);
+          localStorage.setItem("theme", theme);
+        }
         
         updateCoinsUI();
-        alert("✅ Sauvegarde (.sav) importée avec succès ! Bon retour collectionneur.");
+        render(); // Actualise l'affichage si besoin
+        
+        alert("✅ Sauvegarde (.sav) importée et vérifiée avec succès ! Bon retour collectionneur.");
         openSettings();
+        
       } catch (err) {
-        alert("❌ Erreur lors de l'importation du fichier de sauvegarde.");
+        console.warn("Échec de l'importation de la sauvegarde :", err);
+        alert("❌ Erreur : Ce fichier de sauvegarde est corrompu, illisible ou invalide. Votre collection actuelle n'a pas été modifiée.");
       }
     };
     reader.readAsText(file);
