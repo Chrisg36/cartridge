@@ -1363,54 +1363,77 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
     </div>
     
-    <div id="arcadePageContent" style="margin-top: 16px;">
-      <div class="gb-console-wrapper">
-        <div class="gb-console">
-          <div class="gb-screen-lens">
-            <div class="gb-screen" id="gbScreen">
-              <div class="gb-ui-overlay">
-                <span id="gbScoreText">SC:00</span>
-                <span id="gbHighScoreText">HI:00</span>
-              </div>
-              <canvas id="gbGameCanvas" width="160" height="144"></canvas>
+  <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+  
+  <!-- 🎮 LA JAQUETTE / CARTOUCHE CLIQUABLE -->
+  <div id="arcadeGameCard" style="width: 220px; background: var(--card); border: 2px solid var(--acc); border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px color-mix(in srgb, var(--acc) 40%, transparent); transition: transform 0.3s ease, filter 0.3s ease;" onclick="launchSnakeGameBoy()">
+    <div style="position: relative; width: 100%; aspect-ratio: 3/4; background: #0f1f0f; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <!-- Visuel rétro de la cartouche / jeu -->
+      <div style="text-align: center; padding: 20px;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 14px; color: #9bbc0f; margin-bottom: 10px; text-shadow: 2px 2px #0f380f;">SNAKE BOY</div>
+        <div style="width: 50px; height: 50px; background: #9bbc0f; border: 2px solid #0f380f; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 20px;">🐍</span>
+        </div>
+      </div>
+      <div style="position: absolute; top: 8px; right: 8px; background: var(--acc); color: var(--on); font-family: 'PressStart 2P', monospace; font-size: 8px; padding: 4px 8px; border-radius: 4px;">PLAY</div>
+    </div>
+    <div style="padding: 12px; text-align: center; background: rgba(0,0,0,0.4);">
+      <b style="font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 2px;">Retro Snake Game Boy</b>
+      <span style="font-size: 11px; color: var(--mut); text-transform: uppercase;">Cliquez pour insérer la cartouche</span>
+    </div>
+  </div>
 
-              <!-- Menus du jeu -->
-              <div id="gbMainMenu" class="gb-menu">
-                <h1>SNAKE BOY</h1>
-                <button onclick="startGbGame()">JOUER</button>
-                <button onclick="toggleGbOptions()">OPTIONS</button>
-              </div>
+  <!-- 🕹️ LA CONSOLE (Cachée au départ, s'affiche au clic sur la jaquette) -->
+  <div id="arcadeConsoleContainer" style="display: none;" class="gb-console-wrapper">
+    <div style="margin-bottom: 12px; width: 100%; display: flex; justify-content: flex-end;">
+      <button onclick="closeSnakeGameBoy()" style="background: #800; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer; box-shadow: 0 3px #300;">← RETOUR JAQUETTE</button>
+    </div>
+    <div class="gb-console">
+      <div class="gb-screen-lens">
+        <div class="gb-screen" id="gbScreen">
+          <div class="gb-ui-overlay">
+            <span id="gbScoreText">SC:00</span>
+            <span id="gbHighScoreText">HI:00</span>
+          </div>
+          <canvas id="gbGameCanvas" width="160" height="144"></canvas>
 
-              <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
-                <h1>OPTIONS</h1>
-                <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
-                <button onclick="toggleGbOptions()">RETOUR</button>
-              </div>
-
-              <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
-                <h1>GAME OVER</h1>
-                <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
-                <button onclick="startGbGame()">REESSAYER</button>
-                <button onclick="showGbMainMenu()">MENU</button>
-              </div>
-            </div>
+          <!-- Menus du jeu -->
+          <div id="gbMainMenu" class="gb-menu">
+            <h1>SNAKE BOY</h1>
+            <button onclick="startGbGame()">JOUER</button>
+            <button onclick="toggleGbOptions()">OPTIONS</button>
           </div>
 
-          <div class="gb-controls">
-            <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
-            <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
-            <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
-            <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
+          <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
+            <h1>OPTIONS</h1>
+            <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
+            <button onclick="toggleGbOptions()">RETOUR</button>
           </div>
 
-          <div class="gb-action-buttons">
-            <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
-            <button class="gb-action-btn" onclick="startGbGame()">STA</button>
+          <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
+            <h1>GAME OVER</h1>
+            <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
+            <button onclick="startGbGame()">REESSAYER</button>
+            <button onclick="showGbMainMenu()">MENU</button>
           </div>
         </div>
       </div>
+
+      <div class="gb-controls">
+        <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
+        <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
+        <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
+        <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
+      </div>
+
+      <div class="gb-action-buttons">
+        <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
+        <button class="gb-action-btn" onclick="startGbGame()">STA</button>
+      </div>
     </div>
   </div>
+
+</div>
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -4983,6 +5006,37 @@ function renderScoresMainPage() {
     try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
     renderScoresMainPage();
   });
+}
+
+function launchSnakeGameBoy() {
+  if (typeof playThemeSound === "function") playThemeSound(theme);
+  
+  // Masque la jaquette et affiche la console Game Boy
+  const card = document.getElementById("arcadeGameCard");
+  const consoleBox = document.getElementById("arcadeConsoleContainer");
+  
+  if (card) card.style.display = "none";
+  if (consoleBox) consoleBox.style.display = "flex";
+  
+  // Initialise l'écran statique
+  if (typeof drawGbStatic === "function") drawGbStatic();
+}
+
+function closeSnakeGameBoy() {
+  if (typeof playThemeSound === "function") playThemeSound(theme);
+  
+  // Stoppe le jeu en cours si actif
+  if (typeof gbGameInterval !== 'undefined' && gbGameInterval) {
+    clearInterval(gbGameInterval);
+  }
+  gbIsPlaying = false;
+
+  // Réaffiche la jaquette et masque la console
+  const card = document.getElementById("arcadeGameCard");
+  const consoleBox = document.getElementById("arcadeConsoleContainer");
+  
+  if (card) card.style.display = "block";
+  if (consoleBox) consoleBox.style.display = "none";
 }
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
