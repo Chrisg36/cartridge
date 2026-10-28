@@ -1537,6 +1537,100 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     inset 0 0 15px rgba(251, 191, 36, 0.5) !important;
 }
 
+/* 🎮 SPLASH BOOT GAME BOY IOS */
+#splash {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+#splash.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Descente du logo vers le centre */
+.gb-boot-anim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+  animation: gbDropIn 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.gb-boot-icon {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 12px var(--acc));
+}
+
+.gb-boot-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-shadow: 0 0 14px var(--acc);
+  position: relative;
+}
+
+.gb-boot-tm {
+  font-size: 10px;
+  color: var(--acc);
+  vertical-align: top;
+  margin-left: 2px;
+}
+
+/* Bouton clignotant pour entrer */
+.gb-boot-touch-btn {
+  z-index: 3;
+  margin-top: 10px;
+  padding: 10px 22px;
+  font-family: 'Orbitron', var(--font);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #fff;
+  background: color-mix(in srgb, var(--acc) 22%, transparent);
+  border: 1.5px solid var(--acc);
+  border-radius: 20px;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--acc) 45%, transparent);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gb-boot-touch-btn.ready {
+  opacity: 1;
+  transform: translateY(0);
+  animation: arcadePulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes gbDropIn {
+  0% { transform: translateY(-260px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes arcadePulse {
+  0% { opacity: 0.4; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1.03); }
+}
+
   
   
 </style>
@@ -1575,6 +1669,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 
 <div class="pixel-particles" id="particles"></div>
 
+<!-- 🎮 ÉCRAN DE BOOT GAME BOY (ACTIVÉ UNIQUEMENT SUR IOS) -->
 <div id="splash">
   <div class="splash-bg-grid">
     <div class="bg-cartridge"></div>
@@ -1603,19 +1698,31 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <div class="bg-cartridge gameboy-cart"></div>
     <div class="bg-cartridge"></div>
   </div>
-  <div class="splash-container">
-    <div class="splash-logo-pro">
-      <div class="splash-logo-text">CR</div>
-      <div class="splash-chip-pins">
-        <div class="splash-chip-pin"></div>
-        <div class="splash-chip-pin"></div>
-        <div class="splash-chip-pin"></div>
-        <div class="splash-chip-pin"></div>
-      </div>
+
+  <div class="gb-boot-anim">
+    <!-- 💾 Cartouche vectorielle officielle Cartridge -->
+    <svg viewBox="0 0 24 24" fill="none" class="gb-boot-icon">
+      <path d="M4 2H17L21 6V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V3C3 2.45 3.45 2 4 2Z" fill="#181B22" stroke="var(--acc)" stroke-width="1.8"/>
+      <rect x="6.5" y="6" width="10" height="9" rx="1.5" fill="rgba(255,122,69,0.25)" stroke="var(--acc)" stroke-width="1.2"/>
+      <path d="M8.5 9.5H14.5M8.5 12H12.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+      <rect x="5.5" y="19" width="12" height="2" rx="0.5" fill="#FFD700"/>
+    </svg>
+    <div class="gb-boot-title">
+      CARTRIDGE<span class="gb-boot-tm">®</span>
     </div>
-    <div class="splash-cartridges">
-      <div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div><div class="cartridge"></div>
-    </div>
+  </div>
+
+  <!-- Rebond des 4 cartouches de chargement -->
+  <div class="splash-cartridges">
+    <div class="cartridge"></div>
+    <div class="cartridge"></div>
+    <div class="cartridge"></div>
+    <div class="cartridge"></div>
+  </div>
+
+  <!-- Bouton tactile néon iOS -->
+  <div id="bootStartBtn" class="gb-boot-touch-btn">
+    ▶ TOUCHER POUR ENTRER
   </div>
 </div>
 
@@ -2509,6 +2616,7 @@ for (const item of rowItems) {
   $("#sheet").classList.add("on");
 }
 document.addEventListener("DOMContentLoaded", () => {
+  initSplashScreen(); // 👈 Ajoute cet appel ici
   updateCoinsUI();
   checkDailyReward();
 });
@@ -3260,9 +3368,66 @@ function updateStaticTexts() {
   }
 }
 
-function hideSplash() {
+// 🍏 Détection stricte d'Apple iOS (iPhone, iPad, iPod)
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+function initSplashScreen() {
   const splash = document.getElementById("splash");
-  if (splash) splash.classList.add("hidden");
+  if (!splash) return;
+
+  // 💻 SUR PC / ANDROID : pas d'écran de démarrage, affichage direct
+  if (!isIOS) {
+    splash.style.display = "none";
+    splash.classList.add("hidden");
+    return;
+  }
+
+  // 🍏 SUR IOS : activation du boot rétro
+  splash.style.display = "flex";
+
+  // Bruitage Game Boy à l'impact (1.5s)
+  setTimeout(() => {
+    try {
+      const a = new (window.AudioContext || window.webkitAudioContext)();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + i * 0.08);
+        g.gain.setValueAtTime(0.12, t + i * 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + i * 0.08); o.stop(t + i * 0.08 + 0.35);
+      });
+    } catch (e) {}
+
+    const btn = document.getElementById("bootStartBtn");
+    if (btn) btn.classList.add("ready");
+  }, 1500);
+
+  // Déverrouillage au tap tactile
+  const unlockApp = () => {
+    splash.style.opacity = "0";
+    splash.style.transform = "scale(1.05)";
+    setTimeout(() => {
+      splash.style.display = "none";
+      splash.classList.add("hidden");
+    }, 450);
+  };
+
+  splash.addEventListener("click", unlockApp, { once: true });
+}
+
+// Fonction conservée pour que le reste du script ne plante pas
+function hideSplash() {
+  if (!isIOS) {
+    const splash = document.getElementById("splash");
+    if (splash) {
+      splash.style.display = "none";
+      splash.classList.add("hidden");
+    }
+  }
 }
 
 function renderShimmerLoader() {
