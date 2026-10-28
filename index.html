@@ -5160,7 +5160,7 @@ window.addEventListener('scroll', () => {
 });
 
 
- async function handleCloudflareAuth(e) {
+async function handleCloudflareAuth(e) {
   e.preventDefault();
 
   const usernameInput = document.getElementById("settingUsername");
@@ -5172,11 +5172,10 @@ window.addEventListener('scroll', () => {
   const recoveryQ = recoveryInput ? recoveryInput.value.trim() : "";
 
   if (!username || !password) {
-    alert("Veuillez renseigner un pseudo et un mot de passe.");
+    showRetroAlert("Champs requis", "Veuillez renseigner un pseudo et un mot de passe.", true);
     return;
   }
 
-  // Snapshot de l'état actuel du joueur
   const currentSave = {
     userCoins: typeof userCoins !== "undefined" ? userCoins : 100,
     myCollection: typeof myCollection !== "undefined" ? myCollection : [],
@@ -5195,16 +5194,14 @@ window.addEventListener('scroll', () => {
     const resData = await res.json();
 
     if (!res.ok) {
-      alert("❌ " + (resData.message || "Erreur de connexion"));
+      showRetroAlert("Erreur de connexion", resData.message || resData.error || "Erreur d'authentification.", true);
       return;
     }
 
-    // Sauvegarde de session
     localStorage.setItem("cartridge_user", username);
     localStorage.setItem("cartridge_pass", password);
 
     if (resData.status === "connected" && resData.data) {
-      // Restauration des données distantes
       if (resData.data.userCoins !== undefined) userCoins = resData.data.userCoins;
       if (resData.data.myCollection) myCollection = resData.data.myCollection;
       if (resData.data.favorites) favorites = resData.data.favorites;
@@ -5217,14 +5214,14 @@ window.addEventListener('scroll', () => {
 
       if (typeof updateCoinsUI === "function") updateCoinsUI();
       if (typeof render === "function") render();
-     showRetroAlert("Bienvenue", `🎮 Bon retour ${username} ! Vos données ont été synchronisées.`);
+      showRetroAlert("Bienvenue", `🎮 Bon retour ${username} ! Vos crédits et données ont été synchronisés.`);
     } else {
       showRetroAlert("Succès", "🎉 Compte Cloudflare créé ! Vos pièces et données sont sauvegardées en ligne.");
     }
 
     closeSheet();
   } catch (err) {
-    showRetroAlert("Erreur de connexion", resData.message || "Identifiants invalides.", true);
+    showRetroAlert("Erreur réseau", "Impossible de joindre le serveur. Vérifiez votre connexion.", true);
   }
 }
 
