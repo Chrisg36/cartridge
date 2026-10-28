@@ -1326,44 +1326,61 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 
 /* 🕹️ Badge profil dans le header / accueil */
-/* 5. Le badge joueur reste compact */
 .player-badge {
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cov);
+  border: 1.5px solid var(--acc);
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font);
   font-size: 10px;
+  font-weight: 700;
+  color: var(--txt);
   white-space: nowrap;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
+
 .player-badge:hover {
-  box-shadow: 0 0 10px var(--acc); transform: translateY(-1px);
+  box-shadow: 0 0 10px var(--acc);
+  transform: translateY(-1px);
 }
+
+/* 🟢 Conteneur avatar (agrandi à 28px) avec position relative pour caler le point vert */
 .player-avatar {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: var(--acc); color: var(--on);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 900; text-transform: uppercase;
-}
-.player-status-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #00e676; box-shadow: 0 0 6px #00e676;
-}
-
-/* 💳 Carte joueur connecté dans les Réglages */
-.player-card-connected {
-  background: var(--cov); border: 1.5px solid var(--acc);
-  border-radius: var(--radius); padding: 14px;
-  display: flex; flex-direction: column; gap: 12px;
-}
-.player-card-header {
-  display: flex; align-items: center; gap: 12px;
-}
-.player-card-avatar-large {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--acc); color: var(--on);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; font-weight: 900; text-transform: uppercase;
-  box-shadow: 0 0 12px var(--acc);
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--acc);
+  color: var(--on);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 50%, transparent);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
 }
 
+/* 🟢 Le voyant vert néon ancré sur l'avatar en bas à droite */
+.player-avatar .player-status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00e676;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px #00e676;
+}
  
  
 </style>
@@ -5437,31 +5454,31 @@ function openForgotPasswordModal() {
 }
 
 function updateUserBadge() {
-  const badges = document.querySelectorAll(".user-header-badge, #userHeaderBadge");
-  if (!badges.length) return;
+  const badge = document.getElementById("userHeaderBadge");
+  if (!badge) return;
 
-  const user = localStorage.getItem("cartridge_user");
+  const savedUser = localStorage.getItem("cartridge_user");
 
-  badges.forEach((b) => {
-    if (user) {
-      const initial = user.charAt(0).toUpperCase();
-      b.innerHTML = `
-        <div class="player-badge">
-          <div class="player-avatar">${initial}</div>
-          <span>${user}</span>
-          <span class="player-status-dot" title="Compte synchronisé Cloudflare"></span>
+  if (savedUser) {
+    const initial = savedUser.charAt(0).toUpperCase();
+    badge.innerHTML = `
+      <div class="player-badge" title="${savedUser} (Connecté)">
+        <div class="player-avatar">
+          ${initial}
+          <span class="player-status-dot"></span>
         </div>
-      `;
-      b.style.display = "inline-flex";
-    } else {
-      b.innerHTML = `
-        <div class="player-badge" style="border: 1px dashed var(--acc); opacity: 0.85;">
-          <span>👤 Connexion</span>
-        </div>
-      `;
-      b.style.display = "inline-flex";
-    }
-  });
+        <span style="font-weight:800; font-size:11px;">${savedUser}</span>
+      </div>
+    `;
+    badge.onclick = () => openSettingsMainPage();
+  } else {
+    badge.innerHTML = `
+      <div class="player-badge">
+        <span>👤 Connexion</span>
+      </div>
+    `;
+    badge.onclick = () => openSettingsMainPage();
+  }
 }
 // Mise à jour de l'avatar au chargement initial de la page
 window.addEventListener("DOMContentLoaded", () => {
