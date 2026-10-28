@@ -211,11 +211,22 @@ body {
   .fav-filter-btn:active { transform: scale(0.95); }
   .fav-filter-btn[aria-pressed="true"] { background: #FF4757; color: #fff; border-color: #FF4757; box-shadow: 0 0 15px rgba(255, 71, 87, 0.5); }
   
-  .search-box {
-    padding: 8px 10px; font-size: 12px; margin-top: 4px; margin-bottom: 2px; width: 100%; border: 0; border-radius: var(--radius);
-    background: var(--card); color: var(--txt); outline: none; font-family: var(--font); font-weight: 600;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); transition: box-shadow 0.2s ease;
-  }
+.search-box {
+  padding: 8px 12px 8px 36px !important; /* 👈 Dégage 36px à gauche pour l'icône */
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  width: 100%;
+  border-radius: var(--radius);
+  background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FF7A45' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") no-repeat 12px center !important;
+  color: var(--txt);
+  outline: none;
+  font-family: var(--font);
+  font-weight: 600;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
   .search-box:focus { box-shadow: 0 0 15px color-mix(in srgb, var(--acc) 40%, transparent), inset 0 2px 4px rgba(0,0,0,0.2); border-color: var(--acc); }
   .search-box::placeholder { color: var(--mut); }
 
@@ -1532,7 +1543,11 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+<!-- Avant : <div class="neon-logo">🏛️ VITRINE DE COLLECTION</div> -->
 <div class="neon-logo">
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  VITRINE DE COLLECTION
+</div>
   <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg>
   BOUTIQUE ARCADE
 </div>
@@ -1596,7 +1611,11 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <!-- Contenu existant -->
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+<!-- Avant : <div class="neon-logo">⚙️ SYSTÈME & PROFIL</div> -->
 <div class="neon-logo">
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
+  SYSTÈME & PROFIL
+</div>
   <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M2 7.5L12 2.5L22 7.5H2Z" fill="rgba(255,122,69,0.3)" stroke="#FF7A45" stroke-width="1.4"/><path d="M4.5 9V18M9.5 9V18M14.5 9V18M19.5 9V18" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M2 18.5H22" stroke="#FF7A45" stroke-width="1.6"/></svg>
   MUSÉE CONSOLES
 </div>
@@ -1644,8 +1663,11 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   <div id="settingsMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">⚙️ SYSTÈME & PROFIL</div>
-        <div class="nav" style="flex-shrink: 0;">
+       <!-- Avant : <div class="neon-logo">⚙️ SYSTÈME & PROFIL</div> -->
+<div class="neon-logo">
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
+  SYSTÈME & PROFIL
+</div>
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
             🪙 <span id="settingsPageCoins">100</span>
@@ -1676,9 +1698,14 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 </div>
         <div class="nav">
           <div class="user-header-badge" onclick="openSettings();"></div>
-          <div class="header-currency-badge" id="shopBtn" title="Mes crédits">
-            🪙 <span id="userCoins">100</span>
-          </div>
+       <div class="header-currency-badge" id="shopBtn" title="Mes crédits">
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;">
+    <circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/>
+    <circle cx="12" cy="12" r="7" stroke="#9E6100" stroke-width="1" stroke-dasharray="2 1.5"/>
+    <path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  <span id="userCoins">100</span>
+</div>
           <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
           <button class="chip" id="shareBtn" aria-label="Partager mon mois">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
@@ -1687,7 +1714,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
 
       <div class="magazine-edition-banner">
-        <span>🕹️ COLLECTOR EDITION</span>
+<span><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 6px var(--acc); margin-right:4px;"></span>COLLECTOR EDITION</span>
         <span id="editionDateBadge">MONTHLY RELEASES</span>
       </div>
 
@@ -1713,7 +1740,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
         </button>
       </div>
 
-      <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
+      <input type="text" id="search" class="search-box" placeholder="Rechercher un titre, une console...">
     </div> <!-- Fermeture sticky-header-container -->
     <div id="list"></div>
   </div> <!-- Fermeture homeMainContent -->
@@ -1818,9 +1845,36 @@ function openShopModal() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:6px; margin:14px 0; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
-  const tabShop = el("button", "chip", "🏬 Boutique (Bientôt)");
-  const tabPacks = el("button", "chip", "🎟️ Packs Mystères");
-  const tabChallenges = el("button", "chip", "🎯 Défis & Quêtes");
+// 1. Bouton Boutique
+const tabShop = el("button", "chip");
+tabShop.innerHTML = `
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px; margin-right:5px;">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--acc)" stroke-width="2"/>
+    <polyline points="9 22 9 12 15 12 15 22" stroke="var(--acc)" stroke-width="2"/>
+  </svg>
+  Boutique
+`;
+
+// 2. Bouton Packs Boosters
+const tabPacks = el("button", "chip");
+tabPacks.innerHTML = `
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px; margin-right:5px;">
+    <rect x="3" y="3" width="18" height="18" rx="3" stroke="var(--acc)" stroke-width="2"/>
+    <path d="M12 8v8M8 12h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  Packs Boosters
+`;
+
+// 3. Bouton Protocoles & Quêtes
+const tabChallenges = el("button", "chip");
+tabChallenges.innerHTML = `
+  <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px; margin-right:5px;">
+    <circle cx="12" cy="12" r="9" stroke="var(--acc)" stroke-width="2"/>
+    <circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="12" cy="12" r="1.5" fill="var(--acc)"/>
+  </svg>
+  Protocoles
+`;
 
   [tabShop, tabPacks, tabChallenges].forEach(btn => {
     btn.style.flex = "1";
@@ -3835,9 +3889,9 @@ function openSettings() {
   const tabNav = el("div");
   tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
-  const btnTabGeneral = el("button", "chip", "⚙️ Général & Look");
-  const btnTabProfile = el("button", "chip", "👤 Profil & Données");
-  const btnTabLegal = el("button", "chip", "⚖️ Légal & Droits");
+  const btnTabGeneral = el("button", "chip", "Affichage & Look");
+  const btnTabProfile = el("button", "chip", "Compte & Sync);
+  const btnTabLegal = el("button", "chip", "Mentions & Droits");
 
   [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
     b.style.flex = "1";
