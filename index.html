@@ -4592,12 +4592,23 @@ function playCartridgeBreathSound() {
   }
 }
 
-// --- VARIABLES DE PAGINATION ET FILTRE POUR LES PROMOS ---
 let promoCurrentPage = 1;
 let promoSelectedConsole = "Tous";
 const PROMOS_PER_PAGE = 16;
+let realPromosCache = [];
 
-// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES ---
+// Fonction pour récupérer les vrais bons plans depuis ton Worker
+async function fetchAndRenderPromos() {
+  try {
+    // ⚠️ Remplace par l'URL de ton Cloudflare Worker (ou laisse relatif si ton site est hébergé dessus)
+    const res = await fetch("/api/promos"); 
+    realPromosCache = await res.json();
+    renderPromosMainPage();
+  } catch (e) {
+    console.error("Erreur lors de la récupération des promos :", e);
+  }
+}
+
 function renderPromosMainPage() {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
@@ -4607,197 +4618,65 @@ function renderPromosMainPage() {
   if (!contentArea) return;
   contentArea.replaceChildren();
 
-  // En-tête de la section Promos
   const banner = el("div", "shop-banner");
   banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ CATALOGUE DES SOLDES OFFICIELLES</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Bons plans en cours sur l'eShop, le PS Store et le Xbox Store</p>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES STEAM</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Flux officiel en direct de la boutique Steam</p>
   `;
   banner.append(headerDiv);
 
-  // --- BARRE DE FILTRE CONSOLE ---
-  const controlsBar = el("div");
-  controlsBar.style.cssText = "display: flex; gap: 8px; align-items: center; width: 100%; flex-wrap: wrap;";
-
-  const filterSelect = el("select", "platform-select");
-  filterSelect.style.flex = "1";
-  filterSelect.style.minWidth = "180px";
-  
-  const optAll = document.createElement("option");
-  optAll.value = "Tous";
-  optAll.textContent = "✨ Toutes les consoles";
-  filterSelect.append(optAll);
-
-  const groups = {};
-  for (const item of WORLD_CONSOLES) {
-    if (!groups[item.brand]) groups[item.brand] = [];
-    if (!groups[item.brand].includes(item.name)) groups[item.brand].push(item.name);
-  }
-
-  for (const [brand, consoleNames] of Object.entries(groups)) {
-    const optGroup = document.createElement("optgroup");
-    optGroup.label = `--- ${brand.toUpperCase()} ---`;
-    for (const name of consoleNames) {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      if (name === promoSelectedConsole) opt.selected = true;
-      optGroup.append(opt);
-    }
-    filterSelect.append(optGroup);
-  }
-
-  filterSelect.addEventListener("change", (e) => {
-    playThemeSound(theme);
-    promoSelectedConsole = e.target.value;
-    promoCurrentPage = 1;
-    renderPromosMainPage();
-  });
-
-  controlsBar.append(filterSelect);
-  banner.append(controlsBar);
-
-  // Récupération des jeux depuis le cache ou la base globale
-  let allGames = [];
-  Object.values(cache).forEach(monthList => {
-    if (Array.isArray(monthList)) allGames.push(...monthList);
-  });
-  if (allGames.length === 0 && typeof cache[ym] !== 'undefined') {
-    allGames = cache[ym] || [];
-  }
-
-  // Si le cache est vide, on prend un set de secours avec de vrais grands jeux et leurs vraies plateformes
-  const fallbackDeals = [
-    { id: 101, name: "The Legend of Zelda: Tears of the Kingdom", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5vwt.png" },
-    { id: 102, name: "God of War Ragnarök", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4ska.png" },
-    { id: 103, name: "Cyberpunk 2077: Ultimate Edition", releases: [{ platform: "Xbox Series X" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co6zqa.png" },
-    { id: 104, name: "Metroid Prime Remastered", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5z8f.png" },
-    { id: 105, name: "Elden Ring", releases: [{ platform: "PS5" }, { platform: "Xbox Series X" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4fzi.png" },
-    { id: 106, name: "Super Mario Odyssey", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1nba.png" },
-    { id: 107, name: "Resident Evil 4 Remake", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5xbu.png" },
-    { id: 108, name: "Final Fantasy VII Rebirth", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co6q9q.png" }
-  ];
-
-  const promoCandidates = (allGames.length > 5 ? allGames : fallbackDeals).filter(g => g.cover);
-
-  // Filtrage par console sélectionnée
-  let filteredDeals = promoCandidates.filter(game => {
-    if (promoSelectedConsole === "Tous") return true;
-    if (!game.releases) return false;
-    return game.releases.some(r => {
-      const plat = r.platform.toLowerCase();
-      const filt = promoSelectedConsole.toLowerCase();
-      return plat.includes(filt) || filt.includes(plat);
-    });
-  });
-
-  if (filteredDeals.length === 0) {
-    const emptyMsg = el("p", "msg", "Aucune promotion trouvée pour cette console. Essaie 'Toutes les consoles' !");
-    banner.append(emptyMsg);
+  if (!realPromosCache || realPromosCache.length === 0) {
+    banner.append(el("p", "msg", "Chargement des promotions en cours..."));
     contentArea.append(banner);
     return;
   }
 
-  // --- LOGIQUE DE PAGINATION ---
-  const totalPages = Math.ceil(filteredDeals.length / PROMOS_PER_PAGE);
+  // Pagination
+  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE);
   if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
   if (promoCurrentPage < 1) promoCurrentPage = 1;
 
-  const startIndex = (promoCurrentPage - 1) * PROMOS_PER_PAGE;
-  const currentItems = filteredDeals.slice(startIndex, startIndex + PROMOS_PER_PAGE);
+  const currentItems = realPromosCache.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
 
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
 
   currentItems.forEach((game) => {
-    const basePrice = 49.99 + ((game.id % 4) * 10);
-    const discountPerc = -30 - ((game.id % 3) * 10); // -30%, -40% ou -50%
-    const newPrice = (basePrice * (1 + discountPerc / 100)).toFixed(2) + " €";
-    const oldPrice = basePrice.toFixed(2) + " €";
-
-    let platformName = "Console";
-    let badgeClass = "badge-default";
-    let storeName = "Store Officiel";
-    
-    if (game.releases && game.releases.length > 0) {
-      platformName = game.releases[0].platform;
-      badgeClass = getPlatformBadgeClass(platformName);
-      
-      const pLower = platformName.toLowerCase();
-      if (pLower.includes("switch")) storeName = "Nintendo eShop";
-      else if (pLower.includes("ps") || pLower.includes("playstation")) storeName = "PlayStation Store";
-      else if (pLower.includes("xbox")) storeName = "Xbox Store";
-    }
-
     const card = el("div");
     card.style.cssText = `
       background: rgba(15, 23, 42, 0.75);
       border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      cursor: pointer;
+      border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: center;
+      position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
     `;
-
-    card.addEventListener("mouseenter", () => {
-      card.style.transform = "translateY(-3px)";
-      card.style.borderColor = "var(--acc)";
-    });
-    card.addEventListener("mouseleave", () => {
-      card.style.transform = "translateY(0)";
-      card.style.borderColor = "color-mix(in srgb, var(--acc) 35%, transparent)";
-    });
 
     card.addEventListener("click", () => {
       playThemeSound(theme);
-      openSheet({ g: game, rel: game.releases || [{ platform: platformName }], date: game.date || new Date().toISOString().slice(0,10) });
+      openSheet({ g: game, rel: game.releases, date: new Date().toISOString().slice(0,10) });
     });
 
-    const imgWrapper = el("div");
-    imgWrapper.style.cssText = "width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
-    const img = el("img");
-    img.src = game.cover;
-    img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
-    imgWrapper.append(img);
-
-    const infoWrapper = el("div");
-    infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;";
-
-    const titleEl = el("b", "", game.name);
-    titleEl.style.cssText = "font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);";
-
-    const badgeWrapper = el("div");
-    badgeWrapper.style.cssText = "display: flex; gap: 4px; align-items: center; flex-wrap: wrap;";
-    badgeWrapper.innerHTML = `<span class="platform-badge ${badgeClass}" style="font-size: 0.55rem; padding: 1px 4px;">${platformName}</span> <span style="font-size: 8px; color: var(--mut); font-weight: 700;">• ${storeName}</span>`;
-
-    const priceRow = el("div");
-    priceRow.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 2px;";
-    
-    const discountBadge = el("span", "", `${discountPerc}%`);
-    discountBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;";
-
-    const priceBox = el("div");
-    priceBox.style.cssText = "display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800;";
-    priceBox.innerHTML = `<span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${oldPrice}</span> <span style="color: var(--acc);">${newPrice}</span>`;
-
-    priceRow.append(discountBadge, priceBox);
-    infoWrapper.append(titleEl, badgeWrapper, priceRow);
-    card.append(imgWrapper, infoWrapper);
+    card.innerHTML = `
+      <div style="width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);">
+        <img src="${game.cover}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
+        <b style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);">${game.name}</b>
+        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">PC • ${game.store}</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+          <span style="font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;">${game.discount}</span>
+          <span style="font-size: 11px; font-weight: 800;"><span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice}</span> <span style="color: var(--acc);">${game.newPrice}</span></span>
+        </div>
+      </div>
+    `;
     gridContainer.append(card);
   });
 
   banner.append(gridContainer);
 
-  // --- PAGINATION ---
+  // Pagination flèches
   if (totalPages > 1) {
     const paginationBar = el("div");
     paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;";
