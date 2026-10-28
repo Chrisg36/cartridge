@@ -4895,7 +4895,6 @@ async function renderAnimeMainPage() {
   let animes = [];
 
   try {
-    // On appelle ton propre Worker configuré dans config.js (variable API)
     const res = await fetch(`${API}/?animes=true`);
     const data = await res.json();
     if (Array.isArray(data)) {
@@ -4905,7 +4904,6 @@ async function renderAnimeMainPage() {
     console.warn("Erreur lors de la récupération via le Worker, utilisation du secours.", e);
   }
 
-  // Catalogue de secours si besoin
   if (animes.length === 0) {
     animes = [
       { title: "Solo Leveling - Season 2", score: 8.9, episodes: "En cours", images: { jpg: { large_image_url: "https://images.igdb.com/igdb/image/upload/t_cover_big/co67wn.png" } }, url: "https://myanimelist.net" },
@@ -4915,7 +4913,7 @@ async function renderAnimeMainPage() {
 
   loadingMsg.remove();
 
-const grid = el("div", "games-grid");
+  const grid = el("div", "games-grid");
   
   animes.forEach(anime => {
     const card = el("div", "grid-card");
@@ -4927,7 +4925,6 @@ const grid = el("div", "games-grid");
     const covContainer = el("div", "grid-cov-container");
     const img = el("img", "grid-cov");
     
-    // 🎯 Extraction sécurisée de l'image (prend en compte tous les formats possibles de Jikan)
     const imageUrl = anime.images?.jpg?.large_image_url || 
                      anime.images?.jpg?.image_url || 
                      anime.image_url || 
@@ -4944,7 +4941,7 @@ const grid = el("div", "games-grid");
     const meta = el("div", "grid-meta");
     const scoreVal = anime.score ? anime.score : 'N/A';
     const scoreBadge = `<span class="score-badge score-high">★ ${scoreVal}</span>`;
-    const epsVal = anime.episodes ? `${anime.episodes} eps` : 'En cours';
+    const epsVal = anime.episodes ? anime.episodes : 'En cours';
     const episodesBadge = `<span class="time-badge">${epsVal}</span>`;
     meta.innerHTML = scoreBadge + episodesBadge;
 
@@ -4954,6 +4951,7 @@ const grid = el("div", "games-grid");
   });
 
   banner.append(grid);
+}  // 👈 ACCOLADE FERMANTE DE LA FONCTION renderAnimeMainPage
 
 const navAnimes = document.getElementById("navAnimes");
 if (navAnimes) {
@@ -4961,9 +4959,9 @@ if (navAnimes) {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navAnimes);
     if (typeof closeSheet === "function") closeSheet();
-
+    
     hideAllMainPages();
-    renderAnimeMainPage(); // 👈 C'est elle qui affiche la page
+    renderAnimeMainPage();
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
