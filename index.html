@@ -1374,9 +1374,10 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🪙 BOUTIQUE ARCADE & QUÊTES</div>
         <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-              <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
+               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+
             🪙 <span id="shopPageCoins">100</span>
           </div>
         </div>
@@ -1395,9 +1396,10 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ VITRINE DE COLLECTION</div>
         <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-              <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
+               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+
             🪙 <span id="vitrinePageCoins">100</span>
           </div>
         </div>
@@ -1433,9 +1435,10 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏛️ MUSÉE MONDIAL DES CONSOLES</div>
         <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-              <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
+               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+   
             🪙 <span id="museumPageCoins">100</span>
           </div>
         </div>
@@ -1454,9 +1457,9 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🕹️ SALLE ARCADE // SNAKE BOY</div>
         <div class="nav" style="flex-shrink: 0;">
-          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-              <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
+               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
             🪙 <span id="arcadePageCoins">100</span>
           </div>
         </div>
@@ -1467,54 +1470,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
     </div>
     
-    <div id="arcadePageContent" style="margin-top: 16px;">
-      <div class="gb-console-wrapper">
-        <div class="gb-console">
-          <div class="gb-screen-lens">
-            <div class="gb-screen" id="gbScreen">
-              <div class="gb-ui-overlay">
-                <span id="gbScoreText">SC:00</span>
-                <span id="gbHighScoreText">HI:00</span>
-              </div>
-              <canvas id="gbGameCanvas" width="160" height="144"></canvas>
-
-              <!-- Menus du jeu -->
-              <div id="gbMainMenu" class="gb-menu">
-                <h1>SNAKE BOY</h1>
-                <button onclick="startGbGame()">JOUER</button>
-                <button onclick="toggleGbOptions()">OPTIONS</button>
-              </div>
-
-              <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
-                <h1>OPTIONS</h1>
-                <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
-                <button onclick="toggleGbOptions()">RETOUR</button>
-              </div>
-
-              <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
-                <h1>GAME OVER</h1>
-                <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
-                <button onclick="startGbGame()">REESSAYER</button>
-                <button onclick="showGbMainMenu()">MENU</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="gb-controls">
-            <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
-            <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
-            <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
-            <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
-          </div>
-
-          <div class="gb-action-buttons">
-            <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
-            <button class="gb-action-btn" onclick="startGbGame()">STA</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
