@@ -1456,6 +1456,87 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   line-height: 1;
 }
 
+/* ✨ EFFET HOLOGRAPHIQUE SUPREME COLLECTOR */
+@keyframes holoShimmerMove {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.65;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: 0.9;
+  }
+  100% {
+    background-position: 0% 0%;
+    opacity: 0.65;
+  }
+}
+
+@keyframes holoSweepRay {
+  0% { transform: rotate(25deg) translateY(-140%); }
+  100% { transform: rotate(25deg) translateY(140%); }
+}
+
+/* La boîte de jeu en édition suprême */
+.supreme-holo-box {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1.5px solid #fbbf24 !important;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.7), 
+    0 0 15px rgba(251, 191, 36, 0.45),
+    inset 0 0 10px rgba(251, 191, 36, 0.3) !important;
+}
+
+/* 🌈 1. Voile irisé multicolore permanent façon carte holographique rare */
+.supreme-holo-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 0, 128, 0.18) 0%,
+    rgba(255, 215, 0, 0.28) 25%,
+    rgba(0, 255, 200, 0.25) 50%,
+    rgba(0, 150, 255, 0.2) 75%,
+    rgba(255, 0, 212, 0.25) 100%
+  );
+  background-size: 250% 250%;
+  mix-blend-mode: color-dodge;
+  animation: holoShimmerMove 4s ease-in-out infinite;
+}
+
+/* ⚡ 2. Rayon lumineux brillant continu en diagonale */
+.supreme-holo-box::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 35%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 65%
+  );
+  mix-blend-mode: overlay;
+  animation: holoSweepRay 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Survol : amplification du reflet */
+.supreme-holo-box:hover {
+  transform: translateY(-4px) scale(1.05) !important;
+  box-shadow: 
+    0 16px 35px rgba(0, 0, 0, 0.8), 
+    0 0 25px rgba(251, 191, 36, 0.75),
+    inset 0 0 15px rgba(251, 191, 36, 0.5) !important;
+}
+
   
   
 </style>
@@ -2340,20 +2421,26 @@ function openCollectionShelf() {
       const gamesRow = el("div");
       gamesRow.style.cssText = "display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:flex-end;";
 
-      for (const item of rowItems) {
-        const gameBox = el("div");
-        gameBox.style.cssText = `
-          background: var(--card);
-          border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
-          border-radius: 8px;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-          transition: transform 0.2s ease;
-          cursor: pointer;
-        `;
+for (const item of rowItems) {
+  const gameBox = el("div");
+  
+  // 🌟 Active l'effet holo si le jeu appartient à la catégorie Supreme Collector
+  if (item.category === "supreme_retro") {
+    gameBox.classList.add("supreme-holo-box");
+  }
+
+  gameBox.style.cssText = `
+    background: var(--card); 
+    border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
+    border-radius: 8px; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}; 
+    cursor: pointer; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  `;
         
         gameBox.addEventListener("click", () => {
           playThemeSound(theme);
