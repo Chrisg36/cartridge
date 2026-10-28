@@ -1457,8 +1457,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🕹️ SALLE ARCADE // SNAKE BOY</div>
         <div class="nav" style="flex-shrink: 0;">
-               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
-          <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
             🪙 <span id="arcadePageCoins">100</span>
           </div>
@@ -1469,16 +1468,16 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
         <span>GAME BOY EDITION</span>
       </div>
     </div>
-    
-  
-<!-- 🎮 3. TON ACCUEIL NORMAL -->
+    <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div> <!-- 👈 Ce </div> manquait pour fermer arcadeMainPage ! -->
+
+  <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
       <div class="header-top">
         <div class="neon-logo" id="sub-title">🎮 CARTRIDGE</div>
         <div class="nav">
-          <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
-          <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" id="shopBtn" title="Mes crédits">
             🪙 <span id="userCoins">100</span>
           </div>
@@ -1488,8 +1487,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
           </button>
         </div>
       </div>
-    </div> <!-- 👈 C'est ce </div> fermant qui manquait pour sticky-header-container -->
-   
+
       <div class="magazine-edition-banner">
         <span>🕹️ COLLECTOR EDITION</span>
         <span id="editionDateBadge">MONTHLY RELEASES</span>
@@ -1518,9 +1516,9 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
 
       <input type="text" id="search" class="search-box" placeholder="🕹️ Rechercher n'importe quel jeu...">
-    </div>
+    </div> <!-- Fermeture sticky-header-container -->
     <div id="list"></div>
-  </div>
+  </div> <!-- Fermeture homeMainContent -->
 </main>
 
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
