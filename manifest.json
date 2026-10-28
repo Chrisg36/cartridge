@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Cartridge",
   "short_name": "Cartridge",
   "start_url": "/",
@@ -10,6 +11,22 @@
       "src": "apple-touch-icon.png",
       "sizes": "1024x1024",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Cartridge Desktop View"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Cartridge Mobile View"
     }
   ]
 }
