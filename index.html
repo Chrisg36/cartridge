@@ -43,10 +43,16 @@ html {
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
 body {
-    margin: 0; background-color: var(--bg); background-image: var(--pattern); color: var(--txt);
-    font-family: var(--font);  env(safe-area-inset-top); padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
-    position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased;
-  }
+  margin: 0; 
+  background-color: var(--bg); 
+  background-image: var(--pattern); 
+  color: var(--txt);
+  font-family: var(--font); 
+  padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+  position: relative; 
+  overflow-x: hidden; 
+  -webkit-font-smoothing: antialiased;
+}
 
   body.crt-enabled::after {
     content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
@@ -120,11 +126,16 @@ body {
   text-shadow: 0 0 8px var(--acc);
 }
 
-/* 2. VRAI LOGO PRINCIPAL ACCUEIL (🎮 CARTRIDGE) : grand, large et percutant */
+/* 2. VRAI LOGO PRINCIPAL ACCUEIL (🎮 CARTRIDGE) */
 #sub-title.neon-logo {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto !important; /* 👈 Interdiction formelle de se faire écraser à 0px */
   font-size: 13px;
   letter-spacing: 2px;
-  padding: 8px 14px;
+  padding: 7px 12px;
+  white-space: nowrap;
   box-shadow: 
     0 0 16px color-mix(in srgb, var(--acc) 55%, transparent),
     inset 0 1px 1px rgba(255, 255, 255, 0.4),
