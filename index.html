@@ -5680,6 +5680,25 @@ const secLegal = el("div", "settings-section");
 
   contentArea.append(pageGeneral, pageProfile, pageLegal);
 
+  <!-- 7. Charte d'utilisation & Fair-play Joueur -->
+      <div style="background: rgba(255, 122, 69, 0.08); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); border-radius: var(--radius); padding: 12px 14px;">
+        <strong style="color: var(--acc); font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          🎮 Charte d'Utilisation & Esprit Arcade (Fair-Play)
+        </strong>
+        <p style="margin: 0 0 8px 0; color: var(--txt); font-weight: 700; font-size: 11px;">
+          En créant un compte sur Cartridge, chaque joueur s'engage à respecter les principes suivants :
+        </p>
+        <ul style="margin: 0 0 8px 18px; padding: 0; list-style-type: square; font-size: 11px; line-height: 1.6;">
+          <li><strong>Respect & Identité :</strong> Choix d'un pseudo correct. Sont strictement proscrits les propos haineux, injurieux, discriminatoires ou à caractère pornographique.</li>
+          <li><strong>Fair-Play & Scores :</strong> Respect de l'intégrité du système de quêtes, des crédits virtuels 🪙 et du Hall of Fame. L'utilisation de scripts automatisés, bots ou failles d'injection SQL/API pour falsifier ses records entraîne la réinitialisation du compte.</li>
+          <li><strong>Sécurité des comptes :</strong> Chaque joueur est responsable de la confidentialité de ses accès. La plateforme met à disposition un système de question secrète pour faciliter la récupération autonome.</li>
+          <li><strong>Gratuité & Convivialité :</strong> Cartridge est un espace de passionnés du jeu vidéo. Les crédits et packs sont purement virtuels et ne possèdent aucune valeur monétaire réelle.</li>
+        </ul>
+        <span style="font-size: 10px; color: var(--mut); display: block; font-style: italic;">
+          Tout manquement grave peut entraîner la suspension locale ou la suppression de l'accès au compte synchronisé.
+        </span>
+      </div>
+
   function showTab(index) {
     playThemeSound(theme);
     btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
