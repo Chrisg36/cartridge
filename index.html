@@ -1363,77 +1363,54 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
     </div>
     
-  <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-  
-  <!-- 🎮 LA JAQUETTE / CARTOUCHE CLIQUABLE -->
-  <div id="arcadeGameCard" style="width: 220px; background: var(--card); border: 2px solid var(--acc); border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px color-mix(in srgb, var(--acc) 40%, transparent); transition: transform 0.3s ease, filter 0.3s ease;" onclick="launchSnakeGameBoy()">
-    <div style="position: relative; width: 100%; aspect-ratio: 3/4; background: #0f1f0f; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-      <!-- Visuel rétro de la cartouche / jeu -->
-      <div style="text-align: center; padding: 20px;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 14px; color: #9bbc0f; margin-bottom: 10px; text-shadow: 2px 2px #0f380f;">SNAKE BOY</div>
-        <div style="width: 50px; height: 50px; background: #9bbc0f; border: 2px solid #0f380f; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-          <span style="font-size: 20px;">🐍</span>
-        </div>
-      </div>
-      <div style="position: absolute; top: 8px; right: 8px; background: var(--acc); color: var(--on); font-family: 'PressStart 2P', monospace; font-size: 8px; padding: 4px 8px; border-radius: 4px;">PLAY</div>
-    </div>
-    <div style="padding: 12px; text-align: center; background: rgba(0,0,0,0.4);">
-      <b style="font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 2px;">Retro Snake Game Boy</b>
-      <span style="font-size: 11px; color: var(--mut); text-transform: uppercase;">Cliquez pour insérer la cartouche</span>
-    </div>
-  </div>
+    <div id="arcadePageContent" style="margin-top: 16px;">
+      <div class="gb-console-wrapper">
+        <div class="gb-console">
+          <div class="gb-screen-lens">
+            <div class="gb-screen" id="gbScreen">
+              <div class="gb-ui-overlay">
+                <span id="gbScoreText">SC:00</span>
+                <span id="gbHighScoreText">HI:00</span>
+              </div>
+              <canvas id="gbGameCanvas" width="160" height="144"></canvas>
 
-  <!-- 🕹️ LA CONSOLE (Cachée au départ, s'affiche au clic sur la jaquette) -->
-  <div id="arcadeConsoleContainer" style="display: none;" class="gb-console-wrapper">
-    <div style="margin-bottom: 12px; width: 100%; display: flex; justify-content: flex-end;">
-      <button onclick="closeSnakeGameBoy()" style="background: #800; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer; box-shadow: 0 3px #300;">← RETOUR JAQUETTE</button>
-    </div>
-    <div class="gb-console">
-      <div class="gb-screen-lens">
-        <div class="gb-screen" id="gbScreen">
-          <div class="gb-ui-overlay">
-            <span id="gbScoreText">SC:00</span>
-            <span id="gbHighScoreText">HI:00</span>
-          </div>
-          <canvas id="gbGameCanvas" width="160" height="144"></canvas>
+              <!-- Menus du jeu -->
+              <div id="gbMainMenu" class="gb-menu">
+                <h1>SNAKE BOY</h1>
+                <button onclick="startGbGame()">JOUER</button>
+                <button onclick="toggleGbOptions()">OPTIONS</button>
+              </div>
 
-          <!-- Menus du jeu -->
-          <div id="gbMainMenu" class="gb-menu">
-            <h1>SNAKE BOY</h1>
-            <button onclick="startGbGame()">JOUER</button>
-            <button onclick="toggleGbOptions()">OPTIONS</button>
+              <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
+                <h1>OPTIONS</h1>
+                <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
+                <button onclick="toggleGbOptions()">RETOUR</button>
+              </div>
+
+              <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
+                <h1>GAME OVER</h1>
+                <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
+                <button onclick="startGbGame()">REESSAYER</button>
+                <button onclick="showGbMainMenu()">MENU</button>
+              </div>
+            </div>
           </div>
 
-          <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
-            <h1>OPTIONS</h1>
-            <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
-            <button onclick="toggleGbOptions()">RETOUR</button>
+          <div class="gb-controls">
+            <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
+            <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
+            <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
+            <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
           </div>
 
-          <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
-            <h1>GAME OVER</h1>
-            <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
-            <button onclick="startGbGame()">REESSAYER</button>
-            <button onclick="showGbMainMenu()">MENU</button>
+          <div class="gb-action-buttons">
+            <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
+            <button class="gb-action-btn" onclick="startGbGame()">STA</button>
           </div>
         </div>
       </div>
-
-      <div class="gb-controls">
-        <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
-        <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
-        <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
-        <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
-      </div>
-
-      <div class="gb-action-buttons">
-        <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
-        <button class="gb-action-btn" onclick="startGbGame()">STA</button>
-      </div>
     </div>
   </div>
-
-</div>
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -3926,7 +3903,7 @@ if (navHome) {
     
     hideAllMainPages();
     const homeContent = document.getElementById("homeMainContent");
-    if (homeContent) homeContent.style.display = "block"; // 👈 S'assure de réafficher l'accueil
+    if (homeContent) homeContent.style.display = "block";
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -4577,7 +4554,7 @@ function renderArcadeMainPage() {
   const coinSpan = document.getElementById("arcadePageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  // Sous-onglets : Salle Arcade / Tableau des scores
+  // --- SOUS-NAVIGATION INTERNE (ONGLETS ARCADE & SCORES) ---
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
 
@@ -4593,79 +4570,23 @@ function renderArcadeMainPage() {
   const displayBox = el("div");
   displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
 
-  // Vue de la cartouche Snake Game Boy
+  // --- VUE 1 : HUB ARCADE (EN CONSTRUCTION / MINI-JEUX) ---
   function showArcadeHub() {
     btnArcadeHub.setAttribute("aria-pressed", "true");
     btnScores.setAttribute("aria-pressed", "false");
     displayBox.replaceChildren();
 
-    // On réinsère le conteneur du jeu Snake avec la jaquette cliquable
-    const gameWrapper = el("div");
-    gameWrapper.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%;";
-    gameWrapper.innerHTML = `
-      <div id="arcadeGameCard" style="width: 220px; background: var(--card); border: 2px solid var(--acc); border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: transform 0.3s ease;" onclick="launchSnakeGameBoy()">
-        <div style="position: relative; width: 100%; aspect-ratio: 3/4; background: #0f1f0f; display: flex; align-items: center; justify-content: center;">
-          <div style="text-align: center; padding: 20px;">
-            <div style="font-family:'Press Start 2P', monospace; font-size: 14px; color: #9bbc0f; margin-bottom: 10px;">SNAKE BOY</div>
-            <div style="width: 50px; height: 50px; background: #9bbc0f; border: 2px solid #0f380f; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-              <span style="font-size: 20px;">🐍</span>
-            </div>
-          </div>
-          <div style="position: absolute; top: 8px; right: 8px; background: var(--acc); color: var(--on); font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 4px 8px; border-radius: 4px;">PLAY</div>
-        </div>
-        <div style="padding: 12px; text-align: center; background: rgba(0,0,0,0.4);">
-          <b style="font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 2px;">Retro Snake Game Boy</b>
-          <span style="font-size: 11px; color: var(--mut); text-transform: uppercase;">Cliquez pour lancer</span>
-        </div>
-      </div>
-
-      <div id="arcadeConsoleContainer" style="display: none;" class="gb-console-wrapper">
-        <div style="margin-bottom: 12px; width: 100%; display: flex; justify-content: flex-end;">
-          <button onclick="closeSnakeGameBoy()" style="background: #800; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer;">← RETOUR</button>
-        </div>
-        <div class="gb-console">
-          <div class="gb-screen-lens">
-            <div class="gb-screen" id="gbScreen">
-              <div class="gb-ui-overlay">
-                <span id="gbScoreText">SC:00</span>
-                <span id="gbHighScoreText">HI:00</span>
-              </div>
-              <canvas id="gbGameCanvas" width="160" height="144"></canvas>
-              <div id="gbMainMenu" class="gb-menu">
-                <h1>SNAKE BOY</h1>
-                <button onclick="startGbGame()">JOUER</button>
-                <button onclick="toggleGbOptions()">OPTIONS</button>
-              </div>
-              <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
-                <h1>OPTIONS</h1>
-                <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
-                <button onclick="toggleGbOptions()">RETOUR</button>
-              </div>
-              <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
-                <h1>GAME OVER</h1>
-                <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
-                <button onclick="startGbGame()">REESSAYER</button>
-                <button onclick="showGbMainMenu()">MENU</button>
-              </div>
-            </div>
-          </div>
-          <div class="gb-controls">
-            <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
-            <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
-            <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
-            <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
-          </div>
-          <div class="gb-action-buttons">
-            <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
-            <button class="gb-action-btn" onclick="startGbGame()">STA</button>
-          </div>
-        </div>
-      </div>
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "border-style: dashed; padding: 40px 20px; text-align: center;";
+    banner.innerHTML = `
+      <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">🕹️ SALLE ARCADE 🕹️</h3>
+      <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">🚧 SECTION EN CONSTRUCTION 🚧</p>
+      <p style="font-size: 12px; color: var(--mut); line-height: 1.5;">Les mini-jeux rétro et les défis interactifs arrivent très bientôt dans Cartridge !</p>
     `;
-    displayBox.append(gameWrapper);
+    displayBox.append(banner);
   }
 
-  // Vue du tableau des scores (Hall of Fame)
+  // --- VUE 2 : TABLEAU DES SCORES (HALL OF FAME) ---
   function showScoresTab() {
     btnArcadeHub.setAttribute("aria-pressed", "false");
     btnScores.setAttribute("aria-pressed", "true");
@@ -4673,16 +4594,20 @@ function renderArcadeMainPage() {
 
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-    
-    banner.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px;">🏆 HALL OF FAME DE VOS JEUX</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
-    `;
 
+    const headerDiv = el("div");
+    headerDiv.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
+    `;
+    banner.append(headerDiv);
+
+    // Formulaire d'ajout de score
     const formBox = el("div");
     formBox.style.cssText = "background: rgba(15, 23, 42, 0.75); border: 1.5px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;";
+    
     formBox.innerHTML = `
-      <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--txt);">ENREGISTRER UN NOUVEAU RECORD</b>
+      <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--txt); letter-spacing:1px;">ENREGISTRER UN NOUVEAU RECORD</b>
       <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
       <div style="display:flex; gap:8px;">
         <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
@@ -4691,46 +4616,71 @@ function renderArcadeMainPage() {
     `;
     banner.append(formBox);
 
+    // Liste des scores enregistrés
     const listContainer = el("div");
     listContainer.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 10px;";
 
     if (!Array.isArray(gameScores) || gameScores.length === 0) {
-      listContainer.append(el("p", "msg", "Aucun score enregistré pour l'instant. Ajoutez votre premier record !"));
+      const empty = el("p", "msg", "Aucun score enregistré pour l'instant. Ajoutez votre premier record !");
+      listContainer.append(empty);
     } else {
       gameScores.forEach((s, index) => {
         const row = el("div");
-        row.style.cssText = "background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;";
+        row.style.cssText = `
+          background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+          border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        `;
+
         row.innerHTML = `
           <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
             <span style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--acc);">#${index + 1}</span>
             <div style="display: flex; flex-direction: column; min-width: 0;">
-              <b style="font-size:13px; font-weight:800; color:var(--txt);">${s.game}</b>
-              <span style="font-size:9px; color:var(--mut);">${s.date}</span>
+              <b style="font-size:13px; font-weight:800; color:var(--txt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.game}</b>
+              <span style="font-size:9px; color:var(--mut); font-weight:700;">${s.date}</span>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:#22c55e; background:rgba(34,197,94,0.15); padding:4px 8px; border-radius:6px;">${s.score}</span>
-            <button class="btn-icon" data-index="${index}" style="width:32px; height:32px; background:rgba(239,68,68,0.15); color:#ef4444; border:none; border-radius:8px; cursor:pointer;">✕</button>
+            <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:#22c55e; background:rgba(34,197,94,0.15); padding:4px 8px; border-radius:6px; border:1px solid rgba(34,197,94,0.3);">${s.score}</span>
+            <button class="btn-icon delete-score-btn" data-index="${index}" style="width:32px; height:32px; background:rgba(239,68,68,0.15); color:#ef4444; border:none; border-radius:8px; cursor:pointer;" title="Supprimer">✕</button>
           </div>
         `;
-        row.querySelector("button").addEventListener("click", () => {
+
+        const delBtn = row.querySelector(".delete-score-btn");
+        delBtn.addEventListener("click", () => {
           playThemeSound(theme);
           gameScores.splice(index, 1);
           try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
           showScoresTab();
         });
+
         listContainer.append(row);
       });
     }
+
     banner.append(listContainer);
     displayBox.append(banner);
 
-    banner.querySelector("#saveScoreBtn").addEventListener("click", () => {
-      const gameName = banner.querySelector("#scoreGameName").value.trim();
-      const scoreVal = banner.querySelector("#scoreValue").value.trim();
-      if (!gameName || !scoreVal) return alert("Remplis tous les champs !");
+    // Écouteur pour le bouton d'ajout
+    const saveBtn = banner.querySelector("#saveScoreBtn");
+    const gameInput = banner.querySelector("#scoreGameName");
+    const scoreInput = banner.querySelector("#scoreValue");
+
+    saveBtn.addEventListener("click", () => {
+      const gameName = gameInput.value.trim();
+      const scoreVal = scoreInput.value.trim();
+
+      if (!gameName || !scoreVal) {
+        alert("Veuillez remplir le nom du jeu et le score !");
+        return;
+      }
+
       playThemeSound(theme);
-      gameScores.unshift({ game: gameName, score: scoreVal, date: new Date().toLocaleDateString() });
+      gameScores.unshift({
+        game: gameName,
+        score: scoreVal,
+        date: new Date().toLocaleDateString()
+      });
+
       try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
       showScoresTab();
     });
@@ -4741,11 +4691,12 @@ function renderArcadeMainPage() {
 
   subNav.append(btnArcadeHub, btnScores);
   contentArea.append(subNav, displayBox);
+  
+  // Par défaut, on ouvre sur le Hub Arcade (ou showScoresTab si tu préfères arriver direct sur les scores)
   showArcadeHub();
 }
 
 
-// --- BRANCHEMENT CORRECT DE L'ONGLET ARCADE ---
 const navArcadeRoom = document.getElementById("navArcadeRoom");
 if (navArcadeRoom) {
   navArcadeRoom.addEventListener("click", () => {
@@ -4754,15 +4705,7 @@ if (navArcadeRoom) {
     if (typeof closeSheet === "function") closeSheet();
     
     hideAllMainPages();
-    
-    // Affiche la page Arcade Game Boy au lieu de la page en construction
-    const arcadePage = document.getElementById("arcadeMainPage");
-    if (arcadePage) {
-      arcadePage.style.display = "block";
-      const coinSpan = document.getElementById("arcadePageCoins");
-      if (coinSpan) coinSpan.textContent = userCoins;
-      if (typeof drawGbStatic === "function") drawGbStatic();
-    }
+    renderArcadeMainPage(); // 👈 Ouvre la section Arcade avec ses onglets
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -5031,37 +4974,6 @@ function renderScoresMainPage() {
     try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
     renderScoresMainPage();
   });
-}
-
-function launchSnakeGameBoy() {
-  if (typeof playThemeSound === "function") playThemeSound(theme);
-  
-  // Masque la jaquette et affiche la console Game Boy
-  const card = document.getElementById("arcadeGameCard");
-  const consoleBox = document.getElementById("arcadeConsoleContainer");
-  
-  if (card) card.style.display = "none";
-  if (consoleBox) consoleBox.style.display = "flex";
-  
-  // Initialise l'écran statique
-  if (typeof drawGbStatic === "function") drawGbStatic();
-}
-
-function closeSnakeGameBoy() {
-  if (typeof playThemeSound === "function") playThemeSound(theme);
-  
-  // Stoppe le jeu en cours si actif
-  if (typeof gbGameInterval !== 'undefined' && gbGameInterval) {
-    clearInterval(gbGameInterval);
-  }
-  gbIsPlaying = false;
-
-  // Réaffiche la jaquette et masque la console
-  const card = document.getElementById("arcadeGameCard");
-  const consoleBox = document.getElementById("arcadeConsoleContainer");
-  
-  if (card) card.style.display = "block";
-  if (consoleBox) consoleBox.style.display = "none";
 }
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
