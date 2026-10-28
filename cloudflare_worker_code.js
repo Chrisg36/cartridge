@@ -210,29 +210,32 @@ const CORS = {
 
 async function handlePromosRequest() {
   try {
-    // Interrogation de l'API CheapShark pour récupérer les meilleures réductions Steam en direct
-    const response = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60&sortBy=Savings", {
+    // Appel direct à l'API officielle Steam pour récupérer les featured/discounts du jour
+    const response = await fetch("https://store.steampowered.com/api/featuredcategories/?l=french", {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CartridgeApp/1.0"
       }
     });
 
-    if (!response.ok) throw new Error("Erreur lors de la récupération des promos Steam");
+    if (!response.ok) throw new Error("Erreur flux officiel Steam");
     const data = await response.json();
 
-    const steamDeals = data.map(deal => ({
-      id: "steam-" + deal.dealID,
-      name: deal.title,
-      releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions en direct", exact: true }],
+    // Steam classe les promos dans différentes catégories (ex: specials)
+    const specials = data.specials ? data.specials.items : [];
+
+    const steamDeals = specials.map(game => ({
+      id: "steam-" + game.id,
+      name: game.name,
+      releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Soldes Steam", exact: true }],
       store: "Steam Store",
-      cover: deal.thumb,
-      oldPrice: deal.normalPrice + " €",
-      newPrice: deal.salePrice + " €",
-      discount: `-${Math.round(deal.savings)}%`
+      cover: game.header_image || game.large_capsule_image,
+      oldPrice: (game.original_price / 100).toFixed(2) + " €",
+      newPrice: (game.final_price / 100).toFixed(2) + " €",
+      discount: `-${game.discount_percent}%`
     }));
 
     return Response.json(steamDeals, {
-      headers: { ...CORS, "Cache-Control": "public, max-age=900" }
+      headers: { ...CORS, "Cache-Control": "public, max-age=1800" }
     });
   } catch (err) {
     return Response.json({ error: err.message, deals: [] }, { status: 500, headers: CORS });
