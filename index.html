@@ -3921,21 +3921,13 @@ function openSettings() {
   // Onglet affiché par défaut à l'ouverture
   showTab(0);
 
-  // Écouteur pour enregistrer le pseudo
+// Écouteur pour enregistrer le pseudo sur Cloudflare
   setTimeout(() => {
     const f = document.getElementById("profileFormSetting");
     if (f) {
-      f.onsubmit = (e) => {
-        e.preventDefault();
-        const u = document.getElementById("settingUsername").value.trim();
-        if (u) {
-          localStorage.setItem("cartridge_user", u);
-          alert("✅ Profil joueur mis à jour !");
-        }
-      };
+      f.onsubmit = handleCloudflareAuth;
     }
   }, 50);
-
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
   p.append(close);
@@ -5143,6 +5135,74 @@ window.addEventListener('scroll', () => {
   }
 });
 
+
+ async function handleCloudflareAuth(e) {
+  e.preventDefault();
+
+  const usernameInput = document.getElementById("settingUsername");
+  const passwordInput = document.getElementById("settingPassword");
+  const recoveryInput = document.getElementById("settingRecovery");
+
+  const username = usernameInput ? usernameInput.value.trim() : "";
+  const password = passwordInput ? passwordInput.value : "";
+  const recoveryQ = recoveryInput ? recoveryInput.value.trim() : "";
+
+  if (!username || !password) {
+    alert("Veuillez renseigner un pseudo et un mot de passe.");
+    return;
+  }
+
+  // Snapshot de l'état actuel du joueur
+  const currentSave = {
+    userCoins: typeof userCoins !== "undefined" ? userCoins : 100,
+    myCollection: typeof myCollection !== "undefined" ? myCollection : [],
+    favorites: typeof favorites !== "undefined" ? favorites : [],
+    gameScores: typeof gameScores !== "undefined" ? gameScores : [],
+    theme: typeof theme !== "undefined" ? theme : "dark"
+  };
+
+  try {
+    const res = await fetch(`${API}/api/auth`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, recoveryQ, data: currentSave })
+    });
+
+    const resData = await res.json();
+
+    if (!res.ok) {
+      alert("❌ " + (resData.message || "Erreur de connexion"));
+      return;
+    }
+
+    // Sauvegarde de session
+    localStorage.setItem("cartridge_user", username);
+    localStorage.setItem("cartridge_pass", password);
+
+    if (resData.status === "connected" && resData.data) {
+      // Restauration des données distantes
+      if (resData.data.userCoins !== undefined) userCoins = resData.data.userCoins;
+      if (resData.data.myCollection) myCollection = resData.data.myCollection;
+      if (resData.data.favorites) favorites = resData.data.favorites;
+      if (resData.data.gameScores) gameScores = resData.data.gameScores;
+
+      localStorage.setItem("userCoins", userCoins);
+      localStorage.setItem("myCollection", JSON.stringify(myCollection));
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      localStorage.setItem("gameScores", JSON.stringify(gameScores));
+
+      if (typeof updateCoinsUI === "function") updateCoinsUI();
+      if (typeof render === "function") render();
+      alert(`🎉 Bon retour ${username} ! Vos données ont été synchronisées.`);
+    } else {
+      alert("✅ Compte Cloudflare créé ! Vos pièces et jaquettes sont sauvegardées en ligne.");
+    }
+
+    closeSheet();
+  } catch (err) {
+    alert("❌ Impossible de joindre le serveur. Vérifiez l'adresse API dans config.js.");
+  }
+}
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
