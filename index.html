@@ -5387,7 +5387,12 @@ function updateUserBadge() {
     badge.style.display = "inline-flex";
   }
 }
-
+// Mise à jour de l'avatar au chargement initial de la page
+window.addEventListener("DOMContentLoaded", () => {
+  updateUserBadge();
+});
+// Sécurité supplémentaire si le DOM est déjà chargé
+updateUserBadge();
 
  
  
