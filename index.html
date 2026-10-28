@@ -1330,14 +1330,14 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <span>Boutique</span>
   </button>
 
- <button class="nav-item" id="navMuseum">
+<button class="nav-item" id="navMuseum">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
     </svg>
     <span>Collection</span>
   </button>
-
+ 
   <button class="nav-item" id="navArcadeRoom">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
@@ -3796,38 +3796,12 @@ if (navMuseum) {
     const museumPage = document.getElementById("museumMainPage");
     if (museumPage) {
       museumPage.style.display = "block";
-      renderMuseumMainPage();
+      renderMuseumAndVitrinePage(); // 🎯 C'est ici qu'on change pour afficher la vue combinée avec les onglets !
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
-
-// --- MISE À JOUR DE LA NAVIGATION : Clic sur l'onglet Vitrine ---
-if (navShelf) {
-  navShelf.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
-    setActiveNav(navShelf);
-    if (typeof closeSheet === "function") closeSheet();
-    
-    hideAllMainPages();
-    const vitrinePage = document.getElementById("vitrineMainPage");
-    if (vitrinePage) {
-      vitrinePage.style.display = "block";
-      renderVitrineMainPage();
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-  
-if (navSettings) {
-  navSettings.addEventListener("click", () => {
-    setActiveNav(navSettings);
-    if (typeof openSettings === "function") openSettings();
-  });
-}
-
 // --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
 
 function loadChallengesData() {
