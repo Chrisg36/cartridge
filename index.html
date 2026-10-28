@@ -1271,6 +1271,25 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     </div>
     <div id="scoresPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
+
+<!-- 🕹️ LA GRANDE PAGE SALLE ARCADE -->
+  <div id="arcadeMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🕹️ SALLE ARCADE & MINI-JEUX</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="arcadePageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>🎮 RETRO ZONE</span>
+        <span>MINI-JEUX</span>
+      </div>
+    </div>
+    <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
  
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
@@ -3752,13 +3771,15 @@ function hideAllMainPages() {
   const shopPage = document.getElementById("shopMainPage");
   const vitrinePage = document.getElementById("vitrineMainPage");
   const museumPage = document.getElementById("museumMainPage");
-  const scoresPage = document.getElementById("scoresMainPage"); // 👈 Déclaration correcte
+  const scoresPage = document.getElementById("scoresMainPage");
+  const arcadePage = document.getElementById("arcadeMainPage"); // Si tu as créé la page arcade dédiée
 
   if (homeContent) homeContent.style.display = "none";
   if (shopPage) shopPage.style.display = "none";
   if (vitrinePage) vitrinePage.style.display = "none";
   if (museumPage) museumPage.style.display = "none";
-  if (scoresPage) scoresPage.style.display = "none"; // 👈 Utilisation correcte
+  if (scoresPage) scoresPage.style.display = "none";
+  if (arcadePage) arcadePage.style.display = "none";
 }
 
 if (navHome) {
@@ -4408,22 +4429,17 @@ function renderVitrineMainPage() {
   contentArea.append(banner);
 }
 
-// Fonction pour afficher les pages "En construction" proprement
 function showConstructionPage(title, icon) {
   closeSheet();
-  document.getElementById("homeMainContent").style.display = "none";
-  const sPage = document.getElementById("shopMainPage");
-  const vPage = document.getElementById("vitrineMainPage");
-  const mPage = document.getElementById("museumMainPage");
-  
-  if (sPage) sPage.style.display = "none";
-  if (vPage) vPage.style.display = "none";
-  if (mPage) mPage.style.display = "none";
+  hideAllMainPages(); // 👈 Masque tout proprement
 
-  // On utilise la page boutique/conteneur principal pour afficher le message
-  if (sPage) {
-    sPage.style.display = "block";
-    const content = document.getElementById("shopPageContent");
+  const arcadePage = document.getElementById("arcadeMainPage");
+  if (arcadePage) {
+    arcadePage.style.display = "block";
+    const coinSpan = document.getElementById("arcadePageCoins");
+    if (coinSpan) coinSpan.textContent = userCoins;
+
+    const content = document.getElementById("arcadePageContent");
     if (content) {
       content.innerHTML = `
         <div class="shop-banner" style="border-style: dashed; padding: 40px 20px; text-align: center; margin-top: 20px;">
@@ -4435,6 +4451,15 @@ function showConstructionPage(title, icon) {
     }
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+const navArcadeRoom = document.getElementById("navArcadeRoom");
+if (navArcadeRoom) {
+  navArcadeRoom.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navArcadeRoom);
+    showConstructionPage("Salle Arcade", "🕹️");
+  });
 }
 
 // Branchement des clics pour les 3 nouveaux boutons
