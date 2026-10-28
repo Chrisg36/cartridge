@@ -210,11 +210,17 @@ const CORS = {
 
 async function handlePromosRequest() {
   try {
-    // 1. Récupération dynamique des meilleures offres PC/Steam en temps réel via CheapShark
-    const steamRes = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=30&sortBy=Deal Rating");
-    const steamData = steamRes.ok ? await steamRes.json() : [];
+    // Interrogation de l'API CheapShark pour récupérer les meilleures réductions Steam en direct
+    const response = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60&sortBy=Savings", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+      }
+    });
 
-    const steamDeals = steamData.map(deal => ({
+    if (!response.ok) throw new Error("Erreur lors de la récupération des promos Steam");
+    const data = await response.json();
+
+    const steamDeals = data.map(deal => ({
       id: "steam-" + deal.dealID,
       name: deal.title,
       releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions en direct", exact: true }],
@@ -225,26 +231,8 @@ async function handlePromosRequest() {
       discount: `-${Math.round(deal.savings)}%`
     }));
 
-    // 2. Flux dynamique mis à jour pour les consoles (PlayStation, Xbox, Nintendo)
-    // Pour éviter les blocages des stores fermés de Sony/Nintendo, on agrège une sélection en temps réel des meilleures offres du marché console
-    const consoleDeals = [
-      { id: "ps-1", name: "God of War Ragnarök", store: "PlayStation Store", releases: [{ platform: "PS5", date: new Date().toISOString().slice(0, 10), human: "Promo PS5", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4sk5.jpg", oldPrice: "79.99 €", newPrice: "39.99 €", discount: "-50%" },
-      { id: "ps-2", name: "Marvel's Spider-Man 2", store: "PlayStation Store", releases: [{ platform: "PS5", date: new Date().toISOString().slice(0, 10), human: "Promo PS5", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5x76.jpg", oldPrice: "79.99 €", newPrice: "49.99 €", discount: "-37%" },
-      { id: "ps-3", name: "EA Sports FC 24", store: "PlayStation Store", releases: [{ platform: "PS5", date: new Date().toISOString().slice(0, 10), human: "Promo PS5", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co6uz8.jpg", oldPrice: "79.99 €", newPrice: "23.99 €", discount: "-70%" },
-      { id: "ps-4", name: "Hogwarts Legacy", store: "PlayStation Store", releases: [{ platform: "PS5", date: new Date().toISOString().slice(0, 10), human: "Promo PS5", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5sb8.jpg", oldPrice: "74.99 €", newPrice: "29.99 €", discount: "-60%" },
-      { id: "xbox-1", name: "Starfield", store: "Xbox Store", releases: [{ platform: "Xbox", date: new Date().toISOString().slice(0, 10), human: "Promo Xbox", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5v7v.jpg", oldPrice: "79.99 €", newPrice: "39.99 €", discount: "-50%" },
-      { id: "xbox-2", name: "Forza Horizon 5", store: "Xbox Store", releases: [{ platform: "Xbox", date: new Date().toISOString().slice(0, 10), human: "Promo Xbox", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co3paq.jpg", oldPrice: "69.99 €", newPrice: "34.99 €", discount: "-50%" },
-      { id: "xbox-3", name: "Halo Infinite", store: "Xbox Store", releases: [{ platform: "Xbox", date: new Date().toISOString().slice(0, 10), human: "Promo Xbox", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2qac.jpg", oldPrice: "69.99 €", newPrice: "20.99 €", discount: "-70%" },
-      { id: "nint-1", name: "The Legend of Zelda: Link's Awakening", store: "Nintendo eShop", releases: [{ platform: "Switch", date: new Date().toISOString().slice(0, 10), human: "Promo Switch", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1ted.jpg", oldPrice: "59.99 €", newPrice: "39.99 €", discount: "-33%" },
-      { id: "nint-2", name: "Mario + Rabbids Sparks of Hope", store: "Nintendo eShop", releases: [{ platform: "Switch", date: new Date().toISOString().slice(0, 10), human: "Promo Switch", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4xop.jpg", oldPrice: "59.99 €", newPrice: "19.99 €", discount: "-66%" },
-      { id: "nint-3", name: "Metroid Prime Remastered", store: "Nintendo eShop", releases: [{ platform: "Switch", date: new Date().toISOString().slice(0, 10), human: "Promo Switch", exact: true }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5zuy.jpg", oldPrice: "39.99 €", newPrice: "29.99 €", discount: "-25%" }
-    ];
-
-    // On combine le flux live de Steam et le flux multi-consoles dans une seule réponse JSON
-    const allPromos = [...steamDeals, ...consoleDeals];
-
-    return Response.json(allPromos, {
-      headers: { ...CORS, "Cache-Control": "public, max-age=600" }
+    return Response.json(steamDeals, {
+      headers: { ...CORS, "Cache-Control": "public, max-age=900" }
     });
   } catch (err) {
     return Response.json({ error: err.message, deals: [] }, { status: 500, headers: CORS });
