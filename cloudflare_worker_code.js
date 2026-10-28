@@ -72,7 +72,7 @@ async function igdb(env, query) {
   return res.json();
 }
 
-// Une sortie IGDB -> { id, name } de plateforme (l'IGDB renvoie un nombre ou un objet)
+// Une sortie IGDB -> { id, name } de plateforme
 function platformOf(r) {
   const p = r.platform;
   const id = p && typeof p === "object" ? p.id : p;
@@ -90,7 +90,7 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       const { id, name } = platformOf(r);
       if (!name) continue;
       if (allowedIds && !allowedIds.includes(id)) continue;
-      if (start && (r.date < start || r.date >= end)) continue; // seulement le mois demandé
+      if (start && (r.date < start || r.date >= end)) continue;
       if (!byPlatform[name] || r.date < byPlatform[name].date) {
         byPlatform[name] = { date: r.date, human: r.human || "" };
       }
@@ -109,9 +109,8 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       if (!searchMode && fix.slice(0, 7) !== month) continue;
       releases = releases.map((r) => ({ ...r, date: fix, exact: true }));
     }
-    if (!releases.length) continue; // pas de date connue : on n'invente rien
+    if (!releases.length) continue;
 
-    // Extraction du Développeur et de l'Éditeur depuis involved_companies
     const developers = [];
     const publishers = [];
     if (g.involved_companies) {
@@ -131,7 +130,7 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
       publisher: publishers.join(", ") || null,
       genres: (g.genres || []).map((x) => x.name),
       cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
-      hypes: (g.hypes || 0) + (g.total_rating_count || 0), // score de popularité
+      hypes: (g.hypes || 0) + (g.total_rating_count || 0),
       rating: g.rating || null,
       aggregated_rating: g.aggregated_rating || null,
       date: releases[0].date,
@@ -141,7 +140,6 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
   return games;
 }
 
-// Découpe un texte en morceaux de 400 caractères maximum, à la fin d'une phrase
 function splitText(text, max = 400) {
   const sentences = text.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/);
   const chunks = [];
@@ -163,10 +161,8 @@ function splitText(text, max = 400) {
   return chunks;
 }
 
-// Langues de traduction (code de la page -> nom attendu par le modèle)
 const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
 
-// Traduction du résumé d'un jeu (anglais -> langue choisie)
 async function translateSummary(idParam, lang, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
@@ -206,10 +202,41 @@ async function translateSummary(idParam, lang, env, ctx) {
   }
 }
 
+// --- RÉCUPÉRATION DES VRAIES PROMOS STEAM (API PUBLIQUE ET GRATUITE) ---
+async function handlePromosRequest() {
+  try {
+    const response = await fetch("https://store.steampowered.com/api/featured/");
+    if (!response.ok) throw new Error("Erreur flux Steam");
+    const data = await response.json();
+    
+    const steamDeals = (data.specials || []).map(game => ({
+      id: game.id,
+      name: game.name,
+      releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions", exact: true }],
+      store: "Steam",
+      cover: game.large_capsule_image,
+      oldPrice: (game.original_price / 100).toFixed(2) + " €",
+      newPrice: (game.final_price / 100).toFixed(2) + " €",
+      discount: `-${game.discount_percent}%`
+    }));
+
+    return Response.json(steamDeals, {
+      headers: { ...CORS, "Cache-Control": "public, max-age=1800" }
+    });
+  } catch (err) {
+    return Response.json([], { status: 500, headers: CORS });
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
+
+    // 🎯 ROUTE DÉDIÉE AUX PROMOS STEAM
+    if (url.pathname === "/api/promos") {
+      return handlePromosRequest();
+    }
 
     if (url.searchParams.has("translate")) {
       return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
