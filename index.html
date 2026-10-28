@@ -1354,14 +1354,6 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <span>Esport</span>
   </button>
 
-<button class="nav-item" id="navPromo">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-      <line x1="7" y1="7" x2="7.01" y2="7"></line>
-    </svg>
-    <span>Promos</span>
-  </button>
-
   <button class="nav-item" id="navSettings">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -4437,20 +4429,6 @@ if (navEsport) {
   });
 }
 
-const navPromo = document.getElementById("navPromo");
-if (navPromo) {
-  navPromo.addEventListener("click", () => {
-    if (typeof playThemeSound === "function") playThemeSound(theme);
-    setActiveNav(navPromo);
-    if (typeof closeSheet === "function") closeSheet();
-    
-    hideAllMainPages();
-    fetchAndRenderPromos(); // 👈 Appelle la récupération des vraies promos
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
 const museumConsoles = [
   // --- NINTENDO ---
   { name: "Nintendo Switch 2", brand: "Nintendo", year: 2025, color: "#ff3b30", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Nintendo-Switch-Console-Docked-wJoyConRB.png/400px-Nintendo-Switch-Console-Docked-wJoyConRB.png" },
@@ -4592,119 +4570,6 @@ function playCartridgeBreathSound() {
   }
 }
 
-let promoCurrentPage = 1;
-const PROMOS_PER_PAGE = 16;
-let realPromosCache = [];
-
-async function fetchAndRenderPromos() {
-  try {
-    // Interroge ton Cloudflare Worker
-    const res = await fetch(`${API}/api/promos`);
-    if (!res.ok) throw new Error("Erreur réseau");
-    realPromosCache = await res.json();
-  } catch (e) {
-    console.error("Erreur promos :", e);
-    realPromosCache = [];
-  }
-  
-  renderPromosMainPage();
-}
-
-function renderPromosMainPage() {
-  const shopPage = document.getElementById("shopMainPage");
-  if (!shopPage) return;
-  
-  shopPage.style.display = "block";
-  const contentArea = document.getElementById("shopPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const banner = el("div", "shop-banner");
-  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-
-  const headerDiv = el("div");
-  headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES STEAM</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Flux en direct (CheapShark)</p>
-  `;
-  banner.append(headerDiv);
-
-  // Pagination calculée
-  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE) || 1;
-  if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
-  if (promoCurrentPage < 1) promoCurrentPage = 1;
-
-  const currentItems = realPromosCache.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
-
-  const gridContainer = el("div");
-  gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
-
-  currentItems.forEach((game) => {
-    const card = el("div");
-    card.style.cssText = `
-      background: rgba(15, 23, 42, 0.75);
-      border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
-      border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: center;
-      position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
-    `;
-
-    card.addEventListener("click", () => {
-      playThemeSound(theme);
-      openSheet({ g: game, rel: game.releases, date: new Date().toISOString().slice(0,10) });
-    });
-
-    card.innerHTML = `
-      <div style="width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);">
-        <img src="${game.cover}" style="width: 100%; height: 100%; object-fit: cover;">
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
-        <b style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);">${game.name}</b>
-        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">PC • Steam Store</div>
-        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-          <span style="font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;">${game.discount}</span>
-          <span style="font-size: 11px; font-weight: 800;"><span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice}</span> <span style="color: var(--acc);">${game.newPrice}</span></span>
-        </div>
-      </div>
-    `;
-    gridContainer.append(card);
-  });
-
-  banner.append(gridContainer);
-
-  // --- BARRE DE NAVIGATION AVEC FLÈCHES ---
-  const paginationBar = el("div");
-  paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 20px;";
-
-  const prevBtn = el("button", "chip", "◀ Précédent");
-  prevBtn.disabled = promoCurrentPage === 1;
-  prevBtn.style.opacity = promoCurrentPage === 1 ? "0.5" : "1";
-  prevBtn.addEventListener("click", () => {
-    if (promoCurrentPage > 1) {
-      promoCurrentPage--;
-      playThemeSound(theme);
-      renderPromosMainPage();
-    }
-  });
-
-  const pageIndicator = el("span", "", `Page ${promoCurrentPage} / ${totalPages}`);
-  pageIndicator.style.cssText = "font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--txt); font-weight: 700;";
-
-  const nextBtn = el("button", "chip", "Suivant ▶");
-  nextBtn.disabled = promoCurrentPage >= totalPages;
-  nextBtn.style.opacity = promoCurrentPage >= totalPages ? "0.5" : "1";
-  nextBtn.addEventListener("click", () => {
-    if (promoCurrentPage < totalPages) {
-      promoCurrentPage++;
-      playThemeSound(theme);
-      renderPromosMainPage();
-    }
-  });
-
-  paginationBar.append(prevBtn, pageIndicator, nextBtn);
-  banner.append(paginationBar);
-
-  contentArea.append(banner);
-}
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
