@@ -5673,13 +5673,6 @@ const secLegal = el("div", "settings-section");
         <strong style="color:var(--acc); font-size:12px; display:block; margin-bottom:2px;">✉️ Notification de retrait & Contact (DMCA)</strong>
         Si vous êtes titulaire de droits d'auteur sur un contenu affiché et souhaitez en demander le retrait immédiat, vous pouvez formuler votre demande par l'intermédiaire du dépôt de projet du service. La modification ou la dé-indexation sera effectuée dans les meilleurs délais.
       </div>
-
-    </div>
-  `;
-  pageLegal.append(secLegal);
-
-  contentArea.append(pageGeneral, pageProfile, pageLegal);
-
   <!-- 7. Charte d'utilisation & Fair-play Joueur -->
       <div style="background: rgba(255, 122, 69, 0.08); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); border-radius: var(--radius); padding: 12px 14px;">
         <strong style="color: var(--acc); font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
@@ -5698,6 +5691,12 @@ const secLegal = el("div", "settings-section");
           Tout manquement grave peut entraîner la suspension locale ou la suppression de l'accès au compte synchronisé.
         </span>
       </div>
+
+    </div>
+  `;
+  pageLegal.append(secLegal);
+
+  contentArea.append(pageGeneral, pageProfile, pageLegal);
 
   function showTab(index) {
     playThemeSound(theme);
