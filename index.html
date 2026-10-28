@@ -97,41 +97,50 @@ body {
   .header-bottom { display: flex; justify-content: space-between; align-items: center; gap: 4px; margin-bottom: 6px; }
 
 /* 2. Le logo / titre se rétrécit proprement si l'écran est étroit */
+/* 1. Titres de pages (Boutique, Musée, Arcade) : équilibrés pour laisser la place aux crédits */
 .neon-logo {
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 0.8px;
   white-space: nowrap;
-  line-height: 1;
-
-  /* 🛑 Fixe la taille sur le texte : n'occupe que sa vraie largeur */
+  line-height: 1.2;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
-  flex: 0 0 auto;
-  width: auto;
-  max-width: fit-content;
-
-  /* 🎨 Habillage Cartouche Rétro & Néon */
-  padding: 8px 12px;
+  gap: 6px;
+  flex: 0 1 auto; /* Peut s'adapter sans pousser le reste */
+  min-width: 0;
+  padding: 6px 10px;
   color: #ffffff;
   background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 25%, var(--card)) 0%, var(--card) 100%);
   border-radius: var(--radius);
   border: 1.5px solid var(--acc);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 40%, transparent);
+  text-shadow: 0 0 8px var(--acc);
+}
 
-  /* 🌟 Glow & relief rétro */
+/* 2. VRAI LOGO PRINCIPAL ACCUEIL (🎮 CARTRIDGE) : grand, large et percutant */
+#sub-title.neon-logo {
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 8px 14px;
   box-shadow: 
-    0 0 14px color-mix(in srgb, var(--acc) 50%, transparent),
+    0 0 16px color-mix(in srgb, var(--acc) 55%, transparent),
     inset 0 1px 1px rgba(255, 255, 255, 0.4),
     inset 0 -2px 6px rgba(0, 0, 0, 0.6);
   text-shadow: 
     0 0 8px var(--acc),
     0 0 16px var(--acc);
 }
-  
+
+/* 3. Verrouille la zone profil + crédits à droite : interdiction absolue de se faire écraser */
+.header-top .nav {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto !important; /* Ne sera jamais compressé */
+} 
   .magazine-edition-banner {
     padding: 3px 8px; margin-bottom: 4px; font-size: 9px;
     display: flex; align-items: center; justify-content: space-between;
@@ -1442,7 +1451,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo">🪙 BOUTIQUE ARCADE & QUÊTES</div>
+        <div class="neon-logo">🪙 BOUTIQUE ARCADE</div>
         <div class="nav" style="flex-shrink: 0;">
                <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
@@ -1453,8 +1462,8 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>🕹️ ARCADE ZONE</span>
-        <span>HUB PRINCIPAL</span>
+        <span>🕹️ BOUTIQUE DEFIS</span>
+        <span>HALL BOUTIQUE</span>
       </div>
     </div>
     <div id="shopPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
@@ -1503,7 +1512,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <!-- Contenu existant -->
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-       <div class="neon-logo">🏛️ MUSÉE MONDIAL DES CONSOLES</div>
+       <div class="neon-logo">🏛️ MUSÉE CONSOLES</div>
         <div class="nav" style="flex-shrink: 0;">
                <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
           <div id="userHeaderBadge" onclick="openSettings();"></div>
@@ -1525,7 +1534,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   <div id="arcadeMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo">🕹️ SALLE ARCADE // SNAKE BOY</div>
+        <div class="neon-logo">🕹️ SALLE ARCADE</div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
