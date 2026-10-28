@@ -1132,14 +1132,16 @@ body[data-layout-style="pixel art"] .booster-shop-card:hover {
 
 body[data-holo-effect="true"] .shop-pack-card,
 body[data-holo-effect="true"] .booster-shop-card,
-body[data-holo-effect="true"] .card-holo-effect {
+body[data-holo-effect="true"] .card-holo-effect,
+body[data-holo-effect="true"] .supreme-holo-box {
   position: relative;
   overflow: hidden;
 }
 
 body[data-holo-effect="true"] .shop-pack-card::after,
 body[data-holo-effect="true"] .booster-shop-card::after,
-body[data-holo-effect="true"] .card-holo-effect::after {
+body[data-holo-effect="true"] .card-holo-effect::after,
+body[data-holo-effect="true"] .supreme-holo-box::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -5195,6 +5197,9 @@ function renderVitrineMainPage() {
 
         for (const item of rowItems) {
           const gameBox = el("div");
+          if (item.category === "supreme_retro") {
+            gameBox.classList.add("supreme-holo-box");
+          }
           gameBox.style.cssText = `
             background: var(--card);
             border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
