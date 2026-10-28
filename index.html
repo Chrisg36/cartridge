@@ -4593,30 +4593,19 @@ function playCartridgeBreathSound() {
 }
 
 let promoCurrentPage = 1;
+let promoSelectedPlatform = "Tous"; // Filtre actif
 const PROMOS_PER_PAGE = 16;
-
-// Vraie liste de grands jeux PC actuellement en promotion sur Steam
-const realSteamPromos = [
-  { id: 1, name: "Cyberpunk 2077", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.jpg", oldPrice: "59.99 €", newPrice: "29.99 €", discount: "-50%" },
-  { id: 2, name: "Hades", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7f.jpg", oldPrice: "23.99 €", newPrice: "9.59 €", discount: "-60%" },
-  { id: 3, name: "Baldur's Gate 3", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co67cn.jpg", oldPrice: "59.99 €", newPrice: "53.99 €", discount: "-10%" },
-  { id: 4, name: "Elden Ring", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4jni.jpg", oldPrice: "49.99 €", newPrice: "34.99 €", discount: "-30%" },
-  { id: 5, name: "Grand Theft Auto V", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2not.jpg", oldPrice: "29.99 €", newPrice: "14.99 €", discount: "-50%" },
-  { id: 6, name: "The Witcher 3: Wild Hunt", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyy.jpg", oldPrice: "39.99 €", newPrice: "9.99 €", discount: "-75%" },
-  { id: 7, name: "Monster Hunter: World", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1vcf.jpg", oldPrice: "29.99 €", newPrice: "9.89 €", discount: "-67%" },
-  { id: 8, name: "Red Dead Redemption 2", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1qnp.jpg", oldPrice: "59.99 €", newPrice: "19.79 €", discount: "-67%" },
-  { id: 9, name: "Terraria", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1vuz.jpg", oldPrice: "9.99 €", newPrice: "3.99 €", discount: "-60%" },
-  { id: 10, name: "Stardew Valley", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2bar.jpg", oldPrice: "13.99 €", newPrice: "9.39 €", discount: "-33%" },
-  { id: 11, name: "Resident Evil 4", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5x87.jpg", oldPrice: "39.99 €", newPrice: "19.99 €", discount: "-50%" },
-  { id: 12, name: "God of War", store: "Steam Store", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co3p2c.jpg", oldPrice: "49.99 €", newPrice: "24.99 €", discount: "-50%" }
-];
-
 let realPromosCache = [];
 
 async function fetchAndRenderPromos() {
-  // On utilise directement la liste de vraies promos vérifiées pour garantir un affichage instantané et sans erreur
-  realPromosCache = realSteamPromos;
-  renderPromosMainPage();
+  try {
+    const res = await fetch(`${API}/api/promos`);
+    if (!res.ok) throw new Error("Erreur réseau");
+    realPromosCache = await res.json();
+    renderPromosMainPage();
+  } catch (e) {
+    console.error("Erreur promos :", e);
+  }
 }
 
 function renderPromosMainPage() {
@@ -4633,24 +4622,55 @@ function renderPromosMainPage() {
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES STEAM</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Sélection officielle des meilleures promotions PC du moment</p>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES (STEAM, SONY, NINTENDO, XBOX)</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Flux officiel multi-plateformes en direct</p>
   `;
   banner.append(headerDiv);
 
-  if (!realPromosCache || realPromosCache.length === 0) {
-    banner.append(el("p", "msg", "Aucune promotion disponible..."));
+  // --- BARRE DE FILTRE PAR CONSTRUCTEUR ---
+  const filterBar = el("div");
+  filterBar.style.cssText = "display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;";
+
+  const platforms = ["Tous", "PC", "PS5", "Xbox", "Switch"];
+  platforms.forEach(plat => {
+    const btn = el("button", "chip", plat);
+    if (promoSelectedPlatform === plat) btn.setAttribute("aria-pressed", "true");
+    btn.addEventListener("click", () => {
+      playThemeSound(theme);
+      promoSelectedPlatform = plat;
+      promoCurrentPage = 1;
+      renderPromosMainPage();
+    });
+    filterBar.append(btn);
+  });
+  banner.append(filterBar);
+
+  // Filtrage des jeux selon la plateforme choisie
+  let filteredItems = realPromosCache;
+  if (promoSelectedPlatform !== "Tous") {
+    filteredItems = realPromosCache.filter(g => {
+      const platStr = g.releases.map(r => r.platform).join(" ").toLowerCase();
+      const storeStr = (g.store || "").toLowerCase();
+      if (promoSelectedPlatform === "PC") return platStr.includes("pc") || storeStr.includes("steam");
+      if (promoSelectedPlatform === "PS5") return platStr.includes("ps") || storeStr.includes("playstation");
+      if (promoSelectedPlatform === "Xbox") return platStr.includes("xbox") || storeStr.includes("xbox");
+      if (promoSelectedPlatform === "Switch") return platStr.includes("switch") || storeStr.includes("nintendo");
+      return true;
+    });
+  }
+
+  if (filteredItems.length === 0) {
+    banner.append(el("p", "msg", "Aucune promotion trouvée pour cette plateforme."));
     contentArea.append(banner);
     return;
   }
 
-  // Pagination propre
-  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE);
+  // Pagination
+  const totalPages = Math.ceil(filteredItems.length / PROMOS_PER_PAGE);
   if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
   if (promoCurrentPage < 1) promoCurrentPage = 1;
 
-  const startIndex = (promoCurrentPage - 1) * PROMOS_PER_PAGE;
-  const currentItems = realPromosCache.slice(startIndex, startIndex + PROMOS_PER_PAGE);
+  const currentItems = filteredItems.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
 
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
@@ -4660,103 +4680,32 @@ function renderPromosMainPage() {
     card.style.cssText = `
       background: rgba(15, 23, 42, 0.75);
       border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      cursor: pointer;
+      border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: center;
+      position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
     `;
-
-    card.addEventListener("mouseenter", () => {
-      card.style.transform = "translateY(-3px)";
-      card.style.borderColor = "var(--acc)";
-    });
-    card.addEventListener("mouseleave", () => {
-      card.style.transform = "translateY(0)";
-      card.style.borderColor = "color-mix(in srgb, var(--acc) 35%, transparent)";
-    });
 
     card.addEventListener("click", () => {
       playThemeSound(theme);
-      openSheet({ g: game, rel: game.releases || [{ platform: "PC" }], date: game.date || new Date().toISOString().slice(0,10) });
+      openSheet({ g: game, rel: game.releases, date: new Date().toISOString().slice(0,10) });
     });
 
-    const imgWrapper = el("div");
-    imgWrapper.style.cssText = "width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
-    const img = el("img");
-    img.src = game.cover || "";
-    img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
-    imgWrapper.append(img);
-
-    const infoWrapper = el("div");
-    infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;";
-
-    const titleEl = el("b", "", game.name);
-    titleEl.style.cssText = "font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);";
-
-    const badgeWrapper = el("div");
-    badgeWrapper.style.cssText = "display: flex; gap: 4px; align-items: center; flex-wrap: wrap;";
-    badgeWrapper.innerHTML = `<span class="platform-badge badge-pc" style="font-size: 0.55rem; padding: 1px 4px;">PC</span> <span style="font-size: 8px; color: var(--mut); font-weight: 700;">• ${game.store || "Steam"}</span>`;
-
-    const priceRow = el("div");
-    priceRow.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 2px;";
-    
-    const discountBadge = el("span", "", game.discount || "-0%");
-    discountBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;";
-
-    const priceBox = el("div");
-    priceBox.style.cssText = "display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800;";
-    priceBox.innerHTML = `<span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice || ""}</span> <span style="color: var(--acc);">${game.newPrice || ""}</span>`;
-
-    priceRow.append(discountBadge, priceBox);
-    infoWrapper.append(titleEl, badgeWrapper, priceRow);
-    card.append(imgWrapper, infoWrapper);
+    card.innerHTML = `
+      <div style="width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);">
+        <img src="${game.cover}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
+        <b style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);">${game.name}</b>
+        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">${game.releases[0].platform} • ${game.store}</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+          <span style="font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;">${game.discount}</span>
+          <span style="font-size: 11px; font-weight: 800;"><span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice}</span> <span style="color: var(--acc);">${game.newPrice}</span></span>
+        </div>
+      </div>
+    `;
     gridContainer.append(card);
   });
 
   banner.append(gridContainer);
-
-  // Pagination si nécessaire
-  if (totalPages > 1) {
-    const paginationBar = el("div");
-    paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;";
-
-    const prevPageBtn = el("button", "chip", "◀ Précédent");
-    prevPageBtn.disabled = promoCurrentPage === 1;
-    if (prevPageBtn.disabled) prevPageBtn.style.opacity = "0.4";
-    prevPageBtn.addEventListener("click", () => {
-      if (promoCurrentPage > 1) {
-        playThemeSound(theme);
-        promoCurrentPage--;
-        renderPromosMainPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    });
-
-    const pageIndicator = el("span", "", `Page ${promoCurrentPage} / ${totalPages}`);
-    pageIndicator.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt);";
-
-    const nextPageBtn = el("button", "chip", "Suivant ▶");
-    nextPageBtn.disabled = promoCurrentPage === totalPages;
-    if (nextPageBtn.disabled) nextPageBtn.style.opacity = "0.4";
-    nextPageBtn.addEventListener("click", () => {
-      if (promoCurrentPage < totalPages) {
-        playThemeSound(theme);
-        promoCurrentPage++;
-        renderPromosMainPage();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    });
-
-    paginationBar.append(prevPageBtn, pageIndicator, nextPageBtn);
-    banner.append(paginationBar);
-  }
-
   contentArea.append(banner);
 }
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
