@@ -1253,23 +1253,23 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-<!-- 🏆 LA GRANDE PAGE TABLEAU DES SCORES -->
-  <div id="scoresMainPage" style="display: none;">
+<!-- 📺 LA GRANDE PAGE ANIMES & MANGAS -->
+  <div id="animeMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏆 TABLEAU DES SCORES & RECORDS</div>
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">📺 ANIMES & MANGAS // 2026</div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="scoresPageCoins">100</span>
+            🪙 <span id="animePageCoins">100</span>
           </div>
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>🕹️ HALL OF FAME</span>
-        <span>RECORDS PERSONNELS</span>
+        <span>🎌 SAISON EN COURS</span>
+        <span>PLANNINGS & SORTIES</span>
       </div>
     </div>
-    <div id="scoresPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+    <div id="animePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
 <!-- 🕹️ LA GRANDE PAGE SALLE ARCADE -->
@@ -3773,7 +3773,8 @@ function hideAllMainPages() {
   const vitrinePage = document.getElementById("vitrineMainPage");
   const museumPage = document.getElementById("museumMainPage");
   const scoresPage = document.getElementById("scoresMainPage");
-  const arcadePage = document.getElementById("arcadeMainPage"); // Si tu as créé la page arcade dédiée
+  const arcadePage = document.getElementById("arcadeMainPage");
+  const animePage = document.getElementById("animeMainPage"); // 👈 Ajout ici
 
   if (homeContent) homeContent.style.display = "none";
   if (shopPage) shopPage.style.display = "none";
@@ -3781,6 +3782,7 @@ function hideAllMainPages() {
   if (museumPage) museumPage.style.display = "none";
   if (scoresPage) scoresPage.style.display = "none";
   if (arcadePage) arcadePage.style.display = "none";
+  if (animePage) animePage.style.display = "none"; // 👈 Ajout ici
 }
 
 if (navHome) {
