@@ -3896,9 +3896,11 @@ function checkDailyConnection() {
   }
 }
 
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE ---
-// --- 1. FONCTION DE RENDU DE LA GRANDE PAGE BOUTIQUE (100% INDÉPENDANTE) ---
 function renderShopMainPage() {
+  const shopPage = document.getElementById("shopMainPage");
+  if (!shopPage) return;
+  
+  shopPage.style.display = "block";
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
   contentArea.replaceChildren();
@@ -3937,7 +3939,7 @@ function renderShopMainPage() {
     constructionBanner.innerHTML = `
       <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
       <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
-        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs, des bordures de cartes légendaires et des bonus uniques pour ton profil !
+        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs et des bonus uniques !
       </p>
     `;
     displayBox.append(constructionBanner);
@@ -4002,21 +4004,12 @@ function renderShopMainPage() {
       }
     ];
 
- packsConfig.forEach(cfg => {
-      const boosterCard = el("div", "booster-shop-card"); // 🎯 Ajout de la classe ici
+    packsConfig.forEach(cfg => {
+      const boosterCard = el("div", "booster-shop-card");
       boosterCard.style.cssText = `
-        background: ${cfg.gradient};
-        border: 2px solid ${cfg.color};
-        border-radius: 16px;
-        padding: 18px 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
+        background: ${cfg.gradient}; border: 2px solid ${cfg.color}; border-radius: 16px;
+        padding: 18px 12px; display: flex; flex-direction: column; align-items: center;
+        justify-content: space-between; gap: 14px; cursor: pointer; position: relative; overflow: hidden;
         box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
         transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
       `;
@@ -4029,6 +4022,7 @@ function renderShopMainPage() {
         boosterCard.style.transform = "translateY(0) scale(1)";
         boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
       });
+
       const headerBox = el("div");
       headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
       headerBox.innerHTML = `
@@ -4085,7 +4079,7 @@ function renderShopMainPage() {
     headerBox.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
     headerBox.innerHTML = `
       <div style="width: 8px; height: 8px; background: var(--acc); box-shadow: 0 0 10px var(--acc); border-radius: 50%;"></div>
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:2px; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈME DE QUÊTES & PROTOCOLES</h3>
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:2px; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈMES DE QUÊTES & PROTOCOLES</h3>
     `;
     banner.append(headerBox);
 
@@ -4233,9 +4227,8 @@ function renderShopMainPage() {
 
   subNav.append(btnShop, btnPacks, btnChallenges);
   contentArea.append(subNav, displayBox);
-  showMainShop();
+  showMainShop(); // Ouvre par défaut sur la boutique (ou showPacks si tu préfères)
 }
-
 function buyAndOpenPack(cost, typeName, category) {
   playThemeSound(theme);
   if (userCoins < cost) {
