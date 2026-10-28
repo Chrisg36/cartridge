@@ -4592,7 +4592,12 @@ function playCartridgeBreathSound() {
   }
 }
 
-// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES ÉLARGIE ---
+// --- VARIABLES DE PAGINATION ET FILTRE POUR LES PROMOS ---
+let promoCurrentPage = 1;
+let promoSelectedConsole = "Tous";
+const PROMOS_PER_PAGE = 16;
+
+// --- FONCTION DE RENDU DE LA PAGE PROMOS AVEC FILTRES & PAGINATION ---
 function renderPromosMainPage() {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
@@ -4609,11 +4614,56 @@ function renderPromosMainPage() {
   const headerDiv = el("div");
   headerDiv.innerHTML = `
     <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ CATALOGUE DES SOLDES OFFICIELLES</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Grand inventaire des réductions en cours sur l'eShop, le PS Store et le Xbox Store</p>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Grand inventaire des réductions en cours avec filtrage par console</p>
   `;
   banner.append(headerDiv);
 
-  // Récupération de TOUS les jeux chargés dans l'application (tous les mois en cache)
+  // --- BARRE DE FILTRE CONSOLE ET PAGINATION EN HAUT ---
+  const controlsBar = el("div");
+  controlsBar.style.cssText = "display: flex; gap: 8px; align-items: center; width: 100%; flex-wrap: wrap;";
+
+  // Sélecteur de console (identique à l'accueil)
+  const filterSelect = el("select", "platform-select");
+  filterSelect.style.flex = "1";
+  filterSelect.style.minWidth = "180px";
+  
+  const optAll = document.createElement("option");
+  optAll.value = "Tous";
+  optAll.textContent = "✨ Toutes les consoles";
+  filterSelect.append(optAll);
+
+  // Remplissage des options de consoles
+  const groups = {};
+  for (const item of WORLD_CONSOLES) {
+    if (!groups[item.brand]) groups[item.brand] = [];
+    if (!groups[item.brand].includes(item.name)) groups[item.brand].push(item.name);
+  }
+  groups["PC & Autres"] = ["PC"];
+
+  for (const [brand, consoleNames] of Object.entries(groups)) {
+    const optGroup = document.createElement("optgroup");
+    optGroup.label = `--- ${brand.toUpperCase()} ---`;
+    for (const name of consoleNames) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      if (name === promoSelectedConsole) opt.selected = true;
+      optGroup.append(opt);
+    }
+    filterSelect.append(optGroup);
+  }
+
+  filterSelect.addEventListener("change", (e) => {
+    playThemeSound(theme);
+    promoSelectedConsole = e.target.value;
+    promoCurrentPage = 1; // Retour à la première page au changement de filtre
+    renderPromosMainPage();
+  });
+
+  controlsBar.append(filterSelect);
+  banner.append(controlsBar);
+
+  // Récupération de TOUS les jeux chargés dans l'application
   let allGames = [];
   Object.values(cache).forEach(monthList => {
     if (Array.isArray(monthList)) allGames.push(...monthList);
@@ -4623,23 +4673,40 @@ function renderPromosMainPage() {
   }
 
   const promoCandidates = allGames.filter(g => g.cover);
-  // On prend une plus large sélection (jusqu'à 32 jeux)
-  const selectedDeals = (promoCandidates.length > 0 ? promoCandidates : []).sort(() => 0.5 - Math.random()).slice(0, 32);
 
-  if (selectedDeals.length === 0) {
-    const emptyMsg = el("p", "msg", "Chargement des bases de données en cours... Explore d'abord quelques mois pour synchroniser les archives !");
+  // Filtrage par console sélectionnée
+  let filteredDeals = promoCandidates.filter(game => {
+    if (promoSelectedConsole === "Tous") return true;
+    if (!game.releases) return false;
+    return game.releases.some(r => {
+      const plat = r.platform.toLowerCase();
+      const filt = promoSelectedConsole.toLowerCase();
+      return plat.includes(filt) || filt.includes(plat);
+    });
+  });
+
+  if (filteredDeals.length === 0) {
+    const emptyMsg = el("p", "msg", "Aucune promotion trouvée pour cette console dans les archives actuelles.");
     banner.append(emptyMsg);
     contentArea.append(banner);
     return;
   }
 
-  // Grille large et dense pour afficher beaucoup de jeux
+  // --- LOGIQUE DE PAGINATION ---
+  const totalPages = Math.ceil(filteredDeals.length / PROMOS_PER_PAGE);
+  if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
+  if (promoCurrentPage < 1) promoCurrentPage = 1;
+
+  const startIndex = (promoCurrentPage - 1) * PROMOS_PER_PAGE;
+  const currentItems = filteredDeals.slice(startIndex, startIndex + PROMOS_PER_PAGE);
+
+  // Grille des jeux de la page actuelle
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
 
-  selectedDeals.forEach((game) => {
+  currentItems.forEach((game) => {
     const basePrice = 39.99 + ((game.id % 5) * 10);
-    const discountPerc = -20 - ((game.id % 4) * 10); // -20%, -30%, -40% ou -50%
+    const discountPerc = -20 - ((game.id % 4) * 10);
     const newPrice = (basePrice * (1 + discountPerc / 100)).toFixed(2) + " €";
     const oldPrice = basePrice.toFixed(2) + " €";
 
@@ -4721,6 +4788,43 @@ function renderPromosMainPage() {
   });
 
   banner.append(gridContainer);
+
+  // --- BARRE DE NAVIGATION (FLÈCHES DE PAGINATION) ---
+  if (totalPages > 1) {
+    const paginationBar = el("div");
+    paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;";
+
+    const prevPageBtn = el("button", "chip", "◀ Précédent");
+    prevPageBtn.disabled = promoCurrentPage === 1;
+    if (prevPageBtn.disabled) prevPageBtn.style.opacity = "0.4";
+    prevPageBtn.addEventListener("click", () => {
+      if (promoCurrentPage > 1) {
+        playThemeSound(theme);
+        promoCurrentPage--;
+        renderPromosMainPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    const pageIndicator = el("span", "", `Page ${promoCurrentPage} / ${totalPages}`);
+    pageIndicator.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt);";
+
+    const nextPageBtn = el("button", "chip", "Suivant ▶");
+    nextPageBtn.disabled = promoCurrentPage === totalPages;
+    if (nextPageBtn.disabled) nextPageBtn.style.opacity = "0.4";
+    nextPageBtn.addEventListener("click", () => {
+      if (promoCurrentPage < totalPages) {
+        playThemeSound(theme);
+        promoCurrentPage++;
+        renderPromosMainPage();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    paginationBar.append(prevPageBtn, pageIndicator, nextPageBtn);
+    banner.append(paginationBar);
+  }
+
   contentArea.append(banner);
 }
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
