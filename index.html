@@ -1411,23 +1411,20 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 
 
 /* 🌟 LOGO DE MARQUE OFFICIEL CARTRIDGE */
-<div class="neon-logo" id="sub-title">
-  <!-- 💾 Cartouche vectorielle rétro -->
-  <svg class="cartridge-brand-mark" viewBox="0 0 28 28" fill="none" style="width: 20px; height: 20px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg">
-    <!-- Coque biseautée -->
-    <path d="M5 3.5C5 2.67 5.67 2 6.5 2H20L24 6V24C24 24.83 23.33 25.5 22.5 25.5H5.5C4.67 25.5 4 24.83 4 24V4.5C4 3.95 4.45 3.5 5 3.5Z" fill="#141720" stroke="var(--acc)" stroke-width="2"/>
-    <!-- Grip supérieur -->
-    <line x1="7" y1="5.5" x2="17" y2="5.5" stroke="var(--acc)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-    <!-- Fenêtre étiquette -->
-    <rect x="7" y="8.5" width="14" height="11" rx="2" fill="color-mix(in srgb, var(--acc) 20%, #0d0f16)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-    <!-- Monogramme CR -->
-    <text x="14" y="16.5" font-family="'Orbitron', sans-serif" font-weight="900" font-size="7.5" fill="#fff" text-anchor="middle" letter-spacing="0.5">CR</text>
-    <!-- Connecteurs dorés d'arcade -->
-    <path d="M7 23H21" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 1.5"/>
-  </svg>
-  
-  <span style="font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 0 0 8px var(--acc);">CARTRIDGE</span>
-</div>
+#sub-title.neon-logo {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto !important;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 18%, var(--card)) 0%, var(--card) 100%);
+  border: 1.5px solid var(--acc);
+  border-radius: var(--radius);
+  box-shadow: 
+    0 0 14px color-mix(in srgb, var(--acc) 45%, transparent),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+}
 
 /* L'icône cartouche vectorielle */
 .cartridge-brand-mark {
@@ -1668,14 +1665,14 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   <div id="homeMainContent">
     <div class="sticky-header-container">
       <div class="header-top">
-   <div class="neon-logo" id="sub-title">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none">
+ <div class="neon-logo" id="sub-title">
+  <svg class="cartridge-brand-mark retro-icon" viewBox="0 0 24 24" fill="none">
     <path d="M4 2H17L21 6V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V3C3 2.45 3.45 2 4 2Z" fill="#181B22" stroke="#FF7A45" stroke-width="1.8" stroke-linejoin="round"/>
     <rect x="6.5" y="6" width="10" height="9" rx="1.5" fill="rgba(255,122,69,0.25)" stroke="#FF7A45" stroke-width="1.2"/>
     <path d="M8.5 9.5H14.5M8.5 12H12.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
     <rect x="5.5" y="19" width="12" height="2" rx="0.5" fill="#FFD700"/>
   </svg>
-  CARTRIDGE
+  <span class="brand-text">CARTRIDGE</span>
 </div>
         <div class="nav">
           <div class="user-header-badge" onclick="openSettings();"></div>
@@ -3126,7 +3123,7 @@ function shiftMonth(delta) {
 }
 
 function updateStaticTexts() {
-  $("#sub-title").textContent = t('subTitle');
+  // $("#sub-title").textContent = t('subTitle'); 👈 À DÉSACTIVER
   $("#search").placeholder = t('searchPlaceholder');
   const viewBtn = $("#viewModeBtn");
   if (viewMode === "list") {
