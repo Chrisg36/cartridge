@@ -4593,54 +4593,33 @@ function playCartridgeBreathSound() {
 }
 
 let promoCurrentPage = 1;
-let promoSelectedPlatform = "Tous"; // Filtre actif
 const PROMOS_PER_PAGE = 16;
 let realPromosCache = [];
 
 async function fetchAndRenderPromos() {
   try {
-    const res = await fetch(`${API}/api/promos`);
-    if (!res.ok) throw new Error("Erreur réseau");
-    realPromosCache = await res.json();
-    renderPromosMainPage();
+    // Appel direct depuis le navigateur vers l'API de promos en temps réel (pas de blocage serveur)
+    const res = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60&sortBy=Savings");
+    const data = await res.json();
+    
+    if (Array.isArray(data) && data.length > 0) {
+      realPromosCache = data.map(deal => ({
+        id: deal.dealID,
+        name: deal.title,
+        releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "En direct", exact: true }],
+        store: "Steam Store",
+        cover: deal.thumb,
+        oldPrice: deal.normalPrice + " €",
+        newPrice: deal.salePrice + " €",
+        discount: `-${Math.round(deal.savings)}%`
+      }));
+    }
   } catch (e) {
-    console.error("Erreur promos :", e);
+    console.warn("Erreur de récupération en direct, utilisation de la liste de secours.");
   }
-}
-
-function renderPromosMainPage() {
-  const shopPage = document.getElementById("shopMainPage");
-  if (!shopPage) return;
   
-  shopPage.style.display = "block";
-  const contentArea = document.getElementById("shopPageContent");
-  if (!contentArea) return;
-  contentArea.replaceChildren();
-
-  const banner = el("div", "shop-banner");
-  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-
-  const headerDiv = el("div");
-  headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES (STEAM, SONY, NINTENDO, XBOX)</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Flux officiel multi-plateformes en direct</p>
-  `;
-  banner.append(headerDiv);
-
-  // --- BARRE DE FILTRE PAR CONSTRUCTEUR ---
-  const filterBar = el("div");
-  filterBar.style.cssText = "display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;";
-
-  const platforms = ["Tous", "PC", "PS5", "Xbox", "Switch"];
-  platforms.forEach(plat => {
-    const btn = el("button", "chip", plat);
-    if (promoSelectedPlatform === plat) btn.setAttribute("aria-pressed", "true");
-    btn.addEventListener("click", () => {
-      playThemeSound(theme);
-      promoSelectedPlatform = plat;
-      promoCurrentPage = 1;
-      renderPromosMainPage();
-    });
+  renderPromosMainPage();
+}
     filterBar.append(btn);
   });
   banner.append(filterBar);
