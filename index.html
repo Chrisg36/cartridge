@@ -4597,7 +4597,12 @@ let promoCurrentPage = 1;
 let promoSelectedConsole = "Tous";
 const PROMOS_PER_PAGE = 16;
 
-// --- FONCTION DE RENDU DE LA PAGE PROMOS AVEC FILTRES & PAGINATION ---
+// --- VARIABLES DE PAGINATION ET FILTRE POUR LES PROMOS ---
+let promoCurrentPage = 1;
+let promoSelectedConsole = "Tous";
+const PROMOS_PER_PAGE = 16;
+
+// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES ---
 function renderPromosMainPage() {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
@@ -4614,15 +4619,14 @@ function renderPromosMainPage() {
   const headerDiv = el("div");
   headerDiv.innerHTML = `
     <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ CATALOGUE DES SOLDES OFFICIELLES</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Grand inventaire des réductions en cours avec filtrage par console</p>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Bons plans en cours sur l'eShop, le PS Store et le Xbox Store</p>
   `;
   banner.append(headerDiv);
 
-  // --- BARRE DE FILTRE CONSOLE ET PAGINATION EN HAUT ---
+  // --- BARRE DE FILTRE CONSOLE ---
   const controlsBar = el("div");
   controlsBar.style.cssText = "display: flex; gap: 8px; align-items: center; width: 100%; flex-wrap: wrap;";
 
-  // Sélecteur de console (identique à l'accueil)
   const filterSelect = el("select", "platform-select");
   filterSelect.style.flex = "1";
   filterSelect.style.minWidth = "180px";
@@ -4632,13 +4636,11 @@ function renderPromosMainPage() {
   optAll.textContent = "✨ Toutes les consoles";
   filterSelect.append(optAll);
 
-  // Remplissage des options de consoles
   const groups = {};
   for (const item of WORLD_CONSOLES) {
     if (!groups[item.brand]) groups[item.brand] = [];
     if (!groups[item.brand].includes(item.name)) groups[item.brand].push(item.name);
   }
-  groups["PC & Autres"] = ["PC"];
 
   for (const [brand, consoleNames] of Object.entries(groups)) {
     const optGroup = document.createElement("optgroup");
@@ -4656,14 +4658,14 @@ function renderPromosMainPage() {
   filterSelect.addEventListener("change", (e) => {
     playThemeSound(theme);
     promoSelectedConsole = e.target.value;
-    promoCurrentPage = 1; // Retour à la première page au changement de filtre
+    promoCurrentPage = 1;
     renderPromosMainPage();
   });
 
   controlsBar.append(filterSelect);
   banner.append(controlsBar);
 
-  // Récupération de TOUS les jeux chargés dans l'application
+  // Récupération des jeux depuis le cache ou la base globale
   let allGames = [];
   Object.values(cache).forEach(monthList => {
     if (Array.isArray(monthList)) allGames.push(...monthList);
@@ -4672,7 +4674,19 @@ function renderPromosMainPage() {
     allGames = cache[ym] || [];
   }
 
-  const promoCandidates = allGames.filter(g => g.cover);
+  // Si le cache est vide, on prend un set de secours avec de vrais grands jeux et leurs vraies plateformes
+  const fallbackDeals = [
+    { id: 101, name: "The Legend of Zelda: Tears of the Kingdom", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5vwt.png" },
+    { id: 102, name: "God of War Ragnarök", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4ska.png" },
+    { id: 103, name: "Cyberpunk 2077: Ultimate Edition", releases: [{ platform: "Xbox Series X" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co6zqa.png" },
+    { id: 104, name: "Metroid Prime Remastered", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5z8f.png" },
+    { id: 105, name: "Elden Ring", releases: [{ platform: "PS5" }, { platform: "Xbox Series X" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4fzi.png" },
+    { id: 106, name: "Super Mario Odyssey", releases: [{ platform: "Nintendo Switch" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1nba.png" },
+    { id: 107, name: "Resident Evil 4 Remake", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co5xbu.png" },
+    { id: 108, name: "Final Fantasy VII Rebirth", releases: [{ platform: "PS5" }], cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co6q9q.png" }
+  ];
+
+  const promoCandidates = (allGames.length > 5 ? allGames : fallbackDeals).filter(g => g.cover);
 
   // Filtrage par console sélectionnée
   let filteredDeals = promoCandidates.filter(game => {
@@ -4686,7 +4700,7 @@ function renderPromosMainPage() {
   });
 
   if (filteredDeals.length === 0) {
-    const emptyMsg = el("p", "msg", "Aucune promotion trouvée pour cette console dans les archives actuelles.");
+    const emptyMsg = el("p", "msg", "Aucune promotion trouvée pour cette console. Essaie 'Toutes les consoles' !");
     banner.append(emptyMsg);
     contentArea.append(banner);
     return;
@@ -4700,13 +4714,12 @@ function renderPromosMainPage() {
   const startIndex = (promoCurrentPage - 1) * PROMOS_PER_PAGE;
   const currentItems = filteredDeals.slice(startIndex, startIndex + PROMOS_PER_PAGE);
 
-  // Grille des jeux de la page actuelle
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
 
   currentItems.forEach((game) => {
-    const basePrice = 39.99 + ((game.id % 5) * 10);
-    const discountPerc = -20 - ((game.id % 4) * 10);
+    const basePrice = 49.99 + ((game.id % 4) * 10);
+    const discountPerc = -30 - ((game.id % 3) * 10); // -30%, -40% ou -50%
     const newPrice = (basePrice * (1 + discountPerc / 100)).toFixed(2) + " €";
     const oldPrice = basePrice.toFixed(2) + " €";
 
@@ -4789,7 +4802,7 @@ function renderPromosMainPage() {
 
   banner.append(gridContainer);
 
-  // --- BARRE DE NAVIGATION (FLÈCHES DE PAGINATION) ---
+  // --- PAGINATION ---
   if (totalPages > 1) {
     const paginationBar = el("div");
     paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;";
