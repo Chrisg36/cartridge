@@ -4597,19 +4597,26 @@ let promoSelectedConsole = "Tous";
 const PROMOS_PER_PAGE = 16;
 let realPromosCache = [];
 
-// Fonction corrigée pour pointer vers l'API de ton Cloudflare Worker via ${API}
+// Fonction pour récupérer les vrais bons plans Steam depuis ton Worker Cloudflare
 async function fetchAndRenderPromos() {
   try {
     const res = await fetch(`${API}/api/promos`); 
-    if (!res.ok) throw new Error("Erreur lors de la récupération des promos sur le Worker");
-    realPromosCache = await res.json();
+    if (!res.ok) throw new Error("Erreur réseau Worker");
+    const data = await res.json();
+    
+    // Si le worker renvoie une erreur sous forme d'objet
+    if (data.error) {
+      console.error("Erreur Worker:", data.error);
+      realPromosCache = [];
+    } else {
+      realPromosCache = Array.isArray(data) ? data : (data.deals || []);
+    }
+    
     renderPromosMainPage();
   } catch (e) {
     console.error("Erreur lors de la récupération des promos :", e);
-    const contentArea = document.getElementById("shopPageContent");
-    if (contentArea) {
-      contentArea.replaceChildren(el("p", "msg", "Impossible de charger les promotions. Vérifie ta console."));
-    }
+    realPromosCache = [];
+    renderPromosMainPage();
   }
 }
 
@@ -4633,17 +4640,19 @@ function renderPromosMainPage() {
   banner.append(headerDiv);
 
   if (!realPromosCache || realPromosCache.length === 0) {
-    banner.append(el("p", "msg", "Chargement des promotions en cours..."));
+    const emptyMsg = el("p", "msg", "Aucune promotion Steam disponible pour le moment (ou vérifie que le Worker est bien déployé).");
+    banner.append(emptyMsg);
     contentArea.append(banner);
     return;
   }
 
-  // Pagination
+  // --- LOGIQUE DE PAGINATION ---
   const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE);
   if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
   if (promoCurrentPage < 1) promoCurrentPage = 1;
 
-  const currentItems = realPromosCache.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
+  const startIndex = (promoCurrentPage - 1) * PROMOS_PER_PAGE;
+  const currentItems = realPromosCache.slice(startIndex, startIndex + PROMOS_PER_PAGE);
 
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
@@ -4653,34 +4662,68 @@ function renderPromosMainPage() {
     card.style.cssText = `
       background: rgba(15, 23, 42, 0.75);
       border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
-      border-radius: 10px; padding: 10px; display: flex; gap: 10px; align-items: center;
-      position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
     `;
+
+    card.addEventListener("mouseenter", () => {
+      card.style.transform = "translateY(-3px)";
+      card.style.borderColor = "var(--acc)";
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "translateY(0)";
+      card.style.borderColor = "color-mix(in srgb, var(--acc) 35%, transparent)";
+    });
 
     card.addEventListener("click", () => {
       playThemeSound(theme);
-      openSheet({ g: game, rel: game.releases, date: new Date().toISOString().slice(0,10) });
+      openSheet({ g: game, rel: game.releases || [{ platform: "PC" }], date: game.date || new Date().toISOString().slice(0,10) });
     });
 
-    card.innerHTML = `
-      <div style="width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);">
-        <img src="${game.cover}" style="width: 100%; height: 100%; object-fit: cover;">
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
-        <b style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);">${game.name}</b>
-        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">PC • ${game.store}</div>
-        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-          <span style="font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;">${game.discount}</span>
-          <span style="font-size: 11px; font-weight: 800;"><span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice}</span> <span style="color: var(--acc);">${game.newPrice}</span></span>
-        </div>
-      </div>
-    `;
+    const imgWrapper = el("div");
+    imgWrapper.style.cssText = "width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
+    const img = el("img");
+    img.src = game.cover || "";
+    img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
+    imgWrapper.append(img);
+
+    const infoWrapper = el("div");
+    infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;";
+
+    const titleEl = el("b", "", game.name);
+    titleEl.style.cssText = "font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);";
+
+    const badgeWrapper = el("div");
+    badgeWrapper.style.cssText = "display: flex; gap: 4px; align-items: center; flex-wrap: wrap;";
+    badgeWrapper.innerHTML = `<span class="platform-badge badge-pc" style="font-size: 0.55rem; padding: 1px 4px;">PC</span> <span style="font-size: 8px; color: var(--mut); font-weight: 700;">• ${game.store || "Steam"}</span>`;
+
+    const priceRow = el("div");
+    priceRow.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 2px;";
+    
+    const discountBadge = el("span", "", game.discount || "-0%");
+    discountBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;";
+
+    const priceBox = el("div");
+    priceBox.style.cssText = "display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800;";
+    priceBox.innerHTML = `<span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice || ""}</span> <span style="color: var(--acc);">${game.newPrice || ""}</span>`;
+
+    priceRow.append(discountBadge, priceBox);
+    infoWrapper.append(titleEl, badgeWrapper, priceRow);
+    card.append(imgWrapper, infoWrapper);
     gridContainer.append(card);
   });
 
   banner.append(gridContainer);
 
-  // Pagination flèches
+  // --- PAGINATION ---
   if (totalPages > 1) {
     const paginationBar = el("div");
     paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;";
@@ -4718,6 +4761,8 @@ function renderPromosMainPage() {
 
   contentArea.append(banner);
 }
+
+
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
