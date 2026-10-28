@@ -1510,12 +1510,6 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     </svg>
     <span>Profil</span>
   </button>
-
-<!-- Encart de notification intégré pour remplacer l'alerte -->
-<div id="notificationBanner" style="display: none; background: color-mix(in srgb, var(--acc) 20%, var(--card)); border: 1px solid var(--acc); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: var(--txt); box-shadow: 0 4px 15px color-mix(in srgb, var(--acc) 20%, transparent); animation: fadeInList 0.3s ease;">
-  <span id="notificationText">🎁 Bonus récupéré !</span>
-</div>
- 
 </nav>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
@@ -1541,49 +1535,10 @@ function checkDailyReward() {
     addCoins(50);
     lastDailyClaim = todayStr;
     try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
-    
-    // Au lieu de l'alerte bloquante, on affiche le message dans la page
     setTimeout(() => {
-      showInPageNotification("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
+      alert("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
     }, 1000);
   }
-}
-
-// Fonction d'affichage de la notification non bloquante
-function showInPageNotification(message, duration = 4000) {
-  let banner = document.getElementById("notificationBanner");
-  let textSpan = document.getElementById("notificationText");
-
-  if (!banner) {
-    banner = document.createElement("div");
-    banner.id = "notificationBanner";
-    banner.style.cssText = "background: color-mix(in srgb, var(--acc) 20%, var(--card)); border: 1.5px solid var(--acc); border-radius: var(--radius); padding: 12px 16px; margin: 10px 0 16px; font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--txt); box-shadow: 0 4px 20px color-mix(in srgb, var(--acc) 30%, transparent); display: flex; align-items: center; gap: 8px; z-index: 60; position: relative;";
-    
-    textSpan = document.createElement("span");
-    textSpan.id = "notificationText";
-    banner.appendChild(textSpan);
-
-    const mainEl = document.querySelector("main");
-    if (mainEl) {
-      mainEl.insertBefore(banner, mainEl.firstChild);
-    } else {
-      document.body.insertBefore(banner, document.body.firstChild);
-    }
-  }
-
-  textSpan.textContent = message;
-  banner.style.display = "flex";
-  banner.style.opacity = "1";
-
-  if (window.notifTimeout) clearTimeout(window.notifTimeout);
-
-  window.notifTimeout = setTimeout(() => {
-    banner.style.transition = "opacity 0.4s ease";
-    banner.style.opacity = "0";
-    setTimeout(() => {
-      banner.style.display = "none";
-    }, 400);
-  }, duration);
 }
 
 function openShopModal() {
@@ -3112,49 +3067,7 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
-function getIgdbConsoleImage(consoleName) {
-  const igdbMap = {
-    // --- NINTENDO ---
-    "Nintendo Switch 2": "co1r7f",
-    "Nintendo Switch": "co1r7f",
-    "Wii U": "co1vcf",
-    "Wii": "co1vcf",
-    "GameCube": "co1x7c",
-    "Nintendo 64": "co1x7c",
-    "Super Nintendo": "co1x7c",
-    "NES": "co1x7c",
-    "Nintendo 3DS": "co2918",
-    "Nintendo DS": "co2918",
-    "Game Boy Advance": "co2918",
-    "Game Boy Color": "co2918",
-    "Game Boy": "co2918",
 
-    // --- SONY ---
-    "PlayStation 5": "co1vcf",
-    "PlayStation 4": "co1tr8",
-    "PlayStation 3": "co1tr8",
-    "PlayStation 2": "co1tr8",
-    "PlayStation": "co1tr8",
-    "PS Vita": "co2918",
-    "PSP": "co2918",
-
-    // --- SEGA ---
-    "Dreamcast": "co2918",
-    "Saturn": "co2918",
-    "Mega Drive": "co2918",
-    "Master System": "co2918",
-    "Game Gear": "co2918",
-
-    // --- MICROSOFT ---
-    "Xbox Series X": "co2e23",
-    "Xbox One": "co2e23",
-    "Xbox 360": "co2e23",
-    "Xbox": "co2e23"
-  };
-
-  const imageId = igdbMap[consoleName];
-  return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-}
 function renderMuseumAndVitrinePage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
