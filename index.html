@@ -1221,6 +1221,31 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 .settings-tab-page { display: none; }
 .settings-tab-page.active { display: block; animation: fadeInList 0.25s ease; }
+
+/* 🕹️ Fenêtre pop-up personnalisée au style Cartridge */
+.cartridge-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px); display: flex; align-items: center;
+  justify-content: center; z-index: 9999; padding: 16px;
+  animation: fadeInList 0.2s ease;
+}
+.cartridge-modal-card {
+  background: var(--card); border: 2px solid var(--acc);
+  border-radius: var(--radius); width: 100%; max-width: 380px;
+  padding: 20px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 10px var(--acc);
+  font-family: var(--font); color: var(--txt);
+}
+.cartridge-modal-title {
+  font-size: 14px; font-weight: 900; text-transform: uppercase;
+  color: var(--acc); margin-bottom: 12px; letter-spacing: 1px;
+}
+.cartridge-modal-body {
+  font-size: 12px; line-height: 1.5; color: var(--mut); margin-bottom: 16px;
+}
+.cartridge-modal-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+
  
 </style>
 </head>
@@ -3795,9 +3820,8 @@ function openSettings() {
       <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
     </form>
     <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
-      <a href="#" onclick="alert('Indiquez votre question secrète pour récupérer vos identifiants')" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
-      <a href="#" onclick="alert('Réinitialisation par clé de sécurité locale')" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
-    </div>
+   <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+<a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
   `;
   pageProfile.append(secProfile);
 
@@ -5193,16 +5217,112 @@ window.addEventListener('scroll', () => {
 
       if (typeof updateCoinsUI === "function") updateCoinsUI();
       if (typeof render === "function") render();
-      alert(`🎉 Bon retour ${username} ! Vos données ont été synchronisées.`);
+     showRetroAlert("Bienvenue", `🎮 Bon retour ${username} ! Vos données ont été synchronisées.`);
     } else {
-      alert("✅ Compte Cloudflare créé ! Vos pièces et jaquettes sont sauvegardées en ligne.");
+      showRetroAlert("Succès", "🎉 Compte Cloudflare créé ! Vos pièces et données sont sauvegardées en ligne.");
     }
 
     closeSheet();
   } catch (err) {
-    alert("❌ Impossible de joindre le serveur. Vérifiez l'adresse API dans config.js.");
+    showRetroAlert("Erreur de connexion", resData.message || "Identifiants invalides.", true);
   }
 }
+
+// Affiche une modale stylée au lieu de window.alert()
+function showRetroAlert(title, message, isError = false) {
+  const overlay = el("div", "cartridge-modal-overlay");
+  const card = el("div", "cartridge-modal-card");
+  if (isError) card.style.borderColor = "#ff3344";
+
+  card.innerHTML = `
+    <div class="cartridge-modal-title" style="${isError ? 'color:#ff3344;' : ''}">${title}</div>
+    <div class="cartridge-modal-body">${message}</div>
+  `;
+
+  const btnClose = el("button", "cta", "Compris");
+  btnClose.style.cssText = "min-height: 38px; padding: 6px 14px; font-size: 12px;";
+  btnClose.onclick = () => overlay.remove();
+
+  const actions = el("div", "cartridge-modal-actions");
+  actions.append(btnClose);
+  card.append(actions);
+  overlay.append(card);
+  document.body.append(overlay);
+}
+
+// Fenêtre de récupération du pseudo
+function openForgotUsernameModal() {
+  const overlay = el("div", "cartridge-modal-overlay");
+  const card = el("div", "cartridge-modal-card");
+
+  card.innerHTML = `
+    <div class="cartridge-modal-title">🔍 Retrouver son Pseudo</div>
+    <div class="cartridge-modal-body">
+      Votre identifiant est synchronisé sur votre navigateur ou sur Cloudflare.
+      <div style="margin-top: 10px; padding: 10px; background: var(--cov); border-radius: 8px; color: var(--txt);">
+        <strong>Identifiant local détecté :</strong><br>
+        <span style="color: var(--acc); font-size: 14px; font-weight: 800;">
+          ${localStorage.getItem("cartridge_user") || "Aucun pseudo enregistré"}
+        </span>
+      </div>
+    </div>
+  `;
+
+  const btnClose = el("button", "cta", "Fermer");
+  btnClose.style.cssText = "min-height: 38px; padding: 6px 14px; font-size: 12px;";
+  btnClose.onclick = () => overlay.remove();
+
+  const actions = el("div", "cartridge-modal-actions");
+  actions.append(btnClose);
+  card.append(actions);
+  overlay.append(card);
+  document.body.append(overlay);
+}
+
+// Fenêtre de réinitialisation du mot de passe
+function openForgotPasswordModal() {
+  const overlay = el("div", "cartridge-modal-overlay");
+  const card = el("div", "cartridge-modal-card");
+
+  card.innerHTML = `
+    <div class="cartridge-modal-title">🔑 Sécurité & Récupération</div>
+    <div class="cartridge-modal-body">
+      Entrez votre pseudo pour réinitialiser votre accès à l'aide de votre question secrète.
+      <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+        <input type="text" id="recoverUser" class="search-box" placeholder="Votre pseudo..." style="margin:0;">
+        <input type="text" id="recoverAnswer" class="search-box" placeholder="Réponse à la question secrète..." style="margin:0;">
+        <input type="password" id="recoverNewPass" class="search-box" placeholder="Nouveau mot de passe..." style="margin:0;">
+      </div>
+    </div>
+  `;
+
+  const btnCancel = el("button", "cta-sec", "Annuler");
+  btnCancel.style.cssText = "min-height: 38px; padding: 6px 12px; font-size: 12px;";
+  btnCancel.onclick = () => overlay.remove();
+
+  const btnSubmit = el("button", "cta", "Valider");
+  btnSubmit.style.cssText = "min-height: 38px; padding: 6px 14px; font-size: 12px;";
+  btnSubmit.onclick = () => {
+    const user = document.getElementById("recoverUser").value.trim();
+    const newPass = document.getElementById("recoverNewPass").value;
+    if (!user || !newPass) {
+      showRetroAlert("Erreur", "Remplissez tous les champs requis.", true);
+      return;
+    }
+    // Mise à jour locale immédiate
+    localStorage.setItem("cartridge_pass", newPass);
+    overlay.remove();
+    showRetroAlert("Succès", "Mot de passe actualisé avec succès !");
+  };
+
+  const actions = el("div", "cartridge-modal-actions");
+  actions.append(btnCancel, btnSubmit);
+  card.append(actions);
+  overlay.append(card);
+  document.body.append(overlay);
+}
+
+
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
