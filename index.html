@@ -1383,13 +1383,14 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <span>Arcade</span>
   </button>
 
-<button class="nav-item" id="navScores">
+<button class="nav-item" id="navAnimes">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-      <path d="M4 22h16M10 14.66V17c0 .55-.45 1-1 1H7M14 14.66V17c0 .55.45 1 1 1h2"></path>
-      <path d="M18 4H6v7a6 6 0 0 0 12 0V4z"></path>
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      <line x1="9" y1="7" x2="15" y2="7"></line>
+      <line x1="9" y1="11" x2="15" y2="11"></line>
     </svg>
-    <span>Scores</span>
+    <span>Animes</span>
   </button>
 
   <button class="nav-item" id="navSettings">
@@ -4863,6 +4864,91 @@ function renderScoresMainPage() {
   });
 }
 
+ async function renderAnimeMainPage() {
+  const animePage = document.getElementById("animeMainPage");
+  if (!animePage) return;
+  
+  animePage.style.display = "block";
+  const contentArea = document.getElementById("animePageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const coinSpan = document.getElementById("animePageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🎌 PLANNING DES ANIMES EN DIRECT</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Mises à jour automatiques via MyAnimeList</p>
+  `;
+  banner.append(headerDiv);
+
+  const loadingMsg = el("p", "msg", "⏳ Connexion au flux des animés en cours...");
+  banner.append(loadingMsg);
+  contentArea.append(banner);
+
+  try {
+    const res = await fetch("https://api.jikan.moe/v4/seasons/now");
+    const json = await res.json();
+    const animes = json.data || [];
+
+    loadingMsg.remove();
+
+    if (animes.length === 0) {
+      banner.append(el("p", "msg", "Aucun animé trouvé pour le moment."));
+      return;
+    }
+
+    const grid = el("div", "games-grid"); // Utilise la même grille stylée que pour les jeux
+    
+    animes.slice(0, 20).forEach(anime => {
+      const card = el("div", "grid-card");
+      card.addEventListener("click", () => {
+        playThemeSound(theme);
+        window.open(anime.url, "_blank");
+      });
+
+      const covContainer = el("div", "grid-cov-container");
+      const img = el("img", "grid-cov");
+      img.src = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url;
+      img.loading = "lazy";
+      covContainer.append(img);
+
+      const info = el("div", "grid-info");
+      const title = el("h3", "grid-title", anime.title_english || anime.title);
+      
+      const meta = el("div", "grid-meta");
+      const scoreBadge = `<span class="score-badge score-high">★ ${anime.score || 'N/A'}</span>`;
+      const episodesBadge = `<span class="time-badge">${anime.episodes ? anime.episodes + ' ep' : 'En cours'}</span>`;
+      meta.innerHTML = scoreBadge + episodesBadge;
+
+      info.append(title, meta);
+      card.append(covContainer, info);
+      grid.append(card);
+    });
+
+    banner.append(grid);
+  } catch (e) {
+    loadingMsg.textContent = "❌ Impossible de charger les flux d'animés pour le moment.";
+  }
+}
+
+const navAnimes = document.getElementById("navAnimes");
+if (navAnimes) {
+  navAnimes.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navAnimes);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    hideAllMainPages();
+    renderAnimeMainPage(); // 👈 Charge et affiche les animés en direct
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
