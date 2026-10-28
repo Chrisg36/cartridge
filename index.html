@@ -1410,6 +1410,46 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 
 
+/* 🌟 LOGO DE MARQUE OFFICIEL CARTRIDGE */
+<div class="neon-logo" id="sub-title">
+  <!-- 🎮 Icône de marque Cartridge vectorielle -->
+  <svg class="cartridge-brand-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Coque Cartouche biseautée -->
+    <path d="M5 3.5C5 2.67 5.67 2 6.5 2H20L24 6V24C24 24.83 23.33 25.5 22.5 25.5H5.5C4.67 25.5 4 24.83 4 24V4.5C4 3.95 4.45 3.5 5 3.5Z" fill="#141720" stroke="var(--acc)" stroke-width="2"/>
+    <!-- Poignée / Grip supérieur creusé -->
+    <line x1="7" y1="5.5" x2="17" y2="5.5" stroke="var(--acc)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+    <!-- Zone étiquette interne sombre -->
+    <rect x="7" y="8.5" width="14" height="11" rx="2" fill="color-mix(in srgb, var(--acc) 20%, #0d0f16)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <!-- Monogramme "CR" néon au cœur de la puce -->
+    <text x="14" y="16.5" font-family="'Orbitron', sans-serif" font-weight="900" font-size="7.5" fill="#fff" text-anchor="middle" letter-spacing="0.5">CR</text>
+    <!-- Connecteurs dorés en bas (les fameuses broches d'arcade) -->
+    <path d="M7 23H21" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 1.5"/>
+  </svg>
+  
+  <!-- Texte typographique net avec le point néon -->
+  <span class="brand-text">CARTRIDGE</span>
+</div>
+
+/* L'icône cartouche vectorielle */
+.cartridge-brand-mark {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px var(--acc));
+}
+
+/* Typographie de marque affirmée */
+#sub-title .brand-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow: 0 0 8px var(--acc), 0 0 16px var(--acc);
+  line-height: 1;
+}
+
+  
   
 </style>
 </head>
