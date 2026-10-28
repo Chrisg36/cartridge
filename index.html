@@ -2948,8 +2948,8 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
-  
       rel = g.releases.filter((r) => {
+        // 🛡️ SÉCURITÉ : Si r.platform est absent ou undefined, on évite le crash
         const plat = (r.platform || "").toLowerCase();
         const filt = currentFilter.toLowerCase();
         
