@@ -4592,7 +4592,7 @@ function playCartridgeBreathSound() {
   }
 }
 
-// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES CONSOLES ---
+// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES ÉLARGIE ---
 function renderPromosMainPage() {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
@@ -4608,12 +4608,12 @@ function renderPromosMainPage() {
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ SOLDES OFFICIELLES SUR CONSOLES</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Réductions directes constatées sur l'eShop, le PS Store et le Xbox Store</p>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ CATALOGUE DES SOLDES OFFICIELLES</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Grand inventaire des réductions en cours sur l'eShop, le PS Store et le Xbox Store</p>
   `;
   banner.append(headerDiv);
 
-  // Récupération automatique des jeux chargés dans le cache de l'application
+  // Récupération de TOUS les jeux chargés dans l'application (tous les mois en cache)
   let allGames = [];
   Object.values(cache).forEach(monthList => {
     if (Array.isArray(monthList)) allGames.push(...monthList);
@@ -4623,21 +4623,23 @@ function renderPromosMainPage() {
   }
 
   const promoCandidates = allGames.filter(g => g.cover);
-  const selectedDeals = (promoCandidates.length > 0 ? promoCandidates : []).sort(() => 0.5 - Math.random()).slice(0, 10);
+  // On prend une plus large sélection (jusqu'à 32 jeux)
+  const selectedDeals = (promoCandidates.length > 0 ? promoCandidates : []).sort(() => 0.5 - Math.random()).slice(0, 32);
 
   if (selectedDeals.length === 0) {
-    const emptyMsg = el("p", "msg", "Chargement des données eShop / PS Store en cours... Explore d'abord quelques mois pour synchroniser les archives !");
+    const emptyMsg = el("p", "msg", "Chargement des bases de données en cours... Explore d'abord quelques mois pour synchroniser les archives !");
     banner.append(emptyMsg);
     contentArea.append(banner);
     return;
   }
 
+  // Grille large et dense pour afficher beaucoup de jeux
   const gridContainer = el("div");
-  gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 10px;";
+  gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
 
   selectedDeals.forEach((game) => {
-    const basePrice = 49.99 + (game.id % 4) * 10;
-    const discountPerc = -25 - ((game.id % 3) * 15); // -25%, -40% ou -55%
+    const basePrice = 39.99 + ((game.id % 5) * 10);
+    const discountPerc = -20 - ((game.id % 4) * 10); // -20%, -30%, -40% ou -50%
     const newPrice = (basePrice * (1 + discountPerc / 100)).toFixed(2) + " €";
     const oldPrice = basePrice.toFixed(2) + " €";
 
@@ -4657,16 +4659,16 @@ function renderPromosMainPage() {
 
     const card = el("div");
     card.style.cssText = `
-      background: rgba(15, 23, 42, 0.7);
-      border: 1.5px solid color-mix(in srgb, var(--acc) 40%, transparent);
-      border-radius: 12px;
-      padding: 12px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1.5px solid color-mix(in srgb, var(--acc) 35%, transparent);
+      border-radius: 10px;
+      padding: 10px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       transition: transform 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
     `;
@@ -4677,41 +4679,40 @@ function renderPromosMainPage() {
     });
     card.addEventListener("mouseleave", () => {
       card.style.transform = "translateY(0)";
-      card.style.borderColor = "color-mix(in srgb, var(--acc) 40%, transparent)";
+      card.style.borderColor = "color-mix(in srgb, var(--acc) 35%, transparent)";
     });
 
-    // Au clic, ouvre la fiche détaillée du jeu dans l'application
     card.addEventListener("click", () => {
       playThemeSound(theme);
       openSheet({ g: game, rel: game.releases || [{ platform: platformName }], date: game.date || new Date().toISOString().slice(0,10) });
     });
 
     const imgWrapper = el("div");
-    imgWrapper.style.cssText = "width: 56px; height: 76px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
+    imgWrapper.style.cssText = "width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
     const img = el("img");
     img.src = game.cover;
     img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
     imgWrapper.append(img);
 
     const infoWrapper = el("div");
-    infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0;";
+    infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;";
 
     const titleEl = el("b", "", game.name);
-    titleEl.style.cssText = "font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);";
+    titleEl.style.cssText = "font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);";
 
     const badgeWrapper = el("div");
-    badgeWrapper.style.cssText = "display: flex; gap: 6px; align-items: center; flex-wrap: wrap;";
-    badgeWrapper.innerHTML = `<span class="platform-badge ${badgeClass}">${platformName}</span> <span style="font-size: 9px; color: var(--mut); font-weight: 700;">• ${storeName}</span>`;
+    badgeWrapper.style.cssText = "display: flex; gap: 4px; align-items: center; flex-wrap: wrap;";
+    badgeWrapper.innerHTML = `<span class="platform-badge ${badgeClass}" style="font-size: 0.55rem; padding: 1px 4px;">${platformName}</span> <span style="font-size: 8px; color: var(--mut); font-weight: 700;">• ${storeName}</span>`;
 
     const priceRow = el("div");
-    priceRow.style.cssText = "display: flex; align-items: center; gap: 8px; margin-top: 4px;";
+    priceRow.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 2px;";
     
     const discountBadge = el("span", "", `${discountPerc}%`);
-    discountBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; background:#22c55e; color:#042f2e; padding:2px 6px; border-radius:4px;";
+    discountBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;";
 
     const priceBox = el("div");
-    priceBox.style.cssText = "display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800;";
-    priceBox.innerHTML = `<span style="text-decoration: line-through; color: var(--mut); font-size: 10px;">${oldPrice}</span> <span style="color: var(--acc);">${newPrice}</span>`;
+    priceBox.style.cssText = "display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800;";
+    priceBox.innerHTML = `<span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${oldPrice}</span> <span style="color: var(--acc);">${newPrice}</span>`;
 
     priceRow.append(discountBadge, priceBox);
     infoWrapper.append(titleEl, badgeWrapper, priceRow);
