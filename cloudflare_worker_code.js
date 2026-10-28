@@ -208,39 +208,65 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
-// 📺 Route dédiée pour récupérer les animés et mangas en direct via Jikan API
-    if (url.searchParams.has("animes")) {
-      const animeCacheKey = new Request("https://sorties-jeux.cache/animes/now");
-      const cachedAnime = await cacheGet(animeCacheKey);
-      if (cachedAnime) return cachedAnime;
-
+    // ==========================================
+    // 👤 ROUTE 1 : AUTHENTIFICATION CLOUDFLARE D1
+    // ==========================================
+    if (url.pathname === "/api/auth" && request.method === "POST") {
       try {
-        const jikanRes = await fetch("https://api.jikan.moe/v4/seasons/now");
-        const jikanData = await jikanRes.json();
-        
-        // On s'assure de bien extraire le tableau data
-        const rawList = jikanData.data || [];
-        
-        // On nettoie et formate les objets pour s'assurer qu'ils ont tous les champs nécessaires
-        const formattedAnimes = rawList.map(anime => ({
-          title: anime.title_english || anime.title,
-          score: anime.score || 'N/A',
-          episodes: anime.episodes ? `${anime.episodes} eps` : 'En cours',
-          images: {
-            jpg: {
-              large_image_url: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || ""
-            }
-          },
-          url: anime.url || "https://myanimelist.net"
-        }));
+        const { username, password, recoveryQ, data } = await request.json();
+        const cleanId = (username || "").trim().toLowerCase();
 
-        const response = Response.json(formattedAnimes, {
-          headers: { ...CORS, "Cache-Control": "public, max-age=3600" }
-        });
-        cachePut(ctx, animeCacheKey, response.clone());
-        return response;
+        if (!cleanId || !password) {
+          return Response.json({ error: "Identifiant et mot de passe requis." }, { status: 400, headers: CORS });
+        }
+
+        // On vérifie si le compte existe déjà dans D1
+        const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+
+        if (!user) {
+          // Inscription : premier enregistrement du joueur
+          await env.DB.prepare(
+            "INSERT INTO users (id, password_hash, recovery_q, data) VALUES (?, ?, ?, ?)"
+          ).bind(cleanId, password, recoveryQ || "", JSON.stringify(data || {})).run();
+
+          return Response.json({ 
+            status: "created", 
+            message: "Compte créé et sauvegardé sur Cloudflare !" 
+          }, { headers: CORS });
+        } else {
+          // Connexion : vérification du mot de passe
+          if (user.password_hash === password) {
+            return Response.json({ 
+              status: "connected", 
+              data: JSON.parse(user.data || "{}") 
+            }, { headers: CORS });
+          } else {
+            return Response.json({ 
+              status: "error", 
+              message: "Mot de passe incorrect pour ce joueur." 
+            }, { status: 401, headers: CORS });
+          }
+        }
       } catch (err) {
-        return Response.json({ error: "Impossible de récupérer les flux d'animés" }, { status: 500, headers: CORS });
+        return Response.json({ error: err.message }, { status: 500, headers: CORS });
+      }
+    }
+
+    // ==========================================
+    // 🔄 ROUTE 2 : SYNCHRONISATION PROGRESSION D1
+    // ==========================================
+    if (url.pathname === "/api/sync" && request.method === "POST") {
+      try {
+        const { username, data } = await request.json();
+        const cleanId = (username || "").trim().toLowerCase();
+
+        await env.DB.prepare("UPDATE users SET data = ? WHERE id = ?")
+          .bind(JSON.stringify(data), cleanId)
+          .run();
+
+        return Response.json({ status: "synced" }, { headers: CORS });
+      } catch (err) {
+        return Response.json({ error: err.message }, { status: 500, headers: CORS });
       }
     }
 
