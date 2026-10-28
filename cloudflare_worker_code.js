@@ -208,7 +208,7 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
-    // 📺 Route dédiée pour récupérer les animés et mangas en direct via Jikan API
+// 📺 Route dédiée pour récupérer les animés et mangas en direct via Jikan API
     if (url.searchParams.has("animes")) {
       const animeCacheKey = new Request("https://sorties-jeux.cache/animes/now");
       const cachedAnime = await cacheGet(animeCacheKey);
@@ -218,7 +218,23 @@ export default {
         const jikanRes = await fetch("https://api.jikan.moe/v4/seasons/now");
         const jikanData = await jikanRes.json();
         
-        const response = Response.json(jikanData.data || [], {
+        // On s'assure de bien extraire le tableau data
+        const rawList = jikanData.data || [];
+        
+        // On nettoie et formate les objets pour s'assurer qu'ils ont tous les champs nécessaires
+        const formattedAnimes = rawList.map(anime => ({
+          title: anime.title_english || anime.title,
+          score: anime.score || 'N/A',
+          episodes: anime.episodes ? `${anime.episodes} eps` : 'En cours',
+          images: {
+            jpg: {
+              large_image_url: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || ""
+            }
+          },
+          url: anime.url || "https://myanimelist.net"
+        }));
+
+        const response = Response.json(formattedAnimes, {
           headers: { ...CORS, "Cache-Control": "public, max-age=3600" }
         });
         cachePut(ctx, animeCacheKey, response.clone());
