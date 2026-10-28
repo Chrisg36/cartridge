@@ -4950,6 +4950,21 @@ function renderScoresMainPage() {
 
   banner.append(grid);
 }
+
+const navAnimes = document.getElementById("navAnimes");
+if (navAnimes) {
+  navAnimes.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navAnimes);
+    if (typeof closeSheet === "function") closeSheet();
+
+    hideAllMainPages();
+    renderAnimeMainPage(); // 👈 C'est elle qui affiche la page
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+ 
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
