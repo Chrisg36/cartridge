@@ -212,7 +212,7 @@ body {
   .fav-filter-btn[aria-pressed="true"] { background: #FF4757; color: #fff; border-color: #FF4757; box-shadow: 0 0 15px rgba(255, 71, 87, 0.5); }
   
 .search-box {
-  padding: 8px 12px 8px 36px !important;
+  padding: 8px 12px 8px 36px !important; /* 👈 Dégage 36px à gauche pour l'icône */
   font-size: 12px;
   margin-top: 4px;
   margin-bottom: 2px;
@@ -1539,32 +1539,24 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 </div>
 
 <main>
+ <main>
   <!-- 🪙 1. LA GRANDE PAGE BOUTIQUE -->
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-<!-- Avant : <div class="neon-logo">
-          <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          VITRINE DE COLLECTION
-        </div> -->
-<div class="neon-logo">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  VITRINE DE COLLECTION
-</div>
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg>
-  BOUTIQUE ARCADE
-</div>
+        <div class="neon-logo">
+          <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg>
+          BOUTIQUE ARCADE
+        </div>
         <div class="nav" style="flex-shrink: 0;">
-               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
-          <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-
-            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg> <span id="shopPageCoins">100</span>
+            🪙 <span id="shopPageCoins">100</span>
           </div>
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>BOUTIQUE DEFIS</span>
+        <span>🕹️ BOUTIQUE DEFIS</span>
         <span>HALL BOUTIQUE</span>
       </div>
     </div>
@@ -1580,26 +1572,22 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
           VITRINE DE COLLECTION
         </div>
         <div class="nav" style="flex-shrink: 0;">
-               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
-          <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-
-            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg> <span id="vitrinePageCoins">100</span>
+            🪙 <span id="vitrinePageCoins">100</span>
           </div>
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>ARCHIVES PERSONNELLES</span>
+        <span>📚 ARCHIVES PERSONNELLES</span>
         <span>GALERIE GLOBALE</span>
       </div>
     </div>
     <div id="vitrinePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-<!-- 🏛️ 3. LA GRANDE PAGE MUSÉE DES CONSOLES -->
+  <!-- 🏛️ 3. LA GRANDE PAGE MUSÉE DES CONSOLES -->
   <div id="museumMainPage" style="display: none;">
-    
-    <!-- 🎨 DÉCOR CSS BIBLIOTHÈQUE RÉTRO -->
     <div class="retro-library-bg">
       <div class="lamp lamp-left">
         <div class="lamp-glow"></div>
@@ -1614,49 +1602,39 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       <div class="bookshelf-overlay"></div>
     </div>
 
-    <!-- Contenu existant -->
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-<!-- Avant : <div class="neon-logo">
-          <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
-          SYSTÈME & PROFIL
-        </div> -->
-<div class="neon-logo">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
-  SYSTÈME & PROFIL
-</div>
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M2 7.5L12 2.5L22 7.5H2Z" fill="rgba(255,122,69,0.3)" stroke="#FF7A45" stroke-width="1.4"/><path d="M4.5 9V18M9.5 9V18M14.5 9V18M19.5 9V18" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M2 18.5H22" stroke="#FF7A45" stroke-width="1.6"/></svg>
-  MUSÉE CONSOLES
-</div>
+        <div class="neon-logo">
+          <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M2 7.5L12 2.5L22 7.5H2Z" fill="rgba(255,122,69,0.3)" stroke="#FF7A45" stroke-width="1.4"/><path d="M4.5 9V18M9.5 9V18M14.5 9V18M19.5 9V18" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M2 18.5H22" stroke="#FF7A45" stroke-width="1.6"/></svg>
+          MUSÉE CONSOLES
+        </div>
         <div class="nav" style="flex-shrink: 0;">
-               <!-- 👤 Badge joueur (avatar + voyant en ligne) -->
-          <div id="userHeaderBadge" onclick="openSettings();"></div>
+          <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-   
-            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg> <span id="museumPageCoins">100</span>
+            🪙 <span id="museumPageCoins">100</span>
           </div>
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>ARCHIVES HISTORIQUES</span>
+        <span>📚 ARCHIVES HISTORIQUES</span>
         <span>GALERIE DES MACHINES</span>
       </div>
     </div>
     <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-<!-- 🕹️ LA GRANDE PAGE ARCADE // SNAKE GAME BOY -->
+  <!-- 🕹️ LA GRANDE PAGE ARCADE // SNAKE GAME BOY -->
   <div id="arcadeMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-<div class="neon-logo">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="4" fill="#FF3B30" stroke="#FFA39E" stroke-width="1.2"/><path d="M11 9.5L10 16H14L13 9.5" fill="#C5C8D0"/><path d="M4 17L6 21H18L20 17H4Z" fill="#1C212D" stroke="#FF7A45" stroke-width="1.4"/></svg>
-  SALLE ARCADE
-</div>
+        <div class="neon-logo">
+          <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="4" fill="#FF3B30" stroke="#FFA39E" stroke-width="1.2"/><path d="M11 9.5L10 16H14L13 9.5" fill="#C5C8D0"/><path d="M4 17L6 21H18L20 17H4Z" fill="#1C212D" stroke="#FF7A45" stroke-width="1.4"/></svg>
+          SALLE ARCADE
+        </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettings();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg> <span id="arcadePageCoins">100</span>
+            🪙 <span id="arcadePageCoins">100</span>
           </div>
         </div>
       </div>
@@ -1666,40 +1644,36 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
     </div>
     <div id="arcadePageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
-  </div> <!-- 👈 Ce </div> manquait pour fermer arcadeMainPage ! -->
+  </div>
 
-<!-- ⚙️ 4. LA GRANDE PAGE RÉGLAGES / PROFIL -->
+  <!-- ⚙️ 4. LA GRANDE PAGE RÉGLAGES / PROFIL -->
   <div id="settingsMainPage" style="display: none;">
     <div class="sticky-header-container">
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-       <!-- Avant : <div class="neon-logo">
+        <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
           SYSTÈME & PROFIL
-        </div> -->
-<div class="neon-logo">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
-  SYSTÈME & PROFIL
-</div>
+        </div>
+        <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg> <span id="settingsPageCoins">100</span>
+            🪙 <span id="settingsPageCoins">100</span>
           </div>
         </div>
       </div>
       <div class="magazine-edition-banner">
-        <span>CONFIGURATION GLOBALE</span>
+        <span>🎮 CONFIGURATION GLOBALE</span>
         <span>ESPACE JOUEUR</span>
       </div>
     </div>
     <div id="settingsPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 14px;"></div>
   </div>
 
- 
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
       <div class="header-top">
- <div class="neon-logo" id="sub-title">
+        <div class="neon-logo" id="sub-title">
           <svg class="cartridge-brand-mark retro-icon" viewBox="0 0 24 24" fill="none">
             <path d="M4 2H17L21 6V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V3C3 2.45 3.45 2 4 2Z" fill="#181B22" stroke="#FF7A45" stroke-width="1.8" stroke-linejoin="round"/>
             <rect x="6.5" y="6" width="10" height="9" rx="1.5" fill="rgba(255,122,69,0.25)" stroke="#FF7A45" stroke-width="1.2"/>
@@ -1710,14 +1684,14 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
         </div>
         <div class="nav">
           <div class="user-header-badge" onclick="openSettings();"></div>
-       <div class="header-currency-badge" id="shopBtn" title="Mes crédits">
-  <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;">
-    <circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/>
-    <circle cx="12" cy="12" r="7" stroke="#9E6100" stroke-width="1" stroke-dasharray="2 1.5"/>
-    <path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/>
-  </svg>
-  <span id="userCoins">100</span>
-</div>
+          <div class="header-currency-badge" id="shopBtn" title="Mes crédits">
+            <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:14px; height:14px;">
+              <circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/>
+              <circle cx="12" cy="12" r="7" stroke="#9E6100" stroke-width="1" stroke-dasharray="2 1.5"/>
+              <path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span id="userCoins">100</span>
+          </div>
           <button class="chip" id="viewModeBtn" aria-label="Changer de vue"></button>
           <button class="chip" id="shareBtn" aria-label="Partager mon mois">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
@@ -1726,7 +1700,7 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
 
       <div class="magazine-edition-banner">
-<span><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 6px var(--acc); margin-right:4px;"></span>COLLECTOR EDITION</span>
+        <span><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 6px var(--acc); margin-right:4px;"></span>COLLECTOR EDITION</span>
         <span id="editionDateBadge">MONTHLY RELEASES</span>
       </div>
 
@@ -1753,9 +1727,9 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
       </div>
 
       <input type="text" id="search" class="search-box" placeholder="Rechercher un titre, une console...">
-    </div> <!-- Fermeture sticky-header-container -->
+    </div>
     <div id="list"></div>
-  </div> <!-- Fermeture homeMainContent -->
+  </div>
 </main>
 
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
@@ -1906,7 +1880,7 @@ tabChallenges.innerHTML = `
     const constructionBanner = el("div", "shop-banner");
     constructionBanner.style.cssText = "border-style:dashed; opacity:0.85; padding:30px 20px; text-align:center;";
     constructionBanner.innerHTML = `
-      <h3 style="font-size:20px; margin-bottom:8px;">EN CONSTRUCTION</h3>
+      <h3 style="font-size:20px; margin-bottom:8px;">🚧 EN CONSTRUCTION 🚧</h3>
       <p style="font-size:13px; font-weight:600; line-height:1.5; color:var(--mut);">
         Bientôt disponible ! Tu pourras y acheter des thèmes exclusifs, des bordures de cartes légendaires et des bonus spéciaux avec tes crédits 🪙.
       </p>
@@ -1923,7 +1897,7 @@ tabChallenges.innerHTML = `
     contentArea.replaceChildren();
     const banner = el("div", "shop-banner");
     banner.innerHTML = `
-      <h3>Distributeur de Jaquettes Mystères</h3>
+      <h3>🎟️ Distributeur de Jaquettes Mystères</h3>
       <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tirez au sort ou achetez des packs pour agrandir votre collection géante !</p>
     `;
 
@@ -2455,9 +2429,9 @@ document.addEventListener("DOMContentLoaded", () => {
 const TRANSLATIONS = {
   fr: {
 subTitle: "CARTRIDGE",
-    searchPlaceholder: "Rechercher un titre, une console...",
-    all: "Tous les jeux",
-    favorites: "Mes Favoris",
+    searchPlaceholder: "🕹️ Rechercher n'importe quel jeu...",
+    all: "✨ Tous les jeux",
+    favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
     noGamesFilter: "Aucune sortie pour cette console ce mois-ci.",
@@ -2468,29 +2442,29 @@ subTitle: "CARTRIDGE",
     settingsTitle: "Réglages",
     themeLabel: "Thèmes & Consoles Rétro",
     soundLabel: "Effets sonores",
-    soundOn: "Son activé",
-    soundOff: "Son coupé",
+    soundOn: "🔊 Son activé",
+    soundOff: "🔇 Son coupé",
     crtLabel: "Effet Écran Cathodique (CRT)",
-    crtOn: "Activé",
-    crtOff: "Désactivé",
+    crtOn: "📺 Activé",
+    crtOff: "🖥️ Désactivé",
     langLabel: "Langue de l'interface",
-    retroLabel: "Capsule Temporelle",
-    resetCurrentMonth: "Revenir au mois actuel",
+    retroLabel: "🕰️ Capsule Temporelle",
+    resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
     shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
     noFavShare: "Aucun favori pour l'instant ! Ajoute des cœurs ❤️ sur tes jeux.",
     shareFooter: "✨ Partagé depuis mon appli de sorties de jeux !",
-    copyBtn: "Copier le texte",
-    copiedBtn: "Copié !",
+    copyBtn: "📋 Copier le texte",
+    copiedBtn: "✅ Copié ! Prêt à coller",
     calendarBtn: "Ajouter au calendrier",
-    favAdd: "Ajouter aux favoris",
-    favRemove: "Retirer des favoris",
-    trailerBtn: "Bande-annonce (YouTube)",
-    hltbBtn: "Durée de vie (HLTB)",
+    favAdd: "🤍 Ajouter aux favoris",
+    favRemove: "❤️ Retirer des favoris",
+    trailerBtn: "🎥 Voir la bande-annonce sur YouTube",
+    hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
-    vitrineTitle: "Musée Mondial des Consoles",
+    vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
     vitrineDesc: "Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
@@ -2499,10 +2473,10 @@ subTitle: "CARTRIDGE",
     daysAgo: (d) => `Il y a ${d} jours`
   },
   en: {
-    subTitle: "CARTRIDGE",
-    searchPlaceholder: "Rechercher un titre, une console...",
-    all: "All Games",
-    favorites: "My Favorites",
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "🕹️ Search any game...",
+    all: "✨ All Games",
+    favorites: "❤️ My Favorites",
     noGamesSearch: "No games found for this search.",
     noGamesFav: "No games in your favorites this month.",
     noGamesFilter: "No releases for this console this month.",
@@ -2513,29 +2487,29 @@ subTitle: "CARTRIDGE",
     settingsTitle: "Settings",
     themeLabel: "Themes & Retro Consoles",
     soundLabel: "Sound Effects",
-    soundOn: "Sound ON",
-    soundOff: "Sound OFF",
+    soundOn: "🔊 Sound ON",
+    soundOff: "🔇 Sound OFF",
     crtLabel: "CRT Scanlines Effect",
-    crtOn: "ON",
-    crtOff: "OFF",
+    crtOn: "📺 ON",
+    crtOff: "🖥️ OFF",
     langLabel: "Interface Language",
-    retroLabel: "Time Capsule",
-    resetCurrentMonth: "Back to current month",
+    retroLabel: "🕰️ Time Capsule",
+    resetCurrentMonth: "📅 Back to current month",
     close: "Close",
     shareTitle: "Share my month",
     shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
     noFavShare: "No favorites yet! Add hearts ❤️ to your games.",
     shareFooter: "✨ Shared from my game releases app!",
-    copyBtn: "Copy text",
-    copiedBtn: "Copied!",
+    copyBtn: "📋 Copy text",
+    copiedBtn: "✅ Copied!",
     calendarBtn: "Add to calendar",
-    favAdd: "Add to favorites",
-    favRemove: "Remove from favorites",
-    trailerBtn: "Trailer (YouTube)",
-    hltbBtn: "HowLongToBeat",
+    favAdd: "🤍 Add to favorites",
+    favRemove: "❤️ Remove from favorites",
+    trailerBtn: "🎥 Watch trailer on YouTube",
+    hltbBtn: "⏱️ Check HowLongToBeat",
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
-    vitrineTitle: "World Console Museum",
+    vitrineTitle: "🏛️ World Console & Micro Museum",
     vitrineDesc: "Click on any console to discover its detailed history and specs:",
     today: "Today",
     tomorrow: "Tomorrow",
@@ -2546,15 +2520,15 @@ subTitle: "CARTRIDGE",
 };
 
 const LANG_NAMES = {
-  fr: "Français",
-  en: "English",
-  ja: "日本語",
-  de: "Deutsch",
-  es: "Español",
-  zh: "中文",
-  pt: "Português",
-  ko: "한국어",
-  it: "Italiano"
+  fr: "🇫🇷 Français",
+  en: "🇬🇧 English",
+  ja: "🇯🇵 日本語",
+  de: "🇩🇪 Deutsch",
+  es: "🇪🇸 Español",
+  zh: "🇨🇳 中文",
+  pt: "🇧🇷 Português",
+  ko: "🇰🇷 한국어",
+  it: "🇮🇹 Italiano"
 };
 
 const WORLD_CONSOLES = [
@@ -3189,7 +3163,7 @@ function shiftMonth(delta) {
 }
 
 function updateStaticTexts() {
-  // // $("#sub-title").textContent = t('subTitle'); 👈 À DÉSACTIVER
+  // $("#sub-title").textContent = t('subTitle'); 👈 À DÉSACTIVER
   $("#search").placeholder = t('searchPlaceholder');
   const viewBtn = $("#viewModeBtn");
   if (viewMode === "list") {
@@ -3447,8 +3421,8 @@ function renderMuseumAndVitrinePage() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
 
-  const tabVitrine = el("button", "chip", "Vitrine de Collection");
-  const tabMuseum = el("button", "chip", "Musée des Consoles");
+  const tabVitrine = el("button", "chip", "🏛️ Vitrine de Collection");
+  const tabMuseum = el("button", "chip", "🕹️ Musée des Consoles");
 
   [tabVitrine, tabMuseum].forEach(b => {
     b.style.flex = "1";
@@ -3590,7 +3564,7 @@ function renderMuseumAndVitrinePage() {
 
     const headerDiv = el("div");
     headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">Musée Mondial des Consoles</h3>
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏛️ Musée Mondial des Consoles & Micros</h3>
       <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :</p>
     `;
     banner.append(headerDiv);
@@ -3901,9 +3875,9 @@ function openSettings() {
   const tabNav = el("div");
   tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
-  const btnTabGeneral = el("button", "chip", "Affichage & Look");
-const btnTabProfile = el("button", "chip", "Compte & Sync"); // 👈 Avec le guillemet bien refermé
-  const btnTabLegal = el("button", "chip", "Mentions & Droits");
+const btnTabGeneral = el("button", "chip", "Affichage & Look");
+const btnTabProfile = el("button", "chip", "Compte & Sync"); // 👈 Avec le guillemet
+const btnTabLegal = el("button", "chip", "Mentions & Droits");
 
   [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
     b.style.flex = "1";
@@ -4505,9 +4479,9 @@ function renderShopMainPage() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
 
-  const btnShop = el("button", "chip", "Boutique");
-  const btnPacks = el("button", "chip", "Packs Boosters");
-  const btnChallenges = el("button", "chip", "Défis & Quêtes");
+  const btnShop = el("button", "chip", "🏬 Boutique (Bientôt)");
+  const btnPacks = el("button", "chip", "🎟️ Packs Mystères");
+  const btnChallenges = el("button", "chip", "🎯 Défis & Quêtes");
 
   [btnShop, btnPacks, btnChallenges].forEach(b => {
     b.style.flex = "1";
@@ -4527,7 +4501,7 @@ function renderShopMainPage() {
     const constructionBanner = el("div", "shop-banner");
     constructionBanner.style.cssText = "border-style:dashed; padding:40px 20px; text-align:center;";
     constructionBanner.innerHTML = `
-      <h3 style="font-size:24px; margin-bottom:12px;">BOUTIQUE EN CONSTRUCTION</h3>
+      <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
       <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
         C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs et des bonus uniques !
       </p>
@@ -4550,7 +4524,7 @@ function renderShopMainPage() {
 
     const headerTitle = el("div");
     headerTitle.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">Distributeur de Boosters Légendaires</h3>
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
       <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
     banner.append(headerTitle);
@@ -4851,7 +4825,7 @@ function renderVitrineMainPage() {
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">Galerie des Jaquettes & Archives</h3>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏛️ Galerie des Jaquettes & Archives</h3>
     <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Total de la collection : <b>${myCollection.length}</b> pièce${myCollection.length > 1 ? 's' : ''}</p>
   `;
   banner.append(headerDiv);
@@ -5003,8 +4977,8 @@ function renderArcadeMainPage() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
 
-  const btnArcadeHub = el("button", "chip", "Salle Arcade");
-  const btnScores = el("button", "chip", "Tableau des scores");
+  const btnArcadeHub = el("button", "chip", "🕹️ Salle Arcade");
+  const btnScores = el("button", "chip", "🏆 Tableau des scores");
 
   [btnArcadeHub, btnScores].forEach(b => {
     b.style.flex = "1";
@@ -5024,8 +4998,8 @@ function renderArcadeMainPage() {
     const banner = el("div", "shop-banner");
     banner.style.cssText = "border-style: dashed; padding: 40px 20px; text-align: center;";
     banner.innerHTML = `
-      <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">SALLE ARCADE</h3>
-      <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">SECTION EN CONSTRUCTION</p>
+      <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">🕹️ SALLE ARCADE 🕹️</h3>
+      <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">🚧 SECTION EN CONSTRUCTION 🚧</p>
       <p style="font-size: 12px; color: var(--mut); line-height: 1.5;">Les mini-jeux rétro et les défis interactifs arrivent très bientôt dans Cartridge !</p>
     `;
     displayBox.append(banner);
@@ -5042,7 +5016,7 @@ function renderArcadeMainPage() {
 
     const headerDiv = el("div");
     headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">HALL OF FAME</h3>
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
       <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
     `;
     banner.append(headerDiv);
@@ -5330,7 +5304,7 @@ function renderScoresMainPage() {
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">HALL OF FAME</h3>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
     <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
   `;
   banner.append(headerDiv);
@@ -5622,7 +5596,7 @@ function updateUserBadge() {
     } else {
       badge.innerHTML = `
         <div class="player-badge">
-          <span><svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:13px; height:13px; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg>Connexion</span>
+          <span>👤 Connexion</span>
         </div>
       `;
     }
@@ -5655,9 +5629,9 @@ function openSettingsMainPage() {
   const tabNav = el("div");
   tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
-  const btnTabGeneral = el("button", "chip", "Général & Look");
-  const btnTabProfile = el("button", "chip", "Profil & Données");
-  const btnTabLegal = el("button", "chip", "Légal & Droits");
+  const btnTabGeneral = el("button", "chip", "⚙️ Général & Look");
+  const btnTabProfile = el("button", "chip", "👤 Profil & Données");
+  const btnTabLegal = el("button", "chip", "⚖️ Légal & Droits");
 
   [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
     b.style.flex = "1";
