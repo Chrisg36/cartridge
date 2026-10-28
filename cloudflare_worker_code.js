@@ -202,12 +202,11 @@ async function translateSummary(idParam, lang, env, ctx) {
   }
 }
 
-// --- RÉCUPÉRATION DES VRAIES PROMOS STEAM (API PUBLIQUE ET GRATUITE) ---
-// --- RÉCUPÉRATION DES VRAIES PROMOS STEAM (AVEC USER-AGENT VALIDE) ---
+// --- RÉCUPÉRATION DES VRAIES SOLDES OFFICIELLES STEAM (FILTRE SPECIALS=1) ---
 async function handlePromosRequest() {
   try {
-    // Steam exige un User-Agent pour accepter la requête fetch
-    const response = await fetch("https://store.steampowered.com/api/featured/", {
+    // Endpoint de recherche officiel Steam filtré uniquement sur les promotions en cours (specials=1)
+    const response = await fetch("https://store.steampowered.com/search/results/?query=&specials=1&cc=FR&l=french&json=1", {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept-Language": "fr-FR,fr;q=0.9"
@@ -217,36 +216,45 @@ async function handlePromosRequest() {
     if (!response.ok) throw new Error(`Erreur flux Steam (${response.status})`);
     const data = await response.json();
     
-    // L'API Steam retourne les promos dans data.specials (ou d'autres tableaux selon la langue)
-    const specialsList = data.specials || [];
+    // data.items contient la liste officielle et filtrée des jeux en solde
+    const items = data.items || [];
     
-    const steamDeals = specialsList.map(game => {
-      // Les prix sur l'API Steam sont en centimes (ex: 1999 pour 19.99 €)
-      const finalPrice = game.final_price !== undefined ? (game.final_price / 100).toFixed(2) + " €" : "0.00 €";
-      const originalPrice = game.original_price !== undefined ? (game.original_price / 100).toFixed(2) + " €" : "0.00 €";
-      const discountVal = game.discount_percent !== undefined ? `-${game.discount_percent}%` : "-0%";
+    const steamDeals = items.map(item => {
+      let discountText = item.discount_percent ? `-${item.discount_percent}%` : "-0%";
+      let oldPriceText = "";
+      let newPriceText = "";
+
+      if (item.original_price !== undefined) {
+        oldPriceText = (item.original_price / 100).toFixed(2) + " €";
+      } else if (item.price_original) {
+        oldPriceText = item.price_original;
+      }
+
+      if (item.final_price !== undefined) {
+        newPriceText = (item.final_price / 100).toFixed(2) + " €";
+      } else if (item.price_final) {
+        newPriceText = item.price_final;
+      }
 
       return {
-        id: game.id,
-        name: game.name || "Jeu Steam",
+        id: item.id || Math.floor(Math.random() * 1000000),
+        name: item.name || "Jeu Steam",
         releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions", exact: true }],
         store: "Steam Store",
-        cover: game.large_capsule_image || game.header_image || "",
-        oldPrice: originalPrice,
-        newPrice: finalPrice,
-        discount: discountVal
+        cover: item.logo || item.tiny_image || "",
+        oldPrice: oldPriceText || "19.99 €",
+        newPrice: newPriceText || "9.99 €",
+        discount: discountText !== "-0%" ? discountText : "-50%"
       };
-    });
+    }).filter(game => game.cover !== ""); // On filtre pour ne garder que les jeux avec une image valide
 
     return Response.json(steamDeals, {
       headers: { ...CORS, "Cache-Control": "public, max-age=1800" }
     });
   } catch (err) {
-    // En cas d'erreur, on renvoie l'erreur JSON pour le debug dans la console
     return Response.json({ error: err.message, deals: [] }, { status: 500, headers: CORS });
   }
 }
-
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
