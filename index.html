@@ -4640,8 +4640,8 @@ function renderPromosMainPage() {
   `;
   banner.append(headerDiv);
 
-  // Pagination
-  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE);
+  // Pagination calculée
+  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE) || 1;
   if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
   if (promoCurrentPage < 1) promoCurrentPage = 1;
 
@@ -4681,6 +4681,39 @@ function renderPromosMainPage() {
   });
 
   banner.append(gridContainer);
+
+  // --- BARRE DE NAVIGATION AVEC FLÈCHES ---
+  const paginationBar = el("div");
+  paginationBar.style.cssText = "display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 20px;";
+
+  const prevBtn = el("button", "chip", "◀ Précédent");
+  prevBtn.disabled = promoCurrentPage === 1;
+  prevBtn.style.opacity = promoCurrentPage === 1 ? "0.5" : "1";
+  prevBtn.addEventListener("click", () => {
+    if (promoCurrentPage > 1) {
+      promoCurrentPage--;
+      playThemeSound(theme);
+      renderPromosMainPage();
+    }
+  });
+
+  const pageIndicator = el("span", "", `Page ${promoCurrentPage} / ${totalPages}`);
+  pageIndicator.style.cssText = "font-family: 'Orbitron', sans-serif; font-size: 12px; color: var(--txt); font-weight: 700;";
+
+  const nextBtn = el("button", "chip", "Suivant ▶");
+  nextBtn.disabled = promoCurrentPage >= totalPages;
+  nextBtn.style.opacity = promoCurrentPage >= totalPages ? "0.5" : "1";
+  nextBtn.addEventListener("click", () => {
+    if (promoCurrentPage < totalPages) {
+      promoCurrentPage++;
+      playThemeSound(theme);
+      renderPromosMainPage();
+    }
+  });
+
+  paginationBar.append(prevBtn, pageIndicator, nextBtn);
+  banner.append(paginationBar);
+
   contentArea.append(banner);
 }
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
