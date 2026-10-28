@@ -4597,15 +4597,19 @@ let promoSelectedConsole = "Tous";
 const PROMOS_PER_PAGE = 16;
 let realPromosCache = [];
 
-// Fonction pour récupérer les vrais bons plans depuis ton Worker
+// Fonction corrigée pour pointer vers l'API de ton Cloudflare Worker via ${API}
 async function fetchAndRenderPromos() {
   try {
-    // ⚠️ Remplace par l'URL de ton Cloudflare Worker (ou laisse relatif si ton site est hébergé dessus)
-    const res = await fetch("/api/promos"); 
+    const res = await fetch(`${API}/api/promos`); 
+    if (!res.ok) throw new Error("Erreur lors de la récupération des promos sur le Worker");
     realPromosCache = await res.json();
     renderPromosMainPage();
   } catch (e) {
     console.error("Erreur lors de la récupération des promos :", e);
+    const contentArea = document.getElementById("shopPageContent");
+    if (contentArea) {
+      contentArea.replaceChildren(el("p", "msg", "Impossible de charger les promotions. Vérifie ta console."));
+    }
   }
 }
 
