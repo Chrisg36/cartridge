@@ -208,6 +208,26 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
+    // 📺 Route dédiée pour récupérer les animés et mangas en direct via Jikan API
+    if (url.searchParams.has("animes")) {
+      const animeCacheKey = new Request("https://sorties-jeux.cache/animes/now");
+      const cachedAnime = await cacheGet(animeCacheKey);
+      if (cachedAnime) return cachedAnime;
+
+      try {
+        const jikanRes = await fetch("https://api.jikan.moe/v4/seasons/now");
+        const jikanData = await jikanRes.json();
+        
+        const response = Response.json(jikanData.data || [], {
+          headers: { ...CORS, "Cache-Control": "public, max-age=3600" }
+        });
+        cachePut(ctx, animeCacheKey, response.clone());
+        return response;
+      } catch (err) {
+        return Response.json({ error: "Impossible de récupérer les flux d'animés" }, { status: 500, headers: CORS });
+      }
+    }
+
     // Route de traduction de résumé
     if (url.pathname.startsWith("/translate/")) {
       const parts = url.pathname.split("/");
