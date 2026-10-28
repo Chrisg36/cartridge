@@ -4429,38 +4429,172 @@ function renderVitrineMainPage() {
   contentArea.append(banner);
 }
 
-function showConstructionPage(title, icon) {
-  closeSheet();
-  hideAllMainPages(); // 👈 Masque tout proprement
-
+function renderArcadeMainPage() {
   const arcadePage = document.getElementById("arcadeMainPage");
-  if (arcadePage) {
-    arcadePage.style.display = "block";
-    const coinSpan = document.getElementById("arcadePageCoins");
-    if (coinSpan) coinSpan.textContent = userCoins;
+  if (!arcadePage) return;
+  
+  arcadePage.style.display = "block";
+  const contentArea = document.getElementById("arcadePageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
 
-    const content = document.getElementById("arcadePageContent");
-    if (content) {
-      content.innerHTML = `
-        <div class="shop-banner" style="border-style: dashed; padding: 40px 20px; text-align: center; margin-top: 20px;">
-          <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">${icon} ${title.toUpperCase()} ${icon}</h3>
-          <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">🚧 SECTION EN CONSTRUCTION 🚧</p>
-          <p style="font-size: 12px; color: var(--mut); line-height: 1.5;">Cette fonctionnalité arrive très bientôt dans une prochaine mise à jour de Cartridge !</p>
-        </div>
-      `;
-    }
+  const coinSpan = document.getElementById("arcadePageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  // --- SOUS-NAVIGATION INTERNE (ONGLETS ARCADE & SCORES) ---
+  const subNav = el("div");
+  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
+
+  const btnArcadeHub = el("button", "chip", "🕹️ Salle Arcade");
+  const btnScores = el("button", "chip", "🏆 Tableau des scores");
+
+  [btnArcadeHub, btnScores].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "38px";
+    b.style.fontSize = "11px";
+  });
+
+  const displayBox = el("div");
+  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
+
+  // --- VUE 1 : HUB ARCADE (EN CONSTRUCTION / MINI-JEUX) ---
+  function showArcadeHub() {
+    btnArcadeHub.setAttribute("aria-pressed", "true");
+    btnScores.setAttribute("aria-pressed", "false");
+    displayBox.replaceChildren();
+
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "border-style: dashed; padding: 40px 20px; text-align: center;";
+    banner.innerHTML = `
+      <h3 style="font-size: 22px; margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">🕹️ SALLE ARCADE 🕹️</h3>
+      <p style="font-size: 14px; font-weight: 600; color: var(--acc); margin-bottom: 8px;">🚧 SECTION EN CONSTRUCTION 🚧</p>
+      <p style="font-size: 12px; color: var(--mut); line-height: 1.5;">Les mini-jeux rétro et les défis interactifs arrivent très bientôt dans Cartridge !</p>
+    `;
+    displayBox.append(banner);
   }
-  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // --- VUE 2 : TABLEAU DES SCORES (HALL OF FAME) ---
+  function showScoresTab() {
+    btnArcadeHub.setAttribute("aria-pressed", "false");
+    btnScores.setAttribute("aria-pressed", "true");
+    displayBox.replaceChildren();
+
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+    const headerDiv = el("div");
+    headerDiv.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
+    `;
+    banner.append(headerDiv);
+
+    // Formulaire d'ajout de score
+    const formBox = el("div");
+    formBox.style.cssText = "background: rgba(15, 23, 42, 0.75); border: 1.5px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;";
+    
+    formBox.innerHTML = `
+      <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--txt); letter-spacing:1px;">ENREGISTRER UN NOUVEAU RECORD</b>
+      <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
+        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
+      </div>
+    `;
+    banner.append(formBox);
+
+    // Liste des scores enregistrés
+    const listContainer = el("div");
+    listContainer.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 10px;";
+
+    if (!Array.isArray(gameScores) || gameScores.length === 0) {
+      const empty = el("p", "msg", "Aucun score enregistré pour l'instant. Ajoutez votre premier record !");
+      listContainer.append(empty);
+    } else {
+      gameScores.forEach((s, index) => {
+        const row = el("div");
+        row.style.cssText = `
+          background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+          border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        `;
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+            <span style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--acc);">#${index + 1}</span>
+            <div style="display: flex; flex-direction: column; min-width: 0;">
+              <b style="font-size:13px; font-weight:800; color:var(--txt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.game}</b>
+              <span style="font-size:9px; color:var(--mut); font-weight:700;">${s.date}</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:#22c55e; background:rgba(34,197,94,0.15); padding:4px 8px; border-radius:6px; border:1px solid rgba(34,197,94,0.3);">${s.score}</span>
+            <button class="btn-icon delete-score-btn" data-index="${index}" style="width:32px; height:32px; background:rgba(239,68,68,0.15); color:#ef4444; border:none; border-radius:8px; cursor:pointer;" title="Supprimer">✕</button>
+          </div>
+        `;
+
+        const delBtn = row.querySelector(".delete-score-btn");
+        delBtn.addEventListener("click", () => {
+          playThemeSound(theme);
+          gameScores.splice(index, 1);
+          try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+          showScoresTab();
+        });
+
+        listContainer.append(row);
+      });
+    }
+
+    banner.append(listContainer);
+    displayBox.append(banner);
+
+    // Écouteur pour le bouton d'ajout
+    const saveBtn = banner.querySelector("#saveScoreBtn");
+    const gameInput = banner.querySelector("#scoreGameName");
+    const scoreInput = banner.querySelector("#scoreValue");
+
+    saveBtn.addEventListener("click", () => {
+      const gameName = gameInput.value.trim();
+      const scoreVal = scoreInput.value.trim();
+
+      if (!gameName || !scoreVal) {
+        alert("Veuillez remplir le nom du jeu et le score !");
+        return;
+      }
+
+      playThemeSound(theme);
+      gameScores.unshift({
+        game: gameName,
+        score: scoreVal,
+        date: new Date().toLocaleDateString()
+      });
+
+      try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+      showScoresTab();
+    });
+  }
+
+  btnArcadeHub.addEventListener("click", () => { playThemeSound(theme); showArcadeHub(); });
+  btnScores.addEventListener("click", () => { playThemeSound(theme); showScoresTab(); });
+
+  subNav.append(btnArcadeHub, btnScores);
+  contentArea.append(subNav, displayBox);
+  
+  // Par défaut, on ouvre sur le Hub Arcade (ou showScoresTab si tu préfères arriver direct sur les scores)
+  showArcadeHub();
 }
 
 
-// Branchement des clics pour les 3 nouveaux boutons
 const navArcadeRoom = document.getElementById("navArcadeRoom");
 if (navArcadeRoom) {
   navArcadeRoom.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navArcadeRoom);
-    showConstructionPage("Salle Arcade", "🕹️");
+    if (typeof closeSheet === "function") closeSheet();
+    
+    hideAllMainPages();
+    renderArcadeMainPage(); // 👈 Ouvre la section Arcade avec ses onglets
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
