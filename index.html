@@ -6334,22 +6334,7 @@ const RETRO_ICONS = {
   `
 };
 
-// 🕹️ Animation de la jauge latérale au défilement de la page
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY || document.documentElement.scrollTop;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const track = document.getElementById('scroll-indicator-track');
-  const thumb = document.getElementById('scroll-indicator-thumb');
-  
-  if (docHeight > 0 && track && thumb) {
-    const scrollPercent = scrollTop / docHeight;
-    const trackHeight = track.clientHeight - thumb.clientHeight;
-    const thumbTop = scrollPercent * trackHeight;
-    thumb.style.transform = `translateY(${thumbTop}px)`;
-  }
-});
 
-  
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
@@ -6370,11 +6355,27 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
 });
 
+  // 🕹️ Animation de la jauge latérale au défilement de la page
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const track = document.getElementById('scroll-indicator-track');
+  const thumb = document.getElementById('scroll-indicator-thumb');
+  
+  if (docHeight > 0 && track && thumb) {
+    const scrollPercent = scrollTop / docHeight;
+    const trackHeight = track.clientHeight - thumb.clientHeight;
+    const thumbTop = scrollPercent * trackHeight;
+    thumb.style.transform = `translateY(${thumbTop}px)`;
+  }
+});
+</script>
+  
 <!-- 🕹️ Jauge latérale rétro de progression -->
 <div id="scroll-indicator-track">
   <div id="scroll-indicator-thumb"></div>
 </div>
-  
+ <script> 
 load();
 </script>
 </body>
