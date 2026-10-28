@@ -5465,31 +5465,33 @@ function openForgotPasswordModal() {
 }
 
 function updateUserBadge() {
-  const badge = document.getElementById("userHeaderBadge");
-  if (!badge) return;
+  // Sélectionne TOUS les emplacements de badge sur toutes les pages
+  const badges = document.querySelectorAll("#userHeaderBadge, .user-header-badge");
+  if (!badges.length) return;
 
   const savedUser = localStorage.getItem("cartridge_user");
 
-  if (savedUser) {
-    const initial = savedUser.charAt(0).toUpperCase();
-    badge.innerHTML = `
-      <div class="player-badge" title="${savedUser} (Connecté)">
-        <div class="player-avatar">
-          ${initial}
-          <span class="player-status-dot"></span>
+  badges.forEach((badge) => {
+    if (savedUser) {
+      const initial = savedUser.charAt(0).toUpperCase();
+      badge.innerHTML = `
+        <div class="player-badge" title="${savedUser} (Connecté)">
+          <div class="player-avatar">
+            ${initial}
+            <span class="player-status-dot"></span>
+          </div>
+          <span style="font-weight:800; font-size:11px;">${savedUser}</span>
         </div>
-        <span style="font-weight:800; font-size:11px;">${savedUser}</span>
-      </div>
-    `;
+      `;
+    } else {
+      badge.innerHTML = `
+        <div class="player-badge">
+          <span>👤 Connexion</span>
+        </div>
+      `;
+    }
     badge.onclick = () => openSettingsMainPage();
-  } else {
-    badge.innerHTML = `
-      <div class="player-badge">
-        <span>👤 Connexion</span>
-      </div>
-    `;
-    badge.onclick = () => openSettingsMainPage();
-  }
+  });
 }
 // Mise à jour de l'avatar au chargement initial de la page
 window.addEventListener("DOMContentLoaded", () => {
