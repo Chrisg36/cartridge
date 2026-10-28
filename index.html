@@ -4598,7 +4598,7 @@ let realPromosCache = [];
 
 async function fetchAndRenderPromos() {
   try {
-    // Appel direct depuis le navigateur vers l'API de promos en temps réel (pas de blocage serveur)
+    // Appel direct depuis le navigateur vers l'API de promos en temps réel
     const res = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60&sortBy=Savings");
     const data = await res.json();
     
@@ -4620,36 +4620,32 @@ async function fetchAndRenderPromos() {
   
   renderPromosMainPage();
 }
-    filterBar.append(btn);
-  });
-  banner.append(filterBar);
 
-  // Filtrage des jeux selon la plateforme choisie
-  let filteredItems = realPromosCache;
-  if (promoSelectedPlatform !== "Tous") {
-    filteredItems = realPromosCache.filter(g => {
-      const platStr = g.releases.map(r => r.platform).join(" ").toLowerCase();
-      const storeStr = (g.store || "").toLowerCase();
-      if (promoSelectedPlatform === "PC") return platStr.includes("pc") || storeStr.includes("steam");
-      if (promoSelectedPlatform === "PS5") return platStr.includes("ps") || storeStr.includes("playstation");
-      if (promoSelectedPlatform === "Xbox") return platStr.includes("xbox") || storeStr.includes("xbox");
-      if (promoSelectedPlatform === "Switch") return platStr.includes("switch") || storeStr.includes("nintendo");
-      return true;
-    });
-  }
+function renderPromosMainPage() {
+  const shopPage = document.getElementById("shopMainPage");
+  if (!shopPage) return;
+  
+  shopPage.style.display = "block";
+  const contentArea = document.getElementById("shopPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
 
-  if (filteredItems.length === 0) {
-    banner.append(el("p", "msg", "Aucune promotion trouvée pour cette plateforme."));
-    contentArea.append(banner);
-    return;
-  }
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ VRAIES SOLDES OFFICIELLES STEAM</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Flux en direct (CheapShark)</p>
+  `;
+  banner.append(headerDiv);
 
   // Pagination
-  const totalPages = Math.ceil(filteredItems.length / PROMOS_PER_PAGE);
+  const totalPages = Math.ceil(realPromosCache.length / PROMOS_PER_PAGE);
   if (promoCurrentPage > totalPages) promoCurrentPage = totalPages;
   if (promoCurrentPage < 1) promoCurrentPage = 1;
 
-  const currentItems = filteredItems.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
+  const currentItems = realPromosCache.slice((promoCurrentPage - 1) * PROMOS_PER_PAGE, promoCurrentPage * PROMOS_PER_PAGE);
 
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 10px;";
@@ -4674,7 +4670,7 @@ async function fetchAndRenderPromos() {
       </div>
       <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
         <b style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt);">${game.name}</b>
-        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">${game.releases[0].platform} • ${game.store}</div>
+        <div style="font-size: 8px; color: var(--mut); font-weight: 700;">PC • Steam Store</div>
         <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
           <span style="font-family:'Orbitron',sans-serif; font-size:8px; font-weight:900; background:#22c55e; color:#042f2e; padding:1px 4px; border-radius:3px;">${game.discount}</span>
           <span style="font-size: 11px; font-weight: 800;"><span style="text-decoration: line-through; color: var(--mut); font-size: 9px;">${game.oldPrice}</span> <span style="color: var(--acc);">${game.newPrice}</span></span>
