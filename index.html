@@ -1354,13 +1354,19 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <span>Esport</span>
   </button>
 
-  <button class="nav-item" id="navPromo">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-      <line x1="7" y1="7" x2="7.01" y2="7"></line>
-    </svg>
-    <span>Promos</span>
-  </button>
+const navPromo = document.getElementById("navPromo");
+if (navPromo) {
+  navPromo.addEventListener("click", () => {
+    if (typeof playThemeSound === "function") playThemeSound(theme);
+    setActiveNav(navPromo);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    hideAllMainPages();
+    renderPromosMainPage(); // 🎯 Lance l'affichage des promos dynamiques !
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 
   <button class="nav-item" id="navSettings">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
