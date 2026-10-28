@@ -5256,6 +5256,7 @@ async function handleCloudflareAuth(e) {
 
       if (typeof updateCoinsUI === "function") updateCoinsUI();
       if (typeof render === "function") render();
+     updateUserBadge();
       showRetroAlert("Bienvenue", `🎮 Bon retour ${username} ! Vos crédits et données ont été synchronisés.`);
     } else {
       showRetroAlert("Succès", "🎉 Compte Cloudflare créé ! Vos pièces et données sont sauvegardées en ligne.");
