@@ -4598,24 +4598,13 @@ let realPromosCache = [];
 
 async function fetchAndRenderPromos() {
   try {
-    // Appel direct depuis le navigateur vers l'API de promos en temps réel
-    const res = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60&sortBy=Savings");
-    const data = await res.json();
-    
-    if (Array.isArray(data) && data.length > 0) {
-      realPromosCache = data.map(deal => ({
-        id: deal.dealID,
-        name: deal.title,
-        releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "En direct", exact: true }],
-        store: "Steam Store",
-        cover: deal.thumb,
-        oldPrice: deal.normalPrice + " €",
-        newPrice: deal.salePrice + " €",
-        discount: `-${Math.round(deal.savings)}%`
-      }));
-    }
+    // Interroge ton Cloudflare Worker
+    const res = await fetch(`${API}/api/promos`);
+    if (!res.ok) throw new Error("Erreur réseau");
+    realPromosCache = await res.json();
   } catch (e) {
-    console.warn("Erreur de récupération en direct, utilisation de la liste de secours.");
+    console.error("Erreur promos :", e);
+    realPromosCache = [];
   }
   
   renderPromosMainPage();
