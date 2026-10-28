@@ -4697,6 +4697,7 @@ function renderArcadeMainPage() {
 }
 
 
+// --- BRANCHEMENT CORRECT DE L'ONGLET ARCADE ---
 const navArcadeRoom = document.getElementById("navArcadeRoom");
 if (navArcadeRoom) {
   navArcadeRoom.addEventListener("click", () => {
@@ -4705,7 +4706,15 @@ if (navArcadeRoom) {
     if (typeof closeSheet === "function") closeSheet();
     
     hideAllMainPages();
-    renderArcadeMainPage(); // 👈 Ouvre la section Arcade avec ses onglets
+    
+    // Affiche la page Arcade Game Boy au lieu de la page en construction
+    const arcadePage = document.getElementById("arcadeMainPage");
+    if (arcadePage) {
+      arcadePage.style.display = "block";
+      const coinSpan = document.getElementById("arcadePageCoins");
+      if (coinSpan) coinSpan.textContent = userCoins;
+      if (typeof drawGbStatic === "function") drawGbStatic();
+    }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
