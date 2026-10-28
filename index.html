@@ -3809,8 +3809,8 @@ if (navMuseum) {
   });
 }
 
-const navSettings = document.getElementById("navSettings");
-if (navSettings) {
+// On s'assure juste que l'écouteur est bien branché sur navSettings (qui est déjà déclaré plus haut)
+if (typeof navSettings !== 'undefined' && navSettings) {
   navSettings.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
     setActiveNav(navSettings);
@@ -3821,7 +3821,6 @@ if (navSettings) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
- 
 // --- SYSTÈME DE DÉFIS & RÉCOMPENSES ---
 
 function loadChallengesData() {
