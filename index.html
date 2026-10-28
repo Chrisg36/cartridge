@@ -4915,7 +4915,7 @@ async function renderAnimeMainPage() {
 
   loadingMsg.remove();
 
-  const grid = el("div", "games-grid");
+const grid = el("div", "games-grid");
   
   animes.forEach(anime => {
     const card = el("div", "grid-card");
@@ -4926,16 +4926,26 @@ async function renderAnimeMainPage() {
 
     const covContainer = el("div", "grid-cov-container");
     const img = el("img", "grid-cov");
-    img.src = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+    
+    // 🎯 Extraction sécurisée de l'image (prend en compte tous les formats possibles de Jikan)
+    const imageUrl = anime.images?.jpg?.large_image_url || 
+                     anime.images?.jpg?.image_url || 
+                     anime.image_url || 
+                     "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+    
+    img.src = imageUrl;
     img.loading = "lazy";
     covContainer.append(img);
 
     const info = el("div", "grid-info");
-    const title = el("h3", "grid-title", anime.title_english || anime.title);
+    const animeTitle = anime.title_english || anime.title || "Titre inconnu";
+    const title = el("h3", "grid-title", animeTitle);
     
     const meta = el("div", "grid-meta");
-    const scoreBadge = `<span class="score-badge score-high">★ ${anime.score || 'N/A'}</span>`;
-    const episodesBadge = `<span class="time-badge">${anime.episodes ? anime.episodes : 'En cours'}</span>`;
+    const scoreVal = anime.score ? anime.score : 'N/A';
+    const scoreBadge = `<span class="score-badge score-high">★ ${scoreVal}</span>`;
+    const epsVal = anime.episodes ? `${anime.episodes} eps` : 'En cours';
+    const episodesBadge = `<span class="time-badge">${epsVal}</span>`;
     meta.innerHTML = scoreBadge + episodesBadge;
 
     info.append(title, meta);
@@ -4944,7 +4954,6 @@ async function renderAnimeMainPage() {
   });
 
   banner.append(grid);
-}
 
 const navAnimes = document.getElementById("navAnimes");
 if (navAnimes) {
