@@ -203,28 +203,47 @@ async function translateSummary(idParam, lang, env, ctx) {
 }
 
 // --- RÉCUPÉRATION DES VRAIES PROMOS STEAM (API PUBLIQUE ET GRATUITE) ---
+// --- RÉCUPÉRATION DES VRAIES PROMOS STEAM (AVEC USER-AGENT VALIDE) ---
 async function handlePromosRequest() {
   try {
-    const response = await fetch("https://store.steampowered.com/api/featured/");
-    if (!response.ok) throw new Error("Erreur flux Steam");
+    // Steam exige un User-Agent pour accepter la requête fetch
+    const response = await fetch("https://store.steampowered.com/api/featured/", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "fr-FR,fr;q=0.9"
+      }
+    });
+    
+    if (!response.ok) throw new Error(`Erreur flux Steam (${response.status})`);
     const data = await response.json();
     
-    const steamDeals = (data.specials || []).map(game => ({
-      id: game.id,
-      name: game.name,
-      releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions", exact: true }],
-      store: "Steam",
-      cover: game.large_capsule_image,
-      oldPrice: (game.original_price / 100).toFixed(2) + " €",
-      newPrice: (game.final_price / 100).toFixed(2) + " €",
-      discount: `-${game.discount_percent}%`
-    }));
+    // L'API Steam retourne les promos dans data.specials (ou d'autres tableaux selon la langue)
+    const specialsList = data.specials || [];
+    
+    const steamDeals = specialsList.map(game => {
+      // Les prix sur l'API Steam sont en centimes (ex: 1999 pour 19.99 €)
+      const finalPrice = game.final_price !== undefined ? (game.final_price / 100).toFixed(2) + " €" : "0.00 €";
+      const originalPrice = game.original_price !== undefined ? (game.original_price / 100).toFixed(2) + " €" : "0.00 €";
+      const discountVal = game.discount_percent !== undefined ? `-${game.discount_percent}%` : "-0%";
+
+      return {
+        id: game.id,
+        name: game.name || "Jeu Steam",
+        releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Promotions", exact: true }],
+        store: "Steam Store",
+        cover: game.large_capsule_image || game.header_image || "",
+        oldPrice: originalPrice,
+        newPrice: finalPrice,
+        discount: discountVal
+      };
+    });
 
     return Response.json(steamDeals, {
       headers: { ...CORS, "Cache-Control": "public, max-age=1800" }
     });
   } catch (err) {
-    return Response.json([], { status: 500, headers: CORS });
+    // En cas d'erreur, on renvoie l'erreur JSON pour le debug dans la console
+    return Response.json({ error: err.message, deals: [] }, { status: 500, headers: CORS });
   }
 }
 
