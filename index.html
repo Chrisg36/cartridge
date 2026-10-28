@@ -1190,6 +1190,37 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
+ /* 🕹️ Témoin de scroll latéral rétro */
+#scroll-indicator-track {
+  position: fixed; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 220px; background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid var(--acc); border-radius: 4px; z-index: 1000;
+  pointer-events: none;
+}
+#scroll-indicator-thumb {
+  width: 100%; height: 35px; background: var(--acc); border-radius: 2px;
+  position: absolute; top: 0; box-shadow: 0 0 10px var(--acc);
+  transition: top 0.08s ease-out;
+}
+
+/* 🗂️ Système d'onglets pour la modale Réglages */
+.settings-tabs-nav {
+  display: flex; gap: 6px; margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px;
+}
+.settings-tab-btn {
+  flex: 1; background: var(--cov); color: var(--mut);
+  border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+  padding: 8px 6px; cursor: pointer; font-family: var(--font);
+  font-size: 10px; font-weight: 800; border-radius: var(--radius);
+  transition: all 0.2s ease; text-align: center; text-transform: uppercase;
+}
+.settings-tab-btn.active {
+  background: var(--acc); color: var(--on); border-color: #fff;
+  box-shadow: 0 0 12px var(--acc);
+}
+.settings-tab-page { display: none; }
+.settings-tab-page.active { display: block; animation: fadeInList 0.25s ease; }
  
 </style>
 </head>
@@ -3572,6 +3603,34 @@ function openSettings() {
   p.replaceChildren(); 
   p.append(el("h2", "", t('settingsTitle')));
 
+  // --- NAVIGATION PAR ONGLETS DANS LES RÉGLAGES ---
+  const tabNav = el("div");
+  tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
+
+  const btnTabGeneral = el("button", "chip", "⚙️ Général & Look");
+  const btnTabProfile = el("button", "chip", "👤 Profil & Données");
+  const btnTabLegal = el("button", "chip", "⚖️ Légal & Droits");
+
+  [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "36px";
+    b.style.fontSize = "10px";
+    b.style.fontWeight = "800";
+    b.style.textTransform = "uppercase";
+  });
+
+  tabNav.append(btnTabGeneral, btnTabProfile, btnTabLegal);
+  p.append(tabNav);
+
+  // Conteneurs des 3 onglets
+  const pageGeneral = el("div");
+  const pageProfile = el("div");
+  const pageLegal = el("div");
+
+  // ==========================================
+  // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
+  // ==========================================
+
   // --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
@@ -3592,7 +3651,7 @@ function openSettings() {
     modernGrid.append(b);
   });
   secModern.append(modernGrid);
-  p.append(secModern);
+  pageGeneral.append(secModern);
 
   // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
   const secRetroThemes = el("div", "settings-section");
@@ -3614,52 +3673,7 @@ function openSettings() {
     retroGrid.append(b);
   });
   secRetroThemes.append(retroGrid);
-  p.append(secRetroThemes);
-
-  // --- 3. SECTION CONFORT & AUDIO ---
-  const secPrefs = el("div", "settings-section");
-  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
-  const prefsGrid = el("div", "settings-grid-options");
-  
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
-  soundBtn.style.margin = "0";
-  soundBtn.addEventListener("click", () => {
-    soundEnabled = !soundEnabled;
-    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
-    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
-    if (soundEnabled) playThemeSound(theme);
-  });
-
-  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
-  crtBtn.style.margin = "0";
-  crtBtn.addEventListener("click", () => {
-    crtEnabled = !crtEnabled;
-    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
-    document.body.classList.toggle("crt-enabled", crtEnabled);
-    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
-    playThemeSound(theme);
-  });
-
-// 1. Récupération de l'état enregistré (par défaut à true ou false selon ton choix)
-  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") !== "false"; // true par défaut
-
-  // Dans ton menu des réglages où tu construis le bouton FX :
-  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
-  fxBtn.style.margin = "0";
-
-  fxBtn.addEventListener("click", () => {
-    cartridgeFxEnabled = !cartridgeFxEnabled;
-    try { 
-      localStorage.setItem("cartridgeFx", cartridgeFxEnabled); 
-    } catch (e) {}
-    
-    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔊 FX Cartouche : Désactivé";
-    playThemeSound(theme); // Joue un petit son de test si tu veux
-  });
-
-  prefsGrid.append(soundBtn, crtBtn, fxBtn);
-  secPrefs.append(prefsGrid);
-  p.append(secPrefs);
+  pageGeneral.append(secRetroThemes);
 
   // --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
   const secCustom = el("div", "settings-section");
@@ -3678,7 +3692,7 @@ function openSettings() {
   });
   document.body.setAttribute("data-layout-style", layoutStyle);
 
-let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
   const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off");
   holoBtn.style.margin = "0";
   holoBtn.addEventListener("click", () => {
@@ -3692,35 +3706,7 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
 
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
-  p.append(secCustom);
-  // --- 5. SYSTÈME DE SAUVEGARDE CARTOUCHE (.SAV) ---
-  const secData = el("div", "settings-section");
-  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
-  const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
-  const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
-  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
-  statsText.style.marginBottom = "10px";
-  
-  const dataBtnGroup = el("div");
-  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
-
-  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
-  exportBtn.style.margin = "0";
-  exportBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    if (typeof exportCartridgeSave === "function") exportCartridgeSave();
-  });
-
-  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
-  importBtn.style.margin = "0";
-  importBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    if (typeof importCartridgeSave === "function") importCartridgeSave();
-  });
-
-  dataBtnGroup.append(exportBtn, importBtn);
-  secData.append(statsText, dataBtnGroup);
-  p.append(secData);
+  pageGeneral.append(secCustom);
 
   // --- 6. SECTION LANGUE ---
   const secLang = el("div", "settings-section");
@@ -3740,7 +3726,7 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
     load(); openSettings();
   });
   secLang.append(langSelect);
-  p.append(secLang);
+  pageGeneral.append(secLang);
 
   // --- 7. CAPSULE TEMPORELLE (FLASHBACK ALÉATOIRE) ---
   const secTime = el("div", "settings-section");
@@ -3780,7 +3766,175 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
     closeSheet();
   });
   secTime.append(resetCurrentBtn);
-  p.append(secTime);
+  pageGeneral.append(secTime);
+
+
+  // ==========================================
+  // 🌟 CONTENU DE L'ONGLET 2 : PROFIL & DONNÉES
+  // ==========================================
+
+  // --- PROFIL JOUEUR & SÉCURITÉ ---
+  const secProfile = el("div", "settings-section");
+  secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
+  const savedUser = localStorage.getItem("cartridge_user") || "";
+  
+  secProfile.innerHTML += `
+    <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
+      </div>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
+    </form>
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+      <a href="#" onclick="alert('Indiquez votre question secrète pour récupérer vos identifiants')" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+      <a href="#" onclick="alert('Réinitialisation par clé de sécurité locale')" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+    </div>
+  `;
+  pageProfile.append(secProfile);
+
+  // --- 3. SECTION CONFORT & AUDIO ---
+  const secPrefs = el("div", "settings-section");
+  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
+  const prefsGrid = el("div", "settings-grid-options");
+  
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.style.margin = "0";
+  soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    if (soundEnabled) playThemeSound(theme);
+  });
+
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.style.margin = "0";
+  crtBtn.addEventListener("click", () => {
+    crtEnabled = !crtEnabled;
+    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
+    document.body.classList.toggle("crt-enabled", crtEnabled);
+    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
+    playThemeSound(theme);
+  });
+
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") !== "false";
+  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
+  fxBtn.style.margin = "0";
+  fxBtn.addEventListener("click", () => {
+    cartridgeFxEnabled = !cartridgeFxEnabled;
+    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
+    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé";
+    playThemeSound(theme);
+  });
+
+  prefsGrid.append(soundBtn, crtBtn, fxBtn);
+  secPrefs.append(prefsGrid);
+  pageProfile.append(secPrefs);
+
+  // --- 5. SYSTÈME DE SAUVEGARDE CARTOUCHE (.SAV) ---
+  const secData = el("div", "settings-section");
+  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
+  const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
+  const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
+  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
+  statsText.style.marginBottom = "10px";
+  
+  const dataBtnGroup = el("div");
+  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
+
+  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
+  exportBtn.style.margin = "0";
+  exportBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof exportCartridgeSave === "function") exportCartridgeSave();
+  });
+
+  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
+  importBtn.style.margin = "0";
+  importBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof importCartridgeSave === "function") importCartridgeSave();
+  });
+
+  dataBtnGroup.append(exportBtn, importBtn);
+  secData.append(statsText, dataBtnGroup);
+  pageProfile.append(secData);
+
+
+  // ==========================================
+  // 🌟 CONTENU DE L'ONGLET 3 : LÉGAL & DROITS
+  // ==========================================
+
+  const secLegal = el("div", "settings-section");
+  secLegal.append(el("div", "settings-section-title", "⚖️ Propriété Intellectuelle & Droits"));
+  secLegal.innerHTML += `
+    <div style="font-size:12px; line-height:1.6; color:var(--mut);">
+      <p style="margin-bottom:10px;">
+        <strong style="color:var(--txt);">1. Conception & Création Originale :</strong><br>
+        L'application <em>Cartridge</em>, sa direction artistique, sa gamification, son ergonomie et l'ensemble de son architecture logicielle sont une <strong>création originale</strong> développée par des passionnés.
+      </p>
+      <p style="margin-bottom:10px;">
+        <strong style="color:var(--txt);">2. Données & Jaquettes (IGDB) :</strong><br>
+        Les fiches descriptives, métadonnées et jaquettes de jeux vidéo sont sourcées via l'API <strong>IGDB (Twitch / Amazon)</strong>. L'ensemble des marques, titres et visuels demeurent la propriété exclusive de leurs éditeurs respectifs. Projet non commercial à but de partage culturel.
+      </p>
+      <p style="margin-bottom:10px;">
+        <strong style="color:var(--txt);">3. Infrastructure & Hébergement :</strong><br>
+        L'application est déployée et sécurisée mondialement sur le réseau de <strong>Cloudflare, Inc.</strong>
+      </p>
+      <p>
+        <strong style="color:var(--txt);">4. Respect de la Vie Privée :</strong><br>
+        Les données de progression et de compte sont stockées localement sur votre terminal (LocalStorage). Aucun pistage ni revente d'informations personnelles.
+      </p>
+    </div>
+  `;
+  pageLegal.append(secLegal);
+
+
+  // ==========================================
+  // GESTION D'AFFICHAGE DES ONGLETS
+  // ==========================================
+  p.append(pageGeneral, pageProfile, pageLegal);
+
+  function showTab(index) {
+    playThemeSound(theme);
+    btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
+    btnTabProfile.setAttribute("aria-pressed", String(index === 1));
+    btnTabLegal.setAttribute("aria-pressed", String(index === 2));
+
+    pageGeneral.style.display = index === 0 ? "block" : "none";
+    pageProfile.style.display = index === 1 ? "block" : "none";
+    pageLegal.style.display = index === 2 ? "block" : "none";
+  }
+
+  btnTabGeneral.onclick = () => showTab(0);
+  btnTabProfile.onclick = () => showTab(1);
+  btnTabLegal.onclick = () => showTab(2);
+
+  // Onglet affiché par défaut à l'ouverture
+  showTab(0);
+
+  // Écouteur pour enregistrer le pseudo
+  setTimeout(() => {
+    const f = document.getElementById("profileFormSetting");
+    if (f) {
+      f.onsubmit = (e) => {
+        e.preventDefault();
+        const u = document.getElementById("settingUsername").value.trim();
+        if (u) {
+          localStorage.setItem("cartridge_user", u);
+          alert("✅ Profil joueur mis à jour !");
+        }
+      };
+    }
+  }, 50);
 
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
@@ -3788,6 +3942,7 @@ let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
 
   $("#sheet").classList.add("on");
 }
+ 
 function renderPlatformDropdown() {
   const select = $("#platformSelect");
   select.replaceChildren();
@@ -4975,6 +5130,19 @@ function renderScoresMainPage() {
     renderScoresMainPage();
   });
 }
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const track = document.getElementById('scroll-indicator-track');
+  const thumb = document.getElementById('scroll-indicator-thumb');
+  if (docHeight > 0 && track && thumb) {
+    const scrollPercent = scrollTop / docHeight;
+    const trackHeight = track.clientHeight - 35;
+    thumb.style.top = (scrollPercent * trackHeight) + 'px';
+  }
+});
+
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
