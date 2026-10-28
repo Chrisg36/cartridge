@@ -1764,7 +1764,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 </div>
 
 <main>
- <main>
   <!-- 🪙 1. LA GRANDE PAGE BOUTIQUE -->
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
@@ -1956,6 +1955,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   <button class="chip" id="shareBtn" aria-label="Partager" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
   </button>
+</div>
+<input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
+<div id="list"></div>
 </div>
 </main>
 
@@ -6374,16 +6376,7 @@ window.addEventListener('scroll', () => {
   }
 });
 </script>
-  <!-- 🕹️ Boutons d'action flottants (Vue & Partage) -->
-<div class="floating-actions">
-  <button class="chip floating-action-btn" id="viewModeBtn" aria-label="Changer de vue">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-  </button>
-  <button class="chip floating-action-btn" id="shareBtn" aria-label="Partager">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-  </button>
-</div>
-  
+
 <!-- 🕹️ Jauge latérale rétro de progression -->
 <div id="scroll-indicator-track">
   <div id="scroll-indicator-thumb"></div>
