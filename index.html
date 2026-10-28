@@ -58,12 +58,20 @@ body {
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
 /* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
-  .sticky-header-container {
-    position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 90%, transparent);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: 6px; margin: 0 -10px; padding-left: 10px; padding-right: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    overflow-x: hidden;
+ .sticky-header-container {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-bottom: 6px;
+    margin: 0 -10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -4298,7 +4306,10 @@ function renderShopMainPage() {
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
-    
+
+   // Dans showPacks(), lors de la création des boosterCard :
+    const boosterCard = el("div", "booster-shop-card card-holo-effect");
+   
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
 
@@ -5397,7 +5408,7 @@ function openSettingsMainPage() {
   settingsPage.style.display = "block";
   contentArea.replaceChildren();
 
-  // --- NAVIGATION PAR ONGLETS ---
+  // Navigation des onglets
   const tabNav = el("div");
   tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
 
@@ -5420,7 +5431,11 @@ function openSettingsMainPage() {
   const pageProfile = el("div");
   const pageLegal = el("div");
 
-  // --- ONGLET 1 : GÉNÉRAL & LOOK ---
+  // ==========================================
+  // ONGLET 1 : GÉNÉRAL & LOOK
+  // ==========================================
+
+  // 1. Thèmes modernes
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
@@ -5430,15 +5445,16 @@ function openSettingsMainPage() {
     const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
-    b.addEventListener("click", () => {
+    b.onclick = () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
       openSettingsMainPage();
-    });
+    };
     modernGrid.append(b);
   });
   secModern.append(modernGrid);
 
+  // 2. Consoles rétro
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
   const retroGrid = el("div", "themes-grid-container");
@@ -5448,15 +5464,40 @@ function openSettingsMainPage() {
     const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
-    b.addEventListener("click", () => {
+    b.onclick = () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
       openSettingsMainPage();
-    });
+    };
     retroGrid.append(b);
   });
   secRetroThemes.append(retroGrid);
 
+  // 3. Confort & Audio (déplacé ici)
+  const secPrefs = el("div", "settings-section");
+  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
+  const prefsGrid = el("div", "settings-grid-options");
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.style.margin = "0";
+  soundBtn.onclick = () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    if (soundEnabled) playThemeSound(theme);
+  };
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.style.margin = "0";
+  crtBtn.onclick = () => {
+    crtEnabled = !crtEnabled;
+    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
+    document.body.classList.toggle("crt-enabled", crtEnabled);
+    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
+    playThemeSound(theme);
+  };
+  prefsGrid.append(soundBtn, crtBtn);
+  secPrefs.append(prefsGrid);
+
+  // 4. Style & Effet Holo
   const secCustom = el("div", "settings-section");
   secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
   const customGrid = el("div", "settings-grid-options");
@@ -5470,19 +5511,20 @@ function openSettingsMainPage() {
     document.body.setAttribute("data-layout-style", layoutStyle);
     playThemeSound(theme);
   };
-  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  let holoEffectEnabled = localStorage.getItem("holoEffect") !== "false";
   const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
   holoBtn.style.margin = "0";
   holoBtn.onclick = () => {
     holoEffectEnabled = !holoEffectEnabled;
-    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    try { localStorage.setItem("holoEffect", holoEffectEnabled ? "true" : "false"); } catch (e) {}
     holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
-    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled ? "true" : "false");
     playThemeSound(theme);
   };
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
 
+  // 5. Capsule Temporelle
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
   const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
@@ -5497,9 +5539,11 @@ function openSettingsMainPage() {
   };
   secTime.append(randomTimeBtn);
 
-  pageGeneral.append(secModern, secRetroThemes, secCustom, secTime);
+  pageGeneral.append(secModern, secRetroThemes, secPrefs, secCustom, secTime);
 
-  // --- ONGLET 2 : PROFIL & SÉCURITÉ ---
+  // ==========================================
+  // ONGLET 2 : PROFIL & DONNÉES
+  // ==========================================
   const secProfile = el("div", "settings-section");
   secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
   const savedUser = localStorage.getItem("cartridge_user");
@@ -5546,32 +5590,25 @@ function openSettingsMainPage() {
     `;
   }
 
-  const secPrefs = el("div", "settings-section");
-  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
-  const prefsGrid = el("div", "settings-grid-options");
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
-  soundBtn.style.margin = "0";
-  soundBtn.onclick = () => {
-    soundEnabled = !soundEnabled;
-    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
-    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
-    if (soundEnabled) playThemeSound(theme);
-  };
-  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
-  crtBtn.style.margin = "0";
-  crtBtn.onclick = () => {
-    crtEnabled = !crtEnabled;
-    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
-    document.body.classList.toggle("crt-enabled", crtEnabled);
-    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
-    playThemeSound(theme);
-  };
-  prefsGrid.append(soundBtn, crtBtn);
-  secPrefs.append(prefsGrid);
+  // Sauvegarde cartouche
+  const secData = el("div", "settings-section");
+  secData.append(el("div", "settings-section-title", "🗃️ Données & Sauvegarde"));
+  const dataBtnGroup = el("div");
+  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
+  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
+  exportBtn.style.margin = "0";
+  exportBtn.onclick = () => { playThemeSound(theme); if (typeof exportCartridgeSave === "function") exportCartridgeSave(); };
+  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
+  importBtn.style.margin = "0";
+  importBtn.onclick = () => { playThemeSound(theme); if (typeof importCartridgeSave === "function") importCartridgeSave(); };
+  dataBtnGroup.append(exportBtn, importBtn);
+  secData.append(dataBtnGroup);
 
-  pageProfile.append(secProfile, secPrefs);
+  pageProfile.append(secProfile, secData);
 
-  // --- ONGLET 3 : LÉGAL ---
+  // ==========================================
+  // ONGLET 3 : LÉGAL
+  // ==========================================
   const secLegal = el("div", "settings-section");
   secLegal.append(el("div", "settings-section-title", "⚖️ Propriété Intellectuelle & Droits"));
   secLegal.innerHTML += `
@@ -5629,6 +5666,19 @@ function openSettingsMainPage() {
 function openSettings() {
   openSettingsMainPage();
 }
+
+
+
+ // Activation par défaut de l'effet holographique
+let holoSetting = localStorage.getItem("holoEffect");
+if (holoSetting === null) {
+  holoSetting = "true";
+  localStorage.setItem("holoEffect", "true");
+}
+document.body.setAttribute("data-holo-effect", holoSetting);
+
+let layoutSetting = localStorage.getItem("layoutStyle") || "clean";
+document.body.setAttribute("data-layout-style", layoutSetting);
  
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
