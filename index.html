@@ -5371,29 +5371,31 @@ function openForgotPasswordModal() {
 }
 
 function updateUserBadge() {
-  const badge = document.getElementById("userHeaderBadge");
-  if (!badge) return;
+  const badges = document.querySelectorAll(".user-header-badge, #userHeaderBadge");
+  if (!badges.length) return;
 
   const user = localStorage.getItem("cartridge_user");
 
-  if (user) {
-    const initial = user.charAt(0).toUpperCase();
-    badge.innerHTML = `
-      <div class="player-badge">
-        <div class="player-avatar">${initial}</div>
-        <span>${user}</span>
-        <span class="player-status-dot" title="Compte synchronisé"></span>
-      </div>
-    `;
-    badge.style.display = "inline-flex";
-  } else {
-    badge.innerHTML = `
-      <div class="player-badge" style="border-style: dashed; opacity: 0.85;">
-        <span>👤 Connexion</span>
-      </div>
-    `;
-    badge.style.display = "inline-flex";
-  }
+  badges.forEach((b) => {
+    if (user) {
+      const initial = user.charAt(0).toUpperCase();
+      b.innerHTML = `
+        <div class="player-badge">
+          <div class="player-avatar">${initial}</div>
+          <span>${user}</span>
+          <span class="player-status-dot" title="Compte synchronisé Cloudflare"></span>
+        </div>
+      `;
+      b.style.display = "inline-flex";
+    } else {
+      b.innerHTML = `
+        <div class="player-badge" style="border: 1px dashed var(--acc); opacity: 0.85;">
+          <span>👤 Connexion</span>
+        </div>
+      `;
+      b.style.display = "inline-flex";
+    }
+  });
 }
 // Mise à jour de l'avatar au chargement initial de la page
 window.addEventListener("DOMContentLoaded", () => {
