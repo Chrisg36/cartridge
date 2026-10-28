@@ -10,6 +10,7 @@ const PLATFORM_NAMES = {
   20: "Nintendo DS", 37: "Nintendo 3DS", 23: "Dreamcast", 32: "Saturn",
   29: "Mega Drive", 64: "Master System",
 };
+
 // Plateformes affichées dans la liste mensuelle
 const MONTH_PLATFORMS = [6, 167, 169, 508];
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
@@ -202,57 +203,19 @@ async function translateSummary(idParam, lang, env, ctx) {
   }
 }
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
-
-async function handlePromosRequest() {
-  try {
-    // Récupération officielle des jeux en promotion sur Steam
-    const response = await fetch("https://store.steampowered.com/api/featuredcategories/?l=french", {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CartridgeApp/1.0"
-      }
-    });
-
-    if (!response.ok) throw new Error("Erreur flux officiel Steam");
-    const data = await response.json();
-
-    const specials = data.specials ? data.specials.items : [];
-
-    const steamDeals = specials.map(game => ({
-      id: "steam-" + game.id,
-      name: game.name,
-      releases: [{ platform: "PC", date: new Date().toISOString().slice(0, 10), human: "Soldes Steam", exact: true }],
-      store: "Steam Store",
-      cover: game.header_image || game.large_capsule_image,
-      oldPrice: game.original_price ? (game.original_price / 100).toFixed(2) + " €" : "0.00 €",
-      newPrice: game.final_price ? (game.final_price / 100).toFixed(2) + " €" : "0.00 €",
-      discount: `-${game.discount_percent}%`
-    }));
-
-    return Response.json(steamDeals, {
-      headers: { ...CORS, "Cache-Control": "public, max-age=1800" }
-    });
-  } catch (err) {
-    return Response.json({ error: err.message, deals: [] }, { status: 500, headers: CORS });
-  }
-}
-
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
-    if (url.pathname === "/api/promos") {
-      return handlePromosRequest();
+    // Route de traduction de résumé
+    if (url.pathname.startsWith("/translate/")) {
+      const parts = url.pathname.split("/");
+      const id = parts[2];
+      const lang = parts[3] || "fr";
+      return translateSummary(id, lang, env, ctx);
     }
 
-    return new Response("Not Found", { status: 404, headers: CORS });
-  }
-};
     let month = url.searchParams.get("month");
     const searchQuery = (url.searchParams.get("search") || "").replace(/["\\;]/g, "").trim();
     const platformParam = url.searchParams.get("platform");
