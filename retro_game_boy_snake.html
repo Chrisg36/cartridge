@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Game Boy Snake</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Pixel Art -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background-color: #0b0f19;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Thème 1 : Vert Game Boy Classique (DMG Palette) */
+        .theme-green {
+            --gb-darkest: #0f380f;
+            --gb-dark: #306230;
+            --gb-light: #8bac0f;
+            --gb-lightest: #9bbc0f;
+            --gb-screen-bg: #9bbc0f;
+            --gb-text: #0f380f;
+            --gb-accent: #306230;
+        }
+
+        /* Thème 2 : Noir et Blanc / Monochrome Rétro */
+        .theme-bw {
+            --gb-darkest: #111827;
+            --gb-dark: #4b5563;
+            --gb-light: #d1d5db;
+            --gb-lightest: #ffffff;
+            --gb-screen-bg: #e5e7eb;
+            --gb-text: #111827;
+            --gb-accent: #374151;
+        }
+
+        /* Effet d'écran LCD rétro avec balayage subtil */
+        .lcd-screen {
+            background-color: var(--gb-screen-bg);
+            color: var(--gb-text);
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .lcd-screen::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.08) 50%);
+            background-size: 100% 3px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Boutons de la console style relief */
+        .console-btn {
+            background: linear-gradient(145deg, #374151, #1f2937);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.1);
+            transition: all 0.04s ease;
+        }
+        .console-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .dpad-key {
+            background: linear-gradient(145deg, #27272a, #18181b);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.6);
+        }
+        .dpad-key:active {
+            background: #09090b;
+            transform: scale(0.95);
+        }
+
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body class="h-full flex items-center justify-center p-2 sm:p-4 overflow-hidden theme-green" id="appBody">
+
+    <!-- Boîtier de la Console Game Boy -->
+    <div class="relative w-full max-w-sm sm:max-w-md bg-gradient-to-b from-zinc-700 via-zinc-800 to-zinc-900 rounded-[2.5rem] p-5 sm:p-7 shadow-2xl border-4 border-zinc-600 flex flex-col items-center justify-between select-none">
+        
+        <!-- Haut de console : LED et Badge -->
+        <div class="w-full flex justify-between items-center mb-3 px-1">
+            <div class="flex items-center space-x-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></div>
+                <span class="text-[7px] text-zinc-400 tracking-wider font-bold">POWER</span>
+            </div>
+            <div class="text-[8px] text-zinc-300 tracking-widest uppercase font-black">DOT MATRIX WITH STEREO SOUND</div>
+            <div class="flex space-x-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-zinc-600"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-zinc-600"></div>
+            </div>
+        </div>
+
+        <!-- ÉCRAN LCD PRINCIPAL -->
+        <div id="screenContainer" class="lcd-screen w-full aspect-[4/5] rounded-xl border-[6px] border-zinc-950 flex flex-col p-3 justify-between relative z-0">
+            
+            <!-- 1. VUE MENU PRINCIPAL -->
+            <div id="menuView" class="flex flex-col h-full justify-between items-center py-2 z-20">
+                <div class="text-center mt-2">
+                    <h1 class="text-sm sm:text-base font-black tracking-wider mb-1" style="color:var(--gb-darkest);">SNAKE DX</h1>
+                    <p class="text-[7px] uppercase tracking-widest opacity-80">Rétro Édition Pro</p>
+                </div>
+
+                <div class="flex flex-col w-full space-y-2.5 px-4 my-auto">
+                    <button onclick="startGame()" class="w-full py-2.5 px-3 text-[9px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)] hover:opacity-90 shadow transition active:translate-y-0.5">
+                        ▶ JOUER
+                    </button>
+                    <button onclick="openOptions()" class="w-full py-2.5 px-3 text-[9px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)] hover:opacity-90 shadow transition active:translate-y-0.5">
+                        ⚙ OPTIONS / PALETTE
+                    </button>
+                </div>
+
+                <div class="text-[7px] text-center font-bold opacity-90">
+                    RECORD: <span id="menuHighScore">000</span>
+                </div>
+            </div>
+
+            <!-- 2. VUE JEU -->
+            <div id="gameView" class="hidden flex flex-col h-full justify-between z-20">
+                <!-- En-tête Scores -->
+                <div class="flex justify-between items-center text-[8px] font-bold border-b-2 border-[var(--gb-darkest)] pb-1.5">
+                    <div>PTS: <span id="currentScore">0</span></div>
+                    <div>HI: <span id="gameHighScore">0</span></div>
+                </div>
+
+                <!-- Canvas du Serpent -->
+                <div class="flex-1 flex items-center justify-center my-1">
+                    <canvas id="gameCanvas" width="200" height="200" class="border-2 border-[var(--gb-darkest)] w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] rounded-sm"></canvas>
+                </div>
+
+                <!-- Bas d'écran jeu -->
+                <div class="flex justify-between items-center text-[7px] pt-1 border-t-2 border-[var(--gb-darkest)] font-bold">
+                    <span>NIV: <span id="levelDisplay">1</span></span>
+                    <span id="gameStatusMsg" class="animate-pulse">EN COURS</span>
+                </div>
+            </div>
+
+            <!-- 3. VUE OPTIONS -->
+            <div id="optionsView" class="hidden flex flex-col h-full justify-between py-2 z-20">
+                <div class="text-center">
+                    <h2 class="text-xs font-black uppercase" style="color:var(--gb-darkest);">OPTIONS</h2>
+                </div>
+
+                <div class="flex flex-col space-y-3 px-2 my-auto">
+                    <div>
+                        <span class="text-[7px] block mb-1 uppercase font-bold">Palette d'écran :</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setTheme('green')" id="btnThemeGreen" class="py-2 text-[7px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)] shadow">
+                                VERT CLASSIQUE
+                            </button>
+                            <button onclick="setTheme('bw')" id="btnThemeBW" class="py-2 text-[7px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)] opacity-60 shadow">
+                                NOIR & BLANC
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="closeOptions()" class="w-3/4 py-2 text-[8px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)]">
+                        ◄ RETOUR
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. VUE GAME OVER -->
+            <div id="gameOverView" class="hidden flex flex-col h-full justify-center items-center text-center z-20">
+                <h2 class="text-sm font-black mb-2 text-red-700 animate-bounce">FIN DE PARTIE</h2>
+                <p class="text-[8px] mb-3 font-bold">SCORE FINAL : <span id="finalScore">0</span></p>
+                <button onclick="startGame()" class="py-2 px-4 text-[8px] font-bold rounded border-2 border-[var(--gb-darkest)] bg-[var(--gb-dark)] text-[var(--gb-lightest)] shadow">
+                    RECOMMENCER
+                </button>
+            </div>
+
+        </div>
+
+        <!-- LOGO BRANDING -->
+        <div class="my-4 text-center">
+            <span class="text-xs font-extrabold tracking-widest text-zinc-400 font-sans italic">GAME BOY <span class="text-xs text-indigo-400">DX</span></span>
+        </div>
+
+        <!-- COMMANDES DE LA CONSOLE (DPAD & BOUTONS A/B) -->
+        <div class="w-full flex justify-between items-center px-2 mt-1">
+            <!-- Croix directionnelle D-PAD -->
+            <div class="relative w-28 h-28">
+                <button ontouchstart="changeDir(0,-1); event.preventDefault();" onclick="changeDir(0,-1)" class="dpad-key absolute top-0 left-9 w-10 h-10 rounded-t flex items-center justify-center text-zinc-300 font-bold text-xs">▲</button>
+                <button ontouchstart="changeDir(0,1); event.preventDefault();" onclick="changeDir(0,1)" class="dpad-key absolute bottom-0 left-9 w-10 h-10 rounded-b flex items-center justify-center text-zinc-300 font-bold text-xs">▼</button>
+                <button ontouchstart="changeDir(-1,0); event.preventDefault();" onclick="changeDir(-1,0)" class="dpad-key absolute top-9 left-0 w-10 h-10 rounded-l flex items-center justify-center text-zinc-300 font-bold text-xs">◄</button>
+                <button ontouchstart="changeDir(1,0); event.preventDefault();" onclick="changeDir(1,0)" class="dpad-key absolute top-9 right-0 w-10 h-10 rounded-r flex items-center justify-center text-zinc-300 font-bold text-xs">►</button>
+                <div class="absolute top-9 left-9 w-10 h-10 bg-zinc-800 rounded-sm"></div>
+            </div>
+
+            <!-- Boutons d'action A & B -->
+            <div class="flex space-x-3 items-center rotate-[-20deg] mb-2">
+                <div class="flex flex-col items-center">
+                    <button onclick="triggerActionB()" class="console-btn w-11 h-11 rounded-full text-zinc-300 font-bold text-[9px] border border-zinc-600 flex items-center justify-center">B</button>
+                </div>
+                <div class="flex flex-col items-center -mt-4">
+                    <button onclick="triggerActionA()" class="console-btn w-11 h-11 rounded-full text-zinc-300 font-bold text-[9px] border border-zinc-600 flex items-center justify-center">A</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boutons START / SELECT -->
+        <div class="flex space-x-6 mt-3">
+            <div class="flex flex-col items-center">
+                <button onclick="openOptions()" class="w-10 h-3.5 bg-zinc-600 rounded-full shadow-inner border border-zinc-700 active:translate-y-0.5"></button>
+                <span class="text-[6px] text-zinc-400 font-bold mt-1 tracking-wider">OPTIONS</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <button onclick="startGame()" class="w-10 h-3.5 bg-zinc-600 rounded-full shadow-inner border border-zinc-700 active:translate-y-0.5"></button>
+                <span class="text-[6px] text-zinc-400 font-bold mt-1 tracking-wider">START</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE JEU & AUDIO SYNTHÈSE WEB AUDIO API -->
+    <script>
+        // Gestion audio rétro (Web Audio API)
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Bruitage : Manger une pomme (Beep aigu montant)
+        function playEatSound() {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        // Bruitage : Ramasser un bonus spécial (Arpège joyeux)
+        function playBonusSound() {
+            try {
+                initAudio();
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.05);
+                    
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime + i * 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.05 + 0.08);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + i * 0.05);
+                    osc.stop(audioCtx.currentTime + i * 0.05 + 0.08);
+                });
+            } catch(e) {}
+        }
+
+        // Bruitage : Perdre / Game Over (Descente de fréquences grave)
+        function playGameOverSound() {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(55, audioCtx.currentTime + 0.4);
+                
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } catch(e) {}
+        }
+
+        // Configuration du Jeu Snake
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const GRID_SIZE = 20;
+        const TILE_COUNT = 10; // Grille 10x10 rétro
+
+        let snake = [];
+        let food = { x: 5, y: 5, type: 'normal' };
+        let dx = 1;
+        let dy = 0;
+        let score = 0;
+        let highScore = localStorage.getItem("snake_high_score") || 0;
+        let gameInterval = null;
+        let isPlaying = false;
+        let gameSpeed = 130;
+
+        document.getElementById("menuHighScore").textContent = String(highScore).padStart(3, '0');
+        document.getElementById("gameHighScore").textContent = String(highScore).padStart(3, '0');
+
+        function setTheme(theme) {
+            const body = document.getElementById("appBody");
+            const btnGreen = document.getElementById("btnThemeGreen");
+            const btnBW = document.getElementById("btnThemeBW");
+
+            if (theme === 'green') {
+                body.className = "h-full flex items-center justify-center p-2 sm:p-4 overflow-hidden theme-green";
+                btnGreen.style.opacity = "1";
+                btnBW.style.opacity = "0.6";
+            } else {
+                body.className = "h-full flex items-center justify-center p-2 sm:p-4 overflow-hidden theme-bw";
+                btnBW.style.opacity = "1";
+                btnGreen.style.opacity = "0.6";
+            }
+        }
+
+        function showView(viewId) {
+            ["menuView", "gameView", "optionsView", "gameOverView"].forEach(id => {
+                document.getElementById(id).classList.add("hidden");
+            });
+            document.getElementById(viewId).classList.remove("hidden");
+        }
+
+        function openOptions() {
+            showView("optionsView");
+        }
+
+        function closeOptions() {
+            showView("menuView");
+        }
+
+        function startGame() {
+            initAudio();
+            showView("gameView");
+            snake = [
+                { x: 4, y: 5 },
+                { x: 3, y: 5 },
+                { x: 2, y: 5 }
+            ];
+            dx = 1;
+            dy = 0;
+            score = 0;
+            gameSpeed = 130;
+            document.getElementById("currentScore").textContent = score;
+            document.getElementById("levelDisplay").textContent = "1";
+            spawnFood();
+            isPlaying = true;
+
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(gameLoop, gameSpeed);
+        }
+
+        function spawnFood() {
+            food.x = Math.floor(Math.random() * TILE_COUNT);
+            food.y = Math.floor(Math.random() * TILE_COUNT);
+            // 1 chance sur 5 d'avoir un bonus spécial
+            food.type = Math.random() < 0.2 ? 'bonus' : 'normal';
+            
+            // Éviter de spawner sur le serpent
+            snake.forEach(part => {
+                if (part.x === food.x && part.y === food.y) {
+                    spawnFood();
+                }
+            });
+        }
+
+        function changeDir(newX, newY) {
+            // Empêcher le demi-tour direct sur soi-même
+            if (newX !== -dx || newY !== -dy) {
+                dx = newX;
+                dy = newY;
+            }
+        }
+
+        function triggerActionA() {
+            if (!isPlaying) startGame();
+        }
+
+        function triggerActionB() {
+            // Action secondaire (pause ou boost)
+        }
+
+        function gameLoop() {
+            if (!isPlaying) return;
+
+            // Mouvement de la tête
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Collisions murs
+            if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) {
+                endGame();
+                return;
+            }
+
+            // Collisions queue
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    endGame();
+                    return;
+                }
+            }
+
+            snake.unshift(head);
+
+            // Manger la nourriture
+            if (head.x === food.x && head.y === food.y) {
+                if (food.type === 'bonus') {
+                    score += 50;
+                    playBonusSound();
+                } else {
+                    score += 10;
+                    playEatSound();
+                }
+                document.getElementById("currentScore").textContent = score;
+
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("snake_high_score", highScore);
+                    document.getElementById("gameHighScore").textContent = String(highScore).padStart(3, '0');
+                    document.getElementById("menuHighScore").textContent = String(highScore).padStart(3, '0');
+                }
+
+                // Accélération progressive
+                if (gameSpeed > 70) {
+                    gameSpeed -= 2;
+                    clearInterval(gameInterval);
+                    gameInterval = setInterval(gameLoop, gameSpeed);
+                }
+
+                document.getElementById("levelDisplay").textContent = Math.floor(score / 50) + 1;
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            drawGame();
+        }
+
+        function drawGame() {
+            const computedStyle = getComputedStyle(document.getElementById("appBody"));
+            const darkestColor = computedStyle.getPropertyValue('--gb-darkest').trim();
+            const accentColor = computedStyle.getPropertyValue('--gb-accent').trim();
+            const screenBg = computedStyle.getPropertyValue('--gb-screen-bg').trim();
+
+            // Effacer l'écran LCD
+            ctx.fillStyle = screenBg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const tileSize = canvas.width / TILE_COUNT;
+
+            // Dessiner la nourriture
+            ctx.fillStyle = darkestColor;
+            if (food.type === 'bonus') {
+                ctx.beginPath();
+                ctx.arc((food.x + 0.5) * tileSize, (food.y + 0.5) * tileSize, tileSize * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillRect(food.x * tileSize + 2, food.y * tileSize + 2, tileSize - 4, tileSize - 4);
+            }
+
+            // Dessiner le serpent
+            snake.forEach((part, index) => {
+                ctx.fillStyle = index === 0 ? darkestColor : accentColor;
+                ctx.fillRect(part.x * tileSize + 1, part.y * tileSize + 1, tileSize - 2, tileSize - 2);
+            });
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            playGameOverSound();
+            document.getElementById("finalScore").textContent = score;
+            showView("gameOverView");
+        }
+
+        // Écouteur clavier PC
+        window.addEventListener("keydown", e => {
+            switch(e.key) {
+                case "ArrowUp": case "z": case "Z": changeDir(0, -1); e.preventDefault(); break;
+                case "ArrowDown": case "s": case "S": changeDir(0, 1); e.preventDefault(); break;
+                case "ArrowLeft": case "q": case "Q": changeDir(-1, 0); e.preventDefault(); break;
+                case "ArrowRight": case "d": case "D": changeDir(1, 0); e.preventDefault(); break;
+            }
+        });
+    </script>
+</body>
+</html>
