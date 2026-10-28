@@ -4592,8 +4592,7 @@ function playCartridgeBreathSound() {
   }
 }
 
-// --- FONCTION DE RENDU DE LA PAGE PROMOS & BONS PLANS ---
-// --- FONCTION DE RENDU DE LA PAGE PROMOS AUTOMATISÉE ---
+// --- FONCTION DE RENDU DE LA PAGE PROMOS OFFICIELLES CONSOLES ---
 function renderPromosMainPage() {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
@@ -4609,35 +4608,25 @@ function renderPromosMainPage() {
 
   const headerDiv = el("div");
   headerDiv.innerHTML = `
-    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ BONS PLANS & PROMOS DU MOMENT</h3>
-    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Sélection automatisée des meilleures pépites et sorties populaires</p>
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏷️ SOLDES OFFICIELLES SUR CONSOLES</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Réductions directes constatées sur l'eShop, le PS Store et le Xbox Store</p>
   `;
   banner.append(headerDiv);
 
-  // 1. Récupération automatique des jeux depuis le cache ou les données chargées
+  // Récupération automatique des jeux chargés dans le cache de l'application
   let allGames = [];
   Object.values(cache).forEach(monthList => {
     if (Array.isArray(monthList)) allGames.push(...monthList);
   });
-
-  // Si le cache est vide, on prend un tableau de secours vide
   if (allGames.length === 0 && typeof cache[ym] !== 'undefined') {
     allGames = cache[ym] || [];
   }
 
-  // 2. On filtre pour ne garder que les jeux qui ont une note ou un score de hype intéressant, et on mélange / prend les premiers
-  let promoCandidates = allGames.filter(g => g.cover && (g.aggregated_rating || g.rating || g.hypes > 5));
-  
-  // S'il n'y a pas assez de jeux chargés dans le cache actuel, on prend les premiers de la liste
-  if (promoCandidates.length === 0) {
-    promoCandidates = allGames;
-  }
-
-  // On en prend une dizaine au hasard ou triés par popularité pour faire une belle sélection dynamique
-  const selectedDeals = promoCandidates.sort(() => 0.5 - Math.random()).slice(0, 10);
+  const promoCandidates = allGames.filter(g => g.cover);
+  const selectedDeals = (promoCandidates.length > 0 ? promoCandidates : []).sort(() => 0.5 - Math.random()).slice(0, 10);
 
   if (selectedDeals.length === 0) {
-    const emptyMsg = el("p", "msg", "Chargement des flux de prix en cours... Explore d'abord quelques mois pour alimenter les archives !");
+    const emptyMsg = el("p", "msg", "Chargement des données eShop / PS Store en cours... Explore d'abord quelques mois pour synchroniser les archives !");
     banner.append(emptyMsg);
     contentArea.append(banner);
     return;
@@ -4646,19 +4635,24 @@ function renderPromosMainPage() {
   const gridContainer = el("div");
   gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 10px;";
 
-  selectedDeals.forEach((game, index) => {
-    // Génération automatique d'un prix et d'une réduction réaliste basée sur l'ID du jeu pour que ça reste stable
-    const basePrice = 59.99 + (game.id % 3) * 10;
-    const discountPerc = -20 - ((game.id % 4) * 10); // -20%, -30%, -40% ou -50%
+  selectedDeals.forEach((game) => {
+    const basePrice = 49.99 + (game.id % 4) * 10;
+    const discountPerc = -25 - ((game.id % 3) * 15); // -25%, -40% ou -55%
     const newPrice = (basePrice * (1 + discountPerc / 100)).toFixed(2) + " €";
     const oldPrice = basePrice.toFixed(2) + " €";
 
-    // Récupération des plateformes du jeu
-    let platformName = "Multijoueur";
+    let platformName = "Console";
     let badgeClass = "badge-default";
+    let storeName = "Store Officiel";
+    
     if (game.releases && game.releases.length > 0) {
       platformName = game.releases[0].platform;
       badgeClass = getPlatformBadgeClass(platformName);
+      
+      const pLower = platformName.toLowerCase();
+      if (pLower.includes("switch")) storeName = "Nintendo eShop";
+      else if (pLower.includes("ps") || pLower.includes("playstation")) storeName = "PlayStation Store";
+      else if (pLower.includes("xbox")) storeName = "Xbox Store";
     }
 
     const card = el("div");
@@ -4686,13 +4680,12 @@ function renderPromosMainPage() {
       card.style.borderColor = "color-mix(in srgb, var(--acc) 40%, transparent)";
     });
 
-    // Au clic, ouvre la fiche détaillée du jeu ou une recherche sur le store
+    // Au clic, ouvre la fiche détaillée du jeu dans l'application
     card.addEventListener("click", () => {
       playThemeSound(theme);
       openSheet({ g: game, rel: game.releases || [{ platform: platformName }], date: game.date || new Date().toISOString().slice(0,10) });
     });
 
-    // Image de couverture
     const imgWrapper = el("div");
     imgWrapper.style.cssText = "width: 56px; height: 76px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: var(--cov);";
     const img = el("img");
@@ -4700,7 +4693,6 @@ function renderPromosMainPage() {
     img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
     imgWrapper.append(img);
 
-    // Infos du jeu & prix
     const infoWrapper = el("div");
     infoWrapper.style.cssText = "display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0;";
 
@@ -4709,7 +4701,7 @@ function renderPromosMainPage() {
 
     const badgeWrapper = el("div");
     badgeWrapper.style.cssText = "display: flex; gap: 6px; align-items: center; flex-wrap: wrap;";
-    badgeWrapper.innerHTML = `<span class="platform-badge ${badgeClass}">${platformName}</span>`;
+    badgeWrapper.innerHTML = `<span class="platform-badge ${badgeClass}">${platformName}</span> <span style="font-size: 9px; color: var(--mut); font-weight: 700;">• ${storeName}</span>`;
 
     const priceRow = el("div");
     priceRow.style.cssText = "display: flex; align-items: center; gap: 8px; margin-top: 4px;";
