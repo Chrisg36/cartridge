@@ -1252,7 +1252,26 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     </div>
     <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
-  
+
+<!-- 🏆 LA GRANDE PAGE TABLEAU DES SCORES -->
+  <div id="scoresMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🏆 TABLEAU DES SCORES & RECORDS</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="scoresPageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>🕹️ HALL OF FAME</span>
+        <span>RECORDS PERSONNELS</span>
+      </div>
+    </div>
+    <div id="scoresPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
+  </div>
+ 
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
@@ -1345,13 +1364,13 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <span>Arcade</span>
   </button>
 
-  <button class="nav-item" id="navEsport">
+<button class="nav-item" id="navScores">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
       <path d="M4 22h16M10 14.66V17c0 .55-.45 1-1 1H7M14 14.66V17c0 .55.45 1 1 1h2"></path>
       <path d="M18 4H6v7a6 6 0 0 0 12 0V4z"></path>
     </svg>
-    <span>Esport</span>
+    <span>Scores</span>
   </button>
 
   <button class="nav-item" id="navSettings">
@@ -3738,6 +3757,7 @@ function hideAllMainPages() {
   if (shopPage) shopPage.style.display = "none";
   if (vitrinePage) vitrinePage.style.display = "none";
   if (museumPage) museumPage.style.display = "none";
+  if (scoresPage) scoresPage.style.display = "none";
 }
 
 if (navHome) {
@@ -4420,12 +4440,17 @@ if (navArcadeRoom) {
   });
 }
 
-const navEsport = document.getElementById("navEsport");
-if (navEsport) {
-  navEsport.addEventListener("click", () => {
+const navScores = document.getElementById("navScores");
+if (navScores) {
+  navScores.addEventListener("click", () => {
     if (typeof playThemeSound === "function") playThemeSound(theme);
-    setActiveNav(navEsport);
-    showConstructionPage("Esport & Tournois", "🏆");
+    setActiveNav(navScores);
+    if (typeof closeSheet === "function") closeSheet();
+    
+    hideAllMainPages();
+    renderScoresMainPage(); // 👈 Ouvre le tableau des scores
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
@@ -4570,6 +4595,117 @@ function playCartridgeBreathSound() {
   }
 }
 
+let gameScores = JSON.parse(localStorage.getItem("gameScores") || "[]");
+
+function renderScoresMainPage() {
+  const scoresPage = document.getElementById("scoresMainPage");
+  if (!scoresPage) return;
+  
+  scoresPage.style.display = "block";
+  const contentArea = document.getElementById("scoresPageContent");
+  if (!contentArea) return;
+  contentArea.replaceChildren();
+
+  const coinSpan = document.getElementById("scoresPageCoins");
+  if (coinSpan) coinSpan.textContent = userCoins;
+
+  const banner = el("div", "shop-banner");
+  banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+
+  const headerDiv = el("div");
+  headerDiv.innerHTML = `
+    <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
+    <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
+  `;
+  banner.append(headerDiv);
+
+  // --- FORMULAIRE D'AJOUT DE SCORE ---
+  const formBox = el("div");
+  formBox.style.cssText = "background: rgba(15, 23, 42, 0.75); border: 1.5px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;";
+  
+  formBox.innerHTML = `
+    <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--txt); letter-spacing:1px;">ENREGISTRER UN NOUVEAU RECORD</b>
+    <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
+      <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
+    </div>
+  `;
+  banner.append(formBox);
+
+  // --- LISTE DES SCORES ENREGISTRÉS ---
+  const listContainer = el("div");
+  listContainer.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 10px;";
+
+  if (gameScores.length === 0) {
+    const empty = el("p", "msg", "Aucun score enregistré pour l'instant. Ajoutez votre premier record !");
+    listContainer.append(empty);
+  } else {
+    // Tri par ordre d'ajout ou selon les besoins
+    gameScores.forEach((s, index) => {
+      const row = el("div");
+      row.style.cssText = `
+        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+        border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      `;
+
+      row.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+          <span style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--acc);">#${index + 1}</span>
+          <div style="display: flex; flex-direction: column; min-width: 0;">
+            <b style="font-size:13px; font-weight:800; color:var(--txt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.game}</b>
+            <span style="font-size:9px; color:var(--mut); font-weight:700;">${s.date}</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:#22c55e; background:rgba(34,197,94,0.15); padding:4px 8px; border-radius:6px; border:1px solid rgba(34,197,94,0.3);">${s.score}</span>
+          <button class="btn-icon" data-index="${index}" style="width:32px; height:32px; background:rgba(239,68,68,0.15); color:#ef4444;" title="Supprimer">✕</button>
+        </div>
+      `;
+
+      // Bouton de suppression
+      const delBtn = row.querySelector("button");
+      delBtn.addEventListener("click", () => {
+        playThemeSound(theme);
+        gameScores.splice(index, 1);
+        try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+        renderScoresMainPage();
+      });
+
+      listContainer.append(row);
+    });
+  }
+
+  banner.append(listContainer);
+  contentArea.append(banner);
+
+  // Écouteur pour le bouton d'ajout
+  const saveBtn = banner.querySelector("#saveScoreBtn");
+  const gameInput = banner.querySelector("#scoreGameName");
+  const scoreInput = banner.querySelector("#scoreValue");
+
+  saveBtn.addEventListener("click", () => {
+    const gameName = gameInput.value.trim();
+    const scoreVal = scoreInput.value.trim();
+
+    if (!gameName || !scoreVal) {
+      alert("Veuillez remplir le nom du jeu et le score !");
+      return;
+    }
+
+    playThemeSound(theme);
+    gameScores.unshift({
+      game: gameName,
+      score: scoreVal,
+      date: new Date().toLocaleDateString()
+    });
+
+    try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+    renderScoresMainPage();
+  });
+}
+
+ 
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
 $("#search").addEventListener("input", (e) => {
