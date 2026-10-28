@@ -1346,96 +1346,71 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
     <div id="museumPageContent" style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;"></div>
   </div>
 
-/* --- STYLES RETRO GAME BOY SNAKE --- */
-.gb-console-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  width: 100%;
-}
-.gb-console {
-  background-color: var(--card);
-  border: 4px solid var(--acc);
-  border-radius: 12px 12px 40px 12px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 300px;
-}
-.gb-screen-lens {
-  background-color: #1a1a1a;
-  padding: 12px;
-  border-radius: 8px 8px 20px 8px;
-  box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
-  margin-bottom: 15px;
-}
-.gb-screen {
-  background-color: #9bbc0f;
-  width: 160px;
-  height: 144px;
-  border: 3px solid #0f380f;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  image-rendering: pixelated;
-}
-.gb-ui-overlay {
-  position: absolute;
-  top: 3px;
-  left: 6px;
-  right: 6px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 9px;
-  font-weight: bold;
-  color: #0f380f;
-  pointer-events: none;
-  font-family: 'Press Start 2P', monospace;
-  z-index: 5;
-}
-.gb-menu {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-color: #9bbc0f;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 10;
-}
-.gb-menu h1 {
-  font-size: 16px; color: #0f380f; margin: 0 0 8px 0;
-  font-family: 'Press Start 2P', monospace; text-shadow: 1px 1px #8bac0f;
-}
-.gb-menu button {
-  background-color: #0f380f; color: #9bbc0f; border: none;
-  padding: 5px 10px; margin: 3px; font-family: 'Press Start 2P', monospace;
-  font-size: 9px; cursor: pointer; width: 120px; text-transform: uppercase; font-weight: bold;
-  border-radius: 2px;
-}
-.gb-menu button:hover { background-color: #306230; }
-.gb-controls {
-  display: grid; grid-template-columns: repeat(3, 45px); grid-template-rows: repeat(3, 45px); gap: 4px; margin-bottom: 12px;
-}
-.gb-btn {
-  background-color: #333; border: none; border-radius: 50%; color: #fff; font-weight: bold;
-  cursor: pointer; box-shadow: 0 3px #111; display: flex; align-items: center; justify-content: center; font-size: 14px;
-}
-.gb-btn:active { box-shadow: 0 1px #111; transform: translateY(2px); }
-.gb-btn-up { grid-column: 2; grid-row: 1; }
-.gb-btn-left { grid-column: 1; grid-row: 2; }
-.gb-btn-right { grid-column: 3; grid-row: 2; }
-.gb-btn-down { grid-column: 2; grid-row: 3; }
-.gb-action-buttons { display: flex; gap: 12px; }
-.gb-action-btn {
-  background-color: #800; border: none; border-radius: 50%; width: 36px; height: 36px;
-  color: #fff; font-size: 9px; font-weight: bold; cursor: pointer; box-shadow: 0 3px #300;
-  font-family: 'Press Start 2P', monospace;
-}
-.gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
+<!-- 🕹️ LA GRANDE PAGE ARCADE // SNAKE GAME BOY -->
+  <div id="arcadeMainPage" style="display: none;">
+    <div class="sticky-header-container">
+      <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+        <div class="neon-logo" style="font-size: 11px; padding: 6px 8px; white-space: nowrap;">🕹️ SALLE ARCADE // SNAKE BOY</div>
+        <div class="nav" style="flex-shrink: 0;">
+          <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
+            🪙 <span id="arcadePageCoins">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="magazine-edition-banner">
+        <span>RETRO HANDHELD</span>
+        <span>GAME BOY EDITION</span>
+      </div>
+    </div>
+    
+    <div id="arcadePageContent" style="margin-top: 16px;">
+      <div class="gb-console-wrapper">
+        <div class="gb-console">
+          <div class="gb-screen-lens">
+            <div class="gb-screen" id="gbScreen">
+              <div class="gb-ui-overlay">
+                <span id="gbScoreText">SC:00</span>
+                <span id="gbHighScoreText">HI:00</span>
+              </div>
+              <canvas id="gbGameCanvas" width="160" height="144"></canvas>
+
+              <!-- Menus du jeu -->
+              <div id="gbMainMenu" class="gb-menu">
+                <h1>SNAKE BOY</h1>
+                <button onclick="startGbGame()">JOUER</button>
+                <button onclick="toggleGbOptions()">OPTIONS</button>
+              </div>
+
+              <div id="gbOptionsMenu" class="gb-menu" style="display: none;">
+                <h1>OPTIONS</h1>
+                <button id="gbPaletteBtn" onclick="toggleGbPalette()">PAL: VERT</button>
+                <button onclick="toggleGbOptions()">RETOUR</button>
+              </div>
+
+              <div id="gbGameOverMenu" class="gb-menu" style="display: none;">
+                <h1>GAME OVER</h1>
+                <p id="gbFinalScore" style="font-size:8px; color:#0f380f; margin:6px 0; font-family:'Press Start 2P',monospace;">SCORE: 0</p>
+                <button onclick="startGbGame()">REESSAYER</button>
+                <button onclick="showGbMainMenu()">MENU</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="gb-controls">
+            <button class="gb-btn gb-btn-up" onclick="setGbDir(0, -1)">▲</button>
+            <button class="gb-btn gb-btn-left" onclick="setGbDir(-1, 0)">◀</button>
+            <button class="gb-btn gb-btn-right" onclick="setGbDir(1, 0)">▶</button>
+            <button class="gb-btn gb-btn-down" onclick="setGbDir(0, 1)">▼</button>
+          </div>
+
+          <div class="gb-action-buttons">
+            <button class="gb-action-btn" onclick="toggleGbOptions()">OPT</button>
+            <button class="gb-action-btn" onclick="startGbGame()">STA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- 🎮 3. TON ACCUEIL NORMAL -->
   <div id="homeMainContent">
     <div class="sticky-header-container">
