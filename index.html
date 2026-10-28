@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#111318" id="themeMeta">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,6 +37,12 @@
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   
+body {
+    margin: 0; background-color: var(--bg); background-image: var(--pattern); color: var(--txt);
+    font-family: var(--font); padding-top: env(safe-area-inset-top); padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+    position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
   body.crt-enabled::after {
     content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
     background: linear-gradient(rgba(18, 16, 38, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 3px;
@@ -1184,44 +1190,10 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
-/* 🕹️ Témoin de scroll rétro sur le côté */
-#scroll-indicator-track {
-    position: fixed; right: 10px; top: 50%; transform: translateY(-50%);
-    width: 8px; height: 200px; background: rgba(255, 255, 255, 0.05);
-    border: 2px solid var(--border-retro, #2c3e50); border-radius: 4px; z-index: 1000;
-}
-#scroll-indicator-thumb {
-    width: 100%; height: 40px; background: var(--accent-gold, #f39c12);
-    border-radius: 2px; position: absolute; top: 0; box-shadow: 0 0 8px var(--accent-gold, #f39c12);
-    transition: top 0.1s ease-out;
-}
-
-/* 🗂️ Menu des paramètres en onglets */
-.nav-tabs {
-    display: flex; gap: 10px; background: var(--panel-bg, #181820);
-    padding: 10px; border-bottom: 2px solid var(--border-retro, #2c3e50);
-    justify-content: center; flex-wrap: wrap;
-}
-.tab-btn {
-    background: #22222e; color: var(--text-muted, #95a5a6);
-    border: 2px solid var(--border-retro, #2c3e50); padding: 8px 15px;
-    cursor: pointer; font-weight: bold; transition: all 0.2s;
-}
-.tab-btn.active {
-    background: var(--accent-gold, #f39c12); color: #000;
-    border-color: #fff; box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
-}
-.tab-content { display: none; }
-.tab-content.active { display: block; }
  
 </style>
 </head>
 <body>
-
-
- <div id="scroll-indicator-track">
-    <div id="scroll-indicator-thumb"></div>
-</div>
 
 <div class="crt-flash"></div>
 
@@ -1541,52 +1513,6 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 </nav>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Fiche du jeu"><div class="panel" id="panel"></div></div>
-
-<div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('collection')">Collection</button>
-    <button class="tab-btn" onclick="switchTab('shop')">Boutique & Avatars</button>
-    <button class="tab-btn" onclick="switchTab('profile')">Profil & Sécurité</button>
-    <button class="tab-btn" onclick="switchTab('legal')">Légal & Crédits</button>
-</div>
-
-<!-- Section Profil & Inscription Sécurisée -->
-<section id="profile" class="tab-content">
-    <div class="card-retro" style="background:#181820; border:3px solid #2c3e50; padding:20px; margin-bottom:20px;">
-        <h2>Espace Joueur & Sécurité</h2>
-        <form id="register-form" onsubmit="handleAuth(event)">
-            <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px;">Pseudo / Identifiant</label>
-                <input type="text" id="username" placeholder="Entre ton pseudo..." required style="width:100%; padding:10px; background:#0a0a0e; border:2px solid #2c3e50; color:#fff;">
-            </div>
-            <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px;">Mot de passe sécurisé</label>
-                <input type="password" id="password" placeholder="••••••••" required style="width:100%; padding:10px; background:#0a0a0e; border:2px solid #2c3e50; color:#fff;">
-            </div>
-            <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px;">Question de sécurité (récupération)</label>
-                <input type="text" id="recovery-q" placeholder="Nom de ton premier jeu ?" required style="width:100%; padding:10px; background:#0a0a0e; border:2px solid #2c3e50; color:#fff;">
-            </div>
-            <button type="submit" style="background:#3498db; color:#fff; border:2px solid #fff; padding:10px 20px; cursor:pointer; font-weight:bold;">Enregistrer / Mettre à jour</button>
-        </form>
-        <div style="margin-top:15px; display:flex; gap:15px; font-size:0.9rem;">
-            <a href="#" onclick="alert('Récupération de pseudo par question secrète')" style="color:#3498db;">Pseudo oublié ?</a>
-            <a href="#" onclick="alert('Réinitialisation par clé locale')" style="color:#f39c12;">Mot de passe oublié ?</a>
-        </div>
-    </div>
-</section>
-
-<!-- Section Légal & Copyright Original -->
-<section id="legal" class="tab-content">
-    <div class="card-retro" style="background:#181820; border:3px solid #2c3e50; padding:20px; font-size:0.85rem; line-height:1.5; color:#95a5a6;">
-        <h2 style="color:#3498db; margin-bottom:15px; font-size:1.2rem;">Mentions Légales & Propriété Intellectuelle</h2>
-        <p style="margin-bottom:10px;"><strong style="color:#fff;">1. Éditeur et Création Originale :</strong> L'application <em>Cartridge</em>, son architecture, son design et sa logique de gamification sont une <strong>création originale</strong> indépendante.</p>
-        <p style="margin-bottom:10px;"><strong style="color:#fff;">2. Données et Visuels (IGDB) :</strong> Les métadonnées et jaquettes sont sourcées via l'API <strong>IGDB (Twitch / Amazon)</strong> dans le cadre d'un projet non commercial de passionnés.</p>
-        <p style="margin-bottom:10px;"><strong style="color:#fff;">3. Hébergement :</strong> Hébergé de manière sécurisée sur le réseau mondial de <strong>Cloudflare, Inc.</strong></p>
-        <p><strong style="color:#fff;">4. Données Personnelles :</strong> Stockage local sécurisé (LocalStorage). Aucun traqueur publicitaire intrusif.</p>
-    </div>
-</section>
-
- 
 <script>
 let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
 let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
@@ -1931,15 +1857,14 @@ async function triggerRandomPackDraw(type, category = "standard") {
   fsOverlay.append(loadingWrapper);
   document.body.append(fsOverlay);
 
- let randomGame;
+  let randomGame;
   try {
     if (typeof API !== 'undefined') {
-      // 🎯 Liste d'années cultes garanties pour éviter les mois vides
-      const retroYears = [1985, 1987, 1989, 1991, 1993, 1995, 1996, 1997, 1998, 2001, 2004];
-      
       let targetYear;
-      if (category === "retro" || category === "supreme_retro") {
-        targetYear = retroYears[Math.floor(Math.random() * retroYears.length)];
+      if (category === "retro") {
+        targetYear = Math.floor(Math.random() * (2005 - 1985)) + 1985;
+      } else if (category === "supreme_retro") {
+        targetYear = Math.floor(Math.random() * (1998 - 1980)) + 1980;
       } else {
         targetYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
       }
@@ -1947,7 +1872,6 @@ async function triggerRandomPackDraw(type, category = "standard") {
       const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
       const res = await fetch(`${API}/?month=${targetYear}-${randomMonth}`);
       const data = await res.json();
-      
       if (Array.isArray(data) && data.length > 0) {
         randomGame = data[Math.floor(Math.random() * data.length)];
       }
@@ -1956,7 +1880,6 @@ async function triggerRandomPackDraw(type, category = "standard") {
     console.warn("Erreur réseau API, passage au cache local.", err);
   }
 
-  // 🛡️ SÉCURITÉ DE SECOURS : Si l'API renvoie du vide, on pioche dans le cache local ou on prend un classique garanti
   if (!randomGame) {
     const allLoadedGames = [];
     Object.values(cache).forEach(monthList => {
@@ -1967,14 +1890,14 @@ async function triggerRandomPackDraw(type, category = "standard") {
     }
   }
 
-  // 🛡️ CARTE DE SECOURS FIABLE (Image de jaquette propre et fonctionnelle)
   if (!randomGame) {
     randomGame = {
       id: Math.floor(Math.random() * 100000),
-      name: "Cartouche d'archive Rétro",
-      cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2foo.png" // Image de cartouche propre
+      name: "Jeu Rétro Légendaire",
+      cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
     };
   }
+
 if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
     // 🎯 SÉCURITÉ FINALE : On force la bonne catégorie selon le pack ouvert, peu importe l'année du jeu
     const typeCheck = (type + "").toLowerCase();
@@ -3028,9 +2951,9 @@ function itemsFor(games) {
     
     let rel = g.releases;
     if (currentFilter !== "Tous") {
+  
       rel = g.releases.filter((r) => {
-        // 🛡️ SÉCURITÉ : Si r.platform est absent ou undefined, on évite le crash
-        const plat = (r.platform || "").toLowerCase();
+        const plat = r.platform.toLowerCase();
         const filt = currentFilter.toLowerCase();
         
         if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
@@ -3144,7 +3067,49 @@ $("#viewModeBtn").addEventListener("click", () => {
   render();
 });
 
+function getIgdbConsoleImage(consoleName) {
+  const igdbMap = {
+    // --- NINTENDO ---
+    "Nintendo Switch 2": "co1r7f",
+    "Nintendo Switch": "co1r7f",
+    "Wii U": "co1vcf",
+    "Wii": "co1vcf",
+    "GameCube": "co1x7c",
+    "Nintendo 64": "co1x7c",
+    "Super Nintendo": "co1x7c",
+    "NES": "co1x7c",
+    "Nintendo 3DS": "co2918",
+    "Nintendo DS": "co2918",
+    "Game Boy Advance": "co2918",
+    "Game Boy Color": "co2918",
+    "Game Boy": "co2918",
 
+    // --- SONY ---
+    "PlayStation 5": "co1vcf",
+    "PlayStation 4": "co1tr8",
+    "PlayStation 3": "co1tr8",
+    "PlayStation 2": "co1tr8",
+    "PlayStation": "co1tr8",
+    "PS Vita": "co2918",
+    "PSP": "co2918",
+
+    // --- SEGA ---
+    "Dreamcast": "co2918",
+    "Saturn": "co2918",
+    "Mega Drive": "co2918",
+    "Master System": "co2918",
+    "Game Gear": "co2918",
+
+    // --- MICROSOFT ---
+    "Xbox Series X": "co2e23",
+    "Xbox One": "co2e23",
+    "Xbox 360": "co2e23",
+    "Xbox": "co2e23"
+  };
+
+  const imageId = igdbMap[consoleName];
+  return imageId ? `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg` : "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
+}
 function renderMuseumAndVitrinePage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
@@ -4843,60 +4808,23 @@ function importCartridgeSave() {
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target.result);
+        if (data.userCoins !== undefined) userCoins = data.userCoins;
+        if (data.myCollection) myCollection = data.myCollection;
+        if (data.favorites) favorites = data.favorites;
         
-        // 🛡️ VALIDATION DE LA STRUCTURE DU FICHIER DE SAUVEGARDE
-        if (!data || typeof data !== "object") {
-          throw new Error("Format de sauvegarde invalide.");
-        }
-
-        // Vérification des types pour chaque propriété critique
-        if (data.userCoins !== undefined && (typeof data.userCoins !== "number" || isNaN(data.userCoins))) {
-          throw new Error("Valeur de crédits corrompue.");
-        }
-        
-        if (data.myCollection !== undefined && !Array.isArray(data.myCollection)) {
-          throw new Error("Format de la collection invalide.");
-        }
-        
-        if (data.favorites !== undefined && !Array.isArray(data.favorites)) {
-          throw new Error("Format des favoris invalide.");
-        }
-
-        // 💾 Application sécurisée des données validées
-        if (data.userCoins !== undefined) {
-          userCoins = data.userCoins;
-          localStorage.setItem("userCoins", userCoins);
-        }
-        
-        if (data.myCollection !== undefined) {
-          myCollection = data.myCollection;
-          localStorage.setItem("myCollection", JSON.stringify(myCollection));
-        }
-        
-        if (data.favorites !== undefined) {
-          favorites = data.favorites;
-          localStorage.setItem("favorites", JSON.stringify(favorites));
-        }
-
-        if (data.theme && typeof data.theme === "string") {
-          theme = applyTheme(data.theme);
-          localStorage.setItem("theme", theme);
-        }
+        localStorage.setItem("userCoins", userCoins);
+        localStorage.setItem("myCollection", JSON.stringify(myCollection));
+        localStorage.setItem("favorites", JSON.stringify(favorites));
         
         updateCoinsUI();
-        render(); // Actualise l'affichage si besoin
-        
-        alert("✅ Sauvegarde (.sav) importée et vérifiée avec succès ! Bon retour collectionneur.");
+        alert("✅ Sauvegarde (.sav) importée avec succès ! Bon retour collectionneur.");
         openSettings();
-        
       } catch (err) {
-        console.warn("Échec de l'importation de la sauvegarde :", err);
-        alert("❌ Erreur : Ce fichier de sauvegarde est corrompu, illisible ou invalide. Votre collection actuelle n'a pas été modifiée.");
+        alert("❌ Erreur lors de l'importation du fichier de sauvegarde.");
       }
     };
     reader.readAsText(file);
@@ -5047,52 +4975,6 @@ function renderScoresMainPage() {
     renderScoresMainPage();
   });
 }
-
-
-// Gestion des onglets
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    
-    const target = document.getElementById(tabId);
-    if (target) target.classList.add('active');
-    if (event && event.target) event.target.classList.add('active');
-}
-
-// Témoin de scroll latéral dynamique
-window.addEventListener('scroll', () => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const track = document.getElementById('scroll-indicator-track');
-    const thumb = document.getElementById('scroll-indicator-thumb');
-    if (docHeight > 0 && track && thumb) {
-        const scrollPercent = scrollTop / docHeight;
-        const trackHeight = track.clientHeight - 40;
-        thumb.style.top = (scrollPercent * trackHeight) + 'px';
-    }
-});
-
-// Authentification locale
-function handleAuth(e) {
-    e.preventDefault();
-    const pseudo = document.getElementById('username').value;
-    localStorage.setItem('cartridge_user', pseudo);
-    const display = document.getElementById('user-display');
-    if (display) display.innerText = pseudo;
-    alert('Profil enregistré avec succès ! 🎉');
-}
-
-// Chargement initial du profil
-window.addEventListener('load', () => {
-    const savedUser = localStorage.getItem('cartridge_user');
-    if (savedUser) {
-        const usernameInput = document.getElementById('username');
-        const userDisplay = document.getElementById('user-display');
-        if (usernameInput) usernameInput.value = savedUser;
-        if (userDisplay) userDisplay.innerText = savedUser;
-    }
-});
-
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
