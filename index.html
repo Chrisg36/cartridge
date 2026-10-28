@@ -2953,7 +2953,7 @@ function itemsFor(games) {
     if (currentFilter !== "Tous") {
   
       rel = g.releases.filter((r) => {
-        const plat = r.platform.toLowerCase();
+        const plat = (r.platform || "").toLowerCase();
         const filt = currentFilter.toLowerCase();
         
         if (filt === "playstation 5" || filt === "ps5") return plat === "playstation 5" || plat === "ps5";
