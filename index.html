@@ -4953,6 +4953,40 @@ async function renderAnimeMainPage() {
   banner.append(grid);
   contentArea.append(banner);
 }
+
+
+// --- CORRECTION CLÉ DE LA NAVBAR ANIMES ---
+document.addEventListener("DOMContentLoaded", () => {
+  const navAnimes = document.getElementById("navAnimes");
+  if (navAnimes) {
+    navAnimes.addEventListener("click", () => {
+      if (typeof playThemeSound === "function") playThemeSound(theme);
+      if (typeof setActiveNav === "function") setActiveNav(navAnimes);
+      if (typeof closeSheet === "function") closeSheet();
+      
+      // Masque toutes les autres pages
+      if (typeof hideAllMainPages === "function") {
+        hideAllMainPages();
+      } else {
+        // Sécurité si la fonction globale n'est pas dispo
+        document.querySelectorAll("main > div").forEach(d => d.style.display = "none");
+      }
+
+      // Affiche la page Animes
+      const animePage = document.getElementById("animeMainPage");
+      if (animePage) {
+        animePage.style.display = "block";
+      }
+
+      // Lance le rendu des animés
+      if (typeof renderAnimeMainPage === "function") {
+        renderAnimeMainPage();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+});
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
 let searchTimeout;
