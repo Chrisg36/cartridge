@@ -3752,12 +3752,13 @@ function hideAllMainPages() {
   const shopPage = document.getElementById("shopMainPage");
   const vitrinePage = document.getElementById("vitrineMainPage");
   const museumPage = document.getElementById("museumMainPage");
+  const scoresPage = document.getElementById("scoresMainPage"); // 👈 Déclaration correcte
 
   if (homeContent) homeContent.style.display = "none";
   if (shopPage) shopPage.style.display = "none";
   if (vitrinePage) vitrinePage.style.display = "none";
   if (museumPage) museumPage.style.display = "none";
-  if (scoresPage) scoresPage.style.display = "none";
+  if (scoresPage) scoresPage.style.display = "none"; // 👈 Utilisation correcte
 }
 
 if (navHome) {
