@@ -4947,7 +4947,7 @@ function renderShopMainPage() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
 
-  const btnShop = el("button", "chip", "🏬 Boutique (Bientôt)");
+  const btnShop = el("button", "chip", "🏬 Boutique Thèmes");
   const btnPacks = el("button", "chip", "🎟️ Packs Mystères");
   const btnChallenges = el("button", "chip", "🎯 Défis & Quêtes");
 
@@ -4960,21 +4960,73 @@ function renderShopMainPage() {
   const displayBox = el("div");
   displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
 
+  // --- CONTENU 1 : BOUTIQUE DE THÈMES (AVEC DEATH NOTE DISPONIBLE À L'ACHAT) ---
   function showMainShop() {
     btnShop.setAttribute("aria-pressed", "true");
     btnPacks.setAttribute("aria-pressed", "false");
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
-    const constructionBanner = el("div", "shop-banner");
-    constructionBanner.style.cssText = "border-style:dashed; padding:40px 20px; text-align:center;";
-    constructionBanner.innerHTML = `
-      <h3 style="font-size:24px; margin-bottom:12px;">🚧 BOUTIQUE EN CONSTRUCTION 🚧</h3>
-      <p style="font-size:14px; font-weight:600; line-height:1.6; color:var(--mut); max-width:600px; margin:0 auto;">
-        C'est ici que tu pourras bientôt dépenser tes crédits 🪙 pour débloquer des thèmes exclusifs et des bonus uniques !
-      </p>
+
+    const banner = el("div", "shop-banner");
+    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; text-align: center; padding: 20px;";
+
+    banner.innerHTML = `
+      <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:2px;">🏬 Boutique d'Ambiance & Thèmes</h3>
+      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
     `;
-    displayBox.append(constructionBanner);
+
+    // 🍎 Carte du Thème Death Note
+    const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+
+    const shopThemeCard = el("div", "shop-pack-card");
+    shopThemeCard.style.cssText = `
+      background: linear-gradient(135deg, #151515 0%, #050505 100%);
+      border: 2px solid ${isThemeUnlocked ? '#22c55e' : '#ffffff'}; 
+      border-radius: 16px; padding: 20px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.15);
+      width: 100%; max-width: 320px; margin: 0 auto;
+    `;
+
+    shopThemeCard.innerHTML = `
+      <div style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1.5px;">
+        🍎 Édition Death Note
+      </div>
+      <p style="font-size:11px; color:var(--mut); margin:0; line-height: 1.4;">
+        Ambiance grimoire sombre, filigranes "How to Use It" et plumes de Shinigami volantes.
+      </p>
+      <div style="font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; color:${isThemeUnlocked ? '#22c55e' : '#ef4444'};">
+        ${isThemeUnlocked ? "✅ DÉBLOQUÉ" : "150 🪙"}
+      </div>
+    `;
+
+    const actionBtn = el("button", "cta", isThemeUnlocked ? "Activer le Thème" : "Acheter (150 Crédits)");
+    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; width:100%; margin-top:4px;";
+
+    actionBtn.onclick = (e) => {
+      e.stopPropagation();
+      playThemeSound(theme);
+      
+      if (!isThemeUnlocked) {
+        if (userCoins < 150) {
+          showRetroAlert("Crédits insuffisants", "❌ Il vous faut 150 🪙 pour acquérir le thème Death Note !", true);
+          return;
+        }
+        userCoins -= 150;
+        updateCoinsUI();
+        localStorage.setItem("unlocked_deathnote", "true");
+        showRetroAlert("Achat réussi !", "🎉 Le thème Death Note est désormais débloqué et disponible dans vos paramètres !");
+        showMainShop(); // Actualise l'affichage de la boutique
+      } else {
+        toggleDeathNoteTheme(true);
+        showRetroAlert("Thème Actif", "📓 L'édition Death Note est activée !");
+      }
+    };
+
+    shopThemeCard.append(actionBtn);
+    banner.append(shopThemeCard);
+    displayBox.append(banner);
   }
 
   function showPacks() {
@@ -4983,10 +5035,7 @@ function renderShopMainPage() {
     btnChallenges.setAttribute("aria-pressed", "false");
 
     displayBox.replaceChildren();
-
-   // Dans showPacks(), lors de la création des boosterCard :
-    const boosterCard = el("div", "booster-shop-card card-holo-effect");
-   
+    
     const banner = el("div", "shop-banner");
     banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
 
@@ -5262,7 +5311,7 @@ function renderShopMainPage() {
 
   subNav.append(btnShop, btnPacks, btnChallenges);
   contentArea.append(subNav, displayBox);
-  showMainShop(); // Ouvre par défaut sur la boutique (ou showPacks si tu préfères)
+  showMainShop(); // Ouvre par défaut sur la boutique de thèmes
 }
 function buyAndOpenPack(cost, typeName, category) {
   playThemeSound(theme);
@@ -6162,12 +6211,22 @@ const bgOptions = [
     };
     modernGrid.append(b);
   });
-  // 🍎 AJOUTE CE MORCEAU ICI :
-  const dnBtn = el("button", "theme-mini-btn", "Death Note");
-  const dnDot = el("span", "dot"); dnDot.style.background = "#ef4444"; dnDot.innerHTML = "🍎";
+const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+  
+  const dnBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnDot = el("span", "dot"); 
+  dnDot.style.background = isUnlocked ? "#ef4444" : "#444"; 
+  dnDot.innerHTML = "🍎";
   dnBtn.prepend(dnDot);
+  
   dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  
   dnBtn.onclick = () => {
+    if (!isUnlocked) {
+      playThemeSound(theme);
+      showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
+      return;
+    }
     toggleDeathNoteTheme(true);
     playThemeSound(theme);
     openSettingsMainPage();
