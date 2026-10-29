@@ -111,11 +111,7 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.8px;
- .theme-mini-btn, .grid-title, .t b {
-  white-space: normal !important;
-  word-break: break-word;
-  line-height: 1.2;
-}
+  white-space: nowrap;
   line-height: 1.2;
   display: inline-flex;
   align-items: center;
@@ -1809,31 +1805,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     pointer-events: none;
     z-index: 9999;
   }
-
-/* Pour les titres des défis, les cartes et les boutons : retour à la ligne automatique */
-.shop-banner div span, 
-.settings-section-title, 
-.grid-title, 
-.t b,
-.theme-mini-btn {
-  white-space: normal !important;
-  word-break: break-word;
-  line-height: 1.25;
-}
-
-/* 2. Pour le bouton du thème Death Note ou les boutons de la grille (deuxième image) */
-.theme-mini-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  overflow-x: auto; /* Permet de scroller horizontalement si le texte dépasse dans la bulle */
-  scrollbar-width: none; /* Cache la barre sous iOS / Firefox */
-}
-.theme-mini-btn::-webkit-scrollbar {
-  display: none; /* Cache la barre sous Safari iOS */
-}
-
   
 </style>
 </head>
@@ -2418,15 +2389,13 @@ tabChallenges.innerHTML = `
       }
     ];
 
- challengesList.forEach(item => {
-      const row = el("div");
+          const row = el("div");
       row.style.cssText = `
         display: flex; flex-direction: column; gap: 10px;
         background: rgba(15, 23, 42, 0.6); border: 1.5px solid color-mix(in srgb, var(--acc) 25%, transparent);
         border-radius: 12px; padding: 14px;
       `;
 
-      // 1. ÉTAGE DU HAUT : Icône + Titre + Description
       const topPart = el("div");
       topPart.style.cssText = "display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;";
 
@@ -2438,7 +2407,7 @@ tabChallenges.innerHTML = `
       textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.2; width: 100%;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
 
       const descEl = el("span", "", item.desc);
       descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break: break-word;";
@@ -2446,7 +2415,6 @@ tabChallenges.innerHTML = `
       textInfo.append(titleEl, descEl);
       topPart.append(iconBox, textInfo);
 
-      // 2. ÉTAGE DU BAS : Récompense à gauche et Bouton à droite
       const bottomPart = el("div");
       bottomPart.style.cssText = "display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 2px;";
 
@@ -2483,9 +2451,8 @@ tabChallenges.innerHTML = `
 
       bottomPart.append(rewardBadge, statusBtn);
       row.append(topPart, bottomPart);
-      banner.append(row);
     });
-    contentArea.append(banner);
+  }
 
   // Écouteurs d'onglets
   tabShop.addEventListener("click", () => { playThemeSound(theme); renderShopTab(); });
@@ -2532,7 +2499,7 @@ async function triggerRandomPackDraw(type, category = "standard") {
   `;
 
   const loadText = el("p", "", "DÉCRYPTAGE DU FLUX DE DONNÉES EN COURS...");
-  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
+  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
 
   loadingWrapper.append(boosterVisual, loadText);
   fsOverlay.append(loadingWrapper);
@@ -2626,7 +2593,7 @@ if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
     <div style="width:72px; height:72px; border-radius:16px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px var(--acc); margin-bottom:14px;">
       <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:24px; color:var(--on);">CR</span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
+    <div style="font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
   `;
 
   const cardBack = el("div", "fs-card-back");
@@ -2635,7 +2602,7 @@ if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
   img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
 
   const cardTitle = el("div", "", randomGame.name);
-  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
+  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
 
   cardBack.append(img, cardTitle);
   flipper.append(cardFront, cardBack);
@@ -4332,13 +4299,8 @@ try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
 function openSettings() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  if (!p) return;
-
-  p.className = "panel settings-panel";
-  p.replaceChildren(); 
-  p.append(el("h2", "", t('settingsTitle')));
+  openSettingsMainPage();
+}
 
   // --- NAVIGATION PAR ONGLETS DANS LES RÉGLAGES ---
   const tabNav = el("div");
@@ -4490,20 +4452,20 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   secProfile.innerHTML += `
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
         <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
       </div>
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
         <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
       </div>
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
       <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
     </form>
-    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:8.5px;">
    <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
 <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
   `;
@@ -4995,7 +4957,7 @@ function renderShopMainPage() {
 
     banner.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:2px;">🏬 Boutique d'Ambiance & Thèmes</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
+      <p style="font-size:8.5px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
     `;
 
     // 🍎 Carte du Thème Death Note
@@ -5015,7 +4977,7 @@ function renderShopMainPage() {
       <div style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1.5px;">
         🍎 Édition Death Note
       </div>
-      <p style="font-size:11px; color:var(--mut); margin:0; line-height: 1.4;">
+      <p style="font-size:8.5px; color:var(--mut); margin:0; line-height: 1.4;">
         Ambiance grimoire sombre, filigranes "How to Use It" et plumes de Shinigami volantes.
       </p>
       <div style="font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; color:${isThemeUnlocked ? '#22c55e' : '#ef4444'};">
@@ -5024,7 +4986,7 @@ function renderShopMainPage() {
     `;
 
     const actionBtn = el("button", "cta", isThemeUnlocked ? "Activer le Thème" : "Acheter (150 Crédits)");
-    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; width:100%; margin-top:4px;";
+    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; width:100%; margin-top:4px;";
 
     actionBtn.onclick = (e) => {
       e.stopPropagation();
@@ -5064,7 +5026,7 @@ function renderShopMainPage() {
     const headerTitle = el("div");
     headerTitle.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
+      <p style="font-size:8.5px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
     banner.append(headerTitle);
 
@@ -5133,7 +5095,7 @@ function renderShopMainPage() {
       headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
       headerBox.innerHTML = `
         <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
-        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
+        <div style="font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
       `;
 
       const centerArt = el("div");
@@ -5149,7 +5111,7 @@ function renderShopMainPage() {
 
       const buyBtn = el("button", "", cfg.price);
       buyBtn.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
+        font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; padding:10px 14px; border-radius:10px;
         background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
         box-shadow: 0 0 15px ${cfg.color}; z-index:2; letter-spacing:1px;
       `;
@@ -5249,35 +5211,35 @@ function renderShopMainPage() {
     challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
-        display: flex; align-items: center; justify-content: space-between;
-        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 12px 16px; gap: 12px;
+        display: flex; flex-direction: column; gap: 10px;
+        background: rgba(15, 23, 42, 0.6); border: 1.5px solid color-mix(in srgb, var(--acc) 25%, transparent);
+        border-radius: 12px; padding: 14px;
       `;
 
-     const leftGroup = el("div");
-     leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
+      const topPart = el("div");
+      topPart.style.cssText = "display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;";
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
+      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break: break-word;";
 
       textInfo.append(titleEl, descEl);
-      leftGroup.append(iconBox, textInfo);
+      topPart.append(iconBox, textInfo);
 
-      const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
+      const bottomPart = el("div");
+      bottomPart.style.cssText = "display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 2px;";
 
       const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 15%, transparent); padding:4px 10px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
@@ -5285,18 +5247,10 @@ function renderShopMainPage() {
 
       if (isClaimed) {
         statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
-          cursor: default; white-space: nowrap;
-        `;
+        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); cursor: default; white-space: nowrap;";
       } else if (item.isDone) {
         statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
-          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
-          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
-        `;
+        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; padding:6px 14px; border-radius:6px; background: var(--acc); color: var(--on); border: 1px solid var(--acc); cursor: pointer; white-space: nowrap; box-shadow: 0 0 10px var(--acc);";
         statusBtn.addEventListener("click", () => {
           if (!cData.claimedRewards) cData.claimedRewards = {};
           cData.claimedRewards[item.id] = true;
@@ -5312,15 +5266,11 @@ function renderShopMainPage() {
         });
       } else {
         statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
-          cursor: default; white-space: nowrap;
-        `;
+        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent); cursor: default; white-space: nowrap;";
       }
 
-      rightGroup.append(rewardBadge, statusBtn);
-      row.append(leftGroup, rightGroup);
+      bottomPart.append(rewardBadge, statusBtn);
+      row.append(topPart, bottomPart);
       banner.append(row);
     });
 
@@ -5572,7 +5522,7 @@ function renderArcadeMainPage() {
       <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
       <div style="display:flex; gap:8px;">
         <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
-        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
+        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:8.5px;">AJOUTER</button>
       </div>
     `;
     banner.append(formBox);
@@ -5860,7 +5810,7 @@ function renderScoresMainPage() {
     <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
     <div style="display:flex; gap:8px;">
       <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
-      <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
+      <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:8.5px;">AJOUTER</button>
     </div>
   `;
   banner.append(formBox);
@@ -6128,7 +6078,7 @@ function updateUserBadge() {
             ${initial}
             <span class="player-status-dot"></span>
           </div>
-          <span style="font-weight:800; font-size:11px;">${savedUser}</span>
+          <span style="font-weight:800; font-size:8.5px;">${savedUser}</span>
         </div>
       `;
     } else {
@@ -6386,20 +6336,20 @@ function openSettingsMainPage() {
   secProfile.innerHTML += `
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
         <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
       </div>
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
         <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
       </div>
       <div>
-        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
       <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
     </form>
-    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:8.5px;">
       <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
       <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
     </div>
@@ -6776,12 +6726,6 @@ window.addEventListener('scroll', () => {
 });
 </script>
 
-<!-- 🕹️ Jauge latérale rétro de progression -->
-<div id="scroll-indicator-track">
-  <div id="scroll-indicator-thumb"></div>
-</div>
- <script> 
 load();
-</script>
 </body>
 </html>
