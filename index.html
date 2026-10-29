@@ -14,13 +14,6 @@
 <title>Cartridge</title>
 <style>
 
-<script>
-  // Redirection automatique vers la version PC si l'écran est grand (type ordinateur)
-  if (window.innerWidth >= 900) {
-    window.location.href = "cartridge_desktop_master.html";
-  }
-</script>
-  
 html {
   /* Empêche les micro-sauts de scroll élastique sous Safari */
   overscroll-behavior-y: none;
@@ -1860,6 +1853,168 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   #list { padding-top: 10px; }
 
   [data-theme="nes"] .app-bg-cartridges, [data-theme="snes"] .app-bg-cartridges, [data-theme="ps1"] .app-bg-cartridges, [data-theme="n64"] .app-bg-cartridges, [data-theme="dreamcast"] .app-bg-cartridges, [data-theme="gamecube"] .app-bg-cartridges, [data-theme="arcade"] .app-bg-cartridges, [data-theme="atari"] .app-bg-cartridges, [data-theme="dos"] .app-bg-cartridges, [data-theme="megadrive"] .app-bg-cartridges, [data-theme="gameboy"] .app-bg-cartridges, [data-theme="gameboy-dark"] .app-bg-cartridges { display: none !important; }
+
+/* 🖥️ STYLES SPÉCIFIQUES PC / DESKTOP PRO (MODE APPLICATION DE BUREAU) */
+@media (min-width: 900px) {
+  body {
+    padding-bottom: 0 !important;
+    padding-left: 280px !important; /* Laisse la place pour la sidebar de bureau */
+  }
+
+  /* Barre de navigation latérale de bureau (Sidebar) */
+  .bottom-nav {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    right: auto !important;
+    width: 280px !important;
+    height: 100vh !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    padding: 30px 16px !important;
+    background: color-mix(in srgb, var(--bg) 95%, #000) !important;
+    border-top: none !important;
+    border-right: 1px solid color-mix(in srgb, var(--acc) 30%, transparent) !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5) !important;
+    gap: 12px !important;
+    z-index: 200 !important;
+  }
+
+  .bottom-nav .nav-item {
+    flex: 0 0 48px !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding: 0 16px !important;
+    border-radius: var(--radius) !important;
+    gap: 14px !important;
+    background: var(--card) !important;
+    border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent) !important;
+  }
+
+  .bottom-nav .nav-item span {
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px !important;
+  }
+
+  .bottom-nav .nav-item.active {
+    background: var(--acc) !important;
+    color: var(--on) !important;
+    border-color: #fff !important;
+    box-shadow: 0 0 18px var(--acc) !important;
+  }
+
+  .bottom-nav .nav-item.active svg {
+    stroke: var(--on) !important;
+    transform: scale(1.15) !important;
+  }
+
+  .bottom-nav .nav-item.active::before {
+    display: none !important;
+  }
+
+  /* Logo brand dans la sidebar PC */
+  .desktop-sidebar-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #fff;
+    text-shadow: 0 0 12px var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 10px;
+  }
+
+  main {
+    max-width: 1400px !important;
+    padding: 40px 50px !important;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  .vitrine-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+
+/* --- 🌟 ENHANCED DESKTOP PRO & CREATIVE LAYOUT --- */
+@media (min-width: 900px) {
+  body {
+    background-attachment: fixed !important;
+  }
+
+  /* Sidebar de bureau ultra-stylisée style station de travail cyberpunk */
+  .bottom-nav {
+    background: linear-gradient(180deg, rgba(11, 15, 26, 0.95) 0%, rgba(5, 7, 12, 0.98) 100%) !important;
+    backdrop-filter: blur(25px) !important;
+    -webkit-backdrop-filter: blur(25px) !important;
+    border-right: 2px solid color-mix(in srgb, var(--acc) 40%, transparent) !important;
+    box-shadow: 15px 0 50px rgba(0,0,0,0.8), inset -2px 0 15px color-mix(in srgb, var(--acc) 15%, transparent) !important;
+  }
+
+  .desktop-sidebar-brand {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 25%, var(--card)) 0%, var(--card) 100%);
+    border: 1.5px solid var(--acc);
+    border-radius: var(--radius);
+    padding: 14px !important;
+    justify-content: center;
+    box-shadow: 0 0 20px color-mix(in srgb, var(--acc) 40%, transparent);
+    margin-bottom: 20px !important;
+  }
+
+  /* Boutons de la sidebar enrichis */
+  .bottom-nav .nav-item {
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bottom-nav .nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--acc);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .bottom-nav .nav-item:hover {
+    transform: translateX(4px);
+    border-color: var(--acc) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 12px color-mix(in srgb, var(--acc) 30%, transparent) !important;
+  }
+
+  .bottom-nav .nav-item:hover::before {
+    opacity: 1;
+  }
+
+  /* Effet de conteneur principal type dashboard pro */
+  main {
+    background: rgba(17, 19, 24, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    margin: 30px auto 40px calc(280px + 30px);
+    width: calc(100% - 310px) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2154,7 +2309,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
 <!-- 📱 NAVIGATION PRINCIPALE (BOTTOM BAR) -->
+
 <nav class="bottom-nav">
+  <div class="desktop-sidebar-brand" style="display: none;" id="sidebarBrand">
+    <svg class="retro-icon" viewBox="0 0 24 24" fill="none" style="width:24px; height:24px;"><path d="M4 2H17L21 6V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V3C3 2.45 3.45 2 4 2Z" fill="#181B22" stroke="var(--acc)" stroke-width="1.8"/><rect x="6.5" y="6" width="10" height="9" rx="1.5" fill="rgba(255,122,69,0.25)" stroke="var(--acc)" stroke-width="1.2"/></svg>
+    CARTRIDGE
+  </div>
+
   <button class="nav-item active" id="navHome">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -6896,6 +7057,16 @@ window.f12 = function() {
 
 <script>
 load();
+
+window.addEventListener('resize', checkDesktopSidebarBrand);
+window.addEventListener('DOMContentLoaded', checkDesktopSidebarBrand);
+function checkDesktopSidebarBrand() {
+  const brand = document.getElementById('sidebarBrand');
+  if (brand) {
+    brand.style.display = window.innerWidth >= 900 ? 'flex' : 'none';
+  }
+}
 </script>
+
 </body>
 </html>
