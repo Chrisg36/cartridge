@@ -70,102 +70,28 @@ body {
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
 /* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
-/* 🍏 EN-TÊTE FIXE SUPRÊME (RESTE TOUJOURS ACCESSIBLE EN HAUT) */
-/* 🍏 EN-TÊTE FIXE ULTIME ET STABLE */
-/* 🍏 EN-TÊTE STICKY UNIFIÉ ET PARFAIT POUR TOUTES LES PAGES */
-/* 🍏 EN-TÊTE FIXE UNIFIÉ POUR TOUTES LES PAGES SANS EXCEPTION */
-/* 🍏 EN-TÊTE NORMAL (SCROLLE NATURELLEMENT COMME BOUTIQUE ET PROFIL) */
-/* 🍏 EN-TÊTE FIXE UNIFIÉ (NE DISPARAÎT JAMAIS QUAND ON SCROLE) */
-/* 🍏 EN-TÊTE EN FLUX NORMAL (RESTE EN PLACE AU DÉBUT ET SCROLLE AVEC LA PAGE) */
-/* 🍏 EN-TÊTE FIXE UNIFIÉ (NE DÉFILE PAS / RESTE ANCRÉ EN HAUT QUAND ON SCROLE) */
 .sticky-header-container {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 1000 !important;
-  background: color-mix(in srgb, var(--bg) 96%, transparent) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  padding-top: calc(env(safe-area-inset-top, 20px) + 8px) !important;
-  padding-bottom: 10px !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
-  margin: 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
-  box-sizing: border-box !important;
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  /* 🍏 Dégagement sous la Dynamic Island / encoche */
+  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
+  padding-bottom: 8px;
+  margin: 0 -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
-
-/* Espace sous l'en-tête fixe pour éviter que le contenu ne passe dessous */
-main {
-  padding-top: 175px !important;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
-
-/* Pas de padding excessif sur main pour permettre un scroll fluide et normal */
-main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-
-/* Espace sous l'en-tête fixe pour toutes les pages */
-main {
-  padding-top: 175px !important;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
-
-/* Suppression de tout padding-top forcé sur main */
-main {
-  padding-top: 16px !important;
-}
-
-/* Espace universel sous l'en-tête fixe pour toutes les pages */
-main {
-  padding-top: 180px !important;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-  main {
-    padding-top: 170px !important;
-  }
-}
-
-/* Espace sous l'en-tête fixe pour chaque page principale afin qu'aucun jeu ne soit caché */
-
-
-/* 🍏 Espace sous l'en-tête fixe pour chaque page principale */
-
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
-
-
 
 .header-top {
   display: flex;
@@ -1369,35 +1295,16 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
  /* 🕹️ Témoin de scroll latéral rétro */
-/* 🕹️ Témoin de scroll latéral rétro interactif */
 #scroll-indicator-track {
-  position: fixed;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 200px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1.5px solid var(--acc);
-  border-radius: 4px;
-  z-index: 1000;
-  cursor: pointer;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 10px color-mix(in srgb, var(--acc) 30%, transparent);
-  overflow: hidden;
+  position: fixed; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 220px; background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid var(--acc); border-radius: 4px; z-index: 1000;
+  pointer-events: none;
 }
 #scroll-indicator-thumb {
-  width: 100%;
-  height: 35px;
-  background: var(--acc);
-  border-radius: 2px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-shadow: 0 0 10px var(--acc);
-  cursor: grab;
-}
-#scroll-indicator-thumb:active {
-  cursor: grabbing;
+  width: 100%; height: 35px; background: var(--acc); border-radius: 2px;
+  position: absolute; top: 0; box-shadow: 0 0 10px var(--acc);
+  transition: top 0.08s ease-out;
 }
 
 /* 🗂️ Système d'onglets pour la modale Réglages */
@@ -2016,9 +1923,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
         <span><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 6px var(--acc); margin-right:4px;"></span>COLLECTOR EDITION</span>
         <span id="editionDateBadge">MONTHLY RELEASES</span>
       </div>
-    </div>
 
-    <div class="home-interactive-body" style="margin-top: 14px;">
       <div class="header-bottom">
         <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
           <input type="month" id="dateSelect" min="1970-01" max="2999-12">
@@ -2033,24 +1938,26 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
         </div>
       </div>
 
-      <div class="filter-bar-container">
-        <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
-        
-        <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          <span>Favoris</span>
-        </button>
+<div class="filter-bar-container">
+  <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
+  
+  <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    <span>Favoris</span>
+  </button>
 
-        <button class="chip" id="viewModeBtn" aria-label="Changer de vue" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        </button>
+  <!-- 🕹️ Bouton Vue (Grille/Liste) aligné ici -->
+  <button class="chip" id="viewModeBtn" aria-label="Changer de vue" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+  </button>
 
-        <button class="chip" id="shareBtn" aria-label="Partager" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        </button>
-      </div>
-      <input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
-      <div id="list"><div id="list"></div>
+  <!-- 📤 Bouton Partager aligné ici -->
+  <button class="chip" id="shareBtn" aria-label="Partager" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+  </button>
+</div>
+<input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
+<div id="list"></div>
 </div>
 </main>
 
@@ -6478,54 +6385,6 @@ window.addEventListener('scroll', () => {
   <div id="scroll-indicator-thumb"></div>
 </div>
  <script> 
-
-// 🕹️ Interactivité tactile et au clic de la jauge latérale rétro
-document.addEventListener("DOMContentLoaded", () => {
-  const track = document.getElementById('scroll-indicator-track');
-  const thumb = document.getElementById('scroll-indicator-thumb');
-  if (!track || !thumb) return;
-
-  let isDragging = false;
-
-  const scrollToPosition = (clientY) => {
-    const rect = track.getBoundingClientRect();
-    const trackHeight = rect.height - thumb.clientHeight;
-    let offsetY = clientY - rect.top - (thumb.clientHeight / 2);
-    offsetY = Math.max(0, Math.min(trackHeight, offsetY));
-    
-    const percent = offsetY / trackHeight;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    window.scrollTo({ top: percent * docHeight, behavior: 'auto' });
-  };
-
-  track.addEventListener('click', (e) => {
-    scrollToPosition(e.clientY);
-  });
-
-  thumb.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    e.stopPropagation();
-  });
-
-  thumb.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    e.stopPropagation();
-  }, { passive: true });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    scrollToPosition(e.clientY);
-  });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    scrollToPosition(e.touches[0].clientY);
-  }, { passive: true });
-
-  window.addEventListener('mouseup', () => { isDragging = false; });
-  window.addEventListener('touchend', () => { isDragging = false; });
-});
-
 load();
 </script>
 </body>
