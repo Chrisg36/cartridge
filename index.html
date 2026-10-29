@@ -1457,40 +1457,46 @@ body[data-holo-effect="true"] .supreme-holo-box::after {
 
 
 
-/* ✨ EFFET HOLOGRAPHIQUE ULTRA-BRILLANT GARANTI SUR LES JAQUETTES */
+
+/* ✨ REFONTE TOTALE : EFFET HOLOGRAPHIQUE SUPREME COLLECTOR SPECTACULAIRE */
 .supreme-holo-box {
   position: relative !important;
   border: 2px solid #fbbf24 !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(251, 191, 36, 0.7) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.85), 0 0 30px rgba(251, 191, 36, 0.75), inset 0 0 20px rgba(251, 191, 36, 0.4) !important;
   transform: translateZ(0);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease !important;
 }
 
 .supreme-holo-box img {
   position: relative;
   z-index: 1;
+  display: block;
+  width: 100%;
 }
 
-/* Voile irisé multicolore par-dessus l'image */
+/* 🌈 Voile irisé multicolore permanent en surimpression */
 .supreme-holo-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   pointer-events: none;
   background: linear-gradient(
     135deg,
-    rgba(255, 0, 128, 0.35) 0%,
-    rgba(251, 191, 36, 0.45) 25%,
-    rgba(56, 189, 248, 0.4) 50%,
-    rgba(168, 85, 247, 0.4) 75%,
-    rgba(34, 197, 94, 0.35) 100%
+    rgba(255, 0, 128, 0.4) 0%,
+    rgba(251, 191, 36, 0.5) 25%,
+    rgba(56, 189, 248, 0.45) 50%,
+    rgba(168, 85, 247, 0.45) 75%,
+    rgba(34, 197, 94, 0.4) 100%
   );
   background-size: 300% 300%;
-  mix-blend-mode: color-dodge;
-  animation: holoShimmerMove 3s ease-in-out infinite;
+  mix-blend-mode: overlay;
+  animation: holoRainbowShift 4s ease-in-out infinite;
 }
 
-/* Trait lumineux diagonal étincelant */
+/* ⚡ Barre lumineuse diagonale scintillante ultra-nette */
 .supreme-holo-box::after {
   content: "";
   position: absolute;
@@ -1498,28 +1504,36 @@ body[data-holo-effect="true"] .supreme-holo-box::after {
   left: -150%;
   width: 400%;
   height: 400%;
-  z-index: 3;
+  z-index: 5;
   pointer-events: none;
   background: linear-gradient(
-    45deg,
-    transparent 42%,
-    rgba(255, 255, 255, 0.9) 50%,
-    transparent 58%
+    55deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.85) 48%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(255, 255, 255, 0.85) 52%,
+    transparent 62%
   );
-  animation: supremeHoloGleam 2.5s infinite linear;
+  animation: holoFlashSweep 3s infinite linear;
 }
 
-@keyframes holoShimmerMove {
+@keyframes holoRainbowShift {
   0% { background-position: 0% 0%; }
   50% { background-position: 100% 100%; }
   100% { background-position: 0% 0%; }
 }
 
-@keyframes supremeHoloGleam {
-  0% { transform: translateY(-100%) rotate(35deg); opacity: 0; }
-  30% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: translateY(100%) rotate(35deg); opacity: 0; }
+@keyframes holoFlashSweep {
+  0% { transform: translateY(-120%) translateX(-120%) rotate(25deg); opacity: 0; }
+  20% { opacity: 1; }
+  50% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(120%) translateX(120%) rotate(25deg); opacity: 0; }
+}
+
+.supreme-holo-box:hover {
+  transform: translateY(-6px) scale(1.04) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.9), 0 0 40px rgba(251, 191, 36, 0.9), inset 0 0 25px rgba(251, 191, 36, 0.6) !important;
 }
 
 
