@@ -27,25 +27,7 @@ html {
   [data-theme="ruby"] { color-scheme: dark; --bg:#170D10; --card:#251519; --cov:#3A2127; --txt:#FBEFF1; --mut:#C7A4AB; --acc:#FF5C7A; --on:#170D10; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
 
 
-  [data-theme="gameboy-dark"] { 
-  color-scheme: dark; 
-  --bg: #070f07 !important; 
-  --card: #0f1f0f !important; 
-  --cov: #183318 !important; 
-  --txt: #b8f017 !important; 
-  --mut: #729c15 !important; 
-  --acc: #99e600 !important; 
-  --on: #070f07 !important; 
-  --pattern: radial-gradient(circle, #122612 1.5px, #070f07 1.5px) !important; 
-  --font: 'Rajdhani', -apple-system, sans-serif; 
-  --radius: 0px; 
-}
-html, body {
-  background-color: var(--bg) !important;
-  background-image: var(--pattern) !important;
-  background-size: 4px 4px !important;
-}
-[data-theme="gameboy-dark"] .app-bg-cartridges { display: none !important; }
+  [data-theme="gameboy-dark"] { color-scheme: dark; --bg: #070f07; --card: #0f1f0f; --cov: #183318; --txt: #b8f017; --mut: #729c15; --acc: #99e600; --on: #070f07; --pattern: radial-gradient(#122612 1.5px, transparent 1.5px); background-size: 4px 4px; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 0px; }
 
   [data-theme="gameboy"] { color-scheme: dark; --bg: #0f1f0f; --card: #152915; --cov: #1f3b1f; --txt: #9bbc0f; --mut: #486648; --acc: #8bac0f; --on: #0f1f0f; --pattern: radial-gradient(#1f3b1f 1.5px, transparent 1.5px); background-size: 8px 8px; --font: 'Press Start 2P', monospace; --radius: 0px; }
   [data-theme="nes"] { color-scheme: dark; --bg: #121214; --card: #1c1c21; --cov: #2c2c36; --txt: #ffffff; --mut: #8b8b9e; --acc: #e52521; --on: #ffffff; --pattern: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); --font: 'Press Start 2P', monospace; --radius: 4px; }
@@ -105,11 +87,7 @@ body {
   padding-right: 0;
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="gameboy-dark"] .sticky-header-container {
-  background-color: rgba(7, 15, 7, 0.85) !important;
-  border-bottom: 1px solid rgba(153, 230, 0, 0.3) !important;
+  /* hardware acceleration retirée pour iOS scroll */
 }
 
 .header-top {
@@ -1758,11 +1736,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   padding-right: 0;
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="gameboy-dark"] .sticky-header-container {
-  background-color: rgba(7, 15, 7, 0.85) !important;
-  border-bottom: 1px solid rgba(153, 230, 0, 0.3) !important;
+  /* hardware acceleration retirée pour iOS scroll */
 }
 
   body.theme-deathnote .header-top {
@@ -1875,7 +1849,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   font-weight: 900 !important;
 }
 
-
+/* 🟢 Filtre LCD vert rétro permanent sur TOUTES les jaquettes en mode Game Boy Pro */
+[data-theme="gameboy-dark"] .cov,
+[data-theme="gameboy-dark"] .grid-cov,
+[data-theme="gameboy-dark"] .big,
+[data-theme="gameboy-dark"] .collection-item-card img {
+  filter: grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%) !important;
+  border: 1px solid #729c15 !important;
+}
 
   
 </style>
