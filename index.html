@@ -70,84 +70,28 @@ body {
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
 /* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
-/* 🍏 EN-TÊTE FIXE SUPRÊME (RESTE TOUJOURS ACCESSIBLE EN HAUT) */
-/* 🍏 EN-TÊTE FIXE ULTIME ET STABLE */
-/* 🍏 EN-TÊTE STICKY UNIFIÉ ET PARFAIT POUR TOUTES LES PAGES */
-/* 🍏 EN-TÊTE FIXE UNIFIÉ POUR TOUTES LES PAGES SANS EXCEPTION */
-/* 🍏 EN-TÊTE NORMAL (SCROLLE NATURELLEMENT COMME BOUTIQUE ET PROFIL) */
-/* 🍏 EN-TÊTE FIXE UNIFIÉ (NE DISPARAÎT JAMAIS QUAND ON SCROLE) */
-/* 🍏 EN-TÊTE EN FLUX NORMAL (RESTE EN PLACE AU DÉBUT ET SCROLLE AVEC LA PAGE) */
 .sticky-header-container {
-  position: relative !important;
-  z-index: 10 !important;
-  background: var(--card) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding-top: 12px !important;
-  padding-bottom: 10px !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  margin-bottom: 12px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  /* 🍏 Dégagement sous la Dynamic Island / encoche */
+  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
+  padding-bottom: 8px;
+  margin: 0 -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
-
-/* Pas de padding excessif sur main pour permettre un scroll fluide et normal */
-main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-
-/* Espace sous l'en-tête fixe pour toutes les pages */
-main {
-  padding-top: 175px !important;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
-
-/* Suppression de tout padding-top forcé sur main */
-main {
-  padding-top: 16px !important;
-}
-
-/* Espace universel sous l'en-tête fixe pour toutes les pages */
-main {
-  padding-top: 180px !important;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-  main {
-    padding-top: 170px !important;
-  }
-}
-
-/* Espace sous l'en-tête fixe pour chaque page principale afin qu'aucun jeu ne soit caché */
-
-
-/* 🍏 Espace sous l'en-tête fixe pour chaque page principale */
-
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: 40px;
-    padding-right: 40px;
-  }
-}
-
-
 
 .header-top {
   display: flex;
@@ -1188,16 +1132,14 @@ body[data-layout-style="pixel art"] .booster-shop-card:hover {
 
 body[data-holo-effect="true"] .shop-pack-card,
 body[data-holo-effect="true"] .booster-shop-card,
-body[data-holo-effect="true"] .card-holo-effect,
-body[data-holo-effect="true"] .supreme-holo-box {
+body[data-holo-effect="true"] .card-holo-effect {
   position: relative;
   overflow: hidden;
 }
 
 body[data-holo-effect="true"] .shop-pack-card::after,
 body[data-holo-effect="true"] .booster-shop-card::after,
-body[data-holo-effect="true"] .card-holo-effect::after,
-body[data-holo-effect="true"] .supreme-holo-box::after {
+body[data-holo-effect="true"] .card-holo-effect::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -1351,35 +1293,16 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
  /* 🕹️ Témoin de scroll latéral rétro */
-/* 🕹️ Témoin de scroll latéral rétro interactif */
 #scroll-indicator-track {
-  position: fixed;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 200px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1.5px solid var(--acc);
-  border-radius: 4px;
-  z-index: 1000;
-  cursor: pointer;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 10px color-mix(in srgb, var(--acc) 30%, transparent);
-  overflow: hidden;
+  position: fixed; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 220px; background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid var(--acc); border-radius: 4px; z-index: 1000;
+  pointer-events: none;
 }
 #scroll-indicator-thumb {
-  width: 100%;
-  height: 35px;
-  background: var(--acc);
-  border-radius: 2px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  box-shadow: 0 0 10px var(--acc);
-  cursor: grab;
-}
-#scroll-indicator-thumb:active {
-  cursor: grabbing;
+  width: 100%; height: 35px; background: var(--acc); border-radius: 2px;
+  position: absolute; top: 0; box-shadow: 0 0 10px var(--acc);
+  transition: top 0.08s ease-out;
 }
 
 /* 🗂️ Système d'onglets pour la modale Réglages */
@@ -1562,46 +1485,48 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   border: 1.5px solid #fbbf24 !important;
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.7), 
-    0 0 20px rgba(251, 191, 36, 0.6),
-    inset 0 0 15px rgba(251, 191, 36, 0.4) !important;
+    0 0 15px rgba(251, 191, 36, 0.45),
+    inset 0 0 10px rgba(251, 191, 36, 0.3) !important;
 }
 
-/* 🌈 1. Voile irisé multicolore permanent par-dessus l'image */
+/* 🌈 1. Voile irisé multicolore permanent façon carte holographique rare */
 .supreme-holo-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: 2;
   pointer-events: none;
   background: linear-gradient(
     125deg,
-    rgba(255, 0, 128, 0.22) 0%,
-    rgba(255, 215, 0, 0.35) 25%,
-    rgba(0, 255, 200, 0.3) 50%,
-    rgba(0, 150, 255, 0.25) 75%,
-    rgba(255, 0, 212, 0.3) 100%
+    rgba(255, 0, 128, 0.18) 0%,
+    rgba(255, 215, 0, 0.28) 25%,
+    rgba(0, 255, 200, 0.25) 50%,
+    rgba(0, 150, 255, 0.2) 75%,
+    rgba(255, 0, 212, 0.25) 100%
   );
   background-size: 250% 250%;
-  mix-blend-mode: overlay;
-  animation: holoShimmerMove 3s ease-in-out infinite;
+  mix-blend-mode: color-dodge;
+  animation: holoShimmerMove 4s ease-in-out infinite;
 }
 
-/* ⚡ 2. Rayon lumineux brillant continu en diagonale par-dessus l'image */
+/* ⚡ 2. Rayon lumineux brillant continu en diagonale */
 .supreme-holo-box::after {
   content: "";
   position: absolute;
-  inset: -50%;
-  z-index: 6;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 3;
   pointer-events: none;
   background: linear-gradient(
-    45deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.55) 50%,
-    transparent 60%
+    to bottom,
+    transparent 35%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 65%
   );
-  background-size: 200% 200%;
-  mix-blend-mode: screen;
-  animation: continuousHoloSweep 2.2s infinite linear;
+  mix-blend-mode: overlay;
+  animation: holoSweepRay 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* Survol : amplification du reflet */
@@ -1839,6 +1764,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 </div>
 
 <main>
+ <main>
   <!-- 🪙 1. LA GRANDE PAGE BOUTIQUE -->
   <div id="shopMainPage" style="display: none;">
     <div class="sticky-header-container">
@@ -2031,9 +1957,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
   </button>
 </div>
-<input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
-<div id="list"></div>
-</div>
 </main>
 
 <!-- 📱 BARRE DE NAVIGATION EN BAS (5 ONGLETS) -->
@@ -2112,7 +2035,7 @@ function checkDailyReward() {
     lastDailyClaim = todayStr;
     try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
     setTimeout(() => {
-      showRetroAlert("Bonus Journalier", "🎁 +50 🪙 crédits de connexion offerts !");
+      alert("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
     }, 1000);
   }
 }
@@ -5270,9 +5193,6 @@ function renderVitrineMainPage() {
 
         for (const item of rowItems) {
           const gameBox = el("div");
-          if (item.category === "supreme_retro") {
-            gameBox.classList.add("supreme-holo-box");
-          }
           gameBox.style.cssText = `
             background: var(--card);
             border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
@@ -6454,60 +6374,21 @@ window.addEventListener('scroll', () => {
   }
 });
 </script>
-
+  <!-- 🕹️ Boutons d'action flottants (Vue & Partage) -->
+<div class="floating-actions">
+  <button class="chip floating-action-btn" id="viewModeBtn" aria-label="Changer de vue">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+  </button>
+  <button class="chip floating-action-btn" id="shareBtn" aria-label="Partager">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+  </button>
+</div>
+  
 <!-- 🕹️ Jauge latérale rétro de progression -->
 <div id="scroll-indicator-track">
   <div id="scroll-indicator-thumb"></div>
 </div>
  <script> 
-
-// 🕹️ Interactivité tactile et au clic de la jauge latérale rétro
-document.addEventListener("DOMContentLoaded", () => {
-  const track = document.getElementById('scroll-indicator-track');
-  const thumb = document.getElementById('scroll-indicator-thumb');
-  if (!track || !thumb) return;
-
-  let isDragging = false;
-
-  const scrollToPosition = (clientY) => {
-    const rect = track.getBoundingClientRect();
-    const trackHeight = rect.height - thumb.clientHeight;
-    let offsetY = clientY - rect.top - (thumb.clientHeight / 2);
-    offsetY = Math.max(0, Math.min(trackHeight, offsetY));
-    
-    const percent = offsetY / trackHeight;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    window.scrollTo({ top: percent * docHeight, behavior: 'auto' });
-  };
-
-  track.addEventListener('click', (e) => {
-    scrollToPosition(e.clientY);
-  });
-
-  thumb.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    e.stopPropagation();
-  });
-
-  thumb.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    e.stopPropagation();
-  }, { passive: true });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    scrollToPosition(e.clientY);
-  });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    scrollToPosition(e.touches[0].clientY);
-  }, { passive: true });
-
-  window.addEventListener('mouseup', () => { isDragging = false; });
-  window.addEventListener('touchend', () => { isDragging = false; });
-});
-
 load();
 </script>
 </body>
