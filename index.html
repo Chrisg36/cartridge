@@ -6376,7 +6376,9 @@ async function handleCloudflareAuth(e) {
       }})
     });
 
-    if (res.ok) {
+    if (res.status === 401) {
+      console.warn("Authentification distante refusée (401). Utilisation du profil local sécurisé.");
+    } else if (res.ok) {
       const resData = await res.json();
       if (resData.data) {
         if (resData.data.userCoins !== undefined) userCoins = resData.data.userCoins;
