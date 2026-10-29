@@ -6402,6 +6402,8 @@ function applyBgStyle(bg) {
     cartridgesBg.style.display = (bg === "cartridges") ? "grid" : "none";
   }
 }
+
+  
 let currentBg = localStorage.getItem("bgStyle") || "cartridges";
 window.addEventListener("DOMContentLoaded", () => { applyBgStyle(currentBg); });
   
