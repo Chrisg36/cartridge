@@ -1805,6 +1805,31 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     pointer-events: none;
     z-index: 9999;
   }
+
+/* 1. Pour les titres des défis (première image) : empêche la coupe brutale et gère proprement les textes longs */
+.shop-banner .shop-banner div span, 
+.settings-section-title, 
+.grid-title, 
+.t b,
+.theme-mini-btn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 2. Pour le bouton du thème Death Note ou les boutons de la grille (deuxième image) */
+.theme-mini-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow-x: auto; /* Permet de scroller horizontalement si le texte dépasse dans la bulle */
+  scrollbar-width: none; /* Cache la barre sous iOS / Firefox */
+}
+.theme-mini-btn::-webkit-scrollbar {
+  display: none; /* Cache la barre sous Safari iOS */
+}
+
   
 </style>
 </head>
