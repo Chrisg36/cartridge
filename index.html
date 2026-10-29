@@ -1456,68 +1456,70 @@ body[data-holo-effect="true"] .supreme-holo-box::after {
 }
 
 
-/* ✨ EFFET HOLOGRAPHIQUE FLAMBOYANT SUPREME COLLECTOR (AMÉLIORÉ) */
-@keyframes supremeHoloGleam {
-  0% { transform: translateY(-100%) rotate(35deg); opacity: 0; }
-  30% { opacity: 0.8; }
-  50% { opacity: 1; }
-  70% { opacity: 0.8; }
-  100% { transform: translateY(150%) rotate(35deg); opacity: 0; }
-}
 
-@keyframes rainbowBorderShimmer {
-  0% { border-color: #fbbf24; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(251, 191, 36, 0.7), inset 0 0 15px rgba(251, 191, 36, 0.5); }
-  50% { border-color: #38bdf8; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 30px rgba(56, 189, 248, 0.8), inset 0 0 20px rgba(56, 189, 248, 0.6); }
-  100% { border-color: #fbbf24; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(251, 191, 36, 0.7), inset 0 0 15px rgba(251, 191, 36, 0.5); }
-}
-
+/* ✨ EFFET HOLOGRAPHIQUE ULTRA-BRILLANT GARANTI SUR LES JAQUETTES */
 .supreme-holo-box {
   position: relative !important;
-  overflow: hidden !important;
-  animation: rainbowBorderShimmer 4s infinite ease-in-out !important;
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(251, 191, 36, 0.7) !important;
+  transform: translateZ(0);
 }
 
-/* Voile irisé multicolore permanent */
+.supreme-holo-box img {
+  position: relative;
+  z-index: 1;
+}
+
+/* Voile irisé multicolore par-dessus l'image */
 .supreme-holo-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: 2;
   pointer-events: none;
   background: linear-gradient(
     135deg,
-    rgba(255, 0, 128, 0.3) 0%,
-    rgba(251, 191, 36, 0.4) 25%,
-    rgba(56, 189, 248, 0.35) 50%,
-    rgba(168, 85, 247, 0.35) 75%,
-    rgba(34, 197, 94, 0.3) 100%
+    rgba(255, 0, 128, 0.35) 0%,
+    rgba(251, 191, 36, 0.45) 25%,
+    rgba(56, 189, 248, 0.4) 50%,
+    rgba(168, 85, 247, 0.4) 75%,
+    rgba(34, 197, 94, 0.35) 100%
   );
   background-size: 300% 300%;
-  mix-blend-mode: overlay;
-  animation: holoShimmerMove 4s ease-in-out infinite;
+  mix-blend-mode: color-dodge;
+  animation: holoShimmerMove 3s ease-in-out infinite;
 }
 
-/* Balayage lumineux tranchant diagonal */
+/* Trait lumineux diagonal étincelant */
 .supreme-holo-box::after {
   content: "";
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
-  z-index: 6;
+  top: -150%;
+  left: -150%;
+  width: 400%;
+  height: 400%;
+  z-index: 3;
   pointer-events: none;
   background: linear-gradient(
     45deg,
-    transparent 45%,
-    rgba(255, 255, 255, 0.8) 50%,
-    transparent 55%
+    transparent 42%,
+    rgba(255, 255, 255, 0.9) 50%,
+    transparent 58%
   );
-  animation: supremeHoloGleam 3s infinite linear;
+  animation: supremeHoloGleam 2.5s infinite linear;
 }
 
-.supreme-holo-box:hover {
-  transform: translateY(-8px) scale(1.06) !important;
+@keyframes holoShimmerMove {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+@keyframes supremeHoloGleam {
+  0% { transform: translateY(-100%) rotate(35deg); opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(100%) rotate(35deg); opacity: 0; }
 }
 
 
