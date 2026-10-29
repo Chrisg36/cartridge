@@ -1487,48 +1487,46 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
   border: 1.5px solid #fbbf24 !important;
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.7), 
-    0 0 15px rgba(251, 191, 36, 0.45),
-    inset 0 0 10px rgba(251, 191, 36, 0.3) !important;
+    0 0 20px rgba(251, 191, 36, 0.6),
+    inset 0 0 15px rgba(251, 191, 36, 0.4) !important;
 }
 
-/* 🌈 1. Voile irisé multicolore permanent façon carte holographique rare */
+/* 🌈 1. Voile irisé multicolore permanent par-dessus l'image */
 .supreme-holo-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 5;
   pointer-events: none;
   background: linear-gradient(
     125deg,
-    rgba(255, 0, 128, 0.18) 0%,
-    rgba(255, 215, 0, 0.28) 25%,
-    rgba(0, 255, 200, 0.25) 50%,
-    rgba(0, 150, 255, 0.2) 75%,
-    rgba(255, 0, 212, 0.25) 100%
+    rgba(255, 0, 128, 0.22) 0%,
+    rgba(255, 215, 0, 0.35) 25%,
+    rgba(0, 255, 200, 0.3) 50%,
+    rgba(0, 150, 255, 0.25) 75%,
+    rgba(255, 0, 212, 0.3) 100%
   );
   background-size: 250% 250%;
-  mix-blend-mode: color-dodge;
-  animation: holoShimmerMove 4s ease-in-out infinite;
+  mix-blend-mode: overlay;
+  animation: holoShimmerMove 3s ease-in-out infinite;
 }
 
-/* ⚡ 2. Rayon lumineux brillant continu en diagonale */
+/* ⚡ 2. Rayon lumineux brillant continu en diagonale par-dessus l'image */
 .supreme-holo-box::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  z-index: 3;
+  inset: -50%;
+  z-index: 6;
   pointer-events: none;
   background: linear-gradient(
-    to bottom,
-    transparent 35%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 65%
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 60%
   );
-  mix-blend-mode: overlay;
-  animation: holoSweepRay 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  background-size: 200% 200%;
+  mix-blend-mode: screen;
+  animation: continuousHoloSweep 2.2s infinite linear;
 }
 
 /* Survol : amplification du reflet */
@@ -2039,7 +2037,7 @@ function checkDailyReward() {
     lastDailyClaim = todayStr;
     try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
     setTimeout(() => {
-      alert("🎁 Bonus journalier de connexion : +50 🪙 crédits offerts !");
+      showRetroAlert("Bonus Journalier", "🎁 +50 🪙 crédits de connexion offerts !");
     }, 1000);
   }
 }
