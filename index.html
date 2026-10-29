@@ -71,26 +71,33 @@ body {
 
 /* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
 .sticky-header-container {
-  position: -webkit-sticky !important;
-  position: sticky !important;
+  position: fixed !important;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
-  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 
   /* 🍏 Dégagement sous la Dynamic Island / encoche */
-  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
-  padding-bottom: 8px;
-  margin: 0 -20px;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 10px);
+  padding-bottom: 10px;
   padding-left: 20px;
   padding-right: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* Espace pour éviter que le contenu ne passe sous l'en-tête fixe */
+#homeMainContent, #shopMainPage, #vitrineMainPage, #museumMainPage, #arcadeMainPage, #settingsMainPage {
+  padding-top: 175px !important;
 }
 
 .header-top {
