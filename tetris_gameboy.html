@@ -3,14 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Tetris - Game Boy Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tetris - Game Boy Immersif</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --gb-bg: #9bbc0f;
     --gb-dark: #0f380f;
     --gb-medium: #306230;
     --gb-light: #8bac0f;
+    --bg-app: #070a0f;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -18,60 +20,72 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #070f07;
-    color: var(--gb-dark);
+    background-color: var(--bg-app);
+    color: #f2f3f5;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+  }
+
+  .game-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(21, 27, 38, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #8bac0f;
+  }
+
+  .screen-container {
+    flex: 1;
+    width: 100%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
-  }
-
-  /* Cadre Game Boy / Écran LCD */
-  .console-body {
-    background-color: #152915;
-    border: 4px solid var(--gb-light);
-    border-radius: 16px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    max-width: 360px;
-    width: 100%;
+    padding: 10px;
+    position: relative;
   }
 
   .screen-lens {
-    background-color: #0a180a;
+    background-color: #070d07;
     padding: 12px;
-    border-radius: 8px 8px 24px 8px;
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);
-    border: 2px solid #204020;
-    margin-bottom: 14px;
+    border-radius: 16px;
+    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px rgba(139, 172, 15, 0.15);
+    border: 3px solid #182418;
     display: flex;
     gap: 12px;
-  }
-
-  .game-area {
-    background-color: var(--gb-bg);
-    border: 3px solid var(--gb-dark);
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 380px;
     position: relative;
-    image-rendering: pixelated;
   }
 
   canvas {
     display: block;
     background-color: var(--gb-bg);
+    border: 3px solid var(--gb-dark);
   }
 
   .side-panel {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 90px;
+    width: 95px;
+    height: 320px;
     background-color: var(--gb-bg);
     border: 3px solid var(--gb-dark);
     padding: 8px;
@@ -79,55 +93,69 @@
   }
 
   .panel-box {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   .panel-title {
-    font-size: 7px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6.5px;
     color: var(--gb-dark);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     text-transform: uppercase;
   }
 
   .panel-value {
-    font-size: 9px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8.5px;
     color: var(--gb-dark);
     font-weight: bold;
   }
 
   #nextCanvas {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     margin: 0 auto;
     background-color: var(--gb-bg);
   }
 
-  /* Contrôles tactiles de type Game Boy */
-  .controls-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 55px);
-    grid-template-rows: repeat(3, 50px);
-    gap: 4px;
-    margin-top: 10px;
+  /* Commandes tactiles fluides en bas d'écran */
+  .controls-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
   }
 
-  .gb-btn {
-    background-color: #2c2c2c;
-    border: none;
-    border-radius: 6px;
+  .dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 52px);
+    gap: 5px;
+  }
+
+  .arcade-btn {
+    background: linear-gradient(145deg, #232c3d, #151b26);
+    border: 1.5px solid color-mix(in srgb, var(--gb-light) 50%, transparent);
+    border-radius: 12px;
     color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px #111;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.08s ease;
   }
 
-  .gb-btn:active {
-    box-shadow: 0 1px #111;
-    transform: translateY(3px);
+  .arcade-btn:active {
+    background: var(--gb-light);
+    color: #0f380f;
+    transform: translateY(2px);
   }
 
   .btn-up { grid-column: 2; grid-row: 1; }
@@ -135,24 +163,23 @@
   .btn-right { grid-column: 3; grid-row: 2; }
   .btn-down { grid-column: 2; grid-row: 3; }
 
-  .action-buttons {
+  .action-group {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-top: 12px;
-    padding: 0 10px;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
   }
 
   .action-btn {
-    background-color: #800020;
+    background: #800020;
     border: none;
-    width: 55px;
-    height: 55px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
-    box-shadow: 0 4px #300;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -160,14 +187,13 @@
   }
 
   .action-btn:active {
-    box-shadow: 0 1px #300;
-    transform: translateY(3px);
+    transform: translateY(2px);
   }
 
-  /* Écrans de menu et game over */
+  /* Écrans de superposition (Menu & Game Over) */
   .screen-overlay {
     position: absolute;
-    inset: 0;
+    inset: 12px;
     background-color: var(--gb-bg);
     display: flex;
     flex-direction: column;
@@ -175,7 +201,8 @@
     justify-content: center;
     z-index: 10;
     text-align: center;
-    padding: 10px;
+    padding: 15px;
+    border-radius: 6px;
   }
 
   .screen-overlay.hidden {
@@ -183,45 +210,52 @@
   }
 
   .screen-overlay h1 {
-    font-size: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
     color: var(--gb-dark);
-    margin-bottom: 14px;
-    text-shadow: 1px 1px var(--gb-light);
+    margin-bottom: 12px;
+    text-shadow: 2px 2px var(--gb-light);
   }
 
   .screen-overlay p {
+    font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     color: var(--gb-medium);
-    margin-bottom: 12px;
-    line-height: 1.6;
+    margin-bottom: 16px;
+    line-height: 1.8;
   }
 
   .menu-btn {
     background-color: var(--gb-dark);
     color: var(--gb-bg);
     border: none;
-    padding: 10px 16px;
+    padding: 12px 22px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 10px;
     cursor: pointer;
-    margin-top: 8px;
-    border-radius: 4px;
+    border-radius: 6px;
+    box-shadow: 0 4px var(--gb-medium);
   }
 
-  .menu-btn:hover {
-    background-color: var(--gb-medium);
+  .menu-btn:active {
+    transform: translateY(2px);
   }
 
   @media (pointer: fine) {
-    .controls-grid, .action-buttons {
-      display: none; /* Masqué sur PC car on joue au clavier */
+    .controls-container {
+      display: none; /* Masqué sur PC pour profiter du clavier */
     }
   }
 </style>
 </head>
 <body>
 
-<div class="console-body">
+<div class="game-header">
+  <span>🧱 TETRIS // GAME BOY</span>
+  <span>CLAVIER : ← → ↕ ESPACE</span>
+</div>
+
+<div class="screen-container">
   <div class="screen-lens">
     <!-- Grille de jeu Tetris (10x20 blocs) -->
     <div style="position: relative;">
@@ -230,7 +264,7 @@
       <!-- Écran Menu Principal -->
       <div id="menuScreen" class="screen-overlay">
         <h1>TETRIS</h1>
-        <p>EDITION GAME BOY<br><br>CLAVIER :<br>← → Déplacer<br>↑ Pivoter<br>↓ Tomber<br>ESPACE : Drop</p>
+        <p>EDITION GAME BOY<br><br>Alignez les lignes et montez de niveau !</p>
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -242,7 +276,7 @@
       </div>
     </div>
 
-    <!-- Panneau latéral (Score, Lignes, Pièce suivante) -->
+    <!-- Panneau latéral -->
     <div class="side-panel">
       <div class="panel-box">
         <div class="panel-title">SCORE</div>
@@ -262,17 +296,19 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Contrôles tactiles Game Boy -->
-  <div class="action-buttons">
-    <button class="action-btn" id="btnRotate">ROT</button>
-    <button class="action-btn" id="btnDrop" style="background-color: #004080; box-shadow: 0 4px #002040;">DROP</button>
+<!-- Contrôles tactiles plein écran pour mobile (iOS / Android) -->
+<div class="controls-container">
+  <div class="dpad">
+    <button class="arcade-btn btn-up" id="btnUp">▲</button>
+    <button class="arcade-btn btn-left" id="btnLeft">◀</button>
+    <button class="arcade-btn btn-right" id="btnRight">▶</button>
+    <button class="arcade-btn btn-down" id="btnDown">▼</button>
   </div>
-  <div class="controls-grid">
-    <button class="gb-btn btn-up" id="btnUp">▲</button>
-    <button class="gb-btn btn-left" id="btnLeft">◀</button>
-    <button class="gb-btn btn-right" id="btnRight">▶</button>
-    <button class="gb-btn btn-down" id="btnDown">▼</button>
+  <div class="action-group">
+    <button class="action-btn" id="btnRotate">ROT</button>
+    <button class="action-btn" id="btnDrop" style="background-color: #004080;">DROP</button>
   </div>
 </div>
 
@@ -377,15 +413,15 @@ function getRandomPieceType() {
 
 function drawBlock(context, x, y, size, colorIndex) {
   if (colorIndex === 0) {
-    context.fillStyle = "#9bbc0f"; // Fond Game Boy
+    context.fillStyle = "#9bbc0f";
     context.fillRect(x * size, y * size, size, size);
     return;
   }
-  context.fillStyle = "#306230"; // Contour
+  context.fillStyle = "#306230";
   context.fillRect(x * size, y * size, size, size);
-  context.fillStyle = "#8bac0f"; // Intérieur pixel
+  context.fillStyle = "#8bac0f";
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  context.fillStyle = "#0f380f"; // Cœur sombre
+  context.fillStyle = "#0f380f";
   context.fillRect(x * size + 3, y * size + 3, size - 6, size - 6);
 }
 
@@ -458,7 +494,7 @@ function clearLines() {
     board.splice(r, 1);
     board.unshift(Array(COLS).fill(0));
     cleared++;
-    r++; // Vérifier à nouveau la même ligne
+    r++;
   }
 
   if (cleared > 0) {
@@ -482,7 +518,6 @@ function rotatePiece() {
     currentPiece.shape = rotated;
     playGbSound('rotate');
   } else {
-    // Wall kick simple
     if (!collide(currentPiece, -1, 0, rotated)) { currentPiece.x--; currentPiece.shape = rotated; playGbSound('rotate'); }
     else if (!collide(currentPiece, 1, 0, rotated)) { currentPiece.x++; currentPiece.shape = rotated; playGbSound('rotate'); }
   }
@@ -555,7 +590,7 @@ function startGame() {
   requestAnimationFrame(gameLoop);
 }
 
-// Contrôles clavier
+// Contrôles Clavier
 window.addEventListener("keydown", e => {
   if (!gameStarted || gameOver) return;
   if (e.code === "ArrowLeft") movePiece(-1);
@@ -570,7 +605,7 @@ window.addEventListener("keydown", e => {
   }
 });
 
-// Contrôles tactiles Game Boy
+// Contrôles Tactiles Plein Écran
 document.getElementById("btnLeft").onclick = () => { if (gameStarted && !gameOver) movePiece(-1); };
 document.getElementById("btnRight").onclick = () => { if (gameStarted && !gameOver) movePiece(1); };
 document.getElementById("btnDown").onclick = () => { if (gameStarted && !gameOver) dropPiece(); };
