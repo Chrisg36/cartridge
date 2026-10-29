@@ -78,12 +78,14 @@ body {
   background: color-mix(in srgb, var(--bg) 95%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding-top: calc(env(safe-area-inset-top, 20px) + 10px);
+  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
   padding-bottom: 10px;
-  margin-left: -20px;
-  margin-right: -20px;
   padding-left: 20px;
   padding-right: 20px;
+  margin-left: -20px;
+  margin-right: -20px;
+  width: calc(100% + 40px);
+  box-sizing: border-box;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
