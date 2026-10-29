@@ -73,21 +73,41 @@ body {
 /* 🍏 EN-TÊTE FIXE SUPRÊME (RESTE TOUJOURS ACCESSIBLE EN HAUT) */
 /* 🍏 EN-TÊTE FIXE ULTIME ET STABLE */
 /* 🍏 EN-TÊTE STICKY UNIFIÉ ET PARFAIT POUR TOUTES LES PAGES */
+/* 🍏 EN-TÊTE FIXE UNIFIÉ POUR TOUTES LES PAGES SANS EXCEPTION */
+/* 🍏 EN-TÊTE NORMAL (SCROLLE NATURELLEMENT COMME BOUTIQUE ET PROFIL) */
 .sticky-header-container {
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000 !important;
-  background: color-mix(in srgb, var(--bg) 95%, transparent) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  padding-top: calc(env(safe-area-inset-top, 20px) + 10px) !important;
+  position: relative !important;
+  z-index: 10;
+  background: var(--card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding-top: 12px !important;
   padding-bottom: 10px !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
   margin-bottom: 12px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
+
+/* Suppression de tout padding-top forcé sur main */
+main {
+  padding-top: 16px !important;
+}
+
+/* Espace universel sous l'en-tête fixe pour toutes les pages */
+main {
+  padding-top: 180px !important;
+}
+
+@media (min-width: 768px) {
+  .sticky-header-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  main {
+    padding-top: 170px !important;
+  }
 }
 
 /* Espace sous l'en-tête fixe pour chaque page principale afin qu'aucun jeu ne soit caché */
