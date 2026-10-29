@@ -1294,17 +1294,32 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 }
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
- /* 🕹️ Témoin de scroll latéral rétro */
+/* 🕹️ Témoin de scroll latéral rétro unifié */
 #scroll-indicator-track {
-  position: fixed; right: 8px; top: 50%; transform: translateY(-50%);
-  width: 8px; height: 220px; background: rgba(0, 0, 0, 0.4);
-  border: 1.5px solid var(--acc); border-radius: 4px; z-index: 1000;
+  position: fixed;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 180px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+  border-radius: 4px;
+  z-index: 1000;
   pointer-events: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+  overflow: hidden; /* 👈 Empêche formellement le curseur de sortir */
 }
+
 #scroll-indicator-thumb {
-  width: 100%; height: 35px; background: var(--acc); border-radius: 2px;
-  position: absolute; top: 0; box-shadow: 0 0 10px var(--acc);
-  transition: top 0.08s ease-out;
+  width: 100%;
+  height: 30px;
+  background: var(--acc);
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 10px var(--acc);
 }
 
 /* 🗂️ Système d'onglets pour la modale Réglages */
@@ -5714,22 +5729,18 @@ function renderScoresMainPage() {
   });
 }
 
-let isScrolling = false;
+// 🕹️ Gestion propre du curseur de la jauge latérale
 window.addEventListener('scroll', () => {
-  if (!isScrolling) {
-    window.requestAnimationFrame(() => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const track = document.getElementById('scroll-indicator-track');
-      const thumb = document.getElementById('scroll-indicator-thumb');
-      if (docHeight > 0 && track && thumb) {
-        const scrollPercent = scrollTop / docHeight;
-        const trackHeight = track.clientHeight - 35;
-        thumb.style.top = (scrollPercent * trackHeight) + 'px';
-      }
-      isScrolling = false;
-    });
-    isScrolling = true;
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const track = document.getElementById('scroll-indicator-track');
+  const thumb = document.getElementById('scroll-indicator-thumb');
+  
+  if (docHeight > 0 && track && thumb) {
+    const scrollPercent = scrollTop / docHeight;
+    const maxTop = track.clientHeight - thumb.clientHeight;
+    const thumbTop = scrollPercent * maxTop;
+    thumb.style.transform = `translateY(${Math.max(0, Math.min(thumbTop, maxTop))}px)`;
   }
 }, { passive: true });
 
@@ -6001,7 +6012,7 @@ const bgOptions = [
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
-["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"].forEach(key => {
+["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
     const b = el("button", "theme-mini-btn", label);
