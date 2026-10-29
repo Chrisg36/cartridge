@@ -75,7 +75,7 @@ body {
   position: sticky !important;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  background-color: var(--bg) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
@@ -1724,7 +1724,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   position: sticky !important;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  background-color: var(--bg) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
@@ -2126,7 +2126,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   </button>
 </div>
 <input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
-<div id="list"></div>
+    </div>
+    <div id="list"></div>
 </div>
 </main>
 
