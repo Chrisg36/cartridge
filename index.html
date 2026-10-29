@@ -1852,7 +1852,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
   #list { padding-top: 10px; }
 
-  [data-theme="nes"]], [data-theme="snes"]], [data-theme="ps1"]], [data-theme="n64"]], [data-theme="dreamcast"]], [data-theme="gamecube"]], [data-theme="arcade"]], [data-theme="atari"]], [data-theme="dos"]], [data-theme="megadrive"]], [data-theme="gameboy"]], [data-theme="gameboy-dark"]] .app-bg-cartridges { display: none !important; }
+  [data-theme="nes"] .app-bg-cartridges, [data-theme="snes"] .app-bg-cartridges, [data-theme="ps1"] .app-bg-cartridges, [data-theme="n64"] .app-bg-cartridges, [data-theme="dreamcast"] .app-bg-cartridges, [data-theme="gamecube"] .app-bg-cartridges, [data-theme="arcade"] .app-bg-cartridges, [data-theme="atari"] .app-bg-cartridges, [data-theme="dos"] .app-bg-cartridges, [data-theme="megadrive"] .app-bg-cartridges, [data-theme="gameboy"] .app-bg-cartridges, [data-theme="gameboy-dark"] .app-bg-cartridges { display: none !important; }
 </style>
 </head>
 <body>
@@ -6697,6 +6697,10 @@ function applyBgStyle(bg) {
   
   const retroThemes = ["nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive", "gameboy", "gameboy-dark"];
   const isRetroActive = retroThemes.includes(theme);
+
+  if (cartridgesBg) {
+    cartridgesBg.style.display = (bg === "cartridges" && !isRetroActive) ? "grid" : "none";
+  }
 
   let patternVal = "none";
   if (bg === "circuit") {
