@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Snake - Nokia 3310 Pro Edition</title>
+<title>Snake - Nokia 3310 Immersif</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -12,9 +12,7 @@
     --gb-dark: #0f380f;
     --gb-medium: #306230;
     --gb-light: #8bac0f;
-    --bg-app: #0b0f16;
-    --card-app: #151b26;
-    --accent: #FF7A45;
+    --bg-app: #070a0f;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -28,106 +26,116 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    min-height: 100dvh;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
+    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
   }
 
-  /* Conteneur principal style arcade moderne & épuré */
-  .arcade-cabinet {
-    background: var(--card-app);
-    border: 2px solid var(--accent);
-    border-radius: 20px;
-    padding: 20px;
+  /* En-tête minimaliste du jeu */
+  .game-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(21, 27, 38, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #9bbc0f;
+  }
+
+  /* Zone de l'écran principal qui prend le maximum de place */
+  .screen-container {
+    flex: 1;
+    width: 100%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent);
-    max-width: 380px;
-    width: 92%;
-  }
-
-  .game-title {
-    font-family: 'Orbitron', 'Press Start 2P', monospace;
-    font-size: 13px;
-    font-weight: 900;
-    color: var(--accent);
-    letter-spacing: 2px;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-    text-shadow: 0 0 10px var(--accent);
+    justify-content: center;
+    padding: 10px;
+    position: relative;
   }
 
   .screen-lens {
     background-color: #070d07;
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: inset 0 4px 12px rgba(0,0,0,0.9);
-    border: 2px solid #1a2a1a;
-    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 16px;
+    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px rgba(153, 230, 0, 0.15);
+    border: 3px solid #182418;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 1.1;
     position: relative;
   }
 
-  canvas {
-    display: block;
-    background-color: var(--gb-bg);
-    border: 2px solid var(--gb-dark);
-    image-rendering: pixelated;
-  }
-
   .hud-top {
-    width: 180px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
+    font-size: 10px;
     color: var(--gb-dark);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-weight: bold;
+    padding: 0 4px;
   }
 
-  /* Croix directionnelle et contrôles tactiles fluides et épurés */
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    flex: 1;
+    display: block;
+    background-color: var(--gb-bg);
+    border: 3px solid var(--gb-dark);
+    image-rendering: pixelated;
+  }
+
+  /* Commandes tactiles en bas d'écran (optimisées iOS & Android) */
   .controls-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
     width: 100%;
-    margin-top: 6px;
+    max-width: 400px;
+    padding: 15px 10px 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .dpad {
     display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-template-rows: repeat(3, 50px);
-    gap: 6px;
+    grid-template-columns: repeat(3, 75px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 8px;
   }
 
   .arcade-btn {
-    background-color: #232c3d;
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-    border-radius: 12px;
+    background: linear-gradient(145deg, #232c3d, #151b26);
+    border: 1.5px solid color-mix(in srgb, var(--gb-light) 50%, transparent);
+    border-radius: 14px;
     color: #fff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.1s ease;
+    transition: all 0.08s ease;
   }
 
   .arcade-btn:active {
-    background-color: var(--accent);
-    color: #000;
-    transform: translateY(2px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    background: var(--gb-light);
+    color: #0f380f;
+    transform: translateY(3px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
 
   .btn-up { grid-column: 2; grid-row: 1; }
@@ -138,7 +146,7 @@
   /* Écrans de superposition (Menu & Game Over) */
   .screen-overlay {
     position: absolute;
-    top: 24px; left: 12px; right: 12px; bottom: 12px;
+    inset: 14px;
     background-color: var(--gb-bg);
     display: flex;
     flex-direction: column;
@@ -146,7 +154,8 @@
     justify-content: center;
     z-index: 10;
     text-align: center;
-    padding: 12px;
+    padding: 20px;
+    border-radius: 10px;
   }
 
   .screen-overlay.hidden {
@@ -155,72 +164,63 @@
 
   .screen-overlay h1 {
     font-family: 'Press Start 2P', monospace;
-    font-size: 15px;
+    font-size: 20px;
     color: var(--gb-dark);
-    margin-bottom: 10px;
-    text-shadow: 1px 1px var(--gb-light);
+    margin-bottom: 14px;
+    text-shadow: 2px 2px var(--gb-light);
   }
 
   .screen-overlay p {
     font-family: 'Press Start 2P', monospace;
-    font-size: 7.5px;
+    font-size: 9px;
     color: var(--gb-medium);
-    margin-bottom: 14px;
-    line-height: 1.6;
+    margin-bottom: 20px;
+    line-height: 1.8;
   }
 
   .menu-btn {
     background-color: var(--gb-dark);
     color: var(--gb-bg);
     border: none;
-    padding: 10px 20px;
+    padding: 14px 26px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 11px;
     cursor: pointer;
     border-radius: 6px;
-    box-shadow: 0 3px var(--gb-medium);
-    transition: transform 0.1s ease;
+    box-shadow: 0 4px var(--gb-medium);
   }
 
   .menu-btn:active {
     transform: translateY(2px);
   }
 
-  /* Info clavier bureau */
-  .desktop-hint {
-    font-size: 11px;
-    color: #8a99ad;
-    text-align: center;
-    margin-top: 10px;
-    font-weight: 600;
-  }
-
-  @media (min-width: 768px) {
+  @media (pointer: fine) {
     .controls-container {
-      display: none; /* Masqué sur PC car on utilise le clavier */
+      display: none; /* Masqué sur PC pour profiter de tout l'écran avec le clavier */
     }
   }
 </style>
 </head>
 <body>
 
-<div class="arcade-cabinet">
-  <div class="game-title">🐍 SNAKE // 3310 PRO</div>
-  
+<div class="game-header">
+  <span>🐍 SNAKE // NOKIA 3310</span>
+  <span id="headerHi">HI:00</span>
+</div>
+
+<div class="screen-container">
   <div class="screen-lens">
     <div class="hud-top">
       <span id="scoreText">SCORE:00</span>
-      <span id="highScoreText">HI:00</span>
     </div>
 
-    <!-- Grille Snake (18x18 blocs pour un meilleur confort sur navigateur et mobile) -->
-    <div style="position: relative;">
-      <canvas id="snakeCanvas" width="180" height="180"></canvas>
+    <div style="position: relative; width: 100%; flex: 1; display: flex; flex-direction: column;">
+      <canvas id="snakeCanvas" width="200" height="200"></canvas>
 
       <!-- Menu Principal -->
       <div id="menuScreen" class="screen-overlay">
         <h1>SNAKE</h1>
-        <p>NOKIA EDITION<br><br>Utilise les flèches du clavier ou le pavé tactile ci-dessous !</p>
+        <p>NOKIA EDITION<br><br>Utilise les flèches du clavier ou le pavé tactile géant en bas !</p>
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -232,18 +232,16 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Commandes tactiles épurées pour iOS / Android -->
-  <div class="controls-container">
-    <div class="dpad">
-      <button class="arcade-btn btn-up" id="btnUp">▲</button>
-      <button class="arcade-btn btn-left" id="btnLeft">◀</button>
-      <button class="arcade-btn btn-right" id="btnRight">▶</button>
-      <button class="arcade-btn btn-down" id="btnDown">▼</button>
-    </div>
+<!-- Contrôles tactiles plein écran pour mobile -->
+<div class="controls-container">
+  <div class="dpad">
+    <button class="arcade-btn btn-up" id="btnUp">▲</button>
+    <button class="arcade-btn btn-left" id="btnLeft">◀</button>
+    <button class="arcade-btn btn-right" id="btnRight">▶</button>
+    <button class="arcade-btn btn-down" id="btnDown">▼</button>
   </div>
-
-  <div class="desktop-hint">Clavier PC : Flèches directionnelles ⌨️</div>
 </div>
 
 <script>
@@ -284,8 +282,8 @@ function playNokiaSound(type) {
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
-const GRID_SIZE = 18;
-const TILE_SIZE = 10; // 18x10 = 180px
+const GRID_SIZE = 20;
+const TILE_SIZE = 10; // 20x10 = 200px
 
 let snake = [];
 let food = { x: 0, y: 0 };
@@ -298,20 +296,21 @@ let highScore = parseInt(localStorage.getItem("nokia_snake_hi") || "0", 10);
 let gameStarted = false;
 let gameOver = false;
 let gameInterval = null;
-let speed = 110;
+let speed = 100;
 
-document.getElementById("highScoreText").textContent = `HI:${String(highScore).padStart(2, '0')}`;
+document.getElementById("highScoreText")?.remove(); // Remplacé par l'en-tête
+document.getElementById("headerHi").textContent = `HI:${String(highScore).padStart(2, '0')}`;
 
 function resetGame() {
   snake = [
-    { x: 9, y: 9 },
-    { x: 8, y: 9 },
-    { x: 7, y: 9 }
+    { x: 10, y: 10 },
+    { x: 9, y: 10 },
+    { x: 8, y: 10 }
   ];
   dx = 1; dy = 0;
   nextDx = 1; nextDy = 0;
   score = 0;
-  speed = 110;
+  speed = 100;
   updateHUD();
   spawnFood();
 }
@@ -327,7 +326,7 @@ function spawnFood() {
 
 function updateHUD() {
   document.getElementById("scoreText").textContent = `SCORE:${String(score).padStart(2, '0')}`;
-  document.getElementById("highScoreText").textContent = `HI:${String(highScore).padStart(2, '0')}`;
+  document.getElementById("headerHi").textContent = `HI:${String(highScore).padStart(2, '0')}`;
 }
 
 function drawBlock(x, y, isHead = false) {
@@ -364,7 +363,7 @@ function gameStep() {
     }
     updateHUD();
     spawnFood();
-    if (score % 50 === 0 && speed > 55) {
+    if (score % 50 === 0 && speed > 50) {
       speed -= 8;
       clearInterval(gameInterval);
       gameInterval = setInterval(gameStep, speed);
@@ -408,7 +407,7 @@ window.addEventListener("keydown", e => {
   else if ((e.code === "ArrowRight" || e.code === "KeyD") && dx === 0) { nextDx = 1; nextDy = 0; e.preventDefault(); }
 });
 
-// Contrôles Tactiles Épurés
+// Contrôles Tactiles Plein Écran
 document.getElementById("btnUp").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = -1; } };
 document.getElementById("btnDown").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = 1; } };
 document.getElementById("btnLeft").onclick = () => { if (gameStarted && !gameOver && dx === 0) { nextDx = -1; nextDy = 0; } };
