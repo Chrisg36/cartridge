@@ -35,6 +35,14 @@ const hasDay = (h) =>
 
 const iso = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
 
+// 🔒 Fonction utilitaire de hachage sécurisé (SHA-256 natif Cloudflare Workers)
+async function hashPassword(password) {
+  const msgUint8 = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function getToken(env) {
   if (!env.CLIENT_ID || !env.CLIENT_SECRET) {
     throw new Error("CLIENT_ID ou CLIENT_SECRET manquant dans Cloudflare.");
@@ -73,7 +81,6 @@ async function igdb(env, query) {
   return res.json();
 }
 
-// Une sortie IGDB -> { id, name } de plateforme
 function platformOf(r) {
   const p = r.platform;
   const id = p && typeof p === "object" ? p.id : p;
@@ -81,7 +88,6 @@ function platformOf(r) {
   return { id, name };
 }
 
-// Transforme les jeux IGDB en liste propre pour l'application
 function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
   const games = [];
   for (const g of raw || []) {
@@ -209,7 +215,7 @@ export default {
     const url = new URL(request.url);
 
     // ==========================================
-    // 👤 ROUTE 1 : AUTHENTIFICATION CLOUDFLARE D1
+    // 👤 ROUTE 1 : AUTHENTIFICATION CLOUDFLARE D1 (SÉCURISÉE HASH SHA-256)
     // ==========================================
     if (url.pathname === "/api/auth" && request.method === "POST") {
       try {
@@ -220,22 +226,22 @@ export default {
           return Response.json({ error: "Identifiant et mot de passe requis." }, { status: 400, headers: CORS });
         }
 
-        // On vérifie si le compte existe déjà dans D1
+        const hashedPassword = await hashPassword(password);
         const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
 
         if (!user) {
-          // Inscription : premier enregistrement du joueur
+          // Inscription
           await env.DB.prepare(
             "INSERT INTO users (id, password_hash, recovery_q, data) VALUES (?, ?, ?, ?)"
-          ).bind(cleanId, password, recoveryQ || "", JSON.stringify(data || {})).run();
+          ).bind(cleanId, hashedPassword, recoveryQ || "", JSON.stringify(data || {})).run();
 
           return Response.json({ 
             status: "created", 
-            message: "Compte créé et sauvegardé sur Cloudflare !" 
+            message: "Compte créé et sécurisé sur Cloudflare !" 
           }, { headers: CORS });
         } else {
-          // Connexion : vérification du mot de passe
-          if (user.password_hash === password) {
+          // Connexion
+          if (user.password_hash === hashedPassword) {
             return Response.json({ 
               status: "connected", 
               data: JSON.parse(user.data || "{}") 
@@ -270,7 +276,6 @@ export default {
       }
     }
 
-    // Route de traduction de résumé
     if (url.pathname.startsWith("/translate/")) {
       const parts = url.pathname.split("/");
       const id = parts[2];
