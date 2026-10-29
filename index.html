@@ -4286,14 +4286,12 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-  // --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
+// --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
-  <button class="theme-mini-btn" onclick="toggleDeathNoteTheme(true); playThemeSound(theme);" aria-pressed="false">
-  <span class="dot" style="background:#ef4444;"></span> Death Note
-</button>
-const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"];
+
+  const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"];
   modernKeys.forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
@@ -4303,13 +4301,29 @@ const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "ci
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      openSettings();
+      
+      // Désactive Death Note si on clique sur un autre thème
+      toggleDeathNoteTheme(false);
+      
+      openSettingsMainPage();
     });
     modernGrid.append(b);
   });
+
+  // 🍎 AJOUT DU BOUTON SPÉCIAL DEATH NOTE DANS LA GRILLE
+  const dnBtn = el("button", "theme-mini-btn", "Death Note");
+  const dnDot = el("span", "dot"); dnDot.style.background = "#ef4444"; dnDot.innerHTML = "🍎";
+  dnBtn.prepend(dnDot);
+  dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  dnBtn.addEventListener("click", () => {
+    toggleDeathNoteTheme(true);
+    playThemeSound(theme);
+    openSettingsMainPage();
+  });
+  modernGrid.append(dnBtn);
+
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
-
   // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
