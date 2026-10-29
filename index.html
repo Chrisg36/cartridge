@@ -14,6 +14,13 @@
 <title>Cartridge</title>
 <style>
 
+<script>
+  // Redirection automatique vers la version PC si l'écran est large (type ordinateur)
+  if (window.innerWidth >= 900) {
+    window.location.href = "pc.html";
+  }
+</script>
+  
 html {
   /* Empêche les micro-sauts de scroll élastique sous Safari */
   overscroll-behavior-y: none;
