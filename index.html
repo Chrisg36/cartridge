@@ -4315,13 +4315,8 @@ try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
 function openSettings() {
-  playThemeSound(theme);
-  const p = $("#panel");
-  if (!p) return;
-
-  p.className = "panel settings-panel";
-  p.replaceChildren(); 
-  p.append(el("h2", "", t('settingsTitle')));
+  openSettingsMainPage();
+}
 
   // --- NAVIGATION PAR ONGLETS DANS LES RÉGLAGES ---
   const tabNav = el("div");
