@@ -2913,20 +2913,19 @@ function openCollectionShelf() {
 for (const item of rowItems) {
   const gameBox = el("div");
   
-  // 🌟 Active l'effet holo si le jeu appartient à la catégorie Supreme Collector
   if (item.category === "supreme_retro") {
     gameBox.classList.add("supreme-holo-box");
   }
 
   gameBox.style.cssText = `
     background: var(--card); 
-    border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent);
     border-radius: 8px; 
     overflow: hidden; 
     display: flex; 
     flex-direction: column; 
     align-items: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
     cursor: pointer; 
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   `;
@@ -7053,6 +7052,30 @@ function checkDesktopSidebarBrand() {
     brand.style.display = window.innerWidth >= 900 ? 'flex' : 'none';
   }
 }
+</script>
+
+
+<script>
+// 🔄 Migration automatique des anciennes cartes de collection pour les classer et les faire briller
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    let coll = JSON.parse(localStorage.getItem("myCollection") || "[]");
+    let updated = false;
+    coll = coll.map(item => {
+      // Si la carte n'a pas de catégorie, on lui en attribue une selon son ID ou par défaut standard
+      if (!item.category) {
+        // Par exemple, si l'ID est pair ou selon un critère, ou on met standard
+        item.category = "standard";
+        updated = true;
+      }
+      return item;
+    });
+    if (updated) {
+      localStorage.setItem("myCollection", JSON.stringify(coll));
+      myCollection = coll;
+    }
+  } catch(e) {}
+});
 </script>
 
 </body>
