@@ -1295,16 +1295,35 @@ body[data-theme="arcade"] .bottom-nav .nav-item {
 .gb-action-btn:active { box-shadow: 0 1px #300; transform: translateY(2px); }
 
  /* 🕹️ Témoin de scroll latéral rétro */
+/* 🕹️ Témoin de scroll latéral rétro interactif */
 #scroll-indicator-track {
-  position: fixed; right: 8px; top: 50%; transform: translateY(-50%);
-  width: 8px; height: 220px; background: rgba(0, 0, 0, 0.4);
-  border: 1.5px solid var(--acc); border-radius: 4px; z-index: 1000;
-  pointer-events: none;
+  position: fixed;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1.5px solid var(--acc);
+  border-radius: 4px;
+  z-index: 1000;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 10px color-mix(in srgb, var(--acc) 30%, transparent);
+  overflow: hidden;
 }
 #scroll-indicator-thumb {
-  width: 100%; height: 35px; background: var(--acc); border-radius: 2px;
-  position: absolute; top: 0; box-shadow: 0 0 10px var(--acc);
-  transition: top 0.08s ease-out;
+  width: 100%;
+  height: 35px;
+  background: var(--acc);
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 10px var(--acc);
+  cursor: grab;
+}
+#scroll-indicator-thumb:active {
+  cursor: grabbing;
 }
 
 /* 🗂️ Système d'onglets pour la modale Réglages */
@@ -6385,6 +6404,54 @@ window.addEventListener('scroll', () => {
   <div id="scroll-indicator-thumb"></div>
 </div>
  <script> 
+
+// 🕹️ Interactivité tactile et au clic de la jauge latérale rétro
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById('scroll-indicator-track');
+  const thumb = document.getElementById('scroll-indicator-thumb');
+  if (!track || !thumb) return;
+
+  let isDragging = false;
+
+  const scrollToPosition = (clientY) => {
+    const rect = track.getBoundingClientRect();
+    const trackHeight = rect.height - thumb.clientHeight;
+    let offsetY = clientY - rect.top - (thumb.clientHeight / 2);
+    offsetY = Math.max(0, Math.min(trackHeight, offsetY));
+    
+    const percent = offsetY / trackHeight;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: percent * docHeight, behavior: 'auto' });
+  };
+
+  track.addEventListener('click', (e) => {
+    scrollToPosition(e.clientY);
+  });
+
+  thumb.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    e.stopPropagation();
+  });
+
+  thumb.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    e.stopPropagation();
+  }, { passive: true });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    scrollToPosition(e.clientY);
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    scrollToPosition(e.touches[0].clientY);
+  }, { passive: true });
+
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('touchend', () => { isDragging = false; });
+});
+
 load();
 </script>
 </body>
