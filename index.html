@@ -4351,11 +4351,11 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-// --- 1. SECTION THÈMES MODERNES & AMBIANCES (SANS DEATH NOTE) ---
-// 1. Thèmes modernes
+// --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
+
   ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
@@ -4365,21 +4365,17 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
     b.onclick = () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
+      toggleDeathNoteTheme(false);
       openSettingsMainPage();
     };
     modernGrid.append(b);
   });
-  
-  // ❌ SUPPRIME CETTE PARTIE QUI ÉTAIT DANS LA GRILLE :
-  // const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
-  // const dnBtn = ...
-  // modernGrid.append(dnBtn);
 
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
 
 
-  // --- 🍎 AJOUTE CE BLOC UNIQUE SÉPARÉ JUSTE ICI ---
+  // --- 🍎 BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
   const secUniqueThemes = el("div", "settings-section");
   secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
   
@@ -4408,6 +4404,8 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   uniqueGrid.append(dnUniqueBtn);
   secUniqueThemes.append(uniqueGrid);
   pageGeneral.append(secUniqueThemes);
+
+  
   // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
