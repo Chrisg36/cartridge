@@ -4290,7 +4290,9 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
-  
+  <button class="theme-mini-btn" onclick="toggleDeathNoteTheme(true); playThemeSound(theme);" aria-pressed="false">
+  <span class="dot" style="background:#ef4444;"></span> Death Note
+</button>
 const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"];
   modernKeys.forEach(key => {
     if (!THEMES[key]) return;
