@@ -650,10 +650,9 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { cursor: poin
 input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 
 .month-nav .chip {
-  background: var(--acc) !important; color: #000 !important; border: 2px solid #000 !important;
-  border-radius: var(--radius); padding: 4px 10px; min-height: 32px; cursor: pointer;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
-  transition: all 0.05s ease-in-out;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
 }
 
 .month-nav .chip:active {
@@ -6865,6 +6864,7 @@ window.f12 = function() {
 </div>
 
 <script>
+// Appel de ta fonction de chargement principale d'origine
 load();
 </script>
 </body>
