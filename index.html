@@ -51,7 +51,7 @@ body {
   font-family: var(--font); 
   padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
   position: relative; 
-  overflow-x: hidden; 
+  overflow-x: hidden; /* overflow géré */ 
   -webkit-font-smoothing: antialiased;
 }
 
@@ -69,48 +69,22 @@ body {
   }
   .trigger-crt-flash .crt-flash { animation: crtPowerOn 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
 
-/* 🍏 EN-TÊTE FIXÉ EN HAUT DE L'ÉCRAN (NE DÉFILE PAS) */
+/* 🍏 HEADER ULTRA-COMPACT ET ÉPURÉ POUR IOS */
 .sticky-header-container {
-  position: fixed !important;
+  position: -webkit-sticky !important;
+  position: sticky !important;
   top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
   z-index: 100;
   background: color-mix(in srgb, var(--bg) 95%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
-  padding-bottom: 12px;
-  padding-left: max(20px, calc((100% - 640px) / 2 + 20px));
-  padding-right: max(20px, calc((100% - 640px) / 2 + 20px));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-sizing: border-box;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-@media (min-width: 768px) {
-  .sticky-header-container {
-    padding-left: max(40px, calc((100% - 1200px) / 2 + 40px));
-    padding-right: max(40px, calc((100% - 1200px) / 2 + 40px));
-  }
-}
-
-  /* 🍏 Dégagement sous la Dynamic Island / encoche */
-  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
-  padding-bottom: 8px;
-  margin: 0 -20px;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 10px);
+  padding-bottom: 10px;
+  margin-left: -20px;
+  margin-right: -20px;
   padding-left: 20px;
   padding-right: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
 }
 
 .header-top {
@@ -310,20 +284,7 @@ body {
     100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
   }
 
-main { 
-    position: relative; 
-    z-index: 1; 
-    max-width: 640px; 
-    margin: 0 auto; 
-    padding: 190px 20px 40px !important; 
-  }
-
-  @media (min-width: 768px) {
-    main {
-      max-width: 1200px !important;
-      padding: 190px 40px 60px !important;
-    }
-  }
+  main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 20px 40px; }
 
   .day { color: var(--acc); font-weight: 700; font-size: 13px; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 8px color-mix(in srgb, var(--acc) 40%, transparent); }
   
