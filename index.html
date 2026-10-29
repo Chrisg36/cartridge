@@ -6816,6 +6816,10 @@ window.addEventListener('scroll', () => {
 window.f12 = function() {
   console.log("🎮 Activation du Mode Dark Game Boy Pro...");
 
+<script>
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Dark Game Boy Pro...");
+
   // Active le thème Game Boy Dark
   document.documentElement.dataset.theme = "gameboy-dark";
   try { localStorage.setItem("theme", "gameboy-dark"); } catch (e) {}
@@ -6861,7 +6865,8 @@ window.f12 = function() {
   <div id="scroll-indicator-thumb"></div>
 </div>
 
-<script> 
+<script>
+// C'est ici que load() doit être appelé, après que toutes les fonctions du site aient été définies
 load();
 </script>
 </body>
