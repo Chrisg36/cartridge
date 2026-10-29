@@ -3058,7 +3058,22 @@ const TRANSLATIONS = {
     navShop: "Boutique",
     navCollection: "Collection",
     navArcade: "Arcade",
-    navProfile: "Profil"
+    navProfile: "Profil",
+    museumTitle: "MUSÉE CONSOLES",
+    historicalArchives: "ARCHIVES HISTORIQUES",
+    galleryMachines: "GALERIE DES MACHINES",
+    vitrineTab: "🏛️ Vitrine de Collection",
+    museumTab: "🕹️ Musée des Consoles",
+    jacketGallery: "Galerie des Jaquettes & Archives",
+    totalCollection: "Total de la collection",
+    pieces: "pièces",
+    emptyVitrine: "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙",
+    supremeCollector: "✨ Éditions Supreme Collector",
+    retroClassic: "📼 Séries Rétro Classic",
+    standardSeries: "📦 Séries Standard & Communes",
+    jacketsCount: "jaquettes",
+    worldMuseum: "🏛️ Musée Mondial des Consoles & Micros",
+    museumDesc: "Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :"
   },
   en: {
     subTitle: "🎮 CARTRIDGE",
@@ -3100,7 +3115,22 @@ const TRANSLATIONS = {
     navShop: "Shop",
     navCollection: "Collection",
     navArcade: "Arcade",
-    navProfile: "Profile"
+    navProfile: "Profile",
+    museumTitle: "CONSOLE MUSEUM",
+    historicalArchives: "HISTORICAL ARCHIVES",
+    galleryMachines: "MACHINE GALLERY",
+    vitrineTab: "🏛️ Collection Showcase",
+    museumTab: "🕹️ Console Museum",
+    jacketGallery: "Cover Gallery & Archives",
+    totalCollection: "Total collection",
+    pieces: "pieces",
+    emptyVitrine: "Your showcase is empty!<br>Get packs in the Arcade Shop 🪙",
+    supremeCollector: "✨ Supreme Collector Editions",
+    retroClassic: "📼 Retro Classic Series",
+    standardSeries: "📦 Standard & Common Series",
+    jacketsCount: "covers",
+    worldMuseum: "🏛️ World Console & Micro Museum",
+    museumDesc: "Click on any console to discover its detailed history and specs:"
   },
   es: {
     subTitle: "🎮 CARTRIDGE",
@@ -3142,7 +3172,22 @@ const TRANSLATIONS = {
     navShop: "Tienda",
     navCollection: "Colección",
     navArcade: "Arcade",
-    navProfile: "Perfil"
+    navProfile: "Perfil",
+    museumTitle: "MUSEO DE CONSOLAS",
+    historicalArchives: "ARCHIVOS HISTÓRICOS",
+    galleryMachines: "GALERÍA DE MÁQUINAS",
+    vitrineTab: "🏛️ Vitrina de Colección",
+    museumTab: "🕹️ Museo de Consolas",
+    jacketGallery: "Galería de Portadas y Archivos",
+    totalCollection: "Colección total",
+    pieces: "piezas",
+    emptyVitrine: "¡Tu vitrina está vacía!<br>Consigue sobres en la Tienda Arcade 🪙",
+    supremeCollector: "✨ Ediciones Supreme Collector",
+    retroClassic: "📼 Series Retro Classic",
+    standardSeries: "📦 Series Estándar y Comunes",
+    jacketsCount: "portadas",
+    worldMuseum: "🏛️ Museo Mundial de Consolas y Micros",
+    museumDesc: "Haz clic en cualquier consola para descubrir su historia detallada y especificaciones:"
   },
   it: {
     subTitle: "🎮 CARTRIDGE",
@@ -3184,7 +3229,22 @@ const TRANSLATIONS = {
     navShop: "Negozio",
     navCollection: "Raccolta",
     navArcade: "Arcade",
-    navProfile: "Profilo"
+    navProfile: "Profilo",
+    museumTitle: "MUSEO CONSOLE",
+    historicalArchives: "ARCHIVIO STORICO",
+    galleryMachines: "GALLERIA DELLE MACCHINE",
+    vitrineTab: "🏛️ Vetrina Collezione",
+    museumTab: "🕹️ Museo delle Console",
+    jacketGallery: "Galleria Copertine & Archivi",
+    totalCollection: "Collezione totale",
+    pieces: "pezzi",
+    emptyVitrine: "La tua vetrina è vuota!<br>Ottieni pacchetti nel Negozio Arcade 🪙",
+    supremeCollector: "✨ Edizioni Supreme Collector",
+    retroClassic: "📼 Serie Retro Classic",
+    standardSeries: "📦 Serie Standard & Comuni",
+    jacketsCount: "copertine",
+    worldMuseum: "🏛️ Museo Mondiale delle Console & Micro",
+    museumDesc: "Clicca su qualsiasi console per scoprirne la storia dettagliata e le specifiche:"
   },
   ja: {
     subTitle: "🎮 カートリッジ",
@@ -3226,7 +3286,22 @@ const TRANSLATIONS = {
     navShop: "ショップ",
     navCollection: "コレクション",
     navArcade: "アーケード",
-    navProfile: "プロフィール"
+    navProfile: "プロフィール",
+    museumTitle: "コンソールミュージアム",
+    historicalArchives: "歴史アーカイブ",
+    galleryMachines: "マシンギャラリー",
+    vitrineTab: "🏛️ コレクションショーケース",
+    museumTab: "🕹️ コンソールミュージアム",
+    jacketGallery: "カバーギャラリー & アーカイブ",
+    totalCollection: "コレクション合計",
+    pieces: "個",
+    emptyVitrine: "ショーケースは空です！<br>アーケードショップでパックを手に入れよう 🪙",
+    supremeCollector: "✨ スプリームコレクターエディション",
+    retroClassic: "📼 レトロクラシックシリーズ",
+    standardSeries: "📦 スタンダードシリーズ",
+    jacketsCount: "カバー",
+    worldMuseum: "🏛️ 世界コンソール & マイクロミュージアム",
+    museumDesc: "コンソールをクリックして詳細な歴史とスペックを見る:"
   }
 };
 
@@ -4166,8 +4241,8 @@ function renderMuseumAndVitrinePage() {
   const subNav = el("div");
   subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
 
-  const tabVitrine = el("button", "chip", "🏛️ Vitrine de Collection");
-  const tabMuseum = el("button", "chip", "🕹️ Musée des Consoles");
+  const tabVitrine = el("button", "chip", t('vitrineTab'));
+  const tabMuseum = el("button", "chip", t('museumTab'));
 
   [tabVitrine, tabMuseum].forEach(b => {
     b.style.flex = "1";
@@ -4189,8 +4264,8 @@ function renderMuseumAndVitrinePage() {
 
     const headerDiv = el("div");
     headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">📚 Galerie des Jaquettes & Archives</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Total de la collection : <b>${myCollection.length}</b> pièce${myCollection.length > 1 ? 's' : ''}</p>
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">📚 ${t('jacketGallery')}</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('totalCollection')} : <b>${myCollection.length}</b> ${t('pieces')}</p>
     `;
     banner.append(headerDiv);
 
@@ -4309,8 +4384,8 @@ function renderMuseumAndVitrinePage() {
 
     const headerDiv = el("div");
     headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏛️ Musée Mondial des Consoles & Micros</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :</p>
+      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">${t('worldMuseum')}</h3>
+      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">${t('museumDesc')}</p>
     `;
     banner.append(headerDiv);
 
