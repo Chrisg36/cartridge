@@ -1686,7 +1686,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* 📓 IMPORT DE LA POLICE GOTHIQUE OFFICIELLE */
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
-/* 📓 THÈME GLOBAL DEATH NOTE - NOIR ET BLANC PUR & GRIMOIRE 3D */
+/* 📓 THÈME GLOBAL DEATH NOTE (Corrigé : lisible & en-tête aéré) */
   body.theme-deathnote {
     background-color: #000000 !important;
     background-image: 
@@ -1694,9 +1694,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.15  0 0 0 0 0.15  0 0 0 0 0.15  0 0 0 0.8 0'/></filter><rect width='120' height='120' filter='url(%23g)'/></svg>") !important;
     background-blend-mode: normal, overlay;
     color: #ffffff !important;
-    font-family: 'UnifrakturMaguntia', cursive, serif !important;
     
-    /* Neutralisation de toutes les couleurs d'accentuation en mode N&B pur */
     --acc: #ffffff !important;
     --card: #0c0c0c !important;
     --cov: #1a1a1a !important;
@@ -1704,25 +1702,60 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     --mut: #a1a1a1 !important;
   }
 
-  /* Typographie gothique sur tous les textes et boutons */
+  /* 1. ON GARDE LA POLICE GOTHIQUE UNIQUEMENT SUR LES TITRES & LOGOS */
+  body.theme-deathnote .neon-logo,
   body.theme-deathnote h1, 
   body.theme-deathnote h2, 
-  body.theme-deathnote h3, 
-  body.theme-deathnote h4, 
-  body.theme-deathnote .brand-text, 
-  body.theme-deathnote .game-title, 
-  body.theme-deathnote button,
-  body.theme-deathnote span,
-  body.theme-deathnote div {
+  body.theme-deathnote h3 {
     font-family: 'UnifrakturMaguntia', cursive, serif !important;
     letter-spacing: 1px !important;
+  }
+
+  /* 2. ON REMET UNE POLICE LISIBLE (SANS-SERIF) SUR LE RESTE (JEUX, BOUTONS, MENUS) */
+  body.theme-deathnote .t b,
+  body.theme-deathnote .grid-title,
+  body.theme-deathnote button,
+  body.theme-deathnote span,
+  body.theme-deathnote div,
+  body.theme-deathnote input {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  }
+
+  /* 3. CORRECTION DE L'EN-TÊTE COMPRESSÉ (Pour que profil et crédits ne soient plus coupés) */
+  body.theme-deathnote .sticky-header-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    margin: 0 -12px !important;
+  }
+
+  body.theme-deathnote .header-top {
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  body.theme-deathnote #sub-title.neon-logo {
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+    letter-spacing: 1px !important;
+  }
+
+  body.theme-deathnote #deathnote-badge {
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+    margin-left: 4px !important;
+  }
+
+  body.theme-deathnote .header-currency-badge,
+  body.theme-deathnote .player-badge {
+    transform: scale(0.9);
+    transform-origin: right center;
   }
 
   body.theme-deathnote .app-bg-cartridges {
     display: none !important;
   }
 
-  /* Cartes, panneaux et en-têtes avec un effet de relief 3D sombre et bordures blanches nettes */
+  /* Cartes et panneaux 3D ténébreux */
   body.theme-deathnote .row,
   body.theme-deathnote .grid-card,
   body.theme-deathnote .panel,
@@ -1734,17 +1767,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95), inset 0 1px 3px rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* Boutons principaux stylés grimoire 3D */
-  body.theme-deathnote .cta,
-  body.theme-deathnote .chip[aria-pressed="true"] {
-    background: #ffffff !important;
-    color: #000000 !important;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 1px 2px rgba(0,0,0,0.5) !important;
-    font-family: 'UnifrakturMaguntia', cursive, serif !important;
-  }
-
-  /* Animation des plumes blanches de Shinigami */
+  /* Animation des plumes de Shinigami */
   @keyframes floatFeather {
     0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
     20% { opacity: 0.9; }
