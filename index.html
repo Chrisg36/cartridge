@@ -6119,7 +6119,7 @@ function renderArcadeMainPage() {
 
     // Grille des bornes d'arcade
     const gridCabs = el("div");
-    gridCabs.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; width: 100%; max-width: 700px; margin: 0 auto;";
+    gridCabs.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; width: 100%; max-width: 900px; margin: 0 auto;";
 
     // 1. Borne Space Invaders
     const cabCard1 = el("div");
@@ -6132,7 +6132,7 @@ function renderArcadeMainPage() {
     cabCard1.onmouseleave = () => { cabCard1.style.transform = "translateY(0)"; cabCard1.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
     cabCard1.innerHTML = `
       <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--acc); display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 13px; color: var(--acc); text-align: center; text-shadow: 0 0 10px var(--acc);">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: var(--acc); text-align: center; text-shadow: 0 0 10px var(--acc);">
           👾 SPACE INVADERS<br><span style="font-size:7px; color:var(--mut);">MONOCHROME EDITION</span>
         </div>
       </div>
@@ -6155,7 +6155,7 @@ function renderArcadeMainPage() {
     cabCard2.onmouseleave = () => { cabCard2.style.transform = "translateY(0)"; cabCard2.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
     cabCard2.innerHTML = `
       <div style="width: 100%; aspect-ratio: 4/3; background: #9bbc0f; border-radius: 10px; overflow: hidden; border: 1.5px solid #0f380f; display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 13px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
           🧱 TETRIS<br><span style="font-size:7px; color:#306230;">GAME BOY EDITION</span>
         </div>
       </div>
@@ -6167,7 +6167,30 @@ function renderArcadeMainPage() {
     `;
     cabCard2.onclick = () => { playThemeSound(theme); openFullscreenGame("tetris_gameboy.html"); };
 
-    gridCabs.append(cabCard1, cabCard2);
+    // 3. Borne Snake Nokia 3310
+    const cabCard3 = el("div");
+    cabCard3.style.cssText = `
+      background: var(--card); border: 2px solid #306230; border-radius: 14px;
+      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    `;
+    cabCard3.onmouseenter = () => { cabCard3.style.transform = "translateY(-4px)"; cabCard3.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #306230"; };
+    cabCard3.onmouseleave = () => { cabCard3.style.transform = "translateY(0)"; cabCard3.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
+    cabCard3.innerHTML = `
+      <div style="width: 100%; aspect-ratio: 4/3; background: #9bbc0f; border-radius: 10px; overflow: hidden; border: 1.5px solid #0f380f; display: flex; align-items: center; justify-content: center;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
+          🐍 SNAKE<br><span style="font-size:7px; color:#306230;">NOKIA 3310 EDITION</span>
+        </div>
+      </div>
+      <div style="text-align: center; width: 100%;">
+        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Snake 3310</b>
+        <span style="font-size: 10px; color: var(--mut);">Écran LCD Vert • Son Buzzer • High Score</span>
+      </div>
+      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#306230; color:#9bbc0f;">▶ JOUER</button>
+    `;
+    cabCard3.onclick = () => { playThemeSound(theme); openFullscreenGame("snake_nokia.html"); };
+
+    gridCabs.append(cabCard1, cabCard2, cabCard3);
     banner.append(gridCabs);
     displayBox.append(banner);
   }
