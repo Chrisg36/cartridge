@@ -2339,7 +2339,7 @@ tabChallenges.innerHTML = `
     contentArea.append(banner);
   }
 // --- CONTENU 3 : DÉFIS & QUÊTES (AVEC LOGOS SVG) ---
-  function renderChallengesTab() {
+function renderChallengesTab() {
     tabShop.setAttribute("aria-pressed", "false");
     tabPacks.setAttribute("aria-pressed", "false");
     tabChallenges.setAttribute("aria-pressed", "true");
@@ -2361,7 +2361,7 @@ tabChallenges.innerHTML = `
     `;
     banner.append(headerBox);
 
-   const challengesList = [
+    const challengesList = [
       {
         id: "dailyLogin",
         title: "SÉRIE DE CONNEXION",
@@ -2377,7 +2377,7 @@ tabChallenges.innerHTML = `
         desc: "CONSULTATION DE DONNÉES ARCHIVES",
         reward: "+10 🪙",
         rewardAmount: 10,
-        isDone: true, // <--- FORCÉ À TRUE POUR LE TEST
+        isDone: true,
         iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
       },
       {
@@ -2418,11 +2418,12 @@ tabChallenges.innerHTML = `
       }
     ];
 
-const row = el("div");
+    challengesList.forEach(item => {
+      const row = el("div");
       row.style.cssText = `
         display: flex; flex-direction: column; gap: 10px;
         background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 14px; width: 100%; box-sizing: border-box;
+        border-radius: 10px; padding: 14px; width: 100%; box-sizing: border-box; margin-bottom: 10px;
       `;
 
       // Ligne du haut : Icône + Titre + Description
@@ -2445,25 +2446,13 @@ const row = el("div");
       textInfo.append(titleEl, descEl);
       topGroup.append(iconBox, textInfo);
 
-      // Ligne du bas : Récompense + Bouton d'action alignés à droite
+      // Ligne du bas : Récompense + Bouton d'action
       const bottomGroup = el("div");
       bottomGroup.style.cssText = "display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; margin-top: 2px;";
 
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
-      // (Garde ton code existant pour créer le bouton statusBtn ici...)
-      
-      bottomGroup.append(rewardBadge, statusBtn);
-      row.append(topGroup, bottomGroup);
-      banner.append(row);
-      const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 6px; flex-shrink: 0;";
-
-      const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
-
-      // Création d'un vrai bouton HTML interactif
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
       statusBtn.type = "button";
@@ -2493,7 +2482,7 @@ const row = el("div");
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
-          showChallenges(); // Actualise la vue principale des défis
+          renderChallengesTab();
         });
       } else {
         statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
@@ -2504,13 +2493,13 @@ const row = el("div");
         `;
       }
 
-      rightGroup.append(rewardBadge, statusBtn);
-      row.append(leftGroup, rightGroup);
+      bottomGroup.append(rewardBadge, statusBtn);
+      row.append(topGroup, bottomGroup);
       banner.append(row);
     });
+
     contentArea.append(banner);
   }
-
   // Écouteurs d'onglets
   tabShop.addEventListener("click", () => { playThemeSound(theme); renderShopTab(); });
   tabPacks.addEventListener("click", () => { playThemeSound(theme); renderPacksTab(); });
