@@ -26,6 +26,9 @@ html {
   [data-theme="violet"] { color-scheme: dark; --bg:#130F1E; --card:#1E1830; --cov:#2D2548; --txt:#F1ECFF; --mut:#B0A5CC; --acc:#B794FF; --on:#130F1E; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
   [data-theme="ruby"] { color-scheme: dark; --bg:#170D10; --card:#251519; --cov:#3A2127; --txt:#FBEFF1; --mut:#C7A4AB; --acc:#FF5C7A; --on:#170D10; --pattern: none; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 16px; }
 
+
+  [data-theme="gameboy-dark"] { color-scheme: dark; --bg: #070f07; --card: #0f1f0f; --cov: #183318; --txt: #b8f017; --mut: #729c15; --acc: #99e600; --on: #070f07; --pattern: radial-gradient(#122612 1.5px, transparent 1.5px); background-size: 4px 4px; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 0px; }
+
   [data-theme="gameboy"] { color-scheme: dark; --bg: #0f1f0f; --card: #152915; --cov: #1f3b1f; --txt: #9bbc0f; --mut: #486648; --acc: #8bac0f; --on: #0f1f0f; --pattern: radial-gradient(#1f3b1f 1.5px, transparent 1.5px); background-size: 8px 8px; --font: 'Press Start 2P', monospace; --radius: 0px; }
   [data-theme="nes"] { color-scheme: dark; --bg: #121214; --card: #1c1c21; --cov: #2c2c36; --txt: #ffffff; --mut: #8b8b9e; --acc: #e52521; --on: #ffffff; --pattern: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); --font: 'Press Start 2P', monospace; --radius: 4px; }
   [data-theme="snes"] { color-scheme: dark; --bg: #16151d; --card: #23222d; --cov: #343242; --txt: #f1f0f7; --mut: #8f8ba8; --acc: #6b5cd5; --on: #ffffff; --pattern: repeating-linear-gradient(45deg, rgba(107, 92, 213, 0.06) 0px, rgba(107, 92, 213, 0.06) 2px, transparent 2px, transparent 8px); --font: 'Press Start 2P', monospace; --radius: 6px; }
@@ -650,9 +653,10 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { cursor: poin
 input[type="month"]#dateSelect:hover { border-color: var(--acc) !important; }
 
 .month-nav .chip {
-  font-family: 'Press Start 2P', monospace !important;
-  font-size: 10px !important;
-  font-weight: 900 !important;
+  background: var(--acc) !important; color: #000 !important; border: 2px solid #000 !important;
+  border-radius: var(--radius); padding: 4px 10px; min-height: 32px; cursor: pointer;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 4px 0 color-mix(in srgb, var(--acc) 50%, #000) !important;
+  transition: all 0.05s ease-in-out;
 }
 
 .month-nav .chip:active {
@@ -1845,28 +1849,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   font-weight: 900 !important;
 }
 
-/* Style permanent pour le thème Game Boy Pro & Boutons A/B */
-[data-theme="gameboy-dark"] { 
-  color-scheme: dark; 
-  --bg: #070f07 !important; 
-  --card: #0f1f0f !important; 
-  --cov: #183318 !important; 
-  --txt: #b8f017 !important; 
-  --mut: #729c15 !important; 
-  --acc: #99e600 !important; 
-  --on: #070f07 !important; 
-  --pattern: radial-gradient(#122612 1.5px, transparent 1.5px); 
-  background-size: 4px 4px; 
-  --font: 'Rajdhani', -apple-system, sans-serif; 
-  --radius: 0px; 
-}
-
-/* Force les boutons de mois à devenir A et B en mode Game Boy */
-[data-theme="gameboy-dark"] #prev {
-  content: "B" !important;
-}
-[data-theme="gameboy-dark"] #next {
-  content: "A" !important;
+/* 🟢 Filtre LCD vert rétro permanent sur TOUTES les jaquettes en mode Game Boy Pro */
+[data-theme="gameboy-dark"] .cov,
+[data-theme="gameboy-dark"] .grid-cov,
+[data-theme="gameboy-dark"] .big,
+[data-theme="gameboy-dark"] .collection-item-card img {
+  filter: grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%) !important;
+  border: 1px solid #729c15 !important;
 }
 
   
@@ -4370,9 +4359,10 @@ const THEMES = {
 function applyTheme(th) {
   if (!THEMES[th]) th = "dark";
   document.documentElement.dataset.theme = th;
-  $("#themeMeta").content = THEMES[th][1];
-  playThemeSound(th);
+  if ($("#themeMeta")) $("#themeMeta").content = THEMES[th][1];
+  if (typeof playThemeSound === "function") playThemeSound(th);
 
+  // 🕹️ Gère les boutons A/B et le filtre LCD si on est en Game Boy Pro
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
   
@@ -4394,6 +4384,7 @@ function applyTheme(th) {
     });
   }
 
+  // Application du motif de fond selon le thème choisi
   let patternVal = "none";
   if (th === "circuit") {
     patternVal = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'><g fill=\'none\' stroke=\'%23FF7A45\' stroke-width=\'1.2\' opacity=\'0.12\'><rect x=\'20\' y=\'20\' width=\'40\' height=\'40\' rx=\'4\'/><circle cx=\'40\' cy=\'40\' r=\'6\' fill=\'%23FFD700\' opacity=\'0.2\'/><path d=\'M40 20 V10 H120 V80 H100\'/><rect x=\'120\' y=\'110\' width=\'50\' height=\'50\' rx=\'6\'/><path d=\'M145 110 V140 H170\'/><path d=\'M20 140 H70 V180\'/><circle cx=\'70\' cy=\'180\' r=\'4\' fill=\'%235CA8FF\' opacity=\'0.3\'/></g></svg>")';
@@ -4405,7 +4396,6 @@ function applyTheme(th) {
   document.documentElement.style.setProperty('--pattern', patternVal);
   return th;
 }
-
 let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
@@ -4506,7 +4496,7 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
   const retroGrid = el("div", "themes-grid-container");
   
-  const retroKeys = ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
+  const retroKeys = ["gameboy", "gameboy-dark", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
   retroKeys.forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
@@ -6355,7 +6345,7 @@ function openSettingsMainPage() {
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
   const retroGrid = el("div", "themes-grid-container");
   
-  const retroKeys = ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
+  const retroKeys = ["gameboy", "gameboy-dark", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
   retroKeys.forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
@@ -6908,7 +6898,6 @@ window.f12 = function() {
 </div>
 
 <script>
-// Appel de ta fonction de chargement principale d'origine
 load();
 </script>
 </body>
