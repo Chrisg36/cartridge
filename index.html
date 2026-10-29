@@ -3016,6 +3016,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkDailyReward();
 });
 
+
 const TRANSLATIONS = {
   fr: {
     subTitle: "CARTRIDGE",
@@ -3030,16 +3031,10 @@ const TRANSLATIONS = {
     netError: "Impossible de charger les sorties. Vérifie l’adresse du Worker dans config.js.",
     searchError: "Erreur lors de la recherche.",
     settingsTitle: "Réglages",
-    themeLabel: "Thèmes & Consoles Rétro",
-    soundLabel: "Effets sonores",
     soundOn: "🔊 Son activé",
     soundOff: "🔇 Son coupé",
-    crtLabel: "Effet Écran Cathodique (CRT)",
     crtOn: "📺 Activé",
     crtOff: "🖥️ Désactivé",
-    langLabel: "Langue de l'interface",
-    retroLabel: "🕰️ Capsule Temporelle",
-    resetCurrentMonth: "📅 Revenir au mois actuel",
     close: "Fermer",
     shareTitle: "Partager mon mois",
     shareDesc: "Copie ce message et colle-le directement sur Messenger, Discord ou WhatsApp :",
@@ -3054,13 +3049,16 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
-    vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
-    vitrineDesc: "Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
     yesterday: "Hier",
-    daysAgo: (d) => `Il y a ${d} jours`
+    daysAgo: (d) => `Il y a ${d} jours`,
+    navHome: "Home",
+    navShop: "Boutique",
+    navCollection: "Collection",
+    navArcade: "Arcade",
+    navProfile: "Profil"
   },
   en: {
     subTitle: "🎮 CARTRIDGE",
@@ -3075,16 +3073,10 @@ const TRANSLATIONS = {
     netError: "Unable to load releases. Check Worker URL in config.js.",
     searchError: "Error during search.",
     settingsTitle: "Settings",
-    themeLabel: "Themes & Retro Consoles",
-    soundLabel: "Sound Effects",
     soundOn: "🔊 Sound ON",
     soundOff: "🔇 Sound OFF",
-    crtLabel: "CRT Scanlines Effect",
     crtOn: "📺 ON",
     crtOff: "🖥️ OFF",
-    langLabel: "Interface Language",
-    retroLabel: "🕰️ Time Capsule",
-    resetCurrentMonth: "📅 Back to current month",
     close: "Close",
     shareTitle: "Share my month",
     shareDesc: "Copy and paste this message on Messenger, Discord, or WhatsApp:",
@@ -3099,58 +3091,16 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Check HowLongToBeat",
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
-    vitrineTitle: "🏛️ World Console & Micro Museum",
-    vitrineDesc: "Click on any console to discover its detailed history and specs:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
     yesterday: "Yesterday",
-    daysAgo: (d) => `${d} days ago`
-  },
-  ja: {
-    subTitle: "🎮 カートリッジ",
-    searchPlaceholder: "ゲームを検索...",
-    all: "✨ すべてのゲーム",
-    favorites: "❤️ お気に入り",
-    noGamesSearch: "ゲームが見つかりませんでした。",
-    noGamesFav: "今月のお気に入りはありません。",
-    noGamesFilter: "今月のこのコンソールのリリースはありません。",
-    loading: "読み込み中...",
-    searchDb: "データベースを検索中... 🔍",
-    netError: "リリースを読み込めません。config.jsを確認してください。",
-    searchError: "検索中にエラーが発生しました。",
-    settingsTitle: "設定",
-    themeLabel: "テーマとレトロコンソール",
-    soundLabel: "効果音",
-    soundOn: "🔊 サウンド ON",
-    soundOff: "🔇 サウンド OFF",
-    crtLabel: "CRTエフェクト",
-    crtOn: "📺 ON",
-    crtOff: "🖥️ OFF",
-    langLabel: "言語",
-    retroLabel: "🕰️ タイムカプセル",
-    resetCurrentMonth: "📅 今月に戻る",
-    close: "閉じる",
-    shareTitle: "今月を共有",
-    shareDesc: "以下のテキストをコピーして共有:",
-    noFavShare: "お気に入りはまだありません！",
-    shareFooter: "✨ Cartridgeアプリから共有",
-    copyBtn: "📋 テキストをコピー",
-    copiedBtn: "✅ コピーしました！",
-    calendarBtn: "カレンダーに追加",
-    favAdd: "🤍 お気に入りに追加",
-    favRemove: "❤️ お気に入りから削除",
-    trailerBtn: "🎥 トレーラーを見る",
-    hltbBtn: "⏱️ プレイ時間を確認",
-    summaryLabel: "概要",
-    summaryLoading: "翻訳中... ⏳",
-    vitrineTitle: "🏛️ コンソールミュージアム",
-    vitrineDesc: "コンソールをクリックして詳細を見る:",
-    today: "今日",
-    tomorrow: "明日",
-    inDays: (d) => `${d}日後`,
-    yesterday: "昨日",
-    daysAgo: (d) => `${d}日前`
+    daysAgo: (d) => `${d} days ago`,
+    navHome: "Home",
+    navShop: "Shop",
+    navCollection: "Collection",
+    navArcade: "Arcade",
+    navProfile: "Profile"
   },
   es: {
     subTitle: "🎮 CARTRIDGE",
@@ -3165,16 +3115,10 @@ const TRANSLATIONS = {
     netError: "No se pueden cargar los lanzamientos.",
     searchError: "Error en la búsqueda.",
     settingsTitle: "Ajustes",
-    themeLabel: "Temas y Consolas Retro",
-    soundLabel: "Efectos de sonido",
     soundOn: "🔊 Sonido ON",
     soundOff: "🔇 Sonido OFF",
-    crtLabel: "Efecto CRT",
     crtOn: "📺 Activado",
     crtOff: "🖥️ Desactivado",
-    langLabel: "Idioma de la interfaz",
-    retroLabel: "🕰️ Cápsula del Tiempo",
-    resetCurrentMonth: "📅 Volver al mes actual",
     close: "Cerrar",
     shareTitle: "Compartir mi mes",
     shareDesc: "Copia y pega este mensaje:",
@@ -3189,13 +3133,16 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Ver duraciones (HowLongToBeat)",
     summaryLabel: "Resumen",
     summaryLoading: "Traduciendo resumen... ⏳",
-    vitrineTitle: "🏛️ Museo de Consolas",
-    vitrineDesc: "Haz clic en cualquier consola para ver su historia:",
     today: "Hoy",
     tomorrow: "Mañana",
     inDays: (d) => `En ${d} días`,
     yesterday: "Ayer",
-    daysAgo: (d) => `Hace ${d} días`
+    daysAgo: (d) => `Hace ${d} días`,
+    navHome: "Inicio",
+    navShop: "Tienda",
+    navCollection: "Colección",
+    navArcade: "Arcade",
+    navProfile: "Perfil"
   },
   it: {
     subTitle: "🎮 CARTRIDGE",
@@ -3210,16 +3157,10 @@ const TRANSLATIONS = {
     netError: "Impossibile caricare le uscite.",
     searchError: "Errore durante la ricerca.",
     settingsTitle: "Impostazioni",
-    themeLabel: "Temi e Console Retrò",
-    soundLabel: "Effetti sonori",
     soundOn: "🔊 Audio ON",
     soundOff: "🔇 Audio OFF",
-    crtLabel: "Effetto CRT",
     crtOn: "📺 Attivo",
     crtOff: "🖥️ Disattivato",
-    langLabel: "Lingua interfaccia",
-    retroLabel: "🕰️ Capsula Temporale",
-    resetCurrentMonth: "📅 Torna al mese corrente",
     close: "Chiudi",
     shareTitle: "Condividi il mio mese",
     shareDesc: "Copia e incolla questo messaggio:",
@@ -3234,15 +3175,61 @@ const TRANSLATIONS = {
     hltbBtn: "⏱️ Durata del gioco (HowLongToBeat)",
     summaryLabel: "Sommario",
     summaryLoading: "Traduzione in corso... ⏳",
-    vitrineTitle: "🏛️ Museo delle Console",
-    vitrineDesc: "Clicca su qualsiasi console per scoprire la sua storia:",
     today: "Oggi",
     tomorrow: "Domani",
     inDays: (d) => `Tra ${d} giorni`,
     yesterday: "Ieri",
-    daysAgo: (d) => `${d} giorni fa`
+    daysAgo: (d) => `${d} giorni fa`,
+    navHome: "Home",
+    navShop: "Negozio",
+    navCollection: "Raccolta",
+    navArcade: "Arcade",
+    navProfile: "Profilo"
+  },
+  ja: {
+    subTitle: "🎮 カートリッジ",
+    searchPlaceholder: "ゲームを検索...",
+    all: "✨ すべてのゲーム",
+    favorites: "❤️ お気に入り",
+    noGamesSearch: "ゲームが見つかりませんでした。",
+    noGamesFav: "今月のお気に入りはありません。",
+    noGamesFilter: "今月のこのコンソールのリリースはありません。",
+    loading: "読み込み中...",
+    searchDb: "データベースを検索中... 🔍",
+    netError: "リリースを読み込めません。",
+    searchError: "検索エラー",
+    settingsTitle: "設定",
+    soundOn: "🔊 サウンド ON",
+    soundOff: "🔇 サウンド OFF",
+    crtOn: "📺 ON",
+    crtOff: "🖥️ OFF",
+    close: "閉じる",
+    shareTitle: "今月を共有",
+    shareDesc: "以下のテキストをコピー:",
+    noFavShare: "お気に入りはまだありません！",
+    shareFooter: "✨ Cartridgeから共有",
+    copyBtn: "📋 コピー",
+    copiedBtn: "✅ コピー完了",
+    calendarBtn: "カレンダーに追加",
+    favAdd: "🤍 お気に入りに追加",
+    favRemove: "❤️ お気に入りから削除",
+    trailerBtn: "🎥 トレーラー",
+    hltbBtn: "⏱️ プレイ時間",
+    summaryLabel: "概要",
+    summaryLoading: "翻訳中... ⏳",
+    today: "今日",
+    tomorrow: "明日",
+    inDays: (d) => `${d}日後`,
+    yesterday: "昨日",
+    daysAgo: (d) => `${d}日前`,
+    navHome: "ホーム",
+    navShop: "ショップ",
+    navCollection: "コレクション",
+    navArcade: "アーケード",
+    navProfile: "プロフィール"
   }
 };
+
 
 const LANG_NAMES = {
   fr: "🇫🇷 Français",
@@ -4826,6 +4813,7 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
     currentLang = e.target.value;
     try { localStorage.setItem("lang", currentLang); } catch (err) {}
     playThemeSound(theme);
+    updateNavbarTranslations();
     openSettingsMainPage();
     render();
   };
@@ -6705,6 +6693,7 @@ function openSettingsMainPage() {
     currentLang = e.target.value;
     try { localStorage.setItem("lang", currentLang); } catch (err) {}
     playThemeSound(theme);
+    updateNavbarTranslations();
     openSettingsMainPage();
     render();
   };
@@ -7278,6 +7267,23 @@ function checkDesktopSidebarBrand() {
     brand.style.display = window.innerWidth >= 900 ? 'flex' : 'none';
   }
 }
+
+function updateNavbarTranslations() {
+  const nHome = document.querySelector("#navHome span");
+  const nShop = document.querySelector("#navShopArcade span");
+  const nCol = document.querySelector("#navMuseum span");
+  const nArc = document.querySelector("#navArcadeRoom span");
+  const nSet = document.querySelector("#navSettings span");
+
+  if (nHome) nHome.textContent = t('navHome');
+  if (nShop) nShop.textContent = t('navShop');
+  if (nCol) nCol.textContent = t('navCollection');
+  if (nArc) nArc.textContent = t('navArcade');
+  if (nSet) nSet.textContent = t('navProfile');
+}
+
+window.addEventListener("DOMContentLoaded", updateNavbarTranslations);
+
 </script>
 
 </body>
