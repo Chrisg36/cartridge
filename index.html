@@ -2389,7 +2389,7 @@ tabChallenges.innerHTML = `
       }
     ];
 
-          const row = el("div");
+    challengesList.forEach(item => {
       row.style.cssText = `
         display: flex; flex-direction: column; gap: 10px;
         background: rgba(15, 23, 42, 0.6); border: 1.5px solid color-mix(in srgb, var(--acc) 25%, transparent);
