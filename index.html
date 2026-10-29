@@ -2418,7 +2418,7 @@ tabChallenges.innerHTML = `
       }
     ];
 
-   challengesList.forEach(item => {
+ challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
         display: flex; flex-direction: column; gap: 10px;
@@ -2426,7 +2426,7 @@ tabChallenges.innerHTML = `
         border-radius: 12px; padding: 14px;
       `;
 
-      // 1. ÉTAGE DU HAUT : Icône + Titre + Description (prennent 100% de la largeur)
+      // 1. ÉTAGE DU HAUT : Icône + Titre + Description
       const topPart = el("div");
       topPart.style.cssText = "display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;";
 
@@ -2438,7 +2438,7 @@ tabChallenges.innerHTML = `
       textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
 
       const descEl = el("span", "", item.desc);
       descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break: break-word;";
@@ -2485,54 +2485,7 @@ tabChallenges.innerHTML = `
       row.append(topPart, bottomPart);
       banner.append(row);
     });
-
-      // Création d'un vrai bouton HTML interactif
-      const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
-      const statusBtn = document.createElement("button");
-      statusBtn.type = "button";
-
-      if (isClaimed) {
-        statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
-          cursor: default; white-space: nowrap;
-        `;
-      } else if (item.isDone) {
-        statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
-          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
-          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
-        `;
-        statusBtn.addEventListener("click", () => {
-          if (!cData.claimedRewards) cData.claimedRewards = {};
-          cData.claimedRewards[item.id] = true;
-          saveChallengesData(cData);
-
-          if (item.rewardAmount > 0) {
-            addCoins(item.rewardAmount);
-            if (typeof updateCoinsUI === "function") updateCoinsUI();
-          }
-
-          if (typeof playThemeSound === "function") playThemeSound(theme);
-          showChallenges(); // Actualise la vue principale des défis
-        });
-      } else {
-        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
-          cursor: default; white-space: nowrap;
-        `;
-      }
-
-      rightGroup.append(rewardBadge, statusBtn);
-      row.append(leftGroup, rightGroup);
-      banner.append(row);
-    });
     contentArea.append(banner);
-  }
 
   // Écouteurs d'onglets
   tabShop.addEventListener("click", () => { playThemeSound(theme); renderShopTab(); });
