@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Space Invaders - Édition Rétro Monochrome & Game Boy</title>
+<title>Space Invaders - Édition Rétro Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -92,7 +92,7 @@
   }
 
   h1 {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.5;
     margin-bottom: 20px;
     text-shadow: 2px 2px var(--mut);
@@ -100,7 +100,7 @@
   }
 
   p {
-    font-size: 10px;
+    font-size: 9px;
     line-height: 1.8;
     color: var(--mut);
     margin-bottom: 15px;
@@ -125,11 +125,6 @@
     color: var(--bg);
   }
 
-  .btn.active-opt {
-    background: var(--txt);
-    color: var(--bg);
-  }
-
   /* HUD Top bar */
   #hud {
     position: absolute;
@@ -141,7 +136,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 12px;
-    font-size: 9px;
+    font-size: 8px;
     border-bottom: 2px solid var(--txt);
     background: var(--card);
     z-index: 5;
@@ -201,7 +196,7 @@
   <!-- HUD -->
   <div id="hud">
     <span id="hud-score">SCORE: 000000</span>
-    <span id="hud-stage">ÉTAGE 1</span>
+    <span id="hud-stage">VAGUE 1</span>
     <span id="hud-lives">♥♥♥</span>
   </div>
 
@@ -222,9 +217,8 @@
   <!-- MENU PRINCIPAL -->
   <div id="screen-main" class="screen">
     <h1>SPACE INVADERS</h1>
-    <p>ÉDITION RÉTRO MONOCHROME</p>
-    <button class="btn" id="start-adventure">MODE AVENTURE</button>
-    <button class="btn" id="start-infinit">MODE INFINI</button>
+    <p>CLASSIQUE ARCADE</p>
+    <button class="btn" id="start-btn">JOUER</button>
     <button class="btn" id="btn-settings">RÉGLAGES</button>
   </div>
 
@@ -246,25 +240,15 @@
     <p id="go-score">SCORE FINAL : 0</p>
     <button class="btn" id="restart-btn">REJOUER</button>
   </div>
-
-  <!-- ÉCRAN VICTOIRE -->
-  <div id="screen-victory" class="screen hidden">
-    <h1>VICTOIRE !</h1>
-    <p>VOUS AVEZ SAUVÉ LA GALAXIE</p>
-    <p id="vic-score">SCORE : 0</p>
-    <button class="btn" id="vic-restart">MENU PRINCIPAL</button>
-  </div>
 </div>
 
 <script>
-// --- WEB AUDIO SYNTHESIZER ---
+// --- AUDIO SYNTHESIZER ---
 let audioCtx = null;
 let soundOn = true;
 
 function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
 function playSound(type) {
@@ -284,50 +268,44 @@ function playSound(type) {
     osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
     gain.gain.setValueAtTime(0.1, now);
     gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-    osc.start(now);
-    osc.stop(now + 0.1);
+    osc.start(now); osc.stop(now + 0.1);
   } else if (type === 'hit') {
     osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.setValueAtTime(180, now);
     osc.frequency.linearRampToValueAtTime(40, now + 0.2);
     gain.gain.setValueAtTime(0.15, now);
     gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-    osc.start(now);
-    osc.stop(now + 0.2);
-  } else if (type === 'boss_hit') {
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(220, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.15);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-    osc.start(now);
-    osc.stop(now + 0.15);
-  } else if (type === 'gameover') {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(300, now);
-    osc.frequency.linearRampToValueAtTime(80, now + 1.2);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 1.2);
-    osc.start(now);
-    osc.stop(now + 1.2);
-  } else if (type === 'victory') {
-    const notes = [523.25, 659.25, 783.99, 1046.5];
+    osc.start(now); osc.stop(now + 0.2);
+  } else if (type === 'powerup') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+    osc.start(now); osc.stop(now + 0.3);
+  } else if (type === 'extralife') {
+    const notes = [440, 554.37, 659.25, 880];
     notes.forEach((freq, idx) => {
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
-      o.connect(g);
-      g.connect(audioCtx.destination);
-      o.type = 'square';
-      o.frequency.setValueAtTime(freq, now + idx * 0.15);
-      g.gain.setValueAtTime(0.1, now + idx * 0.15);
-      g.gain.linearRampToValueAtTime(0.01, now + idx * 0.15 + 0.2);
-      o.start(now + idx * 0.15);
-      o.stop(now + idx * 0.15 + 0.2);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(freq, now + idx * 0.1);
+      g.gain.setValueAtTime(0.12, now + idx * 0.1);
+      g.gain.linearRampToValueAtTime(0.01, now + idx * 0.1 + 0.15);
+      o.start(now + idx * 0.1); o.stop(now + idx * 0.1 + 0.15);
     });
+  } else if (type === 'gameover') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.linearRampToValueAtTime(60, now + 1.2);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.linearRampToValueAtTime(0.01, now + 1.2);
+    osc.start(now); osc.stop(now + 1.2);
   }
 }
 
-// --- SPRITES PIXEL ART (Matrices 0 et 1) ---
+// --- SPRITES PIXEL ART ---
 const SPRITES = {
   player: [
     "000010000",
@@ -337,34 +315,31 @@ const SPRITES = {
     "111111111",
     "101111101"
   ],
-  alien1: [
-    "00100100",
-    "00011000",
-    "00111100",
-    "01100110",
-    "11111111",
-    "10100101",
-    "10000001",
-    "01000010"
+  alienType1: [
+    "001100",
+    "011110",
+    "110111",
+    "111111",
+    "010101",
+    "100001"
   ],
-  alien2: [
-    "00011000",
+  alienType2: [
     "00111100",
     "01111110",
+    "11111111",
     "11011011",
     "11111111",
     "00100100",
-    "01011010",
-    "10000001"
+    "01000010"
   ],
-  boss: [
-    "000111111000",
-    "001111111100",
-    "011011110110",
-    "111111111111",
-    "101111111101",
-    "100100010001",
-    "000110110000"
+  alienType3: [
+    "00011000",
+    "00111100",
+    "01111110",
+    "11111111",
+    "10111101",
+    "10011001",
+    "01000010"
   ]
 };
 
@@ -383,25 +358,26 @@ function drawSprite(ctx, matrix, x, y, scale = 3, color = "#ffffff") {
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let gameState = "MAIN"; // MAIN, SETTINGS, ADVENTURE, INFINITE, GAMEOVER, VICTORY
-let difficulty = "NORMAL"; // FACILE, NORMAL, DIFFICILE
-let gameMode = "ADVENTURE"; // ADVENTURE, INFINITE
-let currentStage = 1;
+let gameState = "MAIN";
+let difficulty = "NORMAL";
+let wave = 1;
 let score = 0;
 let lives = 3;
+let extraLifeThreshold = 1000; // Seuil pour gagner une vie supplémentaire
 let gbFilter = false;
 
-let player = { x: 215, y: 520, w: 27, h: 18, speed: 5 };
+let player = { x: 215, y: 520, w: 27, h: 18, speed: 5, invulnerableTimer: 0 };
 let bullets = [];
 let enemyBullets = [];
 let enemies = [];
-let boss = null;
-let particleFX = [];
+let powerups = [];
 
 let keys = { ArrowLeft: false, ArrowRight: false, Space: false };
-let touchLeft = false, touchRight = false, touchFire = false;
+let touchLeft = false, touchRight = false;
+let powerupType = null; // 'DOUBLE', 'SHIELD'
+let powerupTimer = 0;
 
-// --- GESTION DES INPUTS ---
+// Inputs
 window.addEventListener("keydown", e => {
   if (e.code === "ArrowLeft" || e.code === "KeyA") keys.ArrowLeft = true;
   if (e.code === "ArrowRight" || e.code === "KeyD") keys.ArrowRight = true;
@@ -411,97 +387,100 @@ window.addEventListener("keydown", e => {
     e.preventDefault();
   }
 });
-
 window.addEventListener("keyup", e => {
   if (e.code === "ArrowLeft" || e.code === "KeyA") keys.ArrowLeft = false;
   if (e.code === "ArrowRight" || e.code === "KeyD") keys.ArrowRight = false;
   if (e.code === "Space") keys.Space = false;
 });
 
-// Contrôles tactiles
 document.getElementById("btn-left").addEventListener("touchstart", () => touchLeft = true);
 document.getElementById("btn-left").addEventListener("touchend", () => touchLeft = false);
 document.getElementById("btn-right").addEventListener("touchstart", () => touchRight = true);
 document.getElementById("btn-right").addEventListener("touchend", () => touchRight = false);
-document.getElementById("btn-fire").addEventListener("touchstart", () => { fireBullet(); });
+document.getElementById("btn-fire").addEventListener("touchstart", () => fireBullet());
 
-// Souris pour test desktop tactile
 document.getElementById("btn-left").addEventListener("mousedown", () => touchLeft = true);
 document.getElementById("btn-left").addEventListener("mouseup", () => touchLeft = false);
 document.getElementById("btn-right").addEventListener("mousedown", () => touchRight = true);
 document.getElementById("btn-right").addEventListener("mouseup", () => touchRight = false);
-document.getElementById("btn-fire").addEventListener("click", () => { fireBullet(); });
+document.getElementById("btn-fire").addEventListener("click", () => fireBullet());
 
 function fireBullet() {
-  if (gameState !== "ADVENTURE" && gameState !== "INFINITE") return;
-  if (bullets.filter(b => b.fromPlayer).length < (difficulty === "FACILE" ? 3 : 2)) {
+  if (gameState !== "PLAYING") return;
+  if (powerupType === 'DOUBLE') {
+    bullets.push({ x: player.x + 2, y: player.y, w: 3, h: 10, vy: -9, fromPlayer: true });
+    bullets.push({ x: player.x + player.w - 5, y: player.y, w: 3, h: 10, vy: -9, fromPlayer: true });
+  } else {
     bullets.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 10, vy: -8, fromPlayer: true });
-    playSound('shoot');
   }
+  playSound('shoot');
 }
 
-// --- INITIALISATION DU NIVEAU ---
-function startStage(stageNum) {
-  currentStage = stageNum;
+function startWave(wNum) {
+  wave = wNum;
   bullets = [];
   enemyBullets = [];
   enemies = [];
-  boss = null;
+  powerups = [];
+  document.getElementById("hud-stage").textContent = `VAGUE ${wave}`;
 
-  document.getElementById("hud-stage").textContent = gameMode === "ADVENTURE" ? `ÉTAGE ${currentStage}/10` : `MODE INFINI`;
+  let rows = 4;
+  let cols = 8;
+  let speedMult = difficulty === "FACILE" ? 0.7 : (difficulty === "DIFFICILE" ? 1.4 : 1.0);
 
-  if (currentStage % 5 === 0 || (gameMode === "ADVENTURE" && currentStage === 10)) {
-    // Boss stage
-    let hp = 20 + currentStage * 5;
-    if (difficulty === "FACILE") hp = Math.floor(hp * 0.7);
-    if (difficulty === "DIFFICILE") hp = Math.floor(hp * 1.4);
-
-    boss = {
-      x: 190, y: 70, w: 36, h: 21, hp: hp, maxHp: hp, vx: difficulty === "DIFFICILE" ? 3 : 2, dir: 1, shootTimer: 0
-    };
-  } else {
-    // Vague d'ennemis
-    let rows = 3 + Math.floor(currentStage / 2);
-    let cols = 6;
-    let speedMult = difficulty === "FACILE" ? 0.7 : (difficulty === "DIFFICILE" ? 1.3 : 1.0);
-
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        enemies.push({
-          x: 60 + c * 60,
-          y: 70 + r * 45,
-          w: 24,
-          h: 24,
-          type: r % 2 === 0 ? 'alien1' : 'alien2',
-          alive: true,
-          vx: 1 * speedMult,
-          baseY: 70 + r * 45
-        });
-      }
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      let type = r === 0 ? 'alienType3' : (r <= 2 ? 'alienType2' : 'alienType1');
+      let points = r === 0 ? 30 : (r <= 2 ? 20 : 10);
+      enemies.push({
+        x: 35 + c * 52,
+        y: 60 + r * 38,
+        w: type === 'alienType1' ? 18 : 24,
+        h: 24,
+        type: type,
+        points: points,
+        alive: true,
+        vx: (0.8 + wave * 0.1) * speedMult
+      });
     }
   }
 }
 
-function initGame(mode) {
-  gameMode = mode;
+function initGame() {
   score = 0;
   lives = 3;
+  extraLifeThreshold = 1000;
+  powerupType = null;
+  powerupTimer = 0;
   player.x = 215;
-  
+  player.invulnerableTimer = 0;
+
   document.getElementById("screen-main").classList.add("hidden");
   document.getElementById("screen-gameover").classList.add("hidden");
-  document.getElementById("screen-victory").classList.add("hidden");
   document.getElementById("screen-settings").classList.add("hidden");
 
-  gameState = mode;
-  startStage(1);
+  gameState = "PLAYING";
+  startWave(1);
 }
 
-// --- BOUCLE PRINCIPALE DE JEU ---
-let enemyAnimTimer = 0;
-
 function update() {
-  if (gameState !== "ADVENTURE" && gameState !== "INFINITE") return;
+  if (gameState !== "PLAYING") return;
+
+  // Invulnérabilité joueur
+  if (player.invulnerableTimer > 0) player.invulnerableTimer--;
+
+  // Power-up timer
+  if (powerupTimer > 0) {
+    powerupTimer--;
+    if (powerupTimer <= 0) powerupType = null;
+  }
+
+  // Vérification de vie supplémentaire par palier de score (+1 vie tous les 1000 pts)
+  if (score >= extraLifeThreshold) {
+    lives++;
+    extraLifeThreshold += 1000;
+    playSound('extralife');
+  }
 
   // Déplacements Joueur
   if (keys.ArrowLeft || touchLeft) player.x -= player.speed;
@@ -509,167 +488,158 @@ function update() {
   if (player.x < 10) player.x = 10;
   if (player.x > canvas.width - player.w - 10) player.x = canvas.width - player.w - 10;
 
-  // Mise à jour Bullets
+  // Bullets
   bullets.forEach(b => b.y += b.vy);
   bullets = bullets.filter(b => b.y > -20 && b.y < canvas.height + 20);
 
   enemyBullets.forEach(b => b.y += b.vy);
   enemyBullets = enemyBullets.filter(b => b.y > -20 && b.y < canvas.height + 20);
 
-  // Gestion Ennemis
+  // Powerups mouvements
+  powerups.forEach(p => p.y += 2);
+  powerups = powerups.filter(p => p.y < canvas.height + 20);
+
+  // Ennemis
   let touchEdge = false;
   enemies.forEach(e => {
     if (!e.alive) return;
     e.x += e.vx;
-    if (e.x < 15 || e.x > canvas.width - e.w - 15) touchEdge = true;
+    if (e.x < 10 || e.x > canvas.width - e.w - 10) touchEdge = true;
   });
 
   if (touchEdge) {
     enemies.forEach(e => {
       e.vx *= -1;
-      e.y += 15;
-      if (e.y >= player.y - 20) {
-        lives = 0; // Invasion réussie = Game Over immédiat
-      }
+      e.y += 12;
+      if (e.y >= player.y - 15) lives = 0;
     });
   }
 
-  // Tirs ennemis aléatoires
+  // Tirs ennemis
   let aliveEnemies = enemies.filter(e => e.alive);
-  let fireChance = difficulty === "FACILE" ? 0.008 : (difficulty === "DIFFICILE" ? 0.03 : 0.015);
-  if (aliveEnemies.length > 0 && Math.random() < fireChance * (1 + currentStage * 0.1)) {
+  let fireChance = difficulty === "FACILE" ? 0.01 : (difficulty === "DIFFICILE" ? 0.035 : 0.02);
+  if (aliveEnemies.length > 0 && Math.random() < fireChance * (1 + wave * 0.05)) {
     let shooter = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
-    let pVy = difficulty === "FACILE" ? 3 : (difficulty === "DIFFICILE" ? 5 : 4);
-    enemyBullets.push({ x: shooter.x + shooter.w / 2 - 2, y: shooter.y + shooter.h, w: 4, h: 10, vy: pVy });
+    enemyBullets.push({ x: shooter.x + shooter.w / 2 - 2, y: shooter.y + shooter.h, w: 4, h: 10, vy: 4 + wave * 0.2 });
   }
 
-  // Gestion Boss
-  if (boss) {
-    boss.x += boss.vx * boss.dir;
-    if (boss.x < 20 || boss.x > canvas.width - boss.w - 20) boss.dir *= -1;
-
-    boss.shootTimer++;
-    let bossFreq = difficulty === "FACILE" ? 50 : (difficulty === "DIFFICILE" ? 25 : 35);
-    if (boss.shootTimer >= bossFreq) {
-      boss.shootTimer = 0;
-      enemyBullets.push({ x: boss.x + boss.w / 2 - 4, y: boss.y + boss.h, w: 8, h: 12, vy: 5 });
-      if (difficulty === "DIFFICILE") {
-        enemyBullets.push({ x: boss.x + 5, y: boss.y + boss.h, w: 4, h: 10, vy: 4 });
-        enemyBullets.push({ x: boss.x + boss.w - 10, y: boss.y + boss.h, w: 4, h: 10, vy: 4 });
-      }
-    }
-  }
-
-  // Collisions Balles Joueur -> Ennemis / Boss
+  // Collisions Balles Joueur -> Ennemis
   bullets.forEach((b, bi) => {
     if (!b.fromPlayer) return;
-
-    // Boss collision
-    if (boss && b.x < boss.x + boss.w && b.x + b.w > boss.x && b.y < boss.y + boss.h && b.y + b.h > boss.y) {
-      boss.hp--;
-      bullets.splice(bi, 1);
-      playSound('boss_hit');
-      if (boss.hp <= 0) {
-        score += 500 * currentStage;
-        boss = null;
-        checkStageClear();
-      }
-      return;
-    }
-
-    // Ennemis collision
     enemies.forEach(e => {
       if (e.alive && b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
         e.alive = false;
         bullets.splice(bi, 1);
-        score += 50;
+        score += e.points;
         playSound('hit');
-        checkStageClear();
+
+        // Chance de drop un power-up ou vie supplémentaire (20%)
+        if (Math.random() < 0.20) {
+          let rand = Math.random();
+          let pType = rand < 0.4 ? 'DOUBLE' : (rand < 0.8 ? 'SHIELD' : 'LIFE');
+          powerups.push({ x: e.x + e.w / 2 - 8, y: e.y, w: 16, h: 16, type: pType });
+        }
+
+        if (enemies.filter(en => en.alive).length === 0) {
+          startWave(wave + 1);
+        }
       }
     });
+  });
+
+  // Collisions Powerups -> Joueur
+  powerups.forEach((p, pi) => {
+    if (p.x < player.x + player.w && p.x + p.w > player.x && p.y < player.y + player.h && p.y + p.h > player.y) {
+      if (p.type === 'LIFE') {
+        lives++;
+        playSound('extralife');
+      } else {
+        powerupType = p.type;
+        powerupTimer = 450; // Durée du bonus (~7.5 secondes)
+        playSound('powerup');
+      }
+      powerups.splice(pi, 1);
+    }
   });
 
   // Collisions Balles Ennemies -> Joueur
   enemyBullets.forEach((eb, ebi) => {
     if (eb.x < player.x + player.w && eb.x + eb.w > player.x && eb.y < player.y + player.h && eb.y + eb.h > player.y) {
       enemyBullets.splice(ebi, 1);
-      lives--;
-      playSound('hit');
-      if (lives <= 0) {
-        gameState = "GAMEOVER";
-        playSound('gameover');
-        document.getElementById("go-score").textContent = `SCORE FINAL : ${score}`;
-        document.getElementById("screen-gameover").classList.remove("hidden");
+
+      if (powerupType === 'SHIELD') {
+        powerupType = null;
+        powerupTimer = 0;
+        playSound('hit');
+        return;
+      }
+
+      if (player.invulnerableTimer <= 0) {
+        lives--;
+        player.invulnerableTimer = 90; // 1.5 seconde d'invulnérabilité et clignotement
+        playSound('hit');
+        if (lives <= 0) {
+          gameState = "GAMEOVER";
+          playSound('gameover');
+          document.getElementById("go-score").textContent = `SCORE FINAL : ${score}`;
+          document.getElementById("screen-gameover").classList.remove("hidden");
+        }
       }
     }
   });
 
-  // MAJ Interface HUD
   document.getElementById("hud-score").textContent = `SCORE: ${String(score).padStart(6, '0')}`;
-  document.getElementById("hud-lives").textContent = '♥'.repeat(Math.max(0, lives));
+  document.getElementById("hud-lives").textContent = '♥'.repeat(Math.max(0, lives)) + (powerupType === 'SHIELD' ? ' [S]' : '');
 }
 
-function checkStageClear() {
-  let cleared = false;
-  if (boss === null && enemies.filter(e => e.alive).length === 0) {
-    cleared = true;
-  }
-
-  if (cleared) {
-    if (gameMode === "ADVENTURE") {
-      if (currentStage >= 10) {
-        gameState = "VICTORY";
-        playSound('victory');
-        document.getElementById("vic-score").textContent = `SCORE : ${score}`;
-        document.getElementById("screen-victory").classList.remove("hidden");
-      } else {
-        startStage(currentStage + 1);
-      }
-    } else {
-      // Mode infini
-      startStage(currentStage + 1);
-    }
-  }
-}
-
-// --- RENDU GRAPHIQUE ---
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (gameState !== "PLAYING") return;
 
-  if (gameState !== "ADVENTURE" && gameState !== "INFINITE") return;
+  const txtColor = getComputedStyle(document.body).getPropertyValue('--txt').trim();
 
-  // Ligne de sol / scanner rétro
-  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--txt').trim();
+  // Sol rétro
+  ctx.strokeStyle = txtColor;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(10, player.y + player.h + 6);
-  ctx.endX = canvas.width - 10;
   ctx.lineTo(canvas.width - 10, player.y + player.h + 6);
   ctx.stroke();
 
-  // Dessin Joueur
-  drawSprite(ctx, SPRITES.player, player.x, player.y, 3, getComputedStyle(document.body).getPropertyValue('--txt').trim());
+  // Dessin Joueur (avec clignotement si invulnérable)
+  if (player.invulnerableTimer <= 0 || Math.floor(player.invulnerableTimer / 6) % 2 === 0) {
+    drawSprite(ctx, SPRITES.player, player.x, player.y, 3, txtColor);
+  }
+
+  // Bouclier actif
+  if (powerupType === 'SHIELD') {
+    ctx.strokeStyle = txtColor;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(player.x + player.w / 2, player.y + player.h / 2, 22, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 
   // Dessin Ennemis
   enemies.forEach(e => {
     if (e.alive) {
-      let sprite = e.type === 'alien1' ? SPRITES.alien1 : SPRITES.alien2;
-      drawSprite(ctx, sprite, e.x, e.y, 3, getComputedStyle(document.body).getPropertyValue('--txt').trim());
+      let spr = e.type === 'alienType1' ? SPRITES.alienType1 : (e.type === 'alienType2' ? SPRITES.alienType2 : SPRITES.alienType3);
+      drawSprite(ctx, spr, e.x, e.y, 3, txtColor);
     }
   });
 
-  // Dessin Boss
-  if (boss) {
-    drawSprite(ctx, SPRITES.boss, boss.x, boss.y, 3, getComputedStyle(document.body).getPropertyValue('--txt').trim());
-    // Barre de vie Boss
-    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--mut').trim();
-    ctx.fillRect(boss.x, boss.y - 10, boss.w * 3, 4);
-    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--txt').trim();
-    ctx.fillRect(boss.x, boss.y - 10, (boss.w * 3) * (boss.hp / boss.maxHp), 4);
-  }
+  // Dessin Powerups
+  powerups.forEach(p => {
+    ctx.fillStyle = txtColor;
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+    ctx.font = '8px "Press Start 2P"';
+    let label = p.type === 'DOUBLE' ? '2X' : (p.type === 'SHIELD' ? 'S' : '♥');
+    ctx.fillText(label, p.x + 3, p.y + 12);
+  });
 
-  // Dessin Projectiles
-  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--txt').trim();
+  // Projectiles
+  ctx.fillStyle = txtColor;
   bullets.forEach(b => ctx.fillRect(b.x, b.y, b.w, b.h));
   enemyBullets.forEach(eb => ctx.fillRect(eb.x, eb.y, eb.w, eb.h));
 }
@@ -680,52 +650,28 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// --- GESTION DES MENUS ---
-document.getElementById("start-adventure").addEventListener("click", () => { playSound('shoot'); initGame("ADVENTURE"); });
-document.getElementById("start-infinit").addEventListener("click", () => { playSound('shoot'); initGame("INFINITE"); });
-
-document.getElementById("btn-settings").addEventListener("click", () => {
-  playSound('shoot');
-  document.getElementById("screen-main").classList.add("hidden");
-  document.getElementById("screen-settings").classList.remove("hidden");
-});
-
-document.getElementById("back-main").addEventListener("click", () => {
-  playSound('shoot');
-  document.getElementById("screen-settings").classList.add("hidden");
-  document.getElementById("screen-main").classList.remove("hidden");
-});
-
+// Menus
+document.getElementById("start-btn").addEventListener("click", () => { playSound('shoot'); initGame(); });
+document.getElementById("btn-settings").addEventListener("click", () => { playSound('shoot'); document.getElementById("screen-main").classList.add("hidden"); document.getElementById("screen-settings").classList.remove("hidden"); });
+document.getElementById("back-main").addEventListener("click", () => { playSound('shoot'); document.getElementById("screen-settings").classList.add("hidden"); document.getElementById("screen-main").classList.remove("hidden"); });
 document.getElementById("opt-diff").addEventListener("click", () => {
   playSound('shoot');
-  if (difficulty === "FACILE") difficulty = "NORMAL";
-  else if (difficulty === "NORMAL") difficulty = "DIFFICILE";
-  else difficulty = "FACILE";
+  difficulty = difficulty === "FACILE" ? "NORMAL" : (difficulty === "NORMAL" ? "DIFFICILE" : "FACILE");
   document.getElementById("lbl-diff").textContent = difficulty;
 });
-
 document.getElementById("opt-sound").addEventListener("click", () => {
   soundOn = !soundOn;
   document.getElementById("lbl-sound").textContent = soundOn ? "ON" : "OFF";
   playSound('shoot');
 });
-
 document.getElementById("opt-gb").addEventListener("click", () => {
   gbFilter = !gbFilter;
   document.body.classList.toggle("gameboy-theme", gbFilter);
   document.getElementById("lbl-gb").textContent = gbFilter ? "ON" : "OFF";
   playSound('shoot');
 });
+document.getElementById("restart-btn").addEventListener("click", () => { playSound('shoot'); initGame(); });
 
-document.getElementById("restart-btn").addEventListener("click", () => { playSound('shoot'); initGame(gameMode); });
-document.getElementById("vic-restart").addEventListener("click", () => {
-  playSound('shoot');
-  document.getElementById("screen-victory").classList.add("hidden");
-  document.getElementById("screen-main").classList.remove("hidden");
-  gameState = "MAIN";
-});
-
-// Lancement de la boucle
 requestAnimationFrame(gameLoop);
 </script>
 </body>
