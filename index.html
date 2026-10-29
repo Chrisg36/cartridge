@@ -3020,7 +3020,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const TRANSLATIONS = {
   fr: {
-subTitle: "CARTRIDGE",
+    subTitle: "CARTRIDGE",
     searchPlaceholder: "Rechercher n'importe quel jeu...",
     all: "✨ Tous les jeux",
     favorites: "❤️ Mes Favoris",
@@ -3057,7 +3057,6 @@ subTitle: "CARTRIDGE",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
-    vitrineDesc: "Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -3102,12 +3101,143 @@ subTitle: "CARTRIDGE",
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
     vitrineTitle: "🏛️ World Console & Micro Museum",
-    vitrineDesc: "Click on any console to discover its detailed history and specs:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
     yesterday: "Yesterday",
     daysAgo: (d) => `${d} days ago`
+  },
+  de: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "Suche nach beliebigem Spiel...",
+    all: "✨ Alle Spiele",
+    favorites: "❤️ Meine Favoriten",
+    noGamesSearch: "Keine Spiele für diese Suche gefunden.",
+    noGamesFav: "Keine Favoriten in diesem Monat.",
+    noGamesFilter: "Keine Veröffentlichungen für diese Konsole in diesem Monat.",
+    loading: "Wird geladen...",
+    searchDb: "Durchsuche die Datenbank... 🔍",
+    netError: "Fehler beim Laden. Überprüfe config.js.",
+    searchError: "Fehler bei der Suche.",
+    settingsTitle: "Einstellungen",
+    themeLabel: "Themen & Retro-Konsolen",
+    soundLabel: "Toneffekte",
+    soundOn: "🔊 Ton AN",
+    soundOff: "🔇 Ton AUS",
+    crtLabel: "CRT-Effekt",
+    crtOn: "📺 AN",
+    crtOff: "🖥️ AUS",
+    langLabel: "Sprache",
+    retroLabel: "🕰️ Zeitkapsel",
+    resetCurrentMonth: "📅 Aktueller Monat",
+    close: "Schließen",
+    shareTitle: "Meinen Monat teilen",
+    shareDesc: "Kopiere diese Nachricht und teile sie:",
+    noFavShare: "Noch keine Favoriten!",
+    shareFooter: "✨ Geteilt von meiner Spiele-App!",
+    copyBtn: "📋 Text kopieren",
+    copiedBtn: "✅ Kopiert!",
+    calendarBtn: "Zum Kalender hinzufügen",
+    favAdd: "🤍 Zu Favoriten",
+    favRemove: "❤️ Entfernen",
+    trailerBtn: "🎥 Trailer auf YouTube",
+    hltbBtn: "⏱️ HowLongToBeat prüfen",
+    summaryLabel: "Zusammenfassung",
+    summaryLoading: "Übersetze... ⏳",
+    vitrineTitle: "🏛️ Konsolen-Museum",
+    today: "Heute",
+    tomorrow: "Morgen",
+    inDays: (d) => `In ${d} Tagen`,
+    yesterday: "Gestern",
+    daysAgo: (d) => `Vor ${d} Tagen`
+  },
+  ja: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "ゲームを検索...",
+    all: "✨ すべてのゲーム",
+    favorites: "❤️ お気に入り",
+    noGamesSearch: "ゲームが見つかりませんでした。",
+    noGamesFav: "今月のお気に入りはありません。",
+    noGamesFilter: "今月のこのコンソールのリリースはありません。",
+    loading: "読み込み中...",
+    searchDb: "データベースを検索中... 🔍",
+    netError: "読み込みエラー。config.jsを確認してください。",
+    searchError: "検索エラー。",
+    settingsTitle: "設定",
+    themeLabel: "テーマ & レトロコンソール",
+    soundLabel: "効果音",
+    soundOn: "🔊 サウンド ON",
+    soundOff: "🔇 サウンド OFF",
+    crtLabel: "CRTスキャンライン効果",
+    crtOn: "📺 ON",
+    crtOff: "🖥️ OFF",
+    langLabel: "言語設定",
+    retroLabel: "🕰️ タイムカプセル",
+    resetCurrentMonth: "📅 今月に戻る",
+    close: "閉じる",
+    shareTitle: "今月をシェア",
+    shareDesc: "メッセージをコピーしてシェア:",
+    noFavShare: "お気に入りはまだありません！",
+    shareFooter: "✨ ゲームリリースアプリからシェア！",
+    copyBtn: "📋 テキストをコピー",
+    copiedBtn: "✅ コピー完了！",
+    calendarBtn: "カレンダーに追加",
+    favAdd: "🤍 お気に入りに追加",
+    favRemove: "❤️ お気に入りから削除",
+    trailerBtn: "🎥 YouTubeでトレーラーを見る",
+    hltbBtn: "⏱️ プレイ時間を調べる",
+    summaryLabel: "概要",
+    summaryLoading: "翻訳中... ⏳",
+    vitrineTitle: "🏛️ 世界のゲーム機ミュージアム",
+    today: "今日",
+    tomorrow: "明日",
+    inDays: (d) => `${d}日後`,
+    yesterday: "昨日",
+    daysAgo: (d) => `${d}日前`
+  },
+  es: {
+    subTitle: "🎮 CARTRIDGE",
+    searchPlaceholder: "Buscar cualquier juego...",
+    all: "✨ Todos los juegos",
+    favorites: "❤️ Mis Favoritos",
+    noGamesSearch: "No se encontraron juegos para esta búsqueda.",
+    noGamesFav: "No hay juegos en favoritos este mes.",
+    noGamesFilter: "No hay lanzamientos para esta consola este mes.",
+    loading: "Cargando...",
+    searchDb: "Buscando en la base de datos... 🔍",
+    netError: "Imposible cargar los lanzamientos. Verifica config.js.",
+    searchError: "Error en la búsqueda.",
+    settingsTitle: "Ajustes",
+    themeLabel: "Temas y Consolas Retro",
+    soundLabel: "Efectos de sonido",
+    soundOn: "🔊 Sonido ACTIVO",
+    soundOff: "🔇 Sonido APAGADO",
+    crtLabel: "Efecto CRT",
+    crtOn: "📺 ACTIVO",
+    crtOff: "🖥️ APAGADO",
+    langLabel: "Idioma de la interfaz",
+    retroLabel: "🕰️ Cápsula del Tiempo",
+    resetCurrentMonth: "📅 Volver al mes actual",
+    close: "Cerrar",
+    shareTitle: "Compartir mi mes",
+    shareDesc: "Copia y pega este mensaje:",
+    noFavShare: "¡Sin favoritos todavía!",
+    shareFooter: "✨ Compartido desde mi app de videojuegos!",
+    copyBtn: "📋 Copiar texto",
+    copiedBtn: "✅ ¡Copiado!",
+    calendarBtn: "Añadir al calendario",
+    favAdd: "🤍 Añadir a favoritos",
+    favRemove: "❤️ Quitar de favoritos",
+    trailerBtn: "🎥 Ver trailer en YouTube",
+    hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
+    summaryLabel: "Resumen",
+    summaryLoading: "Traduciendo resumen... ⏳",
+    vitrineTitle: "🏛️ Museo Mundial de Consolas",
+    today: "Hoy",
+    tomorrow: "Mañana",
+    inDays: (d) => `En ${d} días`,
+    yesterday: "Ayer",
+    daysAgo: (d) => `Hace ${d} días`
   }
 };
 
@@ -4613,6 +4743,32 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
 
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
+
+  // --- 🌍 SECTION SÉLECTION DE LA LANGUE ---
+  const secLang = el("div", "settings-section");
+  secLang.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
+  const langSelect = document.createElement("select");
+  langSelect.className = "settings-select-clean";
+  
+  for (const [codeLang, nameLang] of Object.entries(LANG_NAMES)) {
+    const opt = document.createElement("option");
+    opt.value = codeLang;
+    opt.textContent = nameLang;
+    if (codeLang === currentLang) opt.selected = true;
+    langSelect.append(opt);
+  }
+
+  langSelect.onchange = (e) => {
+    currentLang = e.target.value;
+    try { localStorage.setItem("lang", currentLang); } catch (err) {}
+    playThemeSound(theme);
+    openSettingsMainPage();
+    render();
+  };
+
+  secLang.append(langSelect);
+  pageGeneral.append(secLang);
+
 
 
   // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
@@ -6462,6 +6618,32 @@ function openSettingsMainPage() {
 
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
+
+  // --- 🌍 SECTION SÉLECTION DE LA LANGUE ---
+  const secLang = el("div", "settings-section");
+  secLang.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
+  const langSelect = document.createElement("select");
+  langSelect.className = "settings-select-clean";
+  
+  for (const [codeLang, nameLang] of Object.entries(LANG_NAMES)) {
+    const opt = document.createElement("option");
+    opt.value = codeLang;
+    opt.textContent = nameLang;
+    if (codeLang === currentLang) opt.selected = true;
+    langSelect.append(opt);
+  }
+
+  langSelect.onchange = (e) => {
+    currentLang = e.target.value;
+    try { localStorage.setItem("lang", currentLang); } catch (err) {}
+    playThemeSound(theme);
+    openSettingsMainPage();
+    render();
+  };
+
+  secLang.append(langSelect);
+  pageGeneral.append(secLang);
+
 
   // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
   const secUniqueThemes = el("div", "settings-section");
