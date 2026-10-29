@@ -4865,8 +4865,19 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   const secProfile = el("div", "settings-section");
   secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
   const savedUser = localStorage.getItem("cartridge_user") || "";
-  
+  const isConnected = !!savedUser;
+
   secProfile.innerHTML += `
+    <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isConnected ? '#22c55e' : 'var(--acc)'}; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: ${isConnected ? '#22c55e' : '#ef4444'}; box-shadow: 0 0 8px ${isConnected ? '#22c55e' : '#ef4444'};"></div>
+        <span style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--txt);">
+          ${isConnected ? `CONNECTÉ : ${esc(savedUser)}` : "STATUT : HORS LIGNE"}
+        </span>
+      </div>
+      ${isConnected ? `<button id="btnLogout" class="cta-sec" style="width:auto; padding:6px 12px; font-size:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); margin:0;">Déconnexion</button>` : ''}
+    </div>
+
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
@@ -4880,11 +4891,12 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
-      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil & Synchroniser</button>
     </form>
     <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
-   <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
-<a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+      <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+      <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+    </div>
   `;
   pageProfile.append(secProfile);
 
