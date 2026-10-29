@@ -2433,7 +2433,12 @@ tabChallenges.innerHTML = `
       iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
-const textInfo =
+const textInfo = el("div");
+textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; overflow: hidden;";
+
+const titleEl = el("span", "", item.title);
+titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:800; color:var(--txt); letter-spacing:0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
+      
       const descEl = el("span", "", item.desc);
       descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
 
