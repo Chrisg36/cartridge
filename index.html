@@ -4351,7 +4351,34 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-// --- SECTION THÈMES UNIQUES & COLLECTOR (DEATH NOTE) ---
+// --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
+  const secModern = el("div", "settings-section");
+  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
+  const modernGrid = el("div", "themes-grid-container");
+
+  const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"];
+  modernKeys.forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      
+      // Désactive Death Note si on clique sur un autre thème
+      toggleDeathNoteTheme(false);
+      
+      openSettingsMainPage();
+    });
+    modernGrid.append(b);
+  });
+
+  secModern.append(modernGrid);
+  pageGeneral.append(secModern);
+
+  // --- SECTION THÈMES UNIQUES & COLLECTOR (DEATH NOTE) ---
   const secUniqueThemes = el("div", "settings-section");
   secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
   
@@ -4359,10 +4386,10 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
   
   const dnSettingBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
-  const dnDot = el("span", "dot"); 
-  dnDot.style.background = isUnlocked ? "#ef4444" : "#555"; 
-  dnDot.innerHTML = "🍎";
-  dnSettingBtn.prepend(dnDot);
+  const dnUniqueDot = el("span", "dot"); 
+  dnUniqueDot.style.background = isUnlocked ? "#ef4444" : "#555"; 
+  dnUniqueDot.innerHTML = "🍎";
+  dnSettingBtn.prepend(dnUniqueDot);
   
   dnSettingBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
   
@@ -4379,22 +4406,7 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   
   uniqueGrid.append(dnSettingBtn);
   secUniqueThemes.append(uniqueGrid);
-  pageGeneral.append(secUniqueThemes);
-
-  // 🍎 AJOUT DU BOUTON SPÉCIAL DEATH NOTE DANS LA GRILLE
-  const dnBtn = el("button", "theme-mini-btn", "Death Note");
-  const dnDot = el("span", "dot"); dnDot.style.background = "#ef4444"; dnDot.innerHTML = "🍎";
-  dnBtn.prepend(dnDot);
-  dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
-  dnBtn.addEventListener("click", () => {
-    toggleDeathNoteTheme(true);
-    playThemeSound(theme);
-    openSettingsMainPage();
-  });
-  modernGrid.append(dnBtn);
-
-  secModern.append(modernGrid);
-  pageGeneral.append(secModern);
+  pageGeneral.append(secUniqueThemes);;
   // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
