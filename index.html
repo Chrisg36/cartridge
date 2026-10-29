@@ -58,8 +58,10 @@ html {
   /* 🟩 MS-DOS : Terminal phosphorescent vert fluo BIOS / Norton Commander */
   [data-theme="dos"] { color-scheme: dark; --bg: #000500; --card: #001100; --cov: #002200; --txt: #00ff00; --mut: #008800; --acc: #00ff66; --on: #000000; --pattern: linear-gradient(rgba(0, 255, 0, 0.04) 50%, rgba(0, 0, 0, 0.6) 50%), radial-gradient(circle, rgba(0, 255, 0, 0.08) 1px, transparent 1px); background-size: 100% 3px, 16px 16px; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 0px; }
 
+  /* 🟦 MEGA DRIVE : Barres d'acier bleu nuit & rouge flamboyant Blast Processing */
   /* 🖤 SEGA MEGA DRIVE : Plastique noir mat texturé, ovale rouge iconique 16-BIT & rainures */
   [data-theme="megadrive"] { color-scheme: dark; --bg: #050508; --card: #10121a; --cov: #1a1e2b; --txt: #f8fafc; --mut: #8892b0; --acc: #ff0033; --on: #ffffff; --pattern: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) 2px, transparent 2px, transparent 6px), radial-gradient(circle at 50% 50%, rgba(255, 0, 51, 0.08) 0%, transparent 70%); background-size: 100% 6px, 100% 100%; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 8px; }
+ --bg: #060914; --card: #0f152b; --cov: #1c264a; --txt: #ffffff; --mut: #7887b8; --acc: #ff0033; --on: #ffffff; --pattern: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 12px 12px; --font: 'Rajdhani', -apple-system, sans-serif; --radius: 10px; }
 
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; box-shadow:0 0 0 2px rgba(128,128,128,.55); }
   [data-theme="light"] .row, [data-theme="light"] .chip, [data-theme="light"] .search-box, [data-theme="light"] .platform-select, [data-theme="dreamcast"] .row, [data-theme="dreamcast"] .chip, [data-theme="dreamcast"] .search-box, [data-theme="dreamcast"] .platform-select { box-shadow: 0 0 0 1px #D8DCE6; }
@@ -128,6 +130,11 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.8px;
+ .theme-mini-btn, .grid-title, .t b {
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: 1.2;
+}
   line-height: 1.2;
   display: inline-flex;
   align-items: center;
@@ -3012,6 +3019,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const TRANSLATIONS = {
   fr: {
+    shopThemesTab: "🏬 Boutique Thèmes",
+    mysteryPacksTab: "🎟️ Packs Mystères",
+    questsTab: "🎯 Défis & Quêtes",
+    vitrineTabTitle: "🏛️ Vitrine de Collection",
+    museumTabTitle: "🕹️ Musée des Consoles",
     subTitle: "CARTRIDGE",
     searchPlaceholder: "Rechercher n'importe quel jeu...",
     all: "✨ Tous les jeux",
@@ -3079,6 +3091,11 @@ const TRANSLATIONS = {
     days: "JOUR(S)"
   },
   ja: {
+    shopThemesTab: "🏬 テーマショップ",
+    mysteryPacksTab: "🎟️ ミステリーパック",
+    questsTab: "🎯 クエスト & チャレンジ",
+    vitrineTabTitle: "🏛️ コレクションケース",
+    museumTabTitle: "🕹️ コンソール博物館",
     subTitle: "🎮 カートリッジ",
     searchPlaceholder: "ゲームを検索...",
     all: "✨ すべてのゲーム",
@@ -3146,6 +3163,11 @@ const TRANSLATIONS = {
     days: "日"
   },
   en: {
+    shopThemesTab: "🏬 Theme Shop",
+    mysteryPacksTab: "🎟️ Mystery Packs",
+    questsTab: "🎯 Quests & Challenges",
+    vitrineTabTitle: "🏛️ Collection Showcase",
+    museumTabTitle: "🕹️ Consoles Museum",
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "Search any game...",
     all: "✨ All Games",
@@ -3213,6 +3235,11 @@ const TRANSLATIONS = {
     days: "DAY(S)"
   },
   es: {
+    shopThemesTab: "🏬 Tienda de Temas",
+    mysteryPacksTab: "🎟️ Sobres Misteriosos",
+    questsTab: "🎯 Desafíos y Misiones",
+    vitrineTabTitle: "🏛️ Vitrina de Colección",
+    museumTabTitle: "🕹️ Museo de Consolas",
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "Buscar cualquier juego...",
     all: "✨ Todos los juegos",
@@ -3280,6 +3307,11 @@ const TRANSLATIONS = {
     days: "DÍAS"
   },
   it: {
+    shopThemesTab: "🏬 Negozio Temi",
+    mysteryPacksTab: "🎟️ Pacchetti Mistero",
+    questsTab: "🎯 Sfide & Missioni",
+    vitrineTabTitle: "🏛️ Vetrina Collezione",
+    museumTabTitle: "🕹️ Museo delle Console",
     subTitle: "🎮 CARTRIDGE",
     searchPlaceholder: "Cerca un gioco...",
     all: "✨ Tutti i giochi",
@@ -4586,6 +4618,7 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
   
+  // ... le reste de ta fonction continue ici ...
   const GENRE_FR = {
     "Action": "Action",
     "Adventure": "Aventure",
