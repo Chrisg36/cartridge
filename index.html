@@ -6150,48 +6150,7 @@ const bgOptions = [
   // ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-  // 1. Thèmes modernes
-  const secModern = el("div", "settings-section");
-  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
-  const modernGrid = el("div", "themes-grid-container");
-["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
-    if (!THEMES[key]) return;
-    const [label, , acc] = THEMES[key];
-    const b = el("button", "theme-mini-btn", label);
-    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
-    b.setAttribute("aria-pressed", String(key === theme));
-    b.onclick = () => {
-      theme = applyTheme(key);
-      try { localStorage.setItem("theme", theme); } catch (e) {}
-      openSettingsMainPage();
-    };
-    modernGrid.append(b);
-  });
-const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
-  
-  const dnBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
-  const dnDot = el("span", "dot"); 
-  dnDot.style.background = isUnlocked ? "#ef4444" : "#444"; 
-  dnDot.innerHTML = "🍎";
-  dnBtn.prepend(dnDot);
-  
-  dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
-  
-  dnBtn.onclick = () => {
-    if (!isUnlocked) {
-      playThemeSound(theme);
-      showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
-      return;
-    }
-    toggleDeathNoteTheme(true);
-    playThemeSound(theme);
-    openSettingsMainPage();
-  };
-  modernGrid.append(dnBtn);
 
-  secModern.append(modernGrid);
-  pageGeneral.append(secModern);
-  secModern.append(modernGrid);
 
   // 2. Consoles rétro
   const secRetroThemes = el("div", "settings-section");
