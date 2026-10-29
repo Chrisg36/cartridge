@@ -6473,6 +6473,45 @@ window.addEventListener("DOMContentLoaded", () => { applyBgStyle(currentBg); });
 
 
 function applyDeathNoteTheme(enable) {
+  if (enable) {
+    document.body.classList.add("theme-deathnote");
+
+    // 1. Ajout du badge Death Note avec la pomme 🍎 à côté de Cartridge
+    const subTitleEl = document.querySelector("#sub-title");
+    if (subTitleEl && !document.getElementById("deathnote-badge")) {
+      const dnBadge = document.createElement("span");
+      dnBadge.id = "deathnote-badge";
+      dnBadge.style.cssText = "margin-left: 10px; font-family: 'UnifrakturMaguntia', cursive, serif; font-size: 16px; background: linear-gradient(135deg, #0a0a0a, #000000); color: #ffffff; padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 15px rgba(255,255,255,0.2); display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;";
+      dnBadge.innerHTML = `<span style="color:#ef4444; font-size:13px; text-shadow:0 0 6px #ef4444;">🍎</span> Death Note`;
+      subTitleEl.appendChild(dnBadge);
+    }
+
+    // 2. Génération des plumes de Shinigami volantes en arrière-plan
+    let featherLayer = document.getElementById("shinigami-feathers-layer");
+    if (!featherLayer) {
+      featherLayer = document.createElement("div");
+      featherLayer.id = "shinigami-feathers-layer";
+      featherLayer.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 1;";
+      document.body.appendChild(featherLayer);
+      
+      for (let i = 0; i < 18; i++) {
+        const f = document.createElement("div");
+        f.className = "shinigami-feather";
+        f.style.cssText = `left: ${Math.random() * 100}vw; animation-duration: ${8 + Math.random() * 12}s; animation-delay: -${Math.random() * 10}s; transform: scale(${0.6 + Math.random() * 0.8});`;
+        featherLayer.appendChild(f);
+      }
+    }
+
+    try { localStorage.setItem("currentTheme", "deathnote"); } catch(e){}
+  } else {
+    document.body.classList.remove("theme-deathnote");
+    const badge = document.getElementById("deathnote-badge");
+    if (badge) badge.remove();
+    const layer = document.getElementById("shinigami-feathers-layer");
+    if (layer) layer.remove();
+    try { localStorage.removeItem("currentTheme"); } catch(e){}
+  }
+}
 
   
  
