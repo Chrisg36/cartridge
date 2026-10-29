@@ -1810,15 +1810,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     z-index: 9999;
   }
 
-/* 1. Pour les titres des défis (première image) : empêche la coupe brutale et gère proprement les textes longs */
-.shop-banner .shop-banner div span, 
+/* Pour les titres des défis, les cartes et les boutons : retour à la ligne automatique */
+.shop-banner div span, 
 .settings-section-title, 
 .grid-title, 
 .t b,
 .theme-mini-btn {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: 1.25;
 }
 
 /* 2. Pour le bouton du thème Death Note ou les boutons de la grille (deuxième image) */
