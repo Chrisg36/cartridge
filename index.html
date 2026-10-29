@@ -2418,35 +2418,35 @@ tabChallenges.innerHTML = `
       }
     ];
 
-    challengesList.forEach(item => {
+challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
         display: flex; align-items: center; justify-content: space-between;
         background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 12px 16px; gap: 12px;
+        border-radius: 10px; padding: 12px 14px; gap: 8px; width: 100%; box-sizing: border-box;
       `;
 
-  const leftGroup = el("div");
-      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
+      const leftGroup = el("div");
+      leftGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 30px; height: 30px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
-const textInfo = el("div");
-textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; overflow: hidden;";
-
-const titleEl = el("span", "", item.name || item.title);
-titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:900; color:var(--txt); letter-spacing:0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
+      const textInfo = el("div");
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; overflow: hidden;";
       
+      const titleEl = el("span", "", item.title);
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:900; color:var(--txt); letter-spacing:0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
+
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
+      descEl.style.cssText = "font-size:9.5px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
 
       textInfo.append(titleEl, descEl);
       leftGroup.append(iconBox, textInfo);
 
       const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
+      rightGroup.style.cssText = "display: flex; align-items: center; gap: 6px; flex-shrink: 0;";
 
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
