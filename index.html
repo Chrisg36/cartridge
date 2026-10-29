@@ -80,13 +80,11 @@ body {
   -webkit-backdrop-filter: blur(20px);
   padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
   padding-bottom: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-left: -20px;
-  margin-right: -20px;
-  width: calc(100% + 40px);
-  box-sizing: border-box;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  /* hardware acceleration retirée pour iOS scroll */
 }
 
 .header-top {
@@ -1722,11 +1720,21 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
   /* 🍏 CORRECTION IOS : EN-TÊTE ET CRÉDITS NON COUPÉS */
   body.theme-deathnote .sticky-header-container {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    margin: 0 -16px !important;
-    width: calc(100% + 32px) !important;
-  }
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
+  padding-bottom: 10px;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  /* hardware acceleration retirée pour iOS scroll */
+}
 
   body.theme-deathnote .header-top {
     display: flex !important;
