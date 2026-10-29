@@ -4347,11 +4347,67 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   const pageProfile = el("div");
   const pageLegal = el("div");
 
-  // ==========================================
+// ==========================================
   // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-const secModern
+  // --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
+  const secModern = el("div", "settings-section");
+  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
+  const modernGrid = el("div", "themes-grid-container");
+
+  const modernKeys = ["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"];
+  modernKeys.forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      
+      // Désactive Death Note si on clique sur un autre thème
+      toggleDeathNoteTheme(false);
+      
+      openSettingsMainPage();
+    });
+    modernGrid.append(b);
+  });
+
+  secModern.append(modernGrid);
+  pageGeneral.append(secModern);
+
+  // --- 🍎 BLOC THÈMES UNIQUES & COLLECTOR (DEATH NOTE) ---
+  const secUniqueThemes = el("div", "settings-section");
+  secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
+  
+  const uniqueGrid = el("div", "themes-grid-container");
+  const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+  
+  const dnUniqueBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnUniqueDot = el("span", "dot"); 
+  dnUniqueDot.style.background = isUnlocked ? "#ef4444" : "#555"; 
+  dnUniqueDot.innerHTML = "🍎";
+  dnUniqueBtn.prepend(dnUniqueDot);
+  
+  dnUniqueBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  
+  dnUniqueBtn.onclick = () => {
+    if (!isUnlocked) {
+      playThemeSound(theme);
+      showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
+      return;
+    }
+    toggleDeathNoteTheme(true);
+    playThemeSound(theme);
+    openSettingsMainPage();
+  };
+  
+  uniqueGrid.append(dnUniqueBtn);
+  secUniqueThemes.append(uniqueGrid);
+  pageGeneral.append(secUniqueThemes);
+
   // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
@@ -4367,7 +4423,7 @@ const secModern
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      openSettings();
+      openSettingsMainPage();
     });
     retroGrid.append(b);
   });
@@ -4406,66 +4462,6 @@ const secModern
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
   pageGeneral.append(secCustom);
-
-  // --- 6. SECTION LANGUE ---
-  const secLang = el("div", "settings-section");
-  secLang.append(el("div", "settings-section-title", "🌐 " + t('langLabel')));
-  const langSelect = el("select", "settings-select-clean");
-  Object.entries(LANG_NAMES).forEach(([code, label]) => {
-    const opt = document.createElement("option");
-    opt.value = code;
-    opt.textContent = label;
-    if (code === currentLang) opt.selected = true;
-    langSelect.append(opt);
-  });
-  langSelect.addEventListener("change", (e) => {
-    playThemeSound(theme);
-    currentLang = e.target.value;
-    try { localStorage.setItem("lang", currentLang); } catch (e) {}
-    load(); openSettings();
-  });
-  secLang.append(langSelect);
-  pageGeneral.append(secLang);
-
-  // --- 7. CAPSULE TEMPORELLE (FLASHBACK ALÉATOIRE) ---
-  const secTime = el("div", "settings-section");
-  secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
-  
-  const capsuleDesc = el("p", "m", "Téléportez-vous instantanément vers un mois mythique de l'histoire du jeu vidéo !");
-  capsuleDesc.style.marginBottom = "10px";
-  secTime.append(capsuleDesc);
-
-  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
-  randomTimeBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
-    const randomYear = cultYears[Math.floor(Math.random() * cultYears.length)];
-    const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
-    
-    ym = `${randomYear}-${randomMonth}`;
-    
-    hideAllMainPages();
-    const homeContent = document.getElementById("homeMainContent");
-    if (homeContent) homeContent.style.display = "block";
-    if (typeof setActiveNav === "function") {
-      setActiveNav(document.getElementById("navHome"));
-    }
-
-    load();
-    closeSheet();
-  });
-  secTime.append(randomTimeBtn);
-
-  const resetCurrentBtn = el("button", "cta-sec", t('resetCurrentMonth'));
-  resetCurrentBtn.style.marginTop = "8px";
-  resetCurrentBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    ym = new Date().toISOString().slice(0, 7);
-    load();
-    closeSheet();
-  });
-  secTime.append(resetCurrentBtn);
-  pageGeneral.append(secTime);
 
 
   // ==========================================
