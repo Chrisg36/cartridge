@@ -1838,6 +1838,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none; /* Cache la barre sous Safari iOS */
 }
 
+
+/* Style rétro pour transformer les boutons de mois en "B" et "A" */
+.month-nav .chip {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+
+
   
 </style>
 </head>
@@ -6801,6 +6811,54 @@ window.addEventListener('scroll', () => {
     thumb.style.transform = `translateY(${thumbTop}px)`;
   }
 });
+
+<script>
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Dark Game Boy Pro...");
+
+  // Active le thème Game Boy Dark
+  document.documentElement.dataset.theme = "gameboy-dark";
+  try { localStorage.setItem("theme", "gameboy-dark"); } catch (e) {}
+
+  // Force l'affichage de "B" et "A" sur les boutons de navigation
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  if (prevBtn) { prevBtn.textContent = "B"; prevBtn.style.fontFamily = "'Press Start 2P', monospace"; }
+  if (nextBtn) { nextBtn.textContent = "A"; nextBtn.style.fontFamily = "'Press Start 2P', monospace"; }
+
+  // Applique le filtre vert LCD rétro sur les jaquettes de jeux
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%)";
+    img.style.border = "1px solid #729c15";
+  });
+
+  // Fond d'écran points LCD
+  document.body.style.backgroundColor = "#070f07";
+  document.body.style.backgroundImage = "radial-gradient(circle, #122612 1px, transparent 1px)";
+  document.body.style.backgroundSize = "4px 4px";
+
+  // Jingle 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "square";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.12, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+};
+</script>
+
+
+
+  
 </script>
 
 <!-- 🕹️ Jauge latérale rétro de progression -->
