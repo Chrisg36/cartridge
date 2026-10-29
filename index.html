@@ -6076,6 +6076,35 @@ function renderArcadeMainPage() {
   displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
 
   // --- VUE 1 : HUB ARCADE (EN CONSTRUCTION / MINI-JEUX) ---
+  
+  function openFullscreenGame(url) {
+    const overlay = el("div");
+    overlay.style.cssText = `
+      position: fixed; inset: 0; background: #000; z-index: 999999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    `;
+
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.cssText = "width: 100%; height: 100%; border: none; display: block;";
+
+    const closeBtn = el("button", "", "✕ FERMER LE JEU");
+    closeBtn.style.cssText = `
+      position: absolute; top: 12px; right: 12px; z-index: 1000000;
+      background: var(--card); color: var(--txt); border: 2px solid var(--txt);
+      padding: 8px 14px; font-family: 'Press Start 2P', monospace; font-size: 9px;
+      cursor: pointer; border-radius: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    `;
+
+    closeBtn.onclick = () => {
+      playThemeSound(theme);
+      overlay.remove();
+    };
+
+    overlay.append(iframe, closeBtn);
+    document.body.append(overlay);
+  }
+    
   function showArcadeHub() {
     btnArcadeHub.setAttribute("aria-pressed", "true");
     btnScores.setAttribute("aria-pressed", "false");
@@ -6088,37 +6117,58 @@ function renderArcadeMainPage() {
       <p style="font-size:11px; color:var(--mut); margin:0; text-transform:uppercase;">Sélectionnez une borne pour lancer le jeu en plein écran (iOS / Android / PC)</p>
     `;
 
-    // Carte de la borne Space Invaders
-    const cabCard = el("div");
-    cabCard.style.cssText = `
+    // Grille des bornes d'arcade
+    const gridCabs = el("div");
+    gridCabs.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; width: 100%; max-width: 700px; margin: 0 auto;";
+
+    // 1. Borne Space Invaders
+    const cabCard1 = el("div");
+    cabCard1.style.cssText = `
       background: var(--card); border: 2px solid var(--acc); border-radius: 14px;
       padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      width: 100%; max-width: 320px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
     `;
-    
-    cabCard.onmouseenter = () => { cabCard.style.transform = "translateY(-4px)"; cabCard.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px var(--acc)"; };
-    cabCard.onmouseleave = () => { cabCard.style.transform = "translateY(0)"; cabCard.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-
-    cabCard.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--acc); display: flex; align-items: center; justify-content: center; position: relative;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 14px; color: var(--acc); text-align: center; text-shadow: 0 0 10px var(--acc);">
-          👾 SPACE INVADERS<br><span style="font-size:8px; color:var(--mut);">MONOCHROME EDITION</span>
+    cabCard1.onmouseenter = () => { cabCard1.style.transform = "translateY(-4px)"; cabCard1.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px var(--acc)"; };
+    cabCard1.onmouseleave = () => { cabCard1.style.transform = "translateY(0)"; cabCard1.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
+    cabCard1.innerHTML = `
+      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--acc); display: flex; align-items: center; justify-content: center;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 13px; color: var(--acc); text-align: center; text-shadow: 0 0 10px var(--acc);">
+          👾 SPACE INVADERS<br><span style="font-size:7px; color:var(--mut);">MONOCHROME EDITION</span>
         </div>
       </div>
       <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 14px; color: var(--txt); display: block; margin-bottom: 4px;">Space Invaders Rétro</b>
-        <span style="font-size: 10px; color: var(--mut);">Vagues Infinies • Multi-Ennemis • Bonus & Vies</span>
+        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Space Invaders Rétro</b>
+        <span style="font-size: 10px; color: var(--mut);">Vagues Infinies • Bonus & Vies</span>
       </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0;">▶ JOUER EN PLEIN ÉCRAN</button>
+      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0;">▶ JOUER</button>
     `;
+    cabCard1.onclick = () => { playThemeSound(theme); openFullscreenGame("space_invaders.html"); };
 
-    cabCard.onclick = () => {
-      playThemeSound(theme);
-      openSpaceInvadersFullscreen();
-    };
+    // 2. Borne Tetris Game Boy
+    const cabCard2 = el("div");
+    cabCard2.style.cssText = `
+      background: var(--card); border: 2px solid #8bac0f; border-radius: 14px;
+      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    `;
+    cabCard2.onmouseenter = () => { cabCard2.style.transform = "translateY(-4px)"; cabCard2.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #8bac0f"; };
+    cabCard2.onmouseleave = () => { cabCard2.style.transform = "translateY(0)"; cabCard2.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
+    cabCard2.innerHTML = `
+      <div style="width: 100%; aspect-ratio: 4/3; background: #9bbc0f; border-radius: 10px; overflow: hidden; border: 1.5px solid #0f380f; display: flex; align-items: center; justify-content: center;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 13px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
+          🧱 TETRIS<br><span style="font-size:7px; color:#306230;">GAME BOY EDITION</span>
+        </div>
+      </div>
+      <div style="text-align: center; width: 100%;">
+        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Tetris Rétro</b>
+        <span style="font-size: 10px; color: var(--mut);">Règles Classiques • Niveaux & Lignes</span>
+      </div>
+      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#8bac0f; color:#0f380f;">▶ JOUER</button>
+    `;
+    cabCard2.onclick = () => { playThemeSound(theme); openFullscreenGame("tetris_gameboy.html"); };
 
-    banner.append(cabCard);
+    gridCabs.append(cabCard1, cabCard2);
+    banner.append(gridCabs);
     displayBox.append(banner);
   }
 
