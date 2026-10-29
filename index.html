@@ -3675,20 +3675,28 @@ async function load() {
   const editionBadge = $("#editionDateBadge");
   if (editionBadge) editionBadge.textContent = `ISSUE // ${monthTitle.toUpperCase()}`;
 
+  // Si les données sont déjà en cache, on les affiche instantanément sans délai de chargement fictif !
+  if (cache[ym]) {
+    render();
+    hideSplash();
+    return;
+  }
+
   renderShimmerLoader();
   const startTime = Date.now();
   try {
-    if (!cache[ym]) {
-      const res = await fetch(`${API}/?month=${ym}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur");
-      cache[ym] = data;
-    }
+    const res = await fetch(`${API}/?month=${ym}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur");
+    cache[ym] = data;
   } catch (e) {
-    setTimeout(() => { $("#list").replaceChildren(el("p", "msg", t('netError'))); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
+    $("#list").replaceChildren(el("p", "msg", t('netError')));
+    hideSplash();
     return;
   }
-  setTimeout(() => { render(); hideSplash(); }, Math.max(0, 1200 - (Date.now() - startTime)));
+  
+  // Petit délai minimal uniquement si un appel réseau a eu lieu pour garder l'effet rétro fluide
+  setTimeout(() => { render(); hideSplash(); }, Math.max(0, 400 - (Date.now() - startTime)));
 }
 
 const dateSelect = $("#dateSelect");
