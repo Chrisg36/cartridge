@@ -4564,26 +4564,75 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   // 🌟 CONTENU DE L'ONGLET 3 : LÉGAL & DROITS
   // ==========================================
 
+// ==========================================
+  // ONGLET 3 : LÉGAL & DROITS
+  // ==========================================
   const secLegal = el("div", "settings-section");
-  secLegal.append(el("div", "settings-section-title", "⚖️ Propriété Intellectuelle & Droits"));
+  secLegal.append(el("div", "settings-section-title", "⚖️ Informations Légales, Confidentialité & Propriété"));
   secLegal.innerHTML += `
-    <div style="font-size:12px; line-height:1.6; color:var(--mut);">
-      <p style="margin-bottom:10px;">
-        <strong style="color:var(--txt);">1. Conception & Création Originale :</strong><br>
-        L'application <em>Cartridge</em>, sa direction artistique, sa gamification, son ergonomie et l'ensemble de son architecture logicielle sont une <strong>création originale</strong> développée par des passionnés.
-      </p>
-      <p style="margin-bottom:10px;">
-        <strong style="color:var(--txt);">2. Données & Jaquettes (IGDB) :</strong><br>
-        Les fiches descriptives, métadonnées et jaquettes de jeux vidéo sont sourcées via l'API <strong>IGDB (Twitch / Amazon)</strong>. L'ensemble des marques, titres et visuels demeurent la propriété exclusive de leurs éditeurs respectifs. Projet non commercial à but de partage culturel.
-      </p>
-      <p style="margin-bottom:10px;">
-        <strong style="color:var(--txt);">3. Infrastructure & Hébergement :</strong><br>
-        L'application est déployée et sécurisée mondialement sur le réseau de <strong>Cloudflare, Inc.</strong>
-      </p>
-      <p>
-        <strong style="color:var(--txt);">4. Respect de la Vie Privée :</strong><br>
-        Les données de progression et de compte sont stockées localement sur votre terminal (LocalStorage). Aucun pistage ni revente d'informations personnelles.
-      </p>
+    <div style="font-size:12px; line-height:1.65; color:var(--mut); display:flex; flex-direction:column; gap:14px;">
+      
+      <!-- 1. Éditeur & Nature du projet -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">1. Présentation & Statut du Service</strong>
+        L'application web <strong>Cartridge</strong> (accessible via le domaine <code>cartridgegame.pages.dev</code>) est une plateforme non commerciale, conçue à des fins strictement culturelles, éducatives et de veille vidéoludique. Elle n'héberge, ne distribue et ne vend aucune copie de jeu vidéo ni ROM sous copyright.
+      </div>
+
+      <!-- 2. Propriété intellectuelle de l'application -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">2. Propriété Intellectuelle du Logiciel</strong>
+        L'architecture applicative, le code source front-end (HTML5/CSS3/JavaScript), les mécaniques d'interface personnalisées (modales rétro, système de mini-jeux, carrousel de packs), ainsi que la charte graphique et le logo <em>Cartridge</em> sont la propriété exclusive de leur créateur. Toute reproduction ou extraction intégrale non autorisée du code est interdite conformément aux dispositions du Code de la propriété intellectuelle.
+      </div>
+
+      <!-- 3. Métadonnées, Jaquettes & API IGDB -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">3. Métadonnées & Visuels Tiers (API IGDB)</strong>
+        Les fiches documentaires, résumés de sorties, dates historiques, captures d'écran et illustrations de boîtiers (jaquettes) proviennent de l'API publique <strong>Internet Game Database (IGDB)</strong>, filiale de <strong>Twitch Interactive, Inc. / Amazon</strong>.<br>
+        L'ensemble des marques citées, dénominations commerciales, logos de consoles et visuels de jaquettes demeurent la propriété exclusive de leurs éditeurs et fabricants respectifs (notamment <em>Nintendo Co., Ltd., Sony Interactive Entertainment Inc., SEGA Holdings Co., Microsoft Corp., SNK Corp., Atari SA</em>, etc.). Leur citation intervient à titre purement documentaire et illustratif (*Fair Use* / droit d'information).
+      </div>
+
+      <!-- 4. Données personnelles & Conformité RGPD -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">4. Données Personnelles & Vie Privée (RGPD)</strong>
+        Conformément au Règlement Général sur la Protection des Données (RGPD) :
+        <ul style="margin:6px 0 6px 18px; padding:0; list-style-type:square;">
+          <li><strong>Zéro traqueur commercial :</strong> Aucune régie publicitaire, aucun cookie tiers ni outil de profilage de comportement n'est déployé sur le service.</li>
+          <li><strong>Persistance des sessions :</strong> Les identifiants de configuration (thème sélectionné, audio, filtres actifs) et les éléments de gamification (crédits virtuels, favoris, collection) sont conservés localement sur votre terminal via la technologie <code>localStorage</code> de votre navigateur.</li>
+          <li><strong>Compte synchronisé Cloudflare D1 :</strong> Si vous activez la synchronisation Cloud, seul votre pseudonyme, votre empreinte chiffrée d'accès et votre fichier de progression sont stockés de façon sécurisée afin d'assurer la continuité multi-appareils.</li>
+        </ul>
+      </div>
+
+      <!-- 5. Hébergement & Infrastructure Réseau -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">5. Hébergement & Sécurité Réseau</strong>
+        L'hébergement des assets statiques et l'exécution des fonctions serverless intermédiaires sont assurés par l'infrastructure mondiale de <strong>Cloudflare, Inc.</strong> (101 Townsend St, San Francisco, CA 94107, USA), garantissant le chiffrement des échanges via le protocole sécurisé HTTPS (SSL/TLS).
+      </div>
+
+      <!-- 6. Contact & Droit de retrait (DMCA) -->
+      <div style="background:var(--cov); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:10px 12px;">
+        <strong style="color:var(--acc); font-size:12px; display:block; margin-bottom:2px;">✉️ Notification de retrait & Contact (DMCA)</strong>
+        Si vous êtes titulaire de droits d'auteur sur un contenu affiché et souhaitez en demander le retrait immédiat, vous pouvez formuler votre demande par l'intermédiaire du dépôt de projet du service. La modification ou la dé-indexation sera effectuée dans les meilleurs délais.
+      </div>
+
+      <!-- 7. Charte d'utilisation & Fair-play Joueur -->
+      <div style="background: rgba(255, 122, 69, 0.08); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); border-radius: var(--radius); padding: 12px 14px;">
+        <strong style="color: var(--acc); font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          🎮 Charte d'Utilisation & Esprit Arcade (Fair-Play)
+        </strong>
+        <p style="margin: 0 0 8px 0; color: var(--txt); font-weight: 700; font-size: 11px;">
+          En créant un compte sur Cartridge, chaque joueur s'engage à respecter les principes suivants :
+        </p>
+        <ul style="margin: 0 0 8px 18px; padding: 0; list-style-type: square; font-size: 11px; line-height: 1.6;">
+          <li><strong>Respect & Identité :</strong> Choix d'un pseudo correct. Sont strictement proscrits les propos haineux, injurieux, discriminatoires ou à caractère pornographique.</li>
+          <li><strong>Fair-Play & Scores :</strong> Respect de l'intégrité du système de quêtes, des crédits virtuels 🪙 et du Hall of Fame. L'utilisation de scripts automatisés, bots ou failles d'injection SQL/API pour falsifier ses records entraîne la réinitialisation du compte.</li>
+          <li><strong>Sécurité des comptes :</strong> Chaque joueur est responsable de la confidentialité de ses accès. La plateforme met à disposition un système de question secrète pour faciliter la récupération autonome.</li>
+          <li><strong>Gratuité & Convivialité :</strong> Cartridge est un espace de passionnés du jeu vidéo. Les crédits et packs sont purement virtuels et ne possèdent aucune valeur monétaire réelle.</li>
+        </ul>
+        <span style="font-size: 10px; color: var(--mut); display: block; font-style: italic;">
+          Tout manquement grave peut entraîner la suspension locale ou la suppression de l'accès au compte synchronisé.
+        </span>
+      </div>
+
     </div>
   `;
   pageLegal.append(secLegal);
