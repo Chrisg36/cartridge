@@ -1683,7 +1683,66 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   transition: top 0.05s linear;
 }
 
+/* 📓 IMPORT DE LA POLICE GOTHIQUE OFFICIELLE */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
+/* 📓 THÈME GLOBAL DEATH NOTE */
+body.theme-deathnote {
+  --bg: #020202 !important;
+  --txt: #f1f5f9 !important;
+  --acc: #ffffff !important;
+  --mut: #64748b !important;
+  --border: #262626 !important;
+  --on: #000000 !important;
+  
+  background-color: var(--bg) !important;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><radialGradient id='lg' cx='50%' cy='50%' r='70%'><stop offset='0%' stop-color='%23121212'/><stop offset='100%' stop-color='%23010101'/></radialGradient><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/></filter></defs><rect width='240' height='240' fill='url(%23lg)'/><rect width='240' height='240' filter='url(%23n)' opacity='0.1'/><g stroke='%23ffffff' opacity='0.04' stroke-width='0.8'><path d='M0 60 H240 M0 120 H240 M0 180 H240'/><path d='M60 0 V240 M120 0 V240 M180 0 V240' stroke-dasharray='3 6'/><circle cx='120' cy='120' r='80' fill='none' stroke-width='0.5'/></g></svg>") !important;
+  font-family: 'UnifrakturMaguntia', cursive, serif !important;
+}
+
+body.theme-deathnote h1, 
+body.theme-deathnote h2, 
+body.theme-deathnote h3, 
+body.theme-deathnote h4, 
+body.theme-deathnote .brand-text, 
+body.theme-deathnote .game-title, 
+body.theme-deathnote button {
+  font-family: 'UnifrakturMaguntia', cursive, serif !important;
+  letter-spacing: 1px !important;
+}
+
+body.theme-deathnote .app-bg-cartridges {
+  display: none !important;
+}
+
+body.theme-deathnote .game-card, 
+body.theme-deathnote .container, 
+body.theme-deathnote header {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Animations des plumes de Shinigami */
+@keyframes floatFeather {
+  0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) translateX(80px) rotate(360deg); opacity: 0; }
+}
+.shinigami-feather {
+  position: absolute;
+  background: #ffffff;
+  width: 12px;
+  height: 24px;
+  clip-path: path('M6 0 C10 6, 12 14, 6 24 C0 14, 2 6, 6 0 Z');
+  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+  opacity: 0.7;
+  animation: floatFeather linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+  
   
 </style>
 </head>
@@ -6414,6 +6473,48 @@ function applyBgStyle(bg) {
   
 let currentBg = localStorage.getItem("bgStyle") || "cartridges";
 window.addEventListener("DOMContentLoaded", () => { applyBgStyle(currentBg); });
+
+
+function applyDeathNoteTheme(enable) {
+  if (enable) {
+    document.body.classList.add("theme-deathnote");
+
+    // 1. Ajout du badge Death Note avec la pomme 🍎 à côté de Cartridge
+    const subTitleEl = document.querySelector("#sub-title");
+    if (subTitleEl && !document.getElementById("deathnote-badge")) {
+      const dnBadge = document.createElement("span");
+      dnBadge.id = "deathnote-badge";
+      dnBadge.style.cssText = "margin-left: 10px; font-family: 'UnifrakturMaguntia', cursive, serif; font-size: 16px; background: linear-gradient(135deg, #0a0a0a, #000000); color: #ffffff; padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 15px rgba(255,255,255,0.2); display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;";
+      dnBadge.innerHTML = `<span style="color:#ef4444; font-size:13px; text-shadow:0 0 6px #ef4444;">🍎</span> Death Note`;
+      subTitleEl.appendChild(dnBadge);
+    }
+
+    // 2. Génération des plumes de Shinigami volantes
+    let featherLayer = document.getElementById("shinigami-feathers-layer");
+    if (!featherLayer) {
+      featherLayer = document.createElement("div");
+      featherLayer.id = "shinigami-feathers-layer";
+      featherLayer.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 1;";
+      document.body.appendChild(featherLayer);
+      
+      for (let i = 0; i < 18; i++) {
+        const f = document.createElement("div");
+        f.className = "shinigami-feather";
+        f.style.cssText = `left: ${Math.random() * 100}vw; animation-duration: ${8 + Math.random() * 12}s; animation-delay: -${Math.random() * 10}s; transform: scale(${0.6 + Math.random() * 0.8});`;
+        featherLayer.appendChild(f);
+      }
+    }
+
+    try { localStorage.setItem("currentTheme", "deathnote"); } catch(e){}
+  } else {
+    document.body.classList.remove("theme-deathnote");
+    const badge = document.getElementById("deathnote-badge");
+    if (badge) badge.remove();
+    const layer = document.getElementById("shinigami-feathers-layer");
+    if (layer) layer.remove();
+    try { localStorage.removeItem("currentTheme"); } catch(e){}
+  }
+}
 
 
   
