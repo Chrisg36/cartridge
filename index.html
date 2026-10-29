@@ -4351,7 +4351,7 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-  // --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
+// --- 1. SECTION THÈMES MODERNES & AMBIANCES ---
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
@@ -4366,10 +4366,7 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      
-      // Désactive Death Note si on clique sur un autre thème
-      toggleDeathNoteTheme(false);
-      
+      toggleDeathNoteTheme(false); // Désactive Death Note si on change
       openSettingsMainPage();
     });
     modernGrid.append(b);
@@ -4378,23 +4375,24 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
 
-  // --- 🍎 BLOC THÈMES UNIQUES & COLLECTOR (DEATH NOTE) ---
+
+  // --- 🍎 NOUVEAU BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
   const secUniqueThemes = el("div", "settings-section");
   secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
   
   const uniqueGrid = el("div", "themes-grid-container");
-  const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+  const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
   
-  const dnUniqueBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
   const dnUniqueDot = el("span", "dot"); 
-  dnUniqueDot.style.background = isUnlocked ? "#ef4444" : "#555"; 
+  dnUniqueDot.style.background = isThemeUnlocked ? "#ef4444" : "#555"; 
   dnUniqueDot.innerHTML = "🍎";
   dnUniqueBtn.prepend(dnUniqueDot);
   
   dnUniqueBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
   
   dnUniqueBtn.onclick = () => {
-    if (!isUnlocked) {
+    if (!isThemeUnlocked) {
       playThemeSound(theme);
       showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
       return;
