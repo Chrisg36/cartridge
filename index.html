@@ -6513,6 +6513,43 @@ function applyDeathNoteTheme(enable) {
   }
 }
 
+  function toggleDeathNoteTheme(enable) {
+  if (enable) {
+    document.body.classList.add("theme-deathnote");
+
+    // Ajout du badge Death Note avec la pomme rouge 🍎
+    const subTitleEl = document.querySelector("#sub-title");
+    if (subTitleEl && !document.getElementById("deathnote-badge")) {
+      const dnBadge = document.createElement("span");
+      dnBadge.id = "deathnote-badge";
+      dnBadge.style.cssText = "margin-left: 10px; font-family: 'UnifrakturMaguntia', cursive, serif; font-size: 16px; background: #000000; color: #ffffff; padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 0 15px rgba(255,255,255,0.3); display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;";
+      dnBadge.innerHTML = `<span style="color:#ef4444; font-size:13px; text-shadow:0 0 8px #ef4444;">🍎</span> Death Note`;
+      subTitleEl.appendChild(dnBadge);
+    }
+
+    // Génération des plumes de Shinigami volantes
+    let featherLayer = document.getElementById("shinigami-feathers-layer");
+    if (!featherLayer) {
+      featherLayer = document.createElement("div");
+      featherLayer.id = "shinigami-feathers-layer";
+      featherLayer.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 9999;";
+      document.body.appendChild(featherLayer);
+      
+      for (let i = 0; i < 20; i++) {
+        const f = document.createElement("div");
+        f.className = "shinigami-feather";
+        f.style.cssText = `left: ${Math.random() * 100}vw; animation-duration: ${7 + Math.random() * 10}s; animation-delay: -${Math.random() * 10}s; transform: scale(${0.7 + Math.random() * 0.8});`;
+        featherLayer.appendChild(f);
+      }
+    }
+  } else {
+    document.body.classList.remove("theme-deathnote");
+    const badge = document.getElementById("deathnote-badge");
+    if (badge) badge.remove();
+    const layer = document.getElementById("shinigami-feathers-layer");
+    if (layer) layer.remove();
+  }
+}
   
  
 // --- 3. BLOC DE RECHERCHE ET ÉCOUTEURS GLOBAUX ---
