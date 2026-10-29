@@ -6134,10 +6134,11 @@ function openSettingsMainPage() {
 
   bgOptions.forEach(opt => {
     const b = el("button", "theme-mini-btn", opt.label);
-    b.setAttribute("aria-pressed", String(currentBg === opt.id));
+    const activeBg = typeof currentBg !== 'undefined' ? currentBg : "cartridges";
+    b.setAttribute("aria-pressed", String(activeBg === opt.id));
     b.onclick = () => {
-      currentBg = opt.id;
-      applyBgStyle(currentBg);
+      if (typeof currentBg !== 'undefined') currentBg = opt.id;
+      if (typeof applyBgStyle === "function") applyBgStyle(opt.id);
       playThemeSound(theme);
       openSettingsMainPage();
     };
@@ -6164,7 +6165,7 @@ function openSettingsMainPage() {
     b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
-      toggleDeathNoteTheme(false);
+      if (typeof toggleDeathNoteTheme === "function") toggleDeathNoteTheme(false);
       openSettingsMainPage();
     });
     modernGrid.append(b);
@@ -6194,7 +6195,7 @@ function openSettingsMainPage() {
       showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
       return;
     }
-    toggleDeathNoteTheme(true);
+    if (typeof toggleDeathNoteTheme === "function") toggleDeathNoteTheme(true);
     playThemeSound(theme);
     openSettingsMainPage();
   };
@@ -6376,7 +6377,7 @@ function openSettingsMainPage() {
 
 
   // Ajout des pages et gestion des onglets
-  p.append(pageGeneral, pageProfile, pageLegal);
+  contentArea.append(pageGeneral, pageProfile, pageLegal);
 
   function showTab(index) {
     playThemeSound(theme);
@@ -6416,11 +6417,7 @@ function openSettingsMainPage() {
     }
   }, 50);
 
-  const close = el("button", "close", t('close')); 
-  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-  p.append(close);
-
-  $("#sheet").classList.add("on");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 
