@@ -1683,7 +1683,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   transition: top 0.05s linear;
 }
 
-/* 📓 THÈME GLOBAL DEATH NOTE (Police épurée, élégante et lisible) */
+/* 📓 THÈME GLOBAL DEATH NOTE (Corrigé iOS : Crédits et profil non coupés) */
   body.theme-deathnote {
     background-color: #000000 !important;
     background-image: 
@@ -1698,11 +1698,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     --txt: #ffffff !important;
     --mut: #a1a1a1 !important;
     
-    /* Police principale ultra-propre et moderne pour toute l'appli */
     font-family: 'Rajdhani', -apple-system, sans-serif !important;
   }
 
-  /* Style des titres et logos : propres, nets et légèrement espacés */
   body.theme-deathnote .neon-logo,
   body.theme-deathnote h1, 
   body.theme-deathnote h2, 
@@ -1712,7 +1710,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     text-transform: uppercase;
   }
 
-  /* Lisibilité parfaite sur les textes de jeux et boutons */
   body.theme-deathnote .t b,
   body.theme-deathnote .grid-title,
   body.theme-deathnote button,
@@ -1723,34 +1720,54 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     font-weight: 600;
   }
 
-  /* Correction de l'en-tête (profil et crédits non coupés) */
+  /* 🍏 CORRECTION IOS : EN-TÊTE ET CRÉDITS NON COUPÉS */
   body.theme-deathnote .sticky-header-container {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    margin: 0 -12px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    margin: 0 -16px !important;
+    width: calc(100% + 32px) !important;
   }
 
   body.theme-deathnote .header-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     gap: 6px !important;
-    flex-wrap: nowrap !important;
+    width: 100% !important;
   }
 
+  /* On permet au logo de réduire légèrement si besoin pour laisser la place aux crédits */
   body.theme-deathnote #sub-title.neon-logo {
-    font-size: 11px !important;
-    padding: 6px 10px !important;
-    letter-spacing: 1.5px !important;
+    flex: 0 1 auto !important;
+    font-size: 10px !important;
+    padding: 5px 8px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap !important;
   }
 
   body.theme-deathnote #deathnote-badge {
-    font-size: 11px !important;
-    padding: 3px 8px !important;
-    margin-left: 6px !important;
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+    margin-left: 4px !important;
   }
 
-  body.theme-deathnote .header-currency-badge,
+  /* Zone de droite (Profil + Crédits) : empêchée de dépasser de l'écran */
+  body.theme-deathnote .header-top .nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+  }
+
+  body.theme-deathnote .header-currency-badge {
+    padding: 3px 6px !important;
+    font-size: 10px !important;
+    min-height: 26px !important;
+  }
+
   body.theme-deathnote .player-badge {
-    transform: scale(0.92);
-    transform-origin: right center;
+    padding: 2px 6px !important;
+    font-size: 9px !important;
   }
 
   body.theme-deathnote .app-bg-cartridges {
