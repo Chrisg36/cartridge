@@ -2426,15 +2426,15 @@ tabChallenges.innerHTML = `
         border-radius: 10px; padding: 12px 16px; gap: 12px;
       `;
 
-      const leftGroup = el("div");
-      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;
+  const leftGroup = el("div");
+      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
 
       const iconBox = el("div");
       iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
     titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.2;";
