@@ -2418,33 +2418,45 @@ tabChallenges.innerHTML = `
       }
     ];
 
-challengesList.forEach(item => {
-      const row = el("div");
+const row = el("div");
       row.style.cssText = `
-        display: flex; align-items: center; justify-content: space-between;
+        display: flex; flex-direction: column; gap: 10px;
         background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 12px 14px; gap: 8px; width: 100%; box-sizing: border-box;
+        border-radius: 10px; padding: 14px; width: 100%; box-sizing: border-box;
       `;
 
-      const leftGroup = el("div");
-      leftGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;";
+      // Ligne du haut : Icône + Titre + Description
+      const topGroup = el("div");
+      topGroup.style.cssText = "display: flex; align-items: flex-start; gap: 12px; width: 100%;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 30px; height: 30px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; overflow: hidden;";
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:900; color:var(--txt); letter-spacing:0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; overflow-wrap: break-word; line-height: 1.25; width: 100%;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:9.5px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;";
+      descEl.style.cssText = "font-size:9.5px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; white-space: normal; overflow-wrap: break-word; line-height: 1.2; width: 100%;";
 
       textInfo.append(titleEl, descEl);
-      leftGroup.append(iconBox, textInfo);
+      topGroup.append(iconBox, textInfo);
 
+      // Ligne du bas : Récompense + Bouton d'action alignés à droite
+      const bottomGroup = el("div");
+      bottomGroup.style.cssText = "display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; margin-top: 2px;";
+
+      const rewardBadge = el("span", "", item.reward);
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+
+      // (Garde ton code existant pour créer le bouton statusBtn ici...)
+      
+      bottomGroup.append(rewardBadge, statusBtn);
+      row.append(topGroup, bottomGroup);
+      banner.append(row);
       const rightGroup = el("div");
       rightGroup.style.cssText = "display: flex; align-items: center; gap: 6px; flex-shrink: 0;";
 
@@ -5257,40 +5269,42 @@ function renderShopMainPage() {
         iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`
       }
     ];
-
-    challengesList.forEach(item => {
+challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
-        display: flex; align-items: center; justify-content: space-between;
+        display: flex; flex-direction: column; gap: 10px;
         background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 12px 16px; gap: 12px;
+        border-radius: 10px; padding: 14px; width: 100%; box-sizing: border-box;
       `;
 
-     const leftGroup = el("div");
-     leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
+      // Ligne du haut : Icône + Titre + Description
+      const topGroup = el("div");
+      topGroup.style.cssText = "display: flex; align-items: flex-start; gap: 12px; width: 100%;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;";
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; overflow-wrap: break-word; line-height: 1.25; width: 100%;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
+      descEl.style.cssText = "font-size:9.5px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; white-space: normal; overflow-wrap: break-word; line-height: 1.2; width: 100%;";
 
       textInfo.append(titleEl, descEl);
-      leftGroup.append(iconBox, textInfo);
+      topGroup.append(iconBox, textInfo);
 
-      const rightGroup = el("div");
-      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
+      // Ligne du bas : Récompense + Bouton d'action alignés à droite
+      const bottomGroup = el("div");
+      bottomGroup.style.cssText = "display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; margin-top: 2px;";
 
       const rewardBadge = el("span", "", item.reward);
       rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
+      // Création du bouton interactif
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
       statusBtn.type = "button";
@@ -5320,7 +5334,7 @@ function renderShopMainPage() {
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
-          showChallenges();
+          renderChallengesTab();
         });
       } else {
         statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
@@ -5331,11 +5345,10 @@ function renderShopMainPage() {
         `;
       }
 
-      rightGroup.append(rewardBadge, statusBtn);
-      row.append(leftGroup, rightGroup);
+      bottomGroup.append(rewardBadge, statusBtn);
+      row.append(topGroup, bottomGroup);
       banner.append(row);
     });
-
     displayBox.append(banner);
   }
 
