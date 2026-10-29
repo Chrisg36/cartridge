@@ -6097,6 +6097,20 @@ const bgOptions = [
     };
     modernGrid.append(b);
   });
+  // 🍎 AJOUTE CE MORCEAU ICI :
+  const dnBtn = el("button", "theme-mini-btn", "Death Note");
+  const dnDot = el("span", "dot"); dnDot.style.background = "#ef4444"; dnDot.innerHTML = "🍎";
+  dnBtn.prepend(dnDot);
+  dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  dnBtn.onclick = () => {
+    toggleDeathNoteTheme(true);
+    playThemeSound(theme);
+    openSettingsMainPage();
+  };
+  modernGrid.append(dnBtn);
+
+  secModern.append(modernGrid);
+  pageGeneral.append(secModern);
   secModern.append(modernGrid);
 
   // 2. Consoles rétro
