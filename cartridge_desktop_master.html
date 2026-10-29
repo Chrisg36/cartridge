@@ -15,12 +15,11 @@
 <style>
 
 <script>
-  // Redirection automatique vers la version PC si l'écran est grand (type ordinateur)
-  if (window.innerWidth >= 900) {
-    window.location.href = "cartridge_desktop_master.html";
+  // Redirection automatique vers la version mobile si l'écran est étroit
+  if (window.innerWidth < 900) {
+    window.location.href = "index.html";
   }
 </script>
-
   
 html {
   /* Empêche les micro-sauts de scroll élastique sous Safari */
