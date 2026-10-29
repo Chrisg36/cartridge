@@ -1845,7 +1845,28 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   font-weight: 900 !important;
 }
 
+/* Style permanent pour le thème Game Boy Pro & Boutons A/B */
+[data-theme="gameboy-dark"] { 
+  color-scheme: dark; 
+  --bg: #070f07 !important; 
+  --card: #0f1f0f !important; 
+  --cov: #183318 !important; 
+  --txt: #b8f017 !important; 
+  --mut: #729c15 !important; 
+  --acc: #99e600 !important; 
+  --on: #070f07 !important; 
+  --pattern: radial-gradient(#122612 1.5px, transparent 1.5px); 
+  background-size: 4px 4px; 
+  --radius: 0px; 
+}
 
+/* Force les boutons de mois à devenir A et B en mode Game Boy */
+[data-theme="gameboy-dark"] #prev {
+  content: "B" !important;
+}
+[data-theme="gameboy-dark"] #next {
+  content: "A" !important;
+}
 
   
 </style>
@@ -4330,6 +4351,7 @@ const THEMES = {
   violet: ["Violet", "#130F1E", "#B794FF"],
   ruby: ["Rubis", "#170D10", "#FF5C7A"],
   gameboy: ["Game Boy", "#0f1f0f", "#8BAC0F"],
+  "gameboy-dark": ["Game Boy Pro", "#070f07", "#99e600"],
   nes: ["NES Classic", "#121214", "#E52521"],
   snes: ["Super Nintendo", "#16151d", "#6b5cd5"],
   ps1: ["PlayStation 1", "#1a1e29", "#0070D1"],
@@ -4349,6 +4371,33 @@ function applyTheme(th) {
   document.documentElement.dataset.theme = th;
   $("#themeMeta").content = THEMES[th][1];
   playThemeSound(th);
+
+  // 🕹️ Gère les boutons A/B et le filtre LCD si on est en Game Boy Pro
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  
+  if (th === "gameboy-dark") {
+    if (prevBtn) { prevBtn.textContent = "B"; prevBtn.style.fontFamily = "'Press Start 2P', monospace"; }
+    if (nextBtn) { nextBtn.textContent = "A"; nextBtn.style.fontFamily = "'Press Start 2P', monospace"; }
+    
+    document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+      img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%)";
+      img.style.border = "1px solid #729c15";
+    });
+  } else {
+    // Remet les flèches normales pour les autres thèmes
+    if (prevBtn) { prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`; prevBtn.style.fontFamily = ""; }
+    if (nextBtn) { nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`; nextBtn.style.fontFamily = ""; }
+    
+    document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+      img.style.filter = "";
+      img.style.border = "";
+    });
+  }
+
+  // ... le reste de ta fonction applyTheme ...
+  return th;
+}
 
   // Application du motif de fond selon le thème choisi
   let patternVal = "none";
