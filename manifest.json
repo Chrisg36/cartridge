@@ -1,32 +1,23 @@
 {
-  "id": "/",
-  "name": "Cartridge",
+  "name": "Cartridge - Rétro & Gaming Calendar",
   "short_name": "Cartridge",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#111318",
-  "theme_color": "#111318",
+  "theme_color": "#FF7A45",
   "icons": [
     {
       "src": "apple-touch-icon.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "1024x1024",
+      "sizes": "192x192",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Cartridge Desktop View"
+      "purpose": "any maskable"
     },
     {
       "src": "apple-touch-icon.png",
-      "sizes": "1024x1024",
+      "sizes": "512x512",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Cartridge Mobile View"
+      "purpose": "any maskable"
     }
   ]
 }
