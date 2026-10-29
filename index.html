@@ -1455,87 +1455,84 @@ body[data-holo-effect="true"] .supreme-holo-box::after {
   line-height: 1;
 }
 
+/* ✨ EFFET HOLOGRAPHIQUE SUPREME COLLECTOR */
+@keyframes holoShimmerMove {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.65;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: 0.9;
+  }
+  100% {
+    background-position: 0% 0%;
+    opacity: 0.65;
+  }
+}
 
+@keyframes holoSweepRay {
+  0% { transform: rotate(25deg) translateY(-140%); }
+  100% { transform: rotate(25deg) translateY(140%); }
+}
 
-
-/* ✨ REFONTE TOTALE : EFFET HOLOGRAPHIQUE SUPREME COLLECTOR SPECTACULAIRE */
+/* La boîte de jeu en édition suprême */
 .supreme-holo-box {
   position: relative !important;
-  border: 2px solid #fbbf24 !important;
-  border-radius: 8px !important;
   overflow: hidden !important;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.85), 0 0 30px rgba(251, 191, 36, 0.75), inset 0 0 20px rgba(251, 191, 36, 0.4) !important;
-  transform: translateZ(0);
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease !important;
+  border: 1.5px solid #fbbf24 !important;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.7), 
+    0 0 20px rgba(251, 191, 36, 0.6),
+    inset 0 0 15px rgba(251, 191, 36, 0.4) !important;
 }
 
-.supreme-holo-box img {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-}
-
-/* 🌈 Voile irisé multicolore permanent en surimpression */
+/* 🌈 1. Voile irisé multicolore permanent par-dessus l'image */
 .supreme-holo-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 0, 128, 0.4) 0%,
-    rgba(251, 191, 36, 0.5) 25%,
-    rgba(56, 189, 248, 0.45) 50%,
-    rgba(168, 85, 247, 0.45) 75%,
-    rgba(34, 197, 94, 0.4) 100%
-  );
-  background-size: 300% 300%;
-  mix-blend-mode: overlay;
-  animation: holoRainbowShift 4s ease-in-out infinite;
-}
-
-/* ⚡ Barre lumineuse diagonale scintillante ultra-nette */
-.supreme-holo-box::after {
-  content: "";
-  position: absolute;
-  top: -150%;
-  left: -150%;
-  width: 400%;
-  height: 400%;
   z-index: 5;
   pointer-events: none;
   background: linear-gradient(
-    55deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.85) 48%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(255, 255, 255, 0.85) 52%,
-    transparent 62%
+    125deg,
+    rgba(255, 0, 128, 0.22) 0%,
+    rgba(255, 215, 0, 0.35) 25%,
+    rgba(0, 255, 200, 0.3) 50%,
+    rgba(0, 150, 255, 0.25) 75%,
+    rgba(255, 0, 212, 0.3) 100%
   );
-  animation: holoFlashSweep 3s infinite linear;
+  background-size: 250% 250%;
+  mix-blend-mode: overlay;
+  animation: holoShimmerMove 3s ease-in-out infinite;
 }
 
-@keyframes holoRainbowShift {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  100% { background-position: 0% 0%; }
+/* ⚡ 2. Rayon lumineux brillant continu en diagonale par-dessus l'image */
+.supreme-holo-box::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 6;
+  pointer-events: none;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 60%
+  );
+  background-size: 200% 200%;
+  mix-blend-mode: screen;
+  animation: continuousHoloSweep 2.2s infinite linear;
 }
 
-@keyframes holoFlashSweep {
-  0% { transform: translateY(-120%) translateX(-120%) rotate(25deg); opacity: 0; }
-  20% { opacity: 1; }
-  50% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(120%) translateX(120%) rotate(25deg); opacity: 0; }
-}
-
+/* Survol : amplification du reflet */
 .supreme-holo-box:hover {
-  transform: translateY(-6px) scale(1.04) !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.9), 0 0 40px rgba(251, 191, 36, 0.9), inset 0 0 25px rgba(251, 191, 36, 0.6) !important;
+  transform: translateY(-4px) scale(1.05) !important;
+  box-shadow: 
+    0 16px 35px rgba(0, 0, 0, 0.8), 
+    0 0 25px rgba(251, 191, 36, 0.75),
+    inset 0 0 15px rgba(251, 191, 36, 0.5) !important;
 }
-
 
 /* 🎮 SPLASH BOOT GAME BOY IOS */
 #splash {
@@ -2929,19 +2926,20 @@ function openCollectionShelf() {
 for (const item of rowItems) {
   const gameBox = el("div");
   
+  // 🌟 Active l'effet holo si le jeu appartient à la catégorie Supreme Collector
   if (item.category === "supreme_retro") {
     gameBox.classList.add("supreme-holo-box");
   }
 
   gameBox.style.cssText = `
     background: var(--card); 
-    border: 1.5px solid color-mix(in srgb, var(--acc) 60%, transparent);
+    border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
     border-radius: 8px; 
     overflow: hidden; 
     display: flex; 
     flex-direction: column; 
     align-items: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}; 
     cursor: pointer; 
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   `;
@@ -3020,7 +3018,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const TRANSLATIONS = {
   fr: {
-    subTitle: "CARTRIDGE",
+subTitle: "CARTRIDGE",
     searchPlaceholder: "Rechercher n'importe quel jeu...",
     all: "✨ Tous les jeux",
     favorites: "❤️ Mes Favoris",
@@ -3057,6 +3055,7 @@ const TRANSLATIONS = {
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     vitrineTitle: "🏛️ Musée Mondial des Consoles & Micros",
+    vitrineDesc: "Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :",
     today: "Aujourd'hui",
     tomorrow: "Demain",
     inDays: (d) => `Dans ${d} jours`,
@@ -3101,143 +3100,12 @@ const TRANSLATIONS = {
     summaryLabel: "Summary",
     summaryLoading: "Translating summary with AI… ⏳",
     vitrineTitle: "🏛️ World Console & Micro Museum",
+    vitrineDesc: "Click on any console to discover its detailed history and specs:",
     today: "Today",
     tomorrow: "Tomorrow",
     inDays: (d) => `In ${d} days`,
     yesterday: "Yesterday",
     daysAgo: (d) => `${d} days ago`
-  },
-  de: {
-    subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "Suche nach beliebigem Spiel...",
-    all: "✨ Alle Spiele",
-    favorites: "❤️ Meine Favoriten",
-    noGamesSearch: "Keine Spiele für diese Suche gefunden.",
-    noGamesFav: "Keine Favoriten in diesem Monat.",
-    noGamesFilter: "Keine Veröffentlichungen für diese Konsole in diesem Monat.",
-    loading: "Wird geladen...",
-    searchDb: "Durchsuche die Datenbank... 🔍",
-    netError: "Fehler beim Laden. Überprüfe config.js.",
-    searchError: "Fehler bei der Suche.",
-    settingsTitle: "Einstellungen",
-    themeLabel: "Themen & Retro-Konsolen",
-    soundLabel: "Toneffekte",
-    soundOn: "🔊 Ton AN",
-    soundOff: "🔇 Ton AUS",
-    crtLabel: "CRT-Effekt",
-    crtOn: "📺 AN",
-    crtOff: "🖥️ AUS",
-    langLabel: "Sprache",
-    retroLabel: "🕰️ Zeitkapsel",
-    resetCurrentMonth: "📅 Aktueller Monat",
-    close: "Schließen",
-    shareTitle: "Meinen Monat teilen",
-    shareDesc: "Kopiere diese Nachricht und teile sie:",
-    noFavShare: "Noch keine Favoriten!",
-    shareFooter: "✨ Geteilt von meiner Spiele-App!",
-    copyBtn: "📋 Text kopieren",
-    copiedBtn: "✅ Kopiert!",
-    calendarBtn: "Zum Kalender hinzufügen",
-    favAdd: "🤍 Zu Favoriten",
-    favRemove: "❤️ Entfernen",
-    trailerBtn: "🎥 Trailer auf YouTube",
-    hltbBtn: "⏱️ HowLongToBeat prüfen",
-    summaryLabel: "Zusammenfassung",
-    summaryLoading: "Übersetze... ⏳",
-    vitrineTitle: "🏛️ Konsolen-Museum",
-    today: "Heute",
-    tomorrow: "Morgen",
-    inDays: (d) => `In ${d} Tagen`,
-    yesterday: "Gestern",
-    daysAgo: (d) => `Vor ${d} Tagen`
-  },
-  ja: {
-    subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "ゲームを検索...",
-    all: "✨ すべてのゲーム",
-    favorites: "❤️ お気に入り",
-    noGamesSearch: "ゲームが見つかりませんでした。",
-    noGamesFav: "今月のお気に入りはありません。",
-    noGamesFilter: "今月のこのコンソールのリリースはありません。",
-    loading: "読み込み中...",
-    searchDb: "データベースを検索中... 🔍",
-    netError: "読み込みエラー。config.jsを確認してください。",
-    searchError: "検索エラー。",
-    settingsTitle: "設定",
-    themeLabel: "テーマ & レトロコンソール",
-    soundLabel: "効果音",
-    soundOn: "🔊 サウンド ON",
-    soundOff: "🔇 サウンド OFF",
-    crtLabel: "CRTスキャンライン効果",
-    crtOn: "📺 ON",
-    crtOff: "🖥️ OFF",
-    langLabel: "言語設定",
-    retroLabel: "🕰️ タイムカプセル",
-    resetCurrentMonth: "📅 今月に戻る",
-    close: "閉じる",
-    shareTitle: "今月をシェア",
-    shareDesc: "メッセージをコピーしてシェア:",
-    noFavShare: "お気に入りはまだありません！",
-    shareFooter: "✨ ゲームリリースアプリからシェア！",
-    copyBtn: "📋 テキストをコピー",
-    copiedBtn: "✅ コピー完了！",
-    calendarBtn: "カレンダーに追加",
-    favAdd: "🤍 お気に入りに追加",
-    favRemove: "❤️ お気に入りから削除",
-    trailerBtn: "🎥 YouTubeでトレーラーを見る",
-    hltbBtn: "⏱️ プレイ時間を調べる",
-    summaryLabel: "概要",
-    summaryLoading: "翻訳中... ⏳",
-    vitrineTitle: "🏛️ 世界のゲーム機ミュージアム",
-    today: "今日",
-    tomorrow: "明日",
-    inDays: (d) => `${d}日後`,
-    yesterday: "昨日",
-    daysAgo: (d) => `${d}日前`
-  },
-  es: {
-    subTitle: "🎮 CARTRIDGE",
-    searchPlaceholder: "Buscar cualquier juego...",
-    all: "✨ Todos los juegos",
-    favorites: "❤️ Mis Favoritos",
-    noGamesSearch: "No se encontraron juegos para esta búsqueda.",
-    noGamesFav: "No hay juegos en favoritos este mes.",
-    noGamesFilter: "No hay lanzamientos para esta consola este mes.",
-    loading: "Cargando...",
-    searchDb: "Buscando en la base de datos... 🔍",
-    netError: "Imposible cargar los lanzamientos. Verifica config.js.",
-    searchError: "Error en la búsqueda.",
-    settingsTitle: "Ajustes",
-    themeLabel: "Temas y Consolas Retro",
-    soundLabel: "Efectos de sonido",
-    soundOn: "🔊 Sonido ACTIVO",
-    soundOff: "🔇 Sonido APAGADO",
-    crtLabel: "Efecto CRT",
-    crtOn: "📺 ACTIVO",
-    crtOff: "🖥️ APAGADO",
-    langLabel: "Idioma de la interfaz",
-    retroLabel: "🕰️ Cápsula del Tiempo",
-    resetCurrentMonth: "📅 Volver al mes actual",
-    close: "Cerrar",
-    shareTitle: "Compartir mi mes",
-    shareDesc: "Copia y pega este mensaje:",
-    noFavShare: "¡Sin favoritos todavía!",
-    shareFooter: "✨ Compartido desde mi app de videojuegos!",
-    copyBtn: "📋 Copiar texto",
-    copiedBtn: "✅ ¡Copiado!",
-    calendarBtn: "Añadir al calendario",
-    favAdd: "🤍 Añadir a favoritos",
-    favRemove: "❤️ Quitar de favoritos",
-    trailerBtn: "🎥 Ver trailer en YouTube",
-    hltbBtn: "⏱️ Ver duración (HowLongToBeat)",
-    summaryLabel: "Resumen",
-    summaryLoading: "Traduciendo resumen... ⏳",
-    vitrineTitle: "🏛️ Museo Mundial de Consolas",
-    today: "Hoy",
-    tomorrow: "Mañana",
-    inDays: (d) => `En ${d} días`,
-    yesterday: "Ayer",
-    daysAgo: (d) => `Hace ${d} días`
   }
 };
 
@@ -4744,32 +4612,6 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
 
-  // --- 🌍 SECTION SÉLECTION DE LA LANGUE ---
-  const secLang = el("div", "settings-section");
-  secLang.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
-  const langSelect = document.createElement("select");
-  langSelect.className = "settings-select-clean";
-  
-  for (const [codeLang, nameLang] of Object.entries(LANG_NAMES)) {
-    const opt = document.createElement("option");
-    opt.value = codeLang;
-    opt.textContent = nameLang;
-    if (codeLang === currentLang) opt.selected = true;
-    langSelect.append(opt);
-  }
-
-  langSelect.onchange = (e) => {
-    currentLang = e.target.value;
-    try { localStorage.setItem("lang", currentLang); } catch (err) {}
-    playThemeSound(theme);
-    openSettingsMainPage();
-    render();
-  };
-
-  secLang.append(langSelect);
-  pageGeneral.append(secLang);
-
-
 
   // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
   const secUniqueThemes = el("div", "settings-section");
@@ -4823,6 +4665,39 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   secRetroThemes.append(retroGrid);
   pageGeneral.append(secRetroThemes);
 
+  // --- 🌍 SECTION SÉLECTION DE LA LANGUE (DANS GÉNÉRAL & LOOK) ---
+  const secLangGeneral = el("div", "settings-section");
+  secLangGeneral.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
+  const langSelectGeneral = document.createElement("select");
+  langSelectGeneral.className = "settings-select-clean";
+  
+  const generalLangs = {
+    fr: "🇫🇷 Français",
+    en: "🇬🇧 English",
+    ja: "🇯🇵 日本語",
+    es: "🇪🇸 Español",
+    it: "🇮🇹 Italiano"
+  };
+
+  for (const [codeLang, nameLang] of Object.entries(generalLangs)) {
+    const opt = document.createElement("option");
+    opt.value = codeLang;
+    opt.textContent = nameLang;
+    if (codeLang === currentLang) opt.selected = true;
+    langSelectGeneral.append(opt);
+  }
+
+  langSelectGeneral.onchange = (e) => {
+    currentLang = e.target.value;
+    try { localStorage.setItem("lang", currentLang); } catch (err) {}
+    playThemeSound(theme);
+    openSettingsMainPage();
+    render();
+  };
+
+  secLangGeneral.append(langSelectGeneral);
+  pageGeneral.append(secLangGeneral);
+
   // --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
   const secCustom = el("div", "settings-section");
   secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
@@ -4865,19 +4740,8 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
   const secProfile = el("div", "settings-section");
   secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
   const savedUser = localStorage.getItem("cartridge_user") || "";
-  const isConnected = !!savedUser;
-
+  
   secProfile.innerHTML += `
-    <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isConnected ? '#22c55e' : 'var(--acc)'}; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="width: 10px; height: 10px; border-radius: 50%; background: ${isConnected ? '#22c55e' : '#ef4444'}; box-shadow: 0 0 8px ${isConnected ? '#22c55e' : '#ef4444'};"></div>
-        <span style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--txt);">
-          ${isConnected ? `CONNECTÉ : ${esc(savedUser)}` : "STATUT : HORS LIGNE"}
-        </span>
-      </div>
-      ${isConnected ? `<button id="btnLogout" class="cta-sec" style="width:auto; padding:6px 12px; font-size:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); margin:0;">Déconnexion</button>` : ''}
-    </div>
-
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
@@ -4891,12 +4755,11 @@ const btnTabLegal = el("button", "chip", "Mentions & Droits");
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
-      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil & Synchroniser</button>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
     </form>
     <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
-      <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
-      <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
-    </div>
+   <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+<a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
   `;
   pageProfile.append(secProfile);
 
@@ -6631,32 +6494,6 @@ function openSettingsMainPage() {
   secModern.append(modernGrid);
   pageGeneral.append(secModern);
 
-  // --- 🌍 SECTION SÉLECTION DE LA LANGUE ---
-  const secLang = el("div", "settings-section");
-  secLang.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
-  const langSelect = document.createElement("select");
-  langSelect.className = "settings-select-clean";
-  
-  for (const [codeLang, nameLang] of Object.entries(LANG_NAMES)) {
-    const opt = document.createElement("option");
-    opt.value = codeLang;
-    opt.textContent = nameLang;
-    if (codeLang === currentLang) opt.selected = true;
-    langSelect.append(opt);
-  }
-
-  langSelect.onchange = (e) => {
-    currentLang = e.target.value;
-    try { localStorage.setItem("lang", currentLang); } catch (err) {}
-    playThemeSound(theme);
-    openSettingsMainPage();
-    render();
-  };
-
-  secLang.append(langSelect);
-  pageGeneral.append(secLang);
-
-
   // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
   const secUniqueThemes = el("div", "settings-section");
   secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
@@ -6708,6 +6545,39 @@ function openSettingsMainPage() {
   });
   secRetroThemes.append(retroGrid);
   pageGeneral.append(secRetroThemes);
+
+  // --- 🌍 SECTION SÉLECTION DE LA LANGUE (DANS GÉNÉRAL & LOOK) ---
+  const secLangGeneral = el("div", "settings-section");
+  secLangGeneral.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
+  const langSelectGeneral = document.createElement("select");
+  langSelectGeneral.className = "settings-select-clean";
+  
+  const generalLangs = {
+    fr: "🇫🇷 Français",
+    en: "🇬🇧 English",
+    ja: "🇯🇵 日本語",
+    es: "🇪🇸 Español",
+    it: "🇮🇹 Italiano"
+  };
+
+  for (const [codeLang, nameLang] of Object.entries(generalLangs)) {
+    const opt = document.createElement("option");
+    opt.value = codeLang;
+    opt.textContent = nameLang;
+    if (codeLang === currentLang) opt.selected = true;
+    langSelectGeneral.append(opt);
+  }
+
+  langSelectGeneral.onchange = (e) => {
+    currentLang = e.target.value;
+    try { localStorage.setItem("lang", currentLang); } catch (err) {}
+    playThemeSound(theme);
+    openSettingsMainPage();
+    render();
+  };
+
+  secLangGeneral.append(langSelectGeneral);
+  pageGeneral.append(secLangGeneral);
 
   // 4. Confort & Audio
   const secPrefs = el("div", "settings-section");
@@ -6799,8 +6669,19 @@ function openSettingsMainPage() {
   const secProfile = el("div", "settings-section");
   secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
   const savedUser = localStorage.getItem("cartridge_user") || "";
-  
+  const isConnected = !!savedUser;
+
   secProfile.innerHTML += `
+    <div style="background: rgba(0,0,0,0.3); border: 1px solid ${isConnected ? '#22c55e' : 'var(--acc)'}; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: ${isConnected ? '#22c55e' : '#ef4444'}; box-shadow: 0 0 8px ${isConnected ? '#22c55e' : '#ef4444'};"></div>
+        <span style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--txt);">
+          ${isConnected ? `CONNECTÉ : ${esc(savedUser)}` : "STATUT : HORS LIGNE"}
+        </span>
+      </div>
+      ${isConnected ? `<button id="btnLogout" class="cta-sec" style="width:auto; padding:6px 12px; font-size:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); margin:0;">Déconnexion</button>` : ''}
+    </div>
+
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
@@ -6814,7 +6695,7 @@ function openSettingsMainPage() {
         <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
-      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil & Synchroniser</button>
     </form>
     <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
       <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
@@ -6822,6 +6703,8 @@ function openSettingsMainPage() {
     </div>
   `;
   pageProfile.append(secProfile);
+
+
 
   const secData = el("div", "settings-section");
   secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
@@ -7262,30 +7145,6 @@ function checkDesktopSidebarBrand() {
     brand.style.display = window.innerWidth >= 900 ? 'flex' : 'none';
   }
 }
-</script>
-
-
-<script>
-// 🔄 Migration automatique des anciennes cartes de collection pour les classer et les faire briller
-window.addEventListener('DOMContentLoaded', () => {
-  try {
-    let coll = JSON.parse(localStorage.getItem("myCollection") || "[]");
-    let updated = false;
-    coll = coll.map(item => {
-      // Si la carte n'a pas de catégorie, on lui en attribue une selon son ID ou par défaut standard
-      if (!item.category) {
-        // Par exemple, si l'ID est pair ou selon un critère, ou on met standard
-        item.category = "standard";
-        updated = true;
-      }
-      return item;
-    });
-    if (updated) {
-      localStorage.setItem("myCollection", JSON.stringify(coll));
-      myCollection = coll;
-    }
-  } catch(e) {}
-});
 </script>
 
 </body>
