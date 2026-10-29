@@ -1686,17 +1686,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* 📓 IMPORT DE LA POLICE GOTHIQUE OFFICIELLE */
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
-/* 📓 THÈME GLOBAL DEATH NOTE */
+/* 📓 THÈME GLOBAL DEATH NOTE (Cuir granuleux + Filigranes "How to Use It" + Police gothique) */
 body.theme-deathnote {
-  --bg: #020202 !important;
-  --txt: #f1f5f9 !important;
-  --acc: #ffffff !important;
-  --mut: #64748b !important;
-  --border: #262626 !important;
-  --on: #000000 !important;
-  
-  background-color: var(--bg) !important;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><defs><radialGradient id='lg' cx='50%' cy='50%' r='70%'><stop offset='0%' stop-color='%23121212'/><stop offset='100%' stop-color='%23010101'/></radialGradient><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/></filter></defs><rect width='240' height='240' fill='url(%23lg)'/><rect width='240' height='240' filter='url(%23n)' opacity='0.1'/><g stroke='%23ffffff' opacity='0.04' stroke-width='0.8'><path d='M0 60 H240 M0 120 H240 M0 180 H240'/><path d='M60 0 V240 M120 0 V240 M180 0 V240' stroke-dasharray='3 6'/><circle cx='120' cy='120' r='80' fill='none' stroke-width='0.5'/></g></svg>") !important;
+  background-color: #080808 !important;
+  background-image: 
+    /* Filigranes de règles et textes du carnet en arrière-plan */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><text x='50' y='80' font-family='serif' font-size='13' fill='%23ffffff' opacity='0.05' transform='rotate(-8 50 80)'>How to Use It, XLV</text><text x='320' y='160' font-family='serif' font-size='11' fill='%23ffffff' opacity='0.04' transform='rotate(12 320 160)'>The human whose name is written in this note shall die.</text><text x='80' y='320' font-family='serif' font-size='12' fill='%23ffffff' opacity='0.04' transform='rotate(-5 80 320)'>This note shall not take effect unless the writer has the person's face in their mind...</text><text x='350' y='450' font-family='serif' font-size='13' fill='%23ffffff' opacity='0.05' transform='rotate(6 350 450)'>If the cause of death is not specified, the person will simply die of a heart attack.</text><text x='120' y='530' font-family='serif' font-size='11' fill='%23ffffff' opacity='0.04' transform='rotate(-10 120 530)'>Shinigami eyes: the ability to see people's names and lifespans.</text></svg>"),
+    /* Texture de cuir granuleux organique sombre */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.1  0 0 0 0 0.1  0 0 0 0 0.1  0 0 0 0.6 0'/></filter><rect width='120' height='120' filter='url(%23g)'/></svg>") !important;
+  background-blend-mode: normal, overlay;
+  color: #f1f5f9 !important;
   font-family: 'UnifrakturMaguntia', cursive, serif !important;
 }
 
@@ -1722,7 +1721,7 @@ body.theme-deathnote header {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9) !important;
 }
 
-/* Animations des plumes de Shinigami */
+/* Animations des petites plumes de Shinigami flottantes */
 @keyframes floatFeather {
   0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
   20% { opacity: 0.8; }
@@ -1741,8 +1740,6 @@ body.theme-deathnote header {
   pointer-events: none;
   z-index: 1;
 }
-
-  
   
 </style>
 </head>
@@ -6476,46 +6473,6 @@ window.addEventListener("DOMContentLoaded", () => { applyBgStyle(currentBg); });
 
 
 function applyDeathNoteTheme(enable) {
-  if (enable) {
-    document.body.classList.add("theme-deathnote");
-
-    // 1. Ajout du badge Death Note avec la pomme 🍎 à côté de Cartridge
-    const subTitleEl = document.querySelector("#sub-title");
-    if (subTitleEl && !document.getElementById("deathnote-badge")) {
-      const dnBadge = document.createElement("span");
-      dnBadge.id = "deathnote-badge";
-      dnBadge.style.cssText = "margin-left: 10px; font-family: 'UnifrakturMaguntia', cursive, serif; font-size: 16px; background: linear-gradient(135deg, #0a0a0a, #000000); color: #ffffff; padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 15px rgba(255,255,255,0.2); display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;";
-      dnBadge.innerHTML = `<span style="color:#ef4444; font-size:13px; text-shadow:0 0 6px #ef4444;">🍎</span> Death Note`;
-      subTitleEl.appendChild(dnBadge);
-    }
-
-    // 2. Génération des plumes de Shinigami volantes
-    let featherLayer = document.getElementById("shinigami-feathers-layer");
-    if (!featherLayer) {
-      featherLayer = document.createElement("div");
-      featherLayer.id = "shinigami-feathers-layer";
-      featherLayer.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 1;";
-      document.body.appendChild(featherLayer);
-      
-      for (let i = 0; i < 18; i++) {
-        const f = document.createElement("div");
-        f.className = "shinigami-feather";
-        f.style.cssText = `left: ${Math.random() * 100}vw; animation-duration: ${8 + Math.random() * 12}s; animation-delay: -${Math.random() * 10}s; transform: scale(${0.6 + Math.random() * 0.8});`;
-        featherLayer.appendChild(f);
-      }
-    }
-
-    try { localStorage.setItem("currentTheme", "deathnote"); } catch(e){}
-  } else {
-    document.body.classList.remove("theme-deathnote");
-    const badge = document.getElementById("deathnote-badge");
-    if (badge) badge.remove();
-    const layer = document.getElementById("shinigami-feathers-layer");
-    if (layer) layer.remove();
-    try { localStorage.removeItem("currentTheme"); } catch(e){}
-  }
-}
-
 
   
  
