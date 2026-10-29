@@ -1839,39 +1839,638 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
   
+
+  /* 🟢 AMÉLIORATION RÉTRO GAME BOY : FILTRE MONOCHROME & GRILLE LCD */
+  [data-theme="gameboy"] .cov, 
+  [data-theme="gameboy"] .grid-cov, 
+  [data-theme="gameboy"] .big,
+  [data-theme="gameboy"] .collection-item-card img {
+    filter: grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%) !important;
+  }
+
+  /* Grille LCD physique en surimpression sur l'écran Game Boy ou tout le site en mode GB */
+  [data-theme="gameboy"]::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(15, 56, 15, 0) 50%, rgba(15, 56, 15, 0.35) 50%);
+    background-size: 100% 3px;
+    z-index: 998;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+
+  /* 🟢 FOND PRO STYLE GAME BOY (MATRICE LCD DOT-MATRIX) */
+  body[data-theme="gameboy"] .app-bg-cartridges,
+  html[data-theme="gameboy"] .app-bg-cartridges {
+    display: none !important;
+  }
+
+  body[data-theme="gameboy"], html[data-theme="gameboy"] {
+    background-color: #0f1f0f !important;
+    background-image: 
+      radial-gradient(circle, #2d5a27 1px, transparent 1px),
+      linear-gradient(rgba(15, 31, 15, 0.8) 50%, rgba(0, 0, 0, 0.4) 50%) !important;
+    background-size: 6px 6px, 100% 4px !important;
+  }
+
+
+  /* 🟢 AMÉLIORATIONS VISUELLES & COHÉRENCE RÉTRO GAME BOY */
+  [data-theme="gameboy"] .m, 
+  [data-theme="gameboy"] .shimmer-line,
+  [data-theme="gameboy"] .msg {
+    color: #a8d035 !important; /* Texte secondaire éclairci pour un meilleur contraste LCD */
+  }
+
+  /* Boutons d'action (Cœur et Ajout) carrés, bordure nette, style pixel art */
+  [data-theme="gameboy"] .btn-icon,
+  [data-theme="gameboy"] .grid-fav-btn {
+    border-radius: 0px !important;
+    border: 2px solid #8bac0f !important;
+    background: #152915 !important;
+    box-shadow: 2px 2px 0px #0f380f !important;
+  }
+  [data-theme="gameboy"] .btn-icon:active,
+  [data-theme="gameboy"] .grid-fav-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px #0f380f !important;
+  }
+
+  /* Badges de plateformes harmonisés en camaïeu de verts contrastés */
+  [data-theme="gameboy"] .platform-badge {
+    background: #1f3b1f !important;
+    color: #9bbc0f !important;
+    border: 1px solid #8bac0f !important;
+    border-radius: 0px !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 0.55rem !important;
+  }
+
+  /* Champ de recherche : icône SVG de loupe teintée en vert accent */
+  [data-theme="gameboy"] .search-box {
+    background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238BAC0F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") no-repeat 12px center !important;
+    border: 2px solid #8bac0f !important;
+    border-radius: 0px !important;
+  }
+
+  /* 🎮 Contour écran hardware Game Boy / Vitre plastique autour de main */
+  [data-theme="gameboy"] main {
+    position: relative;
+    border: 6px solid #0f380f;
+    border-radius: 12px 12px 36px 12px;
+    background: rgba(15, 31, 15, 0.4);
+    box-shadow: inset 0 0 20px rgba(15, 56, 15, 0.9), 0 0 25px rgba(139, 172, 15, 0.2);
+    padding-top: 36px !important; /* Espace pour l'inscription de la vitre */
+  }
+
+  /* Inscription gravée sur la vitre plastique de la console */
+  [data-theme="gameboy"] main::before {
+    content: "DOT MATRIX WITH STEREO SOUND";
+    position: absolute;
+    top: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #486648;
+    letter-spacing: 1px;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+
+  /* 🎮 DESIGN HARDWARE GAME BOY (DÉTAILS AUTHENTIQUES CONSOLE) */
+  [data-theme="gameboy"] {
+    background-color: #8b956d !important; /* Couleur de coque classique Game Boy gris-vert */
+    background-image: 
+      radial-gradient(circle, #7a845c 1px, transparent 1px),
+      linear-gradient(rgba(0,0,0,0.05) 50%, rgba(255,255,255,0.05) 50%) !important;
+    background-size: 4px 4px, 100% 2px !important;
+  }
+
+  [data-theme="gameboy"] main {
+    position: relative !important;
+    background: #0f1f0f !important;
+    border: 8px solid #3c3f35 !important;
+    border-radius: 16px 16px 48px 16px !important;
+    box-shadow: 
+      inset 0 0 30px rgba(0, 0, 0, 0.9),
+      0 12px 35px rgba(0, 0, 0, 0.6),
+      0 0 0 12px #2f3229 !important;
+    margin: 20px auto 40px !important;
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+
+  /* 🔴 1. LED BATTERY en bas à gauche de la vitre écran */
+  [data-theme="gameboy"] main::after {
+    content: "BATTERY";
+    position: absolute;
+    bottom: 16px;
+    left: 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: #3c3f35;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  [data-theme="gameboy"] main::after::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: #ff2222;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff2222;
+  }
+
+  /* 🔊 2. Haut-parleur stylisé en bas à droite de l'écran */
+  #gb-speaker-retro {
+    display: none;
+  }
+  [data-theme="gameboy"] #gb-speaker-retro {
+    display: block;
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    width: 36px;
+    height: 16px;
+    background: repeating-linear-gradient(135deg, transparent, transparent 3px, #3c3f35 3px, #3c3f35 5px);
+    border-radius: 4px;
+    transform: rotate(-25deg);
+  }
+
+  /* 🔠 3. Inscription Nintendo Game Boy en haut du cadre écran */
+  [data-theme="gameboy"] main::before {
+    content: "Nintendo Ⓡ  G A M E  B O Y";
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 9px;
+    color: #2b3024;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+
+  /* 🟢 CORRECTION RADICALE DE LA TAILLE DES POLICES SUR LE THÈME GAME BOY */
+  [data-theme="gameboy"] {
+    font-size: 8px !important;
+  }
+  [data-theme="gameboy"] * {
+    letter-spacing: 0px !important;
+  }
+  [data-theme="gameboy"] .neon-logo, 
+  [data-theme="gameboy"] #sub-title.neon-logo {
+    font-size: 9px !important;
+    padding: 4px 8px !important;
+  }
+  [data-theme="gameboy"] .magazine-edition-banner {
+    font-size: 7px !important;
+    padding: 2px 6px !important;
+  }
+  [data-theme="gameboy"] input[type="month"]#dateSelect {
+    font-size: 8px !important;
+    padding: 4px 6px !important;
+    min-height: 26px !important;
+  }
+  [data-theme="gameboy"] .platform-select {
+    font-size: 8px !important;
+    padding: 6px 20px 6px 6px !important;
+  }
+  [data-theme="gameboy"] .search-box {
+    font-size: 9px !important;
+    padding: 6px 8px 6px 28px !important;
+  }
+  [data-theme="gameboy"] .chip {
+    font-size: 8px !important;
+    padding: 4px 6px !important;
+    min-height: 26px !important;
+  }
+  [data-theme="gameboy"] .fav-filter-btn {
+    font-size: 8px !important;
+    height: 26px !important;
+    padding: 0 6px !important;
+  }
+  [data-theme="gameboy"] .t b {
+    font-size: 10px !important;
+  }
+  [data-theme="gameboy"] .m {
+    font-size: 7.5px !important;
+  }
+  [data-theme="gameboy"] .platform-badge, 
+  [data-theme="gameboy"] .time-badge, 
+  [data-theme="gameboy"] .score-badge, 
+  [data-theme="gameboy"] .hype-pro-badge {
+    font-size: 6px !important;
+    padding: 1px 4px !important;
+  }
+
+
+    body {
+    font-size: 12px !important;
+  }
+  
+  /* Compresse l'en-tête et les boutons pour que tout s'aligne proprement */
+  .sticky-header-container {
+    padding-top: calc(env(safe-area-inset-top, 15px) + 6px) !important;
+    padding-bottom: 6px !important;
+  }
+  .neon-logo, #sub-title.neon-logo {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+  h1, h2, h3 {
+    font-size: 13px !important;
+  }
+  .t b {
+    font-size: 13px !important;
+  }
+  .m {
+    font-size: 10px !important;
+  }
+  .chip, .platform-select, .search-box, .magazine-edition-banner {
+    font-size: 10px !important;
+  }
+  .search-box {
+    padding: 6px 8px 6px 30px !important;
+  }
+  
+  /* Pour le mode Game Boy en particulier, réduction encore plus poussée */
+  [data-theme="gameboy"] {
+    font-size: 9px !important;
+  }
+  [data-theme="gameboy"] .t b {
+    font-size: 10.5px !important;
+  }
+  [data-theme="gameboy"] .m {
+    font-size: 8px !important;
+  }
+  [data-theme="gameboy"] .platform-badge,
+  [data-theme="gameboy"] .time-badge,
+  [data-theme="gameboy"] .score-badge,
+  [data-theme="gameboy"] .hype-pro-badge {
+    font-size: 7px !important;
+    padding: 1px 3px !important;
+  }
+
+
+  /* 🍏 RÉDUCTION UNIVERSELLE DE LA TAILLE DES POLICES (PARTOUT DE PARTOUT) */
+  html {
+    font-size: 11px !important;
+  }
+  body {
+    font-size: 11px !important;
+  }
+  
+  /* Compresse tous les éléments de texte, en-têtes, boutons et listes */
+  .sticky-header-container {
+    padding-top: calc(env(safe-area-inset-top, 12px) + 4px) !important;
+    padding-bottom: 4px !important;
+  }
+  .neon-logo, #sub-title.neon-logo {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+  }
+  h1, h2, h3 {
+    font-size: 11px !important;
+  }
+  .t b {
+    font-size: 11px !important;
+  }
+  .m {
+    font-size: 9px !important;
+  }
+  .chip, .platform-select, .search-box, .magazine-edition-banner, button {
+    font-size: 9.5px !important;
+  }
+  .search-box {
+    padding: 5px 6px 5px 28px !important;
+  }
+  
+  /* Pour le mode Game Boy en particulier */
+  [data-theme="gameboy"] {
+    font-size: 8px !important;
+  }
+  [data-theme="gameboy"] .t b {
+    font-size: 9.5px !important;
+  }
+  [data-theme="gameboy"] .m {
+    font-size: 7.5px !important;
+  }
+  [data-theme="gameboy"] .platform-badge,
+  [data-theme="gameboy"] .time-badge,
+  [data-theme="gameboy"] .score-badge,
+  [data-theme="gameboy"] .hype-pro-badge {
+    font-size: 6px !important;
+    padding: 1px 3px !important;
+  }
+
+
+  /* 🍏 CORRECTION MOBILE ABSOLUE POUR LE MODE GAME BOY SUR IOS */
+  @media (max-width: 768px) {
+    [data-theme="gameboy"] .sticky-header-container {
+      padding-top: calc(env(safe-area-inset-top, 10px) + 4px) !important;
+      padding-bottom: 4px !important;
+    }
+    [data-theme="gameboy"] .header-top {
+      margin-bottom: 3px !important;
+      gap: 4px !important;
+    }
+    [data-theme="gameboy"] .header-bottom {
+      margin-bottom: 3px !important;
+    }
+    [data-theme="gameboy"] .filter-bar-container {
+      gap: 3px !important;
+      margin-top: 2px !important;
+      margin-bottom: 2px !important;
+    }
+    [data-theme="gameboy"] .platform-select {
+      padding: 4px 16px 4px 4px !important;
+      font-size: 7px !important;
+      min-height: 24px !important;
+    }
+    [data-theme="gameboy"] .fav-filter-btn {
+      height: 24px !important;
+      font-size: 7px !important;
+      padding: 0 4px !important;
+    }
+    [data-theme="gameboy"] .chip {
+      min-height: 24px !important;
+      font-size: 7px !important;
+      padding: 2px 4px !important;
+    }
+    [data-theme="gameboy"] .search-box {
+      padding: 5px 6px 5px 24px !important;
+      font-size: 8px !important;
+      margin-top: 2px !important;
+      margin-bottom: 2px !important;
+    }
+    [data-theme="gameboy"] input[type="month"]#dateSelect {
+      min-height: 24px !important;
+      font-size: 7px !important;
+      padding: 2px 4px !important;
+    }
+    [data-theme="gameboy"] main {
+      padding-bottom: 90px !important; /* Laisse de l'espace pour la barre du bas */
+    }
+  }
+
+
+  /* 🟢 AMÉLIORATION RADICALE DU MODE GAME BOY POUR LISIBILITÉ MOBILE */
+  [data-theme="gameboy"] {
+    --font: 'Rajdhani', -apple-system, sans-serif !important;
+    font-size: 12px !important;
+  }
+  
+  /* On garde Press Start 2P uniquement pour les logos et titres majeurs */
+  [data-theme="gameboy"] .neon-logo, 
+  [data-theme="gameboy"] #sub-title.neon-logo,
+  [data-theme="gameboy"] h1, 
+  [data-theme="gameboy"] h2, 
+  [data-theme="gameboy"] h3 {
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 9px !important;
+    letter-spacing: 0px !important;
+  }
+
+  /* Pour tous les boutons, onglets, sélecteurs, thèmes et réglages : police lisible et compacte */
+  [data-theme="gameboy"] button,
+  [data-theme="gameboy"] .chip,
+  [data-theme="gameboy"] .platform-select,
+  [data-theme="gameboy"] .search-box,
+  [data-theme="gameboy"] .theme-mini-btn,
+  [data-theme="gameboy"] .settings-tab-btn,
+  [data-theme="gameboy"] .shop-banner,
+  [data-theme="gameboy"] .panel {
+    font-family: 'Rajdhani', -apple-system, sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  /* Ajustement propre des grilles de thèmes dans les réglages en mode Game Boy */
+  [data-theme="gameboy"] .themes-grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  [data-theme="gameboy"] .theme-mini-btn {
+    white-space: normal !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+  }
+
+
+  /* 🍏 MODE PLEIN ÉCRAN NATIF PUR POUR MOBILE / IOS */
+  html, body {
+    width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: var(--bg) !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: calc(env(safe-area-inset-top, 10px) + 8px) 12px calc(90px + env(safe-area-inset-bottom)) !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+  }
+
+  /* Désactive les bordures de fausse console en mode Game Boy sur mobile */
+  [data-theme="gameboy"] main {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 10px 12px 90px 12px !important;
+  }
+  [data-theme="gameboy"] main::before,
+  [data-theme="gameboy"] main::after {
+    display: none !important;
+  }
+
+  /* Nettoie l'en-tête pour qu'il occupe toute la largeur proprement */
+  .sticky-header-container {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    border-radius: 0 !important;
+  }
+
+
+  /* 🍏 CORRECTION DÉFINITIVE DES ONGLETS ET TEXTES COUPÉS SUR MOBILE */
+  .shop-banner, .settings-tabs-nav, div[style*="display:flex"][style*="gap"] {
+    flex-wrap: wrap !important;
+  }
+  
+  /* Permet aux onglets de la boutique et des réglages de passer à la ligne proprement ou de s'ajuster */
+  #shopMainPage .chip, #shopMainPage button.chip, 
+  .settings-tab-btn, .theme-mini-btn {
+    font-size: 8.5px !important;
+    padding: 6px 8px !important;
+    white-space: normal !important;
+    text-align: center !important;
+    flex: 1 1 30% !important;
+    min-width: 90px !important;
+  }
+
+  /* Cartes de la boutique / packs / thèmes */
+  .shop-pack-card {
+    max-width: 100% !important;
+    padding: 14px !important;
+  }
+
+
+  /* 🍏 CORRECTION DÉFINITIVE DU DÉBORDEMENT MOBILE (ONGLETS ET CARTES) */
+  #shopMainPage, #shopMainPageContent, .panel {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Sous-navigation / onglets de la boutique et des réglages : scroll horizontal propre sans couper */
+  div[style*="display:flex"][style*="gap"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding-bottom: 6px !important;
+    width: 100% !important;
+  }
+  
+  div[style*="display:flex"][style*="gap"]::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Les boutons/onglets gardent une taille lisible et ne cassent plus l'écran */
+  #shopMainPage .chip, #shopMainPage button.chip, 
+  .settings-tab-btn, .theme-mini-btn {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    font-size: 10px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Bannières et cartes de la boutique centrées et sans débordement à gauche */
+  .shop-banner, .shop-pack-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+
+  /* 🟢 FINITIONS PRO pour le mode "Dark Game Boy" (basé sur la structure sombre parfaite) */
+  [data-theme="gameboy-dark"], body[data-theme="gameboy-dark"] {
+    --bg: #0b140b !important;
+    --card: #122212 !important;
+    --cov: #1b361b !important;
+    --txt: #a3e635 !important;
+    --mut: #65a30d !important;
+    --acc: #84cc16 !important;
+    --on: #0b140b !important;
+    --font: 'Rajdhani', -apple-system, sans-serif !important;
+    --radius: 14px !important;
+  }
+
+  /* Ajustement impeccable de la barre de filtres sur mobile pour éviter tout chevauchement */
+  .filter-bar-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding-bottom: 2px !important;
+  }
+  .filter-bar-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .platform-select {
+    flex: 1 1 auto !important;
+    min-width: 110px !important;
+  }
+
+  .fav-filter-btn, .filter-bar-container .chip {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+
+  /* 🔋 Correction de la position de la LED Battery (maintenant intégrée proprement sous l'en-tête ou dans le header) */
+  .gb-battery-led {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--mut);
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .gb-battery-led::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background: #ff3333;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff3333;
+    animation: batteryBlink 2s infinite;
+  }
+
+  /* 🕹️ Boutons A et B Game Boy pour la navigation des mois */
+  .month-nav .chip {
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+
+  /* 🍏 CORRECTION ESPACEMENT BAS DE PAGE (Évite le chevauchement avec la navbar fixe) */
+  main {
+    padding-bottom: 120px !important;
+  }
+  .bottom-nav {
+    z-index: 9999 !important;
+  }
+
 </style>
 </head>
 <body>
 
 <div class="crt-flash"></div>
-
-<div class="app-bg-cartridges">
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge gameboy-cart"></div>
-  <div class="bg-cartridge n64-cart"></div>
-  <div class="bg-cartridge switch-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge switch-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge gameboy-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge n64-cart"></div>
-  <div class="bg-cartridge n64-cart"></div>
-  <div class="bg-cartridge switch-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge gameboy-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge gameboy-cart"></div>
-  <div class="bg-cartridge switch-cart"></div>
-  <div class="bg-cartridge n64-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge switch-cart"></div>
-  <div class="bg-cartridge"></div>
-  <div class="bg-cartridge n64-cart"></div>
-  <div class="bg-cartridge gameboy-cart"></div>
-  <div class="bg-cartridge"></div>
-</div>
 
 <div class="pixel-particles" id="particles"></div>
 
@@ -2098,12 +2697,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
           <input type="month" id="dateSelect" min="1970-01" max="2999-12">
         </div>
         <div class="month-nav">
-          <button class="chip" id="prev" aria-label="Mois précédent">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
-          </button>
-          <button class="chip" id="next" aria-label="Mois suivant">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>
-          </button>
+          <button class="chip" id="prev" aria-label="Mois précédent">B</button>
+          <button class="chip" id="next" aria-label="Mois suivant">A</button>
         </div>
       </div>
 
@@ -3566,7 +4161,119 @@ function shiftMonth(delta) {
   setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
   const [y, m] = ym.split("-").map(Number);
   ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
-  load();
+  
+// 🕹️ Fonction f12 interactive pour tester et basculer instantanément en mode Game Boy rétro
+function f12() {
+  if (typeof playThemeSound === "function" && typeof soundEnabled !== "undefined" && soundEnabled) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const a = new AudioCtx();
+      if (a.state === 'suspended') a.resume();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + (i * 0.08));
+        g.gain.setValueAtTime(0.15, t + (i * 0.08));
+        g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+      });
+    } catch (e) {}
+  }
+
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+    try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+  }
+
+  const flash = document.querySelector(".crt-flash");
+  if (flash) {
+    document.body.classList.add("trigger-crt-flash");
+    setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  }
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Game Boy (F12)", "🟢 Émulation monochrome activée (Palette 4 nuances vert LCD).");
+  } else {
+    console.log("🎮 Mode Game Boy activé avec succès !");
+  }
+}
+
+
+
+
+
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Game Boy (Optimisé iOS & Polices Compactes)...");
+
+  // 1. Applique le thème Game Boy
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+  } else {
+    document.documentElement.dataset.theme = "gameboy";
+  }
+  try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+
+  // 2. Filtre vert LCD rétro sur les jaquettes
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  // 3. Masque les cartouches de fond d'origine
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  // 4. Nettoyage de l'ancien habillage s'il existe
+  const oldShell = document.getElementById("gb-pro-console-container");
+  if (oldShell) {
+    const mainEl = document.querySelector("main");
+    if (mainEl && oldShell.parentNode) {
+      oldShell.parentNode.insertBefore(mainEl, oldShell);
+      oldShell.remove();
+    }
+  }
+
+  // 5. Fond de page coque Game Boy authentique
+  document.body.style.backgroundColor = "#8b956d";
+  document.body.style.backgroundImage = "radial-gradient(circle, #7a845c 1.5px, transparent 1.5px)";
+  document.body.style.backgroundSize = "4px 4px";
+  document.body.style.overflowX = "hidden";
+
+  // 6. Restaure <main> en pleine largeur naturelle adaptée à l'écran mobile
+  const mainEl = document.querySelector("main");
+  if (mainEl) {
+    mainEl.style.position = "relative";
+    mainEl.style.backgroundColor = "transparent";
+    mainEl.style.border = "none";
+    mainEl.style.borderRadius = "0";
+    mainEl.style.boxShadow = "none";
+    mainEl.style.margin = "0 auto";
+    mainEl.style.maxWidth = "640px";
+    mainEl.style.paddingTop = "10px";
+  }
+
+  // 7. Son 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  console.log("🟢 Mode Game Boy iOS optimisé activé avec succès !");
+};
+
+load();
 }
 
 function updateStaticTexts() {
@@ -3705,7 +4412,119 @@ if (dateSelect) {
     if (e.target.value) {
       playThemeSound(theme);
       ym = e.target.value;
-      load();
+      
+// 🕹️ Fonction f12 interactive pour tester et basculer instantanément en mode Game Boy rétro
+function f12() {
+  if (typeof playThemeSound === "function" && typeof soundEnabled !== "undefined" && soundEnabled) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const a = new AudioCtx();
+      if (a.state === 'suspended') a.resume();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + (i * 0.08));
+        g.gain.setValueAtTime(0.15, t + (i * 0.08));
+        g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+      });
+    } catch (e) {}
+  }
+
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+    try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+  }
+
+  const flash = document.querySelector(".crt-flash");
+  if (flash) {
+    document.body.classList.add("trigger-crt-flash");
+    setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  }
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Game Boy (F12)", "🟢 Émulation monochrome activée (Palette 4 nuances vert LCD).");
+  } else {
+    console.log("🎮 Mode Game Boy activé avec succès !");
+  }
+}
+
+
+
+
+
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Game Boy (Optimisé iOS & Polices Compactes)...");
+
+  // 1. Applique le thème Game Boy
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+  } else {
+    document.documentElement.dataset.theme = "gameboy";
+  }
+  try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+
+  // 2. Filtre vert LCD rétro sur les jaquettes
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  // 3. Masque les cartouches de fond d'origine
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  // 4. Nettoyage de l'ancien habillage s'il existe
+  const oldShell = document.getElementById("gb-pro-console-container");
+  if (oldShell) {
+    const mainEl = document.querySelector("main");
+    if (mainEl && oldShell.parentNode) {
+      oldShell.parentNode.insertBefore(mainEl, oldShell);
+      oldShell.remove();
+    }
+  }
+
+  // 5. Fond de page coque Game Boy authentique
+  document.body.style.backgroundColor = "#8b956d";
+  document.body.style.backgroundImage = "radial-gradient(circle, #7a845c 1.5px, transparent 1.5px)";
+  document.body.style.backgroundSize = "4px 4px";
+  document.body.style.overflowX = "hidden";
+
+  // 6. Restaure <main> en pleine largeur naturelle adaptée à l'écran mobile
+  const mainEl = document.querySelector("main");
+  if (mainEl) {
+    mainEl.style.position = "relative";
+    mainEl.style.backgroundColor = "transparent";
+    mainEl.style.border = "none";
+    mainEl.style.borderRadius = "0";
+    mainEl.style.boxShadow = "none";
+    mainEl.style.margin = "0 auto";
+    mainEl.style.maxWidth = "640px";
+    mainEl.style.paddingTop = "10px";
+  }
+
+  // 7. Son 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  console.log("🟢 Mode Game Boy iOS optimisé activé avec succès !");
+};
+
+load();
     }
   });
 }
@@ -4767,7 +5586,119 @@ $("#platformSelect").addEventListener("change", (e) => {
     if (!isNaN(origYear)) {
       const currentMonthPart = ym.split("-")[1] || "01";
       ym = `${origYear}-${currentMonthPart}`;
-      load();
+      
+// 🕹️ Fonction f12 interactive pour tester et basculer instantanément en mode Game Boy rétro
+function f12() {
+  if (typeof playThemeSound === "function" && typeof soundEnabled !== "undefined" && soundEnabled) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const a = new AudioCtx();
+      if (a.state === 'suspended') a.resume();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + (i * 0.08));
+        g.gain.setValueAtTime(0.15, t + (i * 0.08));
+        g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+      });
+    } catch (e) {}
+  }
+
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+    try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+  }
+
+  const flash = document.querySelector(".crt-flash");
+  if (flash) {
+    document.body.classList.add("trigger-crt-flash");
+    setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  }
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Game Boy (F12)", "🟢 Émulation monochrome activée (Palette 4 nuances vert LCD).");
+  } else {
+    console.log("🎮 Mode Game Boy activé avec succès !");
+  }
+}
+
+
+
+
+
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Game Boy (Optimisé iOS & Polices Compactes)...");
+
+  // 1. Applique le thème Game Boy
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+  } else {
+    document.documentElement.dataset.theme = "gameboy";
+  }
+  try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+
+  // 2. Filtre vert LCD rétro sur les jaquettes
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  // 3. Masque les cartouches de fond d'origine
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  // 4. Nettoyage de l'ancien habillage s'il existe
+  const oldShell = document.getElementById("gb-pro-console-container");
+  if (oldShell) {
+    const mainEl = document.querySelector("main");
+    if (mainEl && oldShell.parentNode) {
+      oldShell.parentNode.insertBefore(mainEl, oldShell);
+      oldShell.remove();
+    }
+  }
+
+  // 5. Fond de page coque Game Boy authentique
+  document.body.style.backgroundColor = "#8b956d";
+  document.body.style.backgroundImage = "radial-gradient(circle, #7a845c 1.5px, transparent 1.5px)";
+  document.body.style.backgroundSize = "4px 4px";
+  document.body.style.overflowX = "hidden";
+
+  // 6. Restaure <main> en pleine largeur naturelle adaptée à l'écran mobile
+  const mainEl = document.querySelector("main");
+  if (mainEl) {
+    mainEl.style.position = "relative";
+    mainEl.style.backgroundColor = "transparent";
+    mainEl.style.border = "none";
+    mainEl.style.borderRadius = "0";
+    mainEl.style.boxShadow = "none";
+    mainEl.style.margin = "0 auto";
+    mainEl.style.maxWidth = "640px";
+    mainEl.style.paddingTop = "10px";
+  }
+
+  // 7. Son 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  console.log("🟢 Mode Game Boy iOS optimisé activé avec succès !");
+};
+
+load();
       return;
     }
   }
@@ -6397,7 +7328,119 @@ function openSettingsMainPage() {
     hideAllMainPages();
     document.getElementById("homeMainContent").style.display = "block";
     setActiveNav(document.getElementById("navHome"));
-    load();
+    
+// 🕹️ Fonction f12 interactive pour tester et basculer instantanément en mode Game Boy rétro
+function f12() {
+  if (typeof playThemeSound === "function" && typeof soundEnabled !== "undefined" && soundEnabled) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const a = new AudioCtx();
+      if (a.state === 'suspended') a.resume();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + (i * 0.08));
+        g.gain.setValueAtTime(0.15, t + (i * 0.08));
+        g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+      });
+    } catch (e) {}
+  }
+
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+    try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+  }
+
+  const flash = document.querySelector(".crt-flash");
+  if (flash) {
+    document.body.classList.add("trigger-crt-flash");
+    setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  }
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Game Boy (F12)", "🟢 Émulation monochrome activée (Palette 4 nuances vert LCD).");
+  } else {
+    console.log("🎮 Mode Game Boy activé avec succès !");
+  }
+}
+
+
+
+
+
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Game Boy (Optimisé iOS & Polices Compactes)...");
+
+  // 1. Applique le thème Game Boy
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+  } else {
+    document.documentElement.dataset.theme = "gameboy";
+  }
+  try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+
+  // 2. Filtre vert LCD rétro sur les jaquettes
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  // 3. Masque les cartouches de fond d'origine
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  // 4. Nettoyage de l'ancien habillage s'il existe
+  const oldShell = document.getElementById("gb-pro-console-container");
+  if (oldShell) {
+    const mainEl = document.querySelector("main");
+    if (mainEl && oldShell.parentNode) {
+      oldShell.parentNode.insertBefore(mainEl, oldShell);
+      oldShell.remove();
+    }
+  }
+
+  // 5. Fond de page coque Game Boy authentique
+  document.body.style.backgroundColor = "#8b956d";
+  document.body.style.backgroundImage = "radial-gradient(circle, #7a845c 1.5px, transparent 1.5px)";
+  document.body.style.backgroundSize = "4px 4px";
+  document.body.style.overflowX = "hidden";
+
+  // 6. Restaure <main> en pleine largeur naturelle adaptée à l'écran mobile
+  const mainEl = document.querySelector("main");
+  if (mainEl) {
+    mainEl.style.position = "relative";
+    mainEl.style.backgroundColor = "transparent";
+    mainEl.style.border = "none";
+    mainEl.style.borderRadius = "0";
+    mainEl.style.boxShadow = "none";
+    mainEl.style.margin = "0 auto";
+    mainEl.style.maxWidth = "640px";
+    mainEl.style.paddingTop = "10px";
+  }
+
+  // 7. Son 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  console.log("🟢 Mode Game Boy iOS optimisé activé avec succès !");
+};
+
+load();
   });
   secTime.append(randomTimeBtn);
   pageGeneral.append(secTime);
@@ -6783,8 +7826,8 @@ $("#next").addEventListener("click", () => shiftMonth(1));
 document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
-  if (prevBtn) prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`;
-  if (nextBtn) nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`;
+  if (prevBtn) prevBtn.textContent = "B";
+  if (nextBtn) nextBtn.textContent = "A";
 });
 
   // 🕹️ Animation de la jauge latérale au défilement de la page
@@ -6808,7 +7851,177 @@ window.addEventListener('scroll', () => {
   <div id="scroll-indicator-thumb"></div>
 </div>
  <script> 
+
+// 🕹️ Fonction f12 interactive pour tester et basculer instantanément en mode Game Boy rétro
+function f12() {
+  if (typeof playThemeSound === "function" && typeof soundEnabled !== "undefined" && soundEnabled) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const a = new AudioCtx();
+      if (a.state === 'suspended') a.resume();
+      const t = a.currentTime;
+      [2093, 2637].forEach((f, i) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(f, t + (i * 0.08));
+        g.gain.setValueAtTime(0.15, t + (i * 0.08));
+        g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+        o.connect(g); g.connect(a.destination);
+        o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+      });
+    } catch (e) {}
+  }
+
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+    try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+  }
+
+  const flash = document.querySelector(".crt-flash");
+  if (flash) {
+    document.body.classList.add("trigger-crt-flash");
+    setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  }
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Game Boy (F12)", "🟢 Émulation monochrome activée (Palette 4 nuances vert LCD).");
+  } else {
+    console.log("🎮 Mode Game Boy activé avec succès !");
+  }
+}
+
+
+
+
+
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Game Boy (Optimisé iOS & Polices Compactes)...");
+
+  // 1. Applique le thème Game Boy
+  if (typeof applyTheme === "function") {
+    applyTheme("gameboy");
+  } else {
+    document.documentElement.dataset.theme = "gameboy";
+  }
+  try { localStorage.setItem("theme", "gameboy"); } catch (e) {}
+
+  // 2. Filtre vert LCD rétro sur les jaquettes
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  // 3. Masque les cartouches de fond d'origine
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  // 4. Nettoyage de l'ancien habillage s'il existe
+  const oldShell = document.getElementById("gb-pro-console-container");
+  if (oldShell) {
+    const mainEl = document.querySelector("main");
+    if (mainEl && oldShell.parentNode) {
+      oldShell.parentNode.insertBefore(mainEl, oldShell);
+      oldShell.remove();
+    }
+  }
+
+  // 5. Fond de page coque Game Boy authentique
+  document.body.style.backgroundColor = "#8b956d";
+  document.body.style.backgroundImage = "radial-gradient(circle, #7a845c 1.5px, transparent 1.5px)";
+  document.body.style.backgroundSize = "4px 4px";
+  document.body.style.overflowX = "hidden";
+
+  // 6. Restaure <main> en pleine largeur naturelle adaptée à l'écran mobile
+  const mainEl = document.querySelector("main");
+  if (mainEl) {
+    mainEl.style.position = "relative";
+    mainEl.style.backgroundColor = "transparent";
+    mainEl.style.border = "none";
+    mainEl.style.borderRadius = "0";
+    mainEl.style.boxShadow = "none";
+    mainEl.style.margin = "0 auto";
+    mainEl.style.maxWidth = "640px";
+    mainEl.style.paddingTop = "10px";
+  }
+
+  // 7. Son 8-bits de démarrage
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  console.log("🟢 Mode Game Boy iOS optimisé activé avec succès !");
+};
+
 load();
 </script>
+
+
+
+
+
+
+
+<script>
+window.f12 = function() {
+  console.log("🎮 Activation du Mode Dark Game Boy (Stable & Irréprochable)...");
+
+  document.documentElement.dataset.theme = "gameboy-dark";
+  try { localStorage.setItem("theme", "gameboy-dark"); } catch (e) {}
+
+  const r = document.documentElement.style;
+  r.setProperty('--bg', '#0b140b');
+  r.setProperty('--card', '#122212');
+  r.setProperty('--cov', '#1b361b');
+  r.setProperty('--txt', '#a3e635');
+  r.setProperty('--mut', '#65a30d');
+  r.setProperty('--acc', '#84cc16');
+  r.setProperty('--on', '#0b140b');
+  r.setProperty('--font', "'Rajdhani', -apple-system, sans-serif");
+
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
+    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(160%) brightness(85%)";
+  });
+
+  const cartridgesBg = document.querySelector(".app-bg-cartridges");
+  if (cartridgesBg) cartridgesBg.style.display = "none";
+
+  document.body.style.backgroundColor = "#0b140b";
+  document.body.style.backgroundImage = "none";
+
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const a = new AudioCtx();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    [2093, 2637].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(f, t + (i * 0.08));
+      g.gain.setValueAtTime(0.15, t + (i * 0.08));
+      g.gain.exponentialRampToValueAtTime(0.001, t + (i * 0.08) + 0.35);
+      o.connect(g); g.connect(a.destination);
+      o.start(t + (i * 0.08)); o.stop(t + (i * 0.08) + 0.35);
+    });
+  } catch (e) {}
+
+  if (typeof showRetroAlert === "function") {
+    showRetroAlert("Mode Dark Game Boy", "🟢 Ambiance LCD active, structure stable 100% sans débordement !");
+  } else {
+    alert("🟢 Mode Dark Game Boy actif !");
+  }
+};
+</script>
+
 </body>
 </html>
