@@ -111,7 +111,11 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  white-space: nowrap;
+ .theme-mini-btn, .grid-title, .t b {
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: 1.2;
+}
   line-height: 1.2;
   display: inline-flex;
   align-items: center;
@@ -1805,6 +1809,31 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     pointer-events: none;
     z-index: 9999;
   }
+
+/* Pour les titres des défis, les cartes et les boutons : retour à la ligne automatique */
+.shop-banner div span, 
+.settings-section-title, 
+.grid-title, 
+.t b,
+.theme-mini-btn {
+  white-space: normal !important;
+  word-break: break-word;
+  line-height: 1.25;
+}
+
+/* 2. Pour le bouton du thème Death Note ou les boutons de la grille (deuxième image) */
+.theme-mini-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow-x: auto; /* Permet de scroller horizontalement si le texte dépasse dans la bulle */
+  scrollbar-width: none; /* Cache la barre sous iOS / Firefox */
+}
+.theme-mini-btn::-webkit-scrollbar {
+  display: none; /* Cache la barre sous Safari iOS */
+}
+
   
 </style>
 </head>
@@ -2390,47 +2419,57 @@ tabChallenges.innerHTML = `
     ];
 
     challengesList.forEach(item => {
+      const row = el("div");
       row.style.cssText = `
-        display: flex; flex-direction: column; gap: 10px;
-        background: rgba(15, 23, 42, 0.6); border: 1.5px solid color-mix(in srgb, var(--acc) 25%, transparent);
-        border-radius: 12px; padding: 14px;
+        display: flex; align-items: center; justify-content: space-between;
+        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+        border-radius: 10px; padding: 12px 16px; gap: 12px;
       `;
 
-      const topPart = el("div");
-      topPart.style.cssText = "display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;";
+  const leftGroup = el("div");
+      leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;";
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;";
       
-      const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
+     const titleEl = el("span", "", item.title);
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:5.5px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.2;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break: break-word;";
+      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
 
       textInfo.append(titleEl, descEl);
-      topPart.append(iconBox, textInfo);
+      leftGroup.append(iconBox, textInfo);
 
-      const bottomPart = el("div");
-      bottomPart.style.cssText = "display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 2px;";
+      const rightGroup = el("div");
+      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
 
       const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 15%, transparent); padding:4px 10px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
+      // Création d'un vrai bouton HTML interactif
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
       statusBtn.type = "button";
 
       if (isClaimed) {
         statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); cursor: default; white-space: nowrap;";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
+          cursor: default; white-space: nowrap;
+        `;
       } else if (item.isDone) {
         statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; padding:6px 14px; border-radius:6px; background: var(--acc); color: var(--on); border: 1px solid var(--acc); cursor: pointer; white-space: nowrap; box-shadow: 0 0 10px var(--acc);";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
+          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
+          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
+        `;
         statusBtn.addEventListener("click", () => {
           if (!cData.claimedRewards) cData.claimedRewards = {};
           cData.claimedRewards[item.id] = true;
@@ -2442,16 +2481,22 @@ tabChallenges.innerHTML = `
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
-          showChallenges();
+          showChallenges(); // Actualise la vue principale des défis
         });
       } else {
         statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent); cursor: default; white-space: nowrap;";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
+          cursor: default; white-space: nowrap;
+        `;
       }
 
-      bottomPart.append(rewardBadge, statusBtn);
-      row.append(topPart, bottomPart);
+      rightGroup.append(rewardBadge, statusBtn);
+      row.append(leftGroup, rightGroup);
+      banner.append(row);
     });
+    contentArea.append(banner);
   }
 
   // Écouteurs d'onglets
@@ -2499,7 +2544,7 @@ async function triggerRandomPackDraw(type, category = "standard") {
   `;
 
   const loadText = el("p", "", "DÉCRYPTAGE DU FLUX DE DONNÉES EN COURS...");
-  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
+  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
 
   loadingWrapper.append(boosterVisual, loadText);
   fsOverlay.append(loadingWrapper);
@@ -2593,7 +2638,7 @@ if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
     <div style="width:72px; height:72px; border-radius:16px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px var(--acc); margin-bottom:14px;">
       <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:24px; color:var(--on);">CR</span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
+    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
   `;
 
   const cardBack = el("div", "fs-card-back");
@@ -2602,7 +2647,7 @@ if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
   img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
 
   const cardTitle = el("div", "", randomGame.name);
-  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
+  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
 
   cardBack.append(img, cardTitle);
   flipper.append(cardFront, cardBack);
@@ -4298,11 +4343,367 @@ let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
 theme = applyTheme(theme);
 
-
 function openSettings() {
-  openSettingsMainPage();
-}
+  playThemeSound(theme);
+  const p = $("#panel");
+  if (!p) return;
 
+  p.className = "panel settings-panel";
+  p.replaceChildren(); 
+  p.append(el("h2", "", t('settingsTitle')));
+
+  // --- NAVIGATION PAR ONGLETS DANS LES RÉGLAGES ---
+  const tabNav = el("div");
+  tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
+
+const btnTabGeneral = el("button", "chip", "Affichage & Look");
+const btnTabProfile = el("button", "chip", "Compte & Sync"); // 👈 Avec le guillemet
+const btnTabLegal = el("button", "chip", "Mentions & Droits");
+
+  [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
+    b.style.flex = "1";
+    b.style.minHeight = "36px";
+    b.style.fontSize = "10px";
+    b.style.fontWeight = "800";
+    b.style.textTransform = "uppercase";
+  });
+
+  tabNav.append(btnTabGeneral, btnTabProfile, btnTabLegal);
+  p.append(tabNav);
+
+  // Conteneurs des 3 onglets
+  const pageGeneral = el("div");
+  const pageProfile = el("div");
+  const pageLegal = el("div");
+
+// ==========================================
+  // 🌟 CONTENU DE L'ONGLET 1 : GÉNÉRAL & LOOK
+  // ==========================================
+
+// --- 1. SECTION THÈMES MODERNES & AMBIANCES (SANS DEATH NOTE) ---
+  const secModern = el("div", "settings-section");
+  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
+  const modernGrid = el("div", "themes-grid-container");
+
+  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.onclick = () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      toggleDeathNoteTheme(false);
+      openSettingsMainPage();
+    };
+    modernGrid.append(b);
+  });
+
+  secModern.append(modernGrid);
+  pageGeneral.append(secModern);
+
+
+  // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
+  const secUniqueThemes = el("div", "settings-section");
+  secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
+  
+  const uniqueGrid = el("div", "themes-grid-container");
+  const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+  
+  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnUniqueDot = el("span", "dot"); 
+  dnUniqueDot.style.background = isThemeUnlocked ? "#ef4444" : "#555"; 
+  dnUniqueDot.innerHTML = "🍎";
+  dnUniqueBtn.prepend(dnUniqueDot);
+  
+  dnUniqueBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  
+  dnUniqueBtn.onclick = () => {
+    if (!isThemeUnlocked) {
+      playThemeSound(theme);
+      showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
+      return;
+    }
+    toggleDeathNoteTheme(true);
+    playThemeSound(theme);
+    openSettingsMainPage();
+  };
+  
+  uniqueGrid.append(dnUniqueBtn);
+  secUniqueThemes.append(uniqueGrid);
+  pageGeneral.append(secUniqueThemes);
+  
+  // --- 2. SECTION CONSOLES RÉTRO & SKINS ---
+  const secRetroThemes = el("div", "settings-section");
+  secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
+  const retroGrid = el("div", "themes-grid-container");
+  
+  const retroKeys = ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
+  retroKeys.forEach(key => {
+    if (!THEMES[key]) return;
+    const [label, , acc] = THEMES[key];
+    const b = el("button", "theme-mini-btn", label);
+    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
+    b.setAttribute("aria-pressed", String(key === theme));
+    b.addEventListener("click", () => {
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+      openSettingsMainPage();
+    });
+    retroGrid.append(b);
+  });
+  secRetroThemes.append(retroGrid);
+  pageGeneral.append(secRetroThemes);
+
+  // --- 4. PERSONNALISATION (STRUCTURE & EFFET LUMINEUX) ---
+  const secCustom = el("div", "settings-section");
+  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
+  const customGrid = el("div", "settings-grid-options");
+  
+  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
+  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
+  layoutBtn.style.margin = "0";
+  layoutBtn.addEventListener("click", () => {
+    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
+    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
+    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
+    document.body.setAttribute("data-layout-style", layoutStyle);
+    playThemeSound(theme);
+  });
+  document.body.setAttribute("data-layout-style", layoutStyle);
+
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off");
+  holoBtn.style.margin = "0";
+  holoBtn.addEventListener("click", () => {
+    holoEffectEnabled = !holoEffectEnabled;
+    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off";
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+    playThemeSound(theme);
+  });
+  document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+
+  customGrid.append(layoutBtn, holoBtn);
+  secCustom.append(customGrid);
+  pageGeneral.append(secCustom);
+
+
+  // ==========================================
+  // 🌟 CONTENU DE L'ONGLET 2 : PROFIL & DONNÉES
+  // ==========================================
+
+  // --- PROFIL JOUEUR & SÉCURITÉ ---
+  const secProfile = el("div", "settings-section");
+  secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
+  const savedUser = localStorage.getItem("cartridge_user") || "";
+  
+  secProfile.innerHTML += `
+    <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
+      </div>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
+    </form>
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+   <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+<a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+  `;
+  pageProfile.append(secProfile);
+
+  // --- 3. SECTION CONFORT & AUDIO ---
+  const secPrefs = el("div", "settings-section");
+  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
+  const prefsGrid = el("div", "settings-grid-options");
+  
+  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
+  soundBtn.style.margin = "0";
+  soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    if (soundEnabled) playThemeSound(theme);
+  });
+
+  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
+  crtBtn.style.margin = "0";
+  crtBtn.addEventListener("click", () => {
+    crtEnabled = !crtEnabled;
+    try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
+    document.body.classList.toggle("crt-enabled", crtEnabled);
+    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
+    playThemeSound(theme);
+  });
+
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") !== "false";
+  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
+  fxBtn.style.margin = "0";
+  fxBtn.addEventListener("click", () => {
+    cartridgeFxEnabled = !cartridgeFxEnabled;
+    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
+    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé";
+    playThemeSound(theme);
+  });
+
+  prefsGrid.append(soundBtn, crtBtn, fxBtn);
+  secPrefs.append(prefsGrid);
+  pageProfile.append(secPrefs);
+
+  // --- 5. SYSTÈME DE SAUVEGARDE CARTOUCHE (.SAV) ---
+  const secData = el("div", "settings-section");
+  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
+  const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
+  const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
+  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
+  statsText.style.marginBottom = "10px";
+  
+  const dataBtnGroup = el("div");
+  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
+
+  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
+  exportBtn.style.margin = "0";
+  exportBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof exportCartridgeSave === "function") exportCartridgeSave();
+  });
+
+  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
+  importBtn.style.margin = "0";
+  importBtn.addEventListener("click", () => {
+    playThemeSound(theme);
+    if (typeof importCartridgeSave === "function") importCartridgeSave();
+  });
+
+  dataBtnGroup.append(exportBtn, importBtn);
+  secData.append(statsText, dataBtnGroup);
+  pageProfile.append(secData);
+
+
+  // ==========================================
+  // 🌟 CONTENU DE L'ONGLET 3 : LÉGAL & DROITS
+  // ==========================================
+
+// ==========================================
+  // ONGLET 3 : LÉGAL & DROITS
+  // ==========================================
+  const secLegal = el("div", "settings-section");
+  secLegal.append(el("div", "settings-section-title", "⚖️ Informations Légales, Confidentialité & Propriété"));
+  secLegal.innerHTML += `
+    <div style="font-size:12px; line-height:1.65; color:var(--mut); display:flex; flex-direction:column; gap:14px;">
+      
+      <!-- 1. Éditeur & Nature du projet -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">1. Présentation & Statut du Service</strong>
+        L'application web <strong>Cartridge</strong> (accessible via le domaine <code>cartridgegame.pages.dev</code>) est une plateforme non commerciale, conçue à des fins strictement culturelles, éducatives et de veille vidéoludique. Elle n'héberge, ne distribue et ne vend aucune copie de jeu vidéo ni ROM sous copyright.
+      </div>
+
+      <!-- 2. Propriété intellectuelle de l'application -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">2. Propriété Intellectuelle du Logiciel</strong>
+        L'architecture applicative, le code source front-end (HTML5/CSS3/JavaScript), les mécaniques d'interface personnalisées (modales rétro, système de mini-jeux, carrousel de packs), ainsi que la charte graphique et le logo <em>Cartridge</em> sont la propriété exclusive de leur créateur. Toute reproduction ou extraction intégrale non autorisée du code est interdite conformément aux dispositions du Code de la propriété intellectuelle.
+      </div>
+
+      <!-- 3. Métadonnées, Jaquettes & API IGDB -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">3. Métadonnées & Visuels Tiers (API IGDB)</strong>
+        Les fiches documentaires, résumés de sorties, dates historiques, captures d'écran et illustrations de boîtiers (jaquettes) proviennent de l'API publique <strong>Internet Game Database (IGDB)</strong>, filiale de <strong>Twitch Interactive, Inc. / Amazon</strong>.<br>
+        L'ensemble des marques citées, dénominations commerciales, logos de consoles et visuels de jaquettes demeurent la propriété exclusive de leurs éditeurs et fabricants respectifs (notamment <em>Nintendo Co., Ltd., Sony Interactive Entertainment Inc., SEGA Holdings Co., Microsoft Corp., SNK Corp., Atari SA</em>, etc.). Leur citation intervient à titre purement documentaire et illustratif (*Fair Use* / droit d'information).
+      </div>
+
+      <!-- 4. Données personnelles & Conformité RGPD -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">4. Données Personnelles & Vie Privée (RGPD)</strong>
+        Conformément au Règlement Général sur la Protection des Données (RGPD) :
+        <ul style="margin:6px 0 6px 18px; padding:0; list-style-type:square;">
+          <li><strong>Zéro traqueur commercial :</strong> Aucune régie publicitaire, aucun cookie tiers ni outil de profilage de comportement n'est déployé sur le service.</li>
+          <li><strong>Persistance des sessions :</strong> Les identifiants de configuration (thème sélectionné, audio, filtres actifs) et les éléments de gamification (crédits virtuels, favoris, collection) sont conservés localement sur votre terminal via la technologie <code>localStorage</code> de votre navigateur.</li>
+          <li><strong>Compte synchronisé Cloudflare D1 :</strong> Si vous activez la synchronisation Cloud, seul votre pseudonyme, votre empreinte chiffrée d'accès et votre fichier de progression sont stockés de façon sécurisée afin d'assurer la continuité multi-appareils.</li>
+        </ul>
+      </div>
+
+      <!-- 5. Hébergement & Infrastructure Réseau -->
+      <div>
+        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">5. Hébergement & Sécurité Réseau</strong>
+        L'hébergement des assets statiques et l'exécution des fonctions serverless intermédiaires sont assurés par l'infrastructure mondiale de <strong>Cloudflare, Inc.</strong> (101 Townsend St, San Francisco, CA 94107, USA), garantissant le chiffrement des échanges via le protocole sécurisé HTTPS (SSL/TLS).
+      </div>
+
+      <!-- 6. Contact & Droit de retrait (DMCA) -->
+      <div style="background:var(--cov); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:10px 12px;">
+        <strong style="color:var(--acc); font-size:12px; display:block; margin-bottom:2px;">✉️ Notification de retrait & Contact (DMCA)</strong>
+        Si vous êtes titulaire de droits d'auteur sur un contenu affiché et souhaitez en demander le retrait immédiat, vous pouvez formuler votre demande par l'intermédiaire du dépôt de projet du service. La modification ou la dé-indexation sera effectuée dans les meilleurs délais.
+      </div>
+
+      <!-- 7. Charte d'utilisation & Fair-play Joueur -->
+      <div style="background: rgba(255, 122, 69, 0.08); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); border-radius: var(--radius); padding: 12px 14px;">
+        <strong style="color: var(--acc); font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          🎮 Charte d'Utilisation & Esprit Arcade (Fair-Play)
+        </strong>
+        <p style="margin: 0 0 8px 0; color: var(--txt); font-weight: 700; font-size: 11px;">
+          En créant un compte sur Cartridge, chaque joueur s'engage à respecter les principes suivants :
+        </p>
+        <ul style="margin: 0 0 8px 18px; padding: 0; list-style-type: square; font-size: 11px; line-height: 1.6;">
+          <li><strong>Respect & Identité :</strong> Choix d'un pseudo correct. Sont strictement proscrits les propos haineux, injurieux, discriminatoires ou à caractère pornographique.</li>
+          <li><strong>Fair-Play & Scores :</strong> Respect de l'intégrité du système de quêtes, des crédits virtuels 🪙 et du Hall of Fame. L'utilisation de scripts automatisés, bots ou failles d'injection SQL/API pour falsifier ses records entraîne la réinitialisation du compte.</li>
+          <li><strong>Sécurité des comptes :</strong> Chaque joueur est responsable de la confidentialité de ses accès. La plateforme met à disposition un système de question secrète pour faciliter la récupération autonome.</li>
+          <li><strong>Gratuité & Convivialité :</strong> Cartridge est un espace de passionnés du jeu vidéo. Les crédits et packs sont purement virtuels et ne possèdent aucune valeur monétaire réelle.</li>
+        </ul>
+        <span style="font-size: 10px; color: var(--mut); display: block; font-style: italic;">
+          Tout manquement grave peut entraîner la suspension locale ou la suppression de l'accès au compte synchronisé.
+        </span>
+      </div>
+
+    </div>
+  `;
+  pageLegal.append(secLegal);
+
+
+  // ==========================================
+  // GESTION D'AFFICHAGE DES ONGLETS
+  // ==========================================
+  p.append(pageGeneral, pageProfile, pageLegal);
+
+  function showTab(index) {
+    playThemeSound(theme);
+    btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
+    btnTabProfile.setAttribute("aria-pressed", String(index === 1));
+    btnTabLegal.setAttribute("aria-pressed", String(index === 2));
+
+    pageGeneral.style.display = index === 0 ? "block" : "none";
+    pageProfile.style.display = index === 1 ? "block" : "none";
+    pageLegal.style.display = index === 2 ? "block" : "none";
+  }
+
+  btnTabGeneral.onclick = () => showTab(0);
+  btnTabProfile.onclick = () => showTab(1);
+  btnTabLegal.onclick = () => showTab(2);
+
+  // Onglet affiché par défaut à l'ouverture
+  showTab(0);
+
+// Écouteur pour enregistrer le pseudo sur Cloudflare
+  setTimeout(() => {
+    const f = document.getElementById("profileFormSetting");
+    if (f) {
+      f.onsubmit = handleCloudflareAuth;
+    }
+  }, 50);
+  const close = el("button", "close", t('close')); 
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
+
+  $("#sheet").classList.add("on");
+}
+ 
 function renderPlatformDropdown() {
   const select = $("#platformSelect");
   select.replaceChildren();
@@ -4606,7 +5007,7 @@ function renderShopMainPage() {
 
     banner.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:2px;">🏬 Boutique d'Ambiance & Thèmes</h3>
-      <p style="font-size:8.5px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
+      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
     `;
 
     // 🍎 Carte du Thème Death Note
@@ -4626,7 +5027,7 @@ function renderShopMainPage() {
       <div style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1.5px;">
         🍎 Édition Death Note
       </div>
-      <p style="font-size:8.5px; color:var(--mut); margin:0; line-height: 1.4;">
+      <p style="font-size:11px; color:var(--mut); margin:0; line-height: 1.4;">
         Ambiance grimoire sombre, filigranes "How to Use It" et plumes de Shinigami volantes.
       </p>
       <div style="font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; color:${isThemeUnlocked ? '#22c55e' : '#ef4444'};">
@@ -4635,7 +5036,7 @@ function renderShopMainPage() {
     `;
 
     const actionBtn = el("button", "cta", isThemeUnlocked ? "Activer le Thème" : "Acheter (150 Crédits)");
-    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; width:100%; margin-top:4px;";
+    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; width:100%; margin-top:4px;";
 
     actionBtn.onclick = (e) => {
       e.stopPropagation();
@@ -4675,7 +5076,7 @@ function renderShopMainPage() {
     const headerTitle = el("div");
     headerTitle.innerHTML = `
       <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
-      <p style="font-size:8.5px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
+      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
     `;
     banner.append(headerTitle);
 
@@ -4744,7 +5145,7 @@ function renderShopMainPage() {
       headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
       headerBox.innerHTML = `
         <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
-        <div style="font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
+        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
       `;
 
       const centerArt = el("div");
@@ -4760,7 +5161,7 @@ function renderShopMainPage() {
 
       const buyBtn = el("button", "", cfg.price);
       buyBtn.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:900; padding:10px 14px; border-radius:10px;
+        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
         background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
         box-shadow: 0 0 15px ${cfg.color}; z-index:2; letter-spacing:1px;
       `;
@@ -4860,35 +5261,35 @@ function renderShopMainPage() {
     challengesList.forEach(item => {
       const row = el("div");
       row.style.cssText = `
-        display: flex; flex-direction: column; gap: 10px;
-        background: rgba(15, 23, 42, 0.6); border: 1.5px solid color-mix(in srgb, var(--acc) 25%, transparent);
-        border-radius: 12px; padding: 14px;
+        display: flex; align-items: center; justify-content: space-between;
+        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
+        border-radius: 10px; padding: 12px 16px; gap: 12px;
       `;
 
-      const topPart = el("div");
-      topPart.style.cssText = "display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;";
+     const leftGroup = el("div");
+     leftGroup.style.cssText = "display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;";
 
       const iconBox = el("div");
-      iconBox.style.cssText = "width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
+      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;";
       iconBox.innerHTML = item.iconSvg;
 
       const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;";
+      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;";
       
       const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; word-break: break-word; line-height: 1.3;";
+      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
 
       const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break: break-word;";
+      descEl.style.cssText = "font-size:10px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;";
 
       textInfo.append(titleEl, descEl);
-      topPart.append(iconBox, textInfo);
+      leftGroup.append(iconBox, textInfo);
 
-      const bottomPart = el("div");
-      bottomPart.style.cssText = "display: flex; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 2px;";
+      const rightGroup = el("div");
+      rightGroup.style.cssText = "display: flex; align-items: center; gap: 10px; flex-shrink: 0;";
 
       const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 15%, transparent); padding:4px 10px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
+      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
 
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
       const statusBtn = document.createElement("button");
@@ -4896,10 +5297,18 @@ function renderShopMainPage() {
 
       if (isClaimed) {
         statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); cursor: default; white-space: nowrap;";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
+          cursor: default; white-space: nowrap;
+        `;
       } else if (item.isDone) {
         statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; padding:6px 14px; border-radius:6px; background: var(--acc); color: var(--on); border: 1px solid var(--acc); cursor: pointer; white-space: nowrap; box-shadow: 0 0 10px var(--acc);";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
+          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
+          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
+        `;
         statusBtn.addEventListener("click", () => {
           if (!cData.claimedRewards) cData.claimedRewards = {};
           cData.claimedRewards[item.id] = true;
@@ -4915,11 +5324,15 @@ function renderShopMainPage() {
         });
       } else {
         statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px; background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent); cursor: default; white-space: nowrap;";
+        statusBtn.style.cssText = `
+          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
+          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
+          cursor: default; white-space: nowrap;
+        `;
       }
 
-      bottomPart.append(rewardBadge, statusBtn);
-      row.append(topPart, bottomPart);
+      rightGroup.append(rewardBadge, statusBtn);
+      row.append(leftGroup, rightGroup);
       banner.append(row);
     });
 
@@ -5171,7 +5584,7 @@ function renderArcadeMainPage() {
       <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
       <div style="display:flex; gap:8px;">
         <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
-        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:8.5px;">AJOUTER</button>
+        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
       </div>
     `;
     banner.append(formBox);
@@ -5459,7 +5872,7 @@ function renderScoresMainPage() {
     <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
     <div style="display:flex; gap:8px;">
       <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
-      <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:8.5px;">AJOUTER</button>
+      <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
     </div>
   `;
   banner.append(formBox);
@@ -5727,7 +6140,7 @@ function updateUserBadge() {
             ${initial}
             <span class="player-status-dot"></span>
           </div>
-          <span style="font-weight:800; font-size:8.5px;">${savedUser}</span>
+          <span style="font-weight:800; font-size:11px;">${savedUser}</span>
         </div>
       `;
     } else {
@@ -5985,20 +6398,20 @@ function openSettingsMainPage() {
   secProfile.innerHTML += `
     <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
       <div>
-        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
         <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
       </div>
       <div>
-        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
         <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
       </div>
       <div>
-        <label style="font-size:8.5px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
         <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
       </div>
       <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
     </form>
-    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:8.5px;">
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
       <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
       <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
     </div>
@@ -6375,6 +6788,12 @@ window.addEventListener('scroll', () => {
 });
 </script>
 
+<!-- 🕹️ Jauge latérale rétro de progression -->
+<div id="scroll-indicator-track">
+  <div id="scroll-indicator-thumb"></div>
+</div>
+ <script> 
 load();
+</script>
 </body>
 </html>
