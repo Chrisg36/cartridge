@@ -4,14 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Snake - Nokia 3310 Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<title>Snake - Nokia 3310 Pro Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --gb-bg: #9bbc0f;
     --gb-dark: #0f380f;
     --gb-medium: #306230;
     --gb-light: #8bac0f;
+    --bg-app: #0b0f16;
+    --card-app: #151b26;
+    --accent: #FF7A45;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -19,47 +22,49 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #0c140c;
-    color: var(--gb-dark);
-    font-family: 'Press Start 2P', monospace;
+    background-color: var(--bg-app);
+    color: #f2f3f5;
+    font-family: 'Rajdhani', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
     overflow: hidden;
   }
 
-  /* Coque téléphone Nokia 3310 stylisée */
-  .nokia-phone {
-    background-color: #2b382b;
-    border: 4px solid #4a5c4a;
-    border-radius: 24px;
-    padding: 20px 16px;
+  /* Conteneur principal style arcade moderne & épuré */
+  .arcade-cabinet {
+    background: var(--card-app);
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 2px 6px rgba(255,255,255,0.1);
-    max-width: 340px;
-    width: 100%;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent);
+    max-width: 380px;
+    width: 92%;
   }
 
-  .nokia-brand {
-    font-size: 8px;
-    color: #8fa38f;
-    letter-spacing: 3px;
-    margin-bottom: 12px;
+  .game-title {
+    font-family: 'Orbitron', 'Press Start 2P', monospace;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
     text-transform: uppercase;
-    font-weight: bold;
+    text-shadow: 0 0 10px var(--accent);
   }
 
   .screen-lens {
     background-color: #070d07;
-    padding: 10px;
+    padding: 12px;
     border-radius: 12px;
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.9);
-    border: 2px solid #182418;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.9);
+    border: 2px solid #1a2a1a;
     margin-bottom: 16px;
     display: flex;
     flex-direction: column;
@@ -75,49 +80,54 @@
   }
 
   .hud-top {
-    width: 160px;
+    width: 180px;
     display: flex;
     justify-content: space-between;
+    font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     color: var(--gb-dark);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-weight: bold;
   }
 
-  /* Contrôles tactiles de type téléphone / pad */
+  /* Croix directionnelle et contrôles tactiles fluides et épurés */
   .controls-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   .dpad {
     display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(3, 45px);
-    gap: 3px;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 6px;
   }
 
-  .nokia-btn {
-    background-color: #3d4d3d;
-    border: none;
-    border-radius: 8px;
-    color: #d1ebd1;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 14px;
+  .arcade-btn {
+    background-color: #232c3d;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px #1a241a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.1s ease;
   }
 
-  .nokia-btn:active {
-    box-shadow: 0 1px #1a241a;
-    transform: translateY(3px);
+  .arcade-btn:active {
+    background-color: var(--accent);
+    color: #000;
+    transform: translateY(2px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
 
   .btn-up { grid-column: 2; grid-row: 1; }
@@ -128,7 +138,7 @@
   /* Écrans de superposition (Menu & Game Over) */
   .screen-overlay {
     position: absolute;
-    top: 22px; left: 10px; right: 10px; bottom: 10px;
+    top: 24px; left: 12px; right: 12px; bottom: 12px;
     background-color: var(--gb-bg);
     display: flex;
     flex-direction: column;
@@ -136,7 +146,7 @@
     justify-content: center;
     z-index: 10;
     text-align: center;
-    padding: 10px;
+    padding: 12px;
   }
 
   .screen-overlay.hidden {
@@ -144,16 +154,18 @@
   }
 
   .screen-overlay h1 {
-    font-size: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
     color: var(--gb-dark);
     margin-bottom: 10px;
     text-shadow: 1px 1px var(--gb-light);
   }
 
   .screen-overlay p {
-    font-size: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7.5px;
     color: var(--gb-medium);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     line-height: 1.6;
   }
 
@@ -161,29 +173,39 @@
     background-color: var(--gb-dark);
     color: var(--gb-bg);
     border: none;
-    padding: 10px 18px;
+    padding: 10px 20px;
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
     cursor: pointer;
-    border-radius: 4px;
-    box-shadow: 0 2px var(--gb-medium);
+    border-radius: 6px;
+    box-shadow: 0 3px var(--gb-medium);
+    transition: transform 0.1s ease;
   }
 
-  .menu-btn:hover {
-    background-color: var(--gb-medium);
+  .menu-btn:active {
+    transform: translateY(2px);
   }
 
-  @media (pointer: fine) {
+  /* Info clavier bureau */
+  .desktop-hint {
+    font-size: 11px;
+    color: #8a99ad;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
     .controls-container {
-      display: none; /* Masqué sur PC (clavier flèches) */
+      display: none; /* Masqué sur PC car on utilise le clavier */
     }
   }
 </style>
 </head>
 <body>
 
-<div class="nokia-phone">
-  <div class="nokia-brand">NOKIA 3310</div>
+<div class="arcade-cabinet">
+  <div class="game-title">🐍 SNAKE // 3310 PRO</div>
   
   <div class="screen-lens">
     <div class="hud-top">
@@ -191,14 +213,14 @@
       <span id="highScoreText">HI:00</span>
     </div>
 
-    <!-- Grille Snake (16x16 blocs) -->
+    <!-- Grille Snake (18x18 blocs pour un meilleur confort sur navigateur et mobile) -->
     <div style="position: relative;">
-      <canvas id="snakeCanvas" width="160" height="160"></canvas>
+      <canvas id="snakeCanvas" width="180" height="180"></canvas>
 
       <!-- Menu Principal -->
       <div id="menuScreen" class="screen-overlay">
         <h1>SNAKE</h1>
-        <p>NOKIA 3310 EDITION<br><br>Mange les insectes !<br>Évite les murs et ta queue.</p>
+        <p>NOKIA EDITION<br><br>Utilise les flèches du clavier ou le pavé tactile ci-dessous !</p>
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -211,19 +233,21 @@
     </div>
   </div>
 
-  <!-- Commandes tactiles mobiles -->
+  <!-- Commandes tactiles épurées pour iOS / Android -->
   <div class="controls-container">
     <div class="dpad">
-      <button class="nokia-btn btn-up" id="btnUp">▲</button>
-      <button class="nokia-btn btn-left" id="btnLeft">◀</button>
-      <button class="nokia-btn btn-right" id="btnRight">▶</button>
-      <button class="nokia-btn btn-down" id="btnDown">▼</button>
+      <button class="arcade-btn btn-up" id="btnUp">▲</button>
+      <button class="arcade-btn btn-left" id="btnLeft">◀</button>
+      <button class="arcade-btn btn-right" id="btnRight">▶</button>
+      <button class="arcade-btn btn-down" id="btnDown">▼</button>
     </div>
   </div>
+
+  <div class="desktop-hint">Clavier PC : Flèches directionnelles ⌨️</div>
 </div>
 
 <script>
-// --- AUDIO BUZZER NOKIA 3310 ---
+// --- AUDIO BUZZER 8-BITS ---
 let audioCtx = null;
 function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -260,8 +284,8 @@ function playNokiaSound(type) {
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
-const GRID_SIZE = 16;
-const TILE_SIZE = 10; // 16x10 = 160px
+const GRID_SIZE = 18;
+const TILE_SIZE = 10; // 18x10 = 180px
 
 let snake = [];
 let food = { x: 0, y: 0 };
@@ -274,20 +298,20 @@ let highScore = parseInt(localStorage.getItem("nokia_snake_hi") || "0", 10);
 let gameStarted = false;
 let gameOver = false;
 let gameInterval = null;
-let speed = 120; // Vitesse de base en ms
+let speed = 110;
 
 document.getElementById("highScoreText").textContent = `HI:${String(highScore).padStart(2, '0')}`;
 
 function resetGame() {
   snake = [
-    { x: 8, y: 8 },
-    { x: 7, y: 8 },
-    { x: 6, y: 8 }
+    { x: 9, y: 9 },
+    { x: 8, y: 9 },
+    { x: 7, y: 9 }
   ];
   dx = 1; dy = 0;
   nextDx = 1; nextDy = 0;
   score = 0;
-  speed = 120;
+  speed = 110;
   updateHUD();
   spawnFood();
 }
@@ -307,14 +331,13 @@ function updateHUD() {
 }
 
 function drawBlock(x, y, isHead = false) {
-  ctx.fillStyle = "#306230"; // Contour sombre
+  ctx.fillStyle = "#306230";
   ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  ctx.fillStyle = isHead ? "#0f380f" : "#8bac0f"; // Tête ou corps
+  ctx.fillStyle = isHead ? "#0f380f" : "#8bac0f";
   ctx.fillRect(x * TILE_SIZE + 1, y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
 }
 
 function drawFood() {
-  // Dessin de l'insecte (petit carré clignotant ou croix pixelisée)
   ctx.fillStyle = "#0f380f";
   ctx.fillRect(food.x * TILE_SIZE + 2, food.y * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 }
@@ -325,7 +348,6 @@ function gameStep() {
 
   const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-  // Collision murs ou queue
   if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE || snake.some(s => s.x === head.x && s.y === head.y)) {
     endGame();
     return;
@@ -333,7 +355,6 @@ function gameStep() {
 
   snake.unshift(head);
 
-  // Manger la nourriture
   if (head.x === food.x && head.y === food.y) {
     score += 10;
     playNokiaSound('eat');
@@ -343,9 +364,8 @@ function gameStep() {
     }
     updateHUD();
     spawnFood();
-    // Légère accélération tous les 50 points
-    if (score % 50 === 0 && speed > 60) {
-      speed -= 10;
+    if (score % 50 === 0 && speed > 55) {
+      speed -= 8;
       clearInterval(gameInterval);
       gameInterval = setInterval(gameStep, speed);
     }
@@ -353,7 +373,6 @@ function gameStep() {
     snake.pop();
   }
 
-  // Rendu graphique
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawFood();
   snake.forEach((segment, index) => {
@@ -380,16 +399,16 @@ function endGame() {
   document.getElementById("gameOverScreen").classList.remove("hidden");
 }
 
-// Contrôles clavier
+// Contrôles Clavier
 window.addEventListener("keydown", e => {
   if (!gameStarted || gameOver) return;
-  if (e.code === "ArrowUp" && dy === 0) { nextDx = 0; nextDy = -1; e.preventDefault(); }
-  else if (e.code === "ArrowDown" && dy === 0) { nextDx = 0; nextDy = 1; e.preventDefault(); }
-  else if (e.code === "ArrowLeft" && dx === 0) { nextDx = -1; nextDy = 0; e.preventDefault(); }
-  else if (e.code === "ArrowRight" && dx === 0) { nextDx = 1; nextDy = 0; e.preventDefault(); }
+  if ((e.code === "ArrowUp" || e.code === "KeyW") && dy === 0) { nextDx = 0; nextDy = -1; e.preventDefault(); }
+  else if ((e.code === "ArrowDown" || e.code === "KeyS") && dy === 0) { nextDx = 0; nextDy = 1; e.preventDefault(); }
+  else if ((e.code === "ArrowLeft" || e.code === "KeyA") && dx === 0) { nextDx = -1; nextDy = 0; e.preventDefault(); }
+  else if ((e.code === "ArrowRight" || e.code === "KeyD") && dx === 0) { nextDx = 1; nextDy = 0; e.preventDefault(); }
 });
 
-// Contrôles tactiles Nokia
+// Contrôles Tactiles Épurés
 document.getElementById("btnUp").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = -1; } };
 document.getElementById("btnDown").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = 1; } };
 document.getElementById("btnLeft").onclick = () => { if (gameStarted && !gameOver && dx === 0) { nextDx = -1; nextDy = 0; } };
