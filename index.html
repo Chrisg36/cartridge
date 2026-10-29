@@ -6120,13 +6120,12 @@ function openSettingsMainPage() {
   const pageProfile = el("div");
   const pageLegal = el("div");
 
-
   // --- SECTION ARRIÈRE-PLAN & MOTIFS ---
   const secBg = el("div", "settings-section");
   secBg.append(el("div", "settings-section-title", "🖼️ Arrière-plan & Motifs"));
   const bgGrid = el("div", "themes-grid-container");
 
-const bgOptions = [
+  const bgOptions = [
     { id: "cartridges", label: "Cartouches" },
     { id: "circuit", label: "Circuit Tech" },
     { id: "retroshop", label: "Magasin Rétro" },
@@ -6146,39 +6145,51 @@ const bgOptions = [
   });
   secBg.append(bgGrid);
   pageGeneral.append(secBg);
+
   // ==========================================
   // ONGLET 1 : GÉNÉRAL & LOOK
   // ==========================================
 
-  // 1. Thèmes modernes
+  // 1. Thèmes modernes (SANS Death Note)
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
-["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
+
+  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
     const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
-    b.onclick = () => {
+    b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
+      toggleDeathNoteTheme(false);
       openSettingsMainPage();
-    };
+    });
     modernGrid.append(b);
   });
-const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+
+  secModern.append(modernGrid);
+  pageGeneral.append(secModern);
+
+  // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
+  const secUniqueThemes = el("div", "settings-section");
+  secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
   
-  const dnBtn = el("button", "theme-mini-btn", isUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
-  const dnDot = el("span", "dot"); 
-  dnDot.style.background = isUnlocked ? "#ef4444" : "#444"; 
-  dnDot.innerHTML = "🍎";
-  dnBtn.prepend(dnDot);
+  const uniqueGrid = el("div", "themes-grid-container");
+  const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
   
-  dnBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnUniqueDot = el("span", "dot"); 
+  dnUniqueDot.style.background = isThemeUnlocked ? "#ef4444" : "#555"; 
+  dnUniqueDot.innerHTML = "🍎";
+  dnUniqueBtn.prepend(dnUniqueDot);
   
-  dnBtn.onclick = () => {
-    if (!isUnlocked) {
+  dnUniqueBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
+  
+  dnUniqueBtn.onclick = () => {
+    if (!isThemeUnlocked) {
       playThemeSound(theme);
       showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
       return;
@@ -6187,87 +6198,105 @@ const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
     playThemeSound(theme);
     openSettingsMainPage();
   };
-  modernGrid.append(dnBtn);
+  
+  uniqueGrid.append(dnUniqueBtn);
+  secUniqueThemes.append(uniqueGrid);
+  pageGeneral.append(secUniqueThemes);
 
-  secModern.append(modernGrid);
-  pageGeneral.append(secModern);
-  secModern.append(modernGrid);
-
-  // 2. Consoles rétro
+  // 3. Consoles rétro & skins
   const secRetroThemes = el("div", "settings-section");
   secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
   const retroGrid = el("div", "themes-grid-container");
-  ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"].forEach(key => {
+  
+  const retroKeys = ["gameboy", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
+  retroKeys.forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
     const b = el("button", "theme-mini-btn", label);
     const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
     b.setAttribute("aria-pressed", String(key === theme));
-    b.onclick = () => {
+    b.addEventListener("click", () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
       openSettingsMainPage();
-    };
+    });
     retroGrid.append(b);
   });
   secRetroThemes.append(retroGrid);
+  pageGeneral.append(secRetroThemes);
 
-  // 3. Confort & Audio (déplacé ici)
+  // 4. Confort & Audio
   const secPrefs = el("div", "settings-section");
   secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
   const prefsGrid = el("div", "settings-grid-options");
   const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
   soundBtn.style.margin = "0";
-  soundBtn.onclick = () => {
+  soundBtn.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
     soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
     if (soundEnabled) playThemeSound(theme);
-  };
+  });
   const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
   crtBtn.style.margin = "0";
-  crtBtn.onclick = () => {
+  crtBtn.addEventListener("click", () => {
     crtEnabled = !crtEnabled;
     try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
     document.body.classList.toggle("crt-enabled", crtEnabled);
     crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
     playThemeSound(theme);
-  };
-  prefsGrid.append(soundBtn, crtBtn);
+  });
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") !== "false";
+  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
+  fxBtn.style.margin = "0";
+  fxBtn.addEventListener("click", () => {
+    cartridgeFxEnabled = !cartridgeFxEnabled;
+    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
+    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé";
+    playThemeSound(theme);
+  });
+  prefsGrid.append(soundBtn, crtBtn, fxBtn);
   secPrefs.append(prefsGrid);
+  pageGeneral.append(secPrefs);
 
-  // 4. Style & Effet Holo
+  // 5. Immersion & Style visuel
   const secCustom = el("div", "settings-section");
   secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
   const customGrid = el("div", "settings-grid-options");
+  
   let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
   const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
   layoutBtn.style.margin = "0";
-  layoutBtn.onclick = () => {
+  layoutBtn.addEventListener("click", () => {
     layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
     try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
     layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
     document.body.setAttribute("data-layout-style", layoutStyle);
     playThemeSound(theme);
-  };
-  let holoEffectEnabled = localStorage.getItem("holoEffect") !== "false";
-  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off");
+  });
+  document.body.setAttribute("data-layout-style", layoutStyle);
+
+  let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
+  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off");
   holoBtn.style.margin = "0";
-  holoBtn.onclick = () => {
+  holoBtn.addEventListener("click", () => {
     holoEffectEnabled = !holoEffectEnabled;
-    try { localStorage.setItem("holoEffect", holoEffectEnabled ? "true" : "false"); } catch (e) {}
-    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo : Actif" : "✨ Effet Holo : Off";
-    document.body.setAttribute("data-holo-effect", holoEffectEnabled ? "true" : "false");
+    try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
+    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off";
+    document.body.setAttribute("data-holo-effect", holoEffectEnabled);
     playThemeSound(theme);
-  };
+  });
+  document.body.setAttribute("data-holo-effect", holoEffectEnabled);
+
   customGrid.append(layoutBtn, holoBtn);
   secCustom.append(customGrid);
+  pageGeneral.append(secCustom);
 
-  // 5. Capsule Temporelle
+  // 6. Capsule Temporelle
   const secTime = el("div", "settings-section");
   secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
   const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
-  randomTimeBtn.onclick = () => {
+  randomTimeBtn.addEventListener("click", () => {
     playThemeSound(theme);
     const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
     ym = `${cultYears[Math.floor(Math.random() * cultYears.length)]}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, "0")}`;
@@ -6275,155 +6304,86 @@ const isUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
     document.getElementById("homeMainContent").style.display = "block";
     setActiveNav(document.getElementById("navHome"));
     load();
-  };
+  });
   secTime.append(randomTimeBtn);
+  pageGeneral.append(secTime);
 
-  pageGeneral.append(secModern, secRetroThemes, secPrefs, secCustom, secTime);
 
   // ==========================================
   // ONGLET 2 : PROFIL & DONNÉES
   // ==========================================
   const secProfile = el("div", "settings-section");
   secProfile.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
-  const savedUser = localStorage.getItem("cartridge_user");
-
-  if (savedUser) {
-    const initial = savedUser.charAt(0).toUpperCase();
-    secProfile.innerHTML += `
-      <div class="player-card-connected">
-        <div class="player-card-header">
-          <div class="player-card-avatar-large">${initial}</div>
-          <div>
-            <div style="font-size:15px; font-weight:800; color:var(--txt);">${savedUser}</div>
-            <div style="font-size:11px; color:#00e676; display:flex; align-items:center; gap:6px; margin-top:2px;">
-              <span class="player-status-dot"></span> Compte synchronisé Cloudflare D1
-            </div>
-          </div>
-        </div>
-        <div style="display:flex; gap:8px; margin-top:6px;">
-          <button id="btnLogout" class="cta-sec" style="flex:1; margin:0; border-color:#ff3344; color:#ff3344;">Déconnexion</button>
-        </div>
+  const savedUser = localStorage.getItem("cartridge_user") || "";
+  
+  secProfile.innerHTML += `
+    <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
+        <input type="text" id="settingUsername" class="search-box" value="${savedUser}" placeholder="Entrez votre pseudo..." style="margin:0;" required>
       </div>
-    `;
-  } else {
-    secProfile.innerHTML += `
-      <form id="profileFormSetting" style="display:flex; flex-direction:column; gap:10px;">
-        <div>
-          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Pseudo Joueur</label>
-          <input type="text" id="settingUsername" class="search-box" placeholder="Entrez votre pseudo..." style="margin:0;" required>
-        </div>
-        <div>
-          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
-          <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;" required>
-        </div>
-        <div>
-          <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
-          <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
-        </div>
-        <button type="submit" class="cta" style="margin-top:6px;">Connexion / Inscription</button>
-      </form>
-      <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
-        <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
-        <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Mot de passe</label>
+        <input type="password" id="settingPassword" class="search-box" placeholder="••••••••" style="margin:0;">
       </div>
-    `;
-  }
+      <div>
+        <label style="font-size:11px; color:var(--mut); display:block; margin-bottom:4px;">Question secrète (Récupération)</label>
+        <input type="text" id="settingRecovery" class="search-box" placeholder="Nom de votre premier jeu vidéo ?" style="margin:0;">
+      </div>
+      <button type="submit" class="cta" style="margin-top:6px;">Enregistrer le profil</button>
+    </form>
+    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px;">
+      <a href="#" onclick="openForgotUsernameModal(); return false;" style="color:var(--acc); text-decoration:none;">Pseudo oublié ?</a>
+      <a href="#" onclick="openForgotPasswordModal(); return false;" style="color:var(--acc); text-decoration:none;">Mot de passe oublié ?</a>
+    </div>
+  `;
+  pageProfile.append(secProfile);
 
-  // Sauvegarde cartouche
   const secData = el("div", "settings-section");
-  secData.append(el("div", "settings-section-title", "🗃️ Données & Sauvegarde"));
+  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
+  const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
+  const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
+  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
+  statsText.style.marginBottom = "10px";
+  
   const dataBtnGroup = el("div");
   dataBtnGroup.style.cssText = "display:flex; gap:8px;";
   const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
   exportBtn.style.margin = "0";
-  exportBtn.onclick = () => { playThemeSound(theme); if (typeof exportCartridgeSave === "function") exportCartridgeSave(); };
+  exportBtn.addEventListener("click", () => { playThemeSound(theme); if (typeof exportCartridgeSave === "function") exportCartridgeSave(); });
   const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
   importBtn.style.margin = "0";
-  importBtn.onclick = () => { playThemeSound(theme); if (typeof importCartridgeSave === "function") importCartridgeSave(); };
+  importBtn.addEventListener("click", () => { playThemeSound(theme); if (typeof importCartridgeSave === "function") importCartridgeSave(); });
   dataBtnGroup.append(exportBtn, importBtn);
-  secData.append(dataBtnGroup);
+  secData.append(statsText, dataBtnGroup);
+  pageProfile.append(secData);
 
-  pageProfile.append(secProfile, secData);
 
   // ==========================================
-  // ONGLET 3 : LÉGAL
+  // ONGLET 3 : LÉGAL & DROITS
   // ==========================================
-const secLegal = el("div", "settings-section");
-  secLegal.append(el("div", "settings-section-title", "⚖️ Informations Légales, Confidentialité & Propriété"));
+  const secLegal = el("div", "settings-section");
+  secLegal.append(el("div", "settings-section-title", "⚖️ Propriété Intellectuelle & Droits"));
   secLegal.innerHTML += `
-    <div style="font-size:12px; line-height:1.65; color:var(--mut); display:flex; flex-direction:column; gap:14px;">
-      
-      <!-- 1. Éditeur & Nature du projet -->
-      <div>
-        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">1. Présentation & Statut du Service</strong>
-        L'application web <strong>Cartridge</strong> (accessible via le domaine <code>cartridgegame.pages.dev</code>) est une plateforme non commerciale, conçue à des fins strictement culturelles, éducatives et de veille vidéoludique. Elle n'héberge, ne distribue et ne vend aucune copie de jeu vidéo ni ROM sous copyright.
-      </div>
-
-      <!-- 2. Propriété intellectuelle de l'application -->
-      <div>
-        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">2. Propriété Intellectuelle du Logiciel</strong>
-        L'architecture applicative, le code source front-end (HTML5/CSS3/JavaScript), les mécaniques d'interface personnalisées (modales rétro, système de mini-jeux, carrousel de packs), ainsi que la charte graphique et le logo <em>Cartridge</em> sont la propriété exclusive de leur créateur. Toute reproduction ou extraction intégrale non autorisée du code est interdite conformément aux dispositions du Code de la propriété intellectuelle.
-      </div>
-
-      <!-- 3. Métadonnées, Jaquettes & API IGDB -->
-      <div>
-        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">3. Métadonnées & Visuels Tiers (API IGDB)</strong>
-        Les fiches documentaires, résumés de sorties, dates historiques, captures d'écran et illustrations de boîtiers (jaquettes) proviennent de l'API publique <strong>Internet Game Database (IGDB)</strong>, filiale de <strong>Twitch Interactive, Inc. / Amazon</strong>.<br>
-        L'ensemble des marques citées, dénominations commerciales, logos de consoles et visuels de jaquettes demeurent la propriété exclusive de leurs éditeurs et fabricants respectifs (notamment <em>Nintendo Co., Ltd., Sony Interactive Entertainment Inc., SEGA Holdings Co., Microsoft Corp., SNK Corp., Atari SA</em>, etc.). Leur citation intervient à titre purement documentaire et illustratif (*Fair Use* / droit d'information).
-      </div>
-
-      <!-- 4. Données personnelles & Conformité RGPD -->
-      <div>
-        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">4. Données Personnelles & Vie Privée (RGPD)</strong>
-        Conformément au Règlement Général sur la Protection des Données (RGPD) :
-        <ul style="margin:6px 0 6px 18px; padding:0; list-style-type:square;">
-          <li><strong>Zéro traqueur commercial :</strong> Aucune régie publicitaire, aucun cookie tiers ni outil de profilage de comportement n'est déployé sur le service.</li>
-          <li><strong>Persistance des sessions :</strong> Les identifiants de configuration (thème sélectionné, audio, filtres actifs) et les éléments de gamification (crédits virtuels, favoris, collection) sont conservés localement sur votre terminal via la technologie <code>localStorage</code> de votre navigateur.</li>
-          <li><strong>Compte synchronisé Cloudflare D1 :</strong> Si vous activez la synchronisation Cloud, seul votre pseudonyme, votre empreinte chiffrée d'accès et votre fichier de progression sont stockés de façon sécurisée afin d'assurer la continuité multi-appareils.</li>
-        </ul>
-      </div>
-
-      <!-- 5. Hébergement & Infrastructure Réseau -->
-      <div>
-        <strong style="color:var(--txt); font-size:13px; display:block; margin-bottom:4px;">5. Hébergement & Sécurité Réseau</strong>
-        L'hébergement des assets statiques et l'exécution des fonctions serverless intermédiaires sont assurés par l'infrastructure mondiale de <strong>Cloudflare, Inc.</strong> (101 Townsend St, San Francisco, CA 94107, USA), garantissant le chiffrement des échanges via le protocole sécurisé HTTPS (SSL/TLS).
-      </div>
-
-      <!-- 6. Contact & Droit de retrait (DMCA) -->
-      <div style="background:var(--cov); border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); border-radius:var(--radius); padding:10px 12px;">
-        <strong style="color:var(--acc); font-size:12px; display:block; margin-bottom:2px;">✉️ Notification de retrait & Contact (DMCA)</strong>
-        Si vous êtes titulaire de droits d'auteur sur un contenu affiché et souhaitez en demander le retrait immédiat, vous pouvez formuler votre demande par l'intermédiaire du dépôt de projet du service. La modification ou la dé-indexation sera effectuée dans les meilleurs délais.
-      </div>
-  <!-- 7. Charte d'utilisation & Fair-play Joueur -->
-      <div style="background: rgba(255, 122, 69, 0.08); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); border-radius: var(--radius); padding: 12px 14px;">
-        <strong style="color: var(--acc); font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-          🎮 Charte d'Utilisation & Esprit Arcade (Fair-Play)
-        </strong>
-        <p style="margin: 0 0 8px 0; color: var(--txt); font-weight: 700; font-size: 11px;">
-          En créant un compte sur Cartridge, chaque joueur s'engage à respecter les principes suivants :
-        </p>
-        <ul style="margin: 0 0 8px 18px; padding: 0; list-style-type: square; font-size: 11px; line-height: 1.6;">
-          <li><strong>Respect & Identité :</strong> Choix d'un pseudo correct. Sont strictement proscrits les propos haineux, injurieux, discriminatoires ou à caractère pornographique.</li>
-          <li><strong>Fair-Play & Scores :</strong> Respect de l'intégrité du système de quêtes, des crédits virtuels 🪙 et du Hall of Fame. L'utilisation de scripts automatisés, bots ou failles d'injection SQL/API pour falsifier ses records entraîne la réinitialisation du compte.</li>
-          <li><strong>Sécurité des comptes :</strong> Chaque joueur est responsable de la confidentialité de ses accès. La plateforme met à disposition un système de question secrète pour faciliter la récupération autonome.</li>
-          <li><strong>Gratuité & Convivialité :</strong> Cartridge est un espace de passionnés du jeu vidéo. Les crédits et packs sont purement virtuels et ne possèdent aucune valeur monétaire réelle.</li>
-        </ul>
-        <span style="font-size: 10px; color: var(--mut); display: block; font-style: italic;">
-          Tout manquement grave peut entraîner la suspension locale ou la suppression de l'accès au compte synchronisé.
-        </span>
-      </div>
-
+    <div style="font-size:12px; line-height:1.6; color:var(--mut);">
+      <p style="margin-bottom:10px;"><strong style="color:var(--txt);">1. Conception & Création Originale :</strong><br>L'application <em>Cartridge</em> est une création originale.</p>
+      <p style="margin-bottom:10px;"><strong style="color:var(--txt);">2. Données & Jaquettes (IGDB) :</strong><br>Sourcées via l'API IGDB (Twitch/Amazon).</p>
+      <p style="margin-bottom:10px;"><strong style="color:var(--txt);">3. Infrastructure :</strong><br>Hébergé sur Cloudflare Pages.</p>
+      <p><strong style="color:var(--txt);">4. Vie Privée :</strong><br>Données stockées localement.</p>
     </div>
   `;
   pageLegal.append(secLegal);
 
-  contentArea.append(pageGeneral, pageProfile, pageLegal);
+
+  // Ajout des pages et gestion des onglets
+  p.append(pageGeneral, pageProfile, pageLegal);
 
   function showTab(index) {
     playThemeSound(theme);
     btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
     btnTabProfile.setAttribute("aria-pressed", String(index === 1));
     btnTabLegal.setAttribute("aria-pressed", String(index === 2));
+
     pageGeneral.style.display = index === 0 ? "block" : "none";
     pageProfile.style.display = index === 1 ? "block" : "none";
     pageLegal.style.display = index === 2 ? "block" : "none";
@@ -6456,12 +6416,11 @@ const secLegal = el("div", "settings-section");
     }
   }, 50);
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+  const close = el("button", "close", t('close')); 
+  close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  p.append(close);
 
- // 🔀 Redirection automatique de tous les anciens appels
-function openSettings() {
-  openSettingsMainPage();
+  $("#sheet").classList.add("on");
 }
 
 
