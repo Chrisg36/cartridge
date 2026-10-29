@@ -1683,10 +1683,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   transition: top 0.05s linear;
 }
 
-/* 📓 IMPORT DE LA POLICE GOTHIQUE OFFICIELLE */
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
-
-/* 📓 THÈME GLOBAL DEATH NOTE (Corrigé : lisible & en-tête aéré) */
+/* 📓 THÈME GLOBAL DEATH NOTE (Police épurée, élégante et lisible) */
   body.theme-deathnote {
     background-color: #000000 !important;
     background-image: 
@@ -1700,28 +1697,33 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     --cov: #1a1a1a !important;
     --txt: #ffffff !important;
     --mut: #a1a1a1 !important;
+    
+    /* Police principale ultra-propre et moderne pour toute l'appli */
+    font-family: 'Rajdhani', -apple-system, sans-serif !important;
   }
 
-  /* 1. ON GARDE LA POLICE GOTHIQUE UNIQUEMENT SUR LES TITRES & LOGOS */
+  /* Style des titres et logos : propres, nets et légèrement espacés */
   body.theme-deathnote .neon-logo,
   body.theme-deathnote h1, 
   body.theme-deathnote h2, 
   body.theme-deathnote h3 {
-    font-family: 'UnifrakturMaguntia', cursive, serif !important;
-    letter-spacing: 1px !important;
+    font-family: 'Orbitron', sans-serif !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase;
   }
 
-  /* 2. ON REMET UNE POLICE LISIBLE (SANS-SERIF) SUR LE RESTE (JEUX, BOUTONS, MENUS) */
+  /* Lisibilité parfaite sur les textes de jeux et boutons */
   body.theme-deathnote .t b,
   body.theme-deathnote .grid-title,
   body.theme-deathnote button,
   body.theme-deathnote span,
   body.theme-deathnote div,
   body.theme-deathnote input {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: 'Rajdhani', -apple-system, sans-serif !important;
+    font-weight: 600;
   }
 
-  /* 3. CORRECTION DE L'EN-TÊTE COMPRESSÉ (Pour que profil et crédits ne soient plus coupés) */
+  /* Correction de l'en-tête (profil et crédits non coupés) */
   body.theme-deathnote .sticky-header-container {
     padding-left: 12px !important;
     padding-right: 12px !important;
@@ -1729,25 +1731,25 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   }
 
   body.theme-deathnote .header-top {
-    gap: 4px !important;
+    gap: 6px !important;
     flex-wrap: nowrap !important;
   }
 
   body.theme-deathnote #sub-title.neon-logo {
     font-size: 11px !important;
-    padding: 5px 8px !important;
-    letter-spacing: 1px !important;
+    padding: 6px 10px !important;
+    letter-spacing: 1.5px !important;
   }
 
   body.theme-deathnote #deathnote-badge {
     font-size: 11px !important;
-    padding: 2px 6px !important;
-    margin-left: 4px !important;
+    padding: 3px 8px !important;
+    margin-left: 6px !important;
   }
 
   body.theme-deathnote .header-currency-badge,
   body.theme-deathnote .player-badge {
-    transform: scale(0.9);
+    transform: scale(0.92);
     transform-origin: right center;
   }
 
