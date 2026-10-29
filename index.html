@@ -5975,7 +5975,7 @@ function openSettingsMainPage() {
   const secModern = el("div", "settings-section");
   secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
   const modernGrid = el("div", "themes-grid-container");
-  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
+["dark", "light", "midnight", "forest", "violet", "ruby", "circuit", "synthwave", "buttons"].forEach(key => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
     const b = el("button", "theme-mini-btn", label);
