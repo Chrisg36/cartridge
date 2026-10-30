@@ -5029,6 +5029,309 @@ html { --acc2: color-mix(in srgb, var(--acc) 60%, #fff); }
 .avatar-pick-card .pick-title, .banner-pick-card .pick-title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .banner-pick-card .banner-pick-preview { width: 100% !important; height: auto !important; aspect-ratio: 600 / 160; border-radius: 8px; }
 
+/* ---------- 28.9 Thèmes consoles rétro : décors et habillage ----------
+   Chaque console a : un décor dessiné (calque #cxBg), un effet propre
+   (sol Mode 7, néons, panneau bois…) et un habillage des cartes/titres.  */
+
+/* Socle commun : on coupe les animations des fonds standards */
+html[data-cx-scene] .cx-bg__tile { animation: none; }
+html[data-cx-scene] .cx-bg__fx { animation: none; mask-image: none; -webkit-mask-image: none; filter: none; mix-blend-mode: normal; opacity: 0; }
+html[data-cx-scene] .cx-bg__sheen { background: none; animation: none; }
+html[data-cx-scene] .cx-bg__sheen::before, html[data-cx-scene] .cx-bg__sheen::after { content: none; animation: none; }
+html[data-cx-scene] .cx-bg__vignette { background: radial-gradient(130% 95% at 50% 45%, transparent 50%, color-mix(in srgb, var(--bg) 90%, transparent) 100%); }
+
+/* Habillage commun piloté par variables */
+html[data-cx-scene] {
+  --cx-r: 14px; --cx-bw: 1px; --cx-bc: var(--line); --cx-sh: none; --cx-hf: var(--font); --cx-day: 12px;
+  --cx-nav: color-mix(in srgb, var(--bg) 92%, #000);
+}
+html[data-cx-scene] :is(.row, .grid-card, .theme-card, .cx-set, .booster, .quest, .cab, .set-list, .score-row, .cx-manual, .empty-state, .score-form) {
+  border-radius: var(--cx-r) !important; border: var(--cx-bw) solid var(--cx-bc) !important; box-shadow: var(--cx-sh) !important;
+}
+html[data-cx-scene] :is(.month-switch, .search-box, .platform-select, .tool-btn, .fav-filter-btn, .seg, .choice-tile) {
+  border-radius: calc(var(--cx-r) * .8) !important; border-width: var(--cx-bw) !important; border-color: var(--cx-bc) !important;
+}
+html[data-cx-scene] :is(.day, .pg-head h2, .settings-section-title, .set-title span, .brand-text, .cx-set-head h3) { font-family: var(--cx-hf) !important; }
+html[data-cx-scene] .day { font-size: var(--cx-day) !important; }
+html[data-cx-scene] .bottom-nav { background: var(--cx-nav) !important; border-top: var(--cx-bw) solid var(--cx-bc) !important; }
+html[data-cx-scene] .sticky-header-container { background: color-mix(in srgb, var(--bg) 88%, transparent) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+/* ═══ GAME BOY — écran LCD vert, pixels nets ═══ */
+html[data-cx-scene="gameboy"] { --cx-r: 3px; --cx-bw: 2px; --cx-bc: #306230; --cx-sh: 3px 3px 0 #0a1a0a; --cx-hf: 'Silkscreen', 'Press Start 2P', monospace; --cx-day: 13px; --cx-nav: #0c1a0c; }
+html[data-cx-scene="gameboy"] .cx-bg__sheen { background: linear-gradient(125deg, rgba(155,188,15,.07), transparent 35%); box-shadow: inset 0 0 90px rgba(5,20,5,.85); }
+html[data-cx-scene="gameboy"] .row { background: linear-gradient(180deg, #172f17, #122612) !important; }
+html[data-cx-scene="gameboy"] .day { color: #9bbc0f !important; }
+html[data-cx-scene="gameboy"] .day::before { content: "▶ "; color: #8bac0f; }
+
+/* ═══ GAME BOY PRO — rétroéclairage lime ═══ */
+html[data-cx-scene="gameboy-dark"] { --cx-r: 4px; --cx-bw: 1px; --cx-bc: rgba(153,230,0,.35); --cx-sh: 0 0 0 1px rgba(0,0,0,.6), 0 0 18px -6px rgba(153,230,0,.45); --cx-hf: 'Silkscreen', 'Press Start 2P', monospace; --cx-day: 13px; --cx-nav: #050b05; }
+html[data-cx-scene="gameboy-dark"] .cx-bg__fx { opacity: 1; filter: drop-shadow(0 0 6px #99e600); animation: cxBacklight 5s ease-in-out infinite; }
+html[data-cx-scene="gameboy-dark"] .cx-bg__sheen { background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px); }
+@keyframes cxBacklight { 0%, 100% { opacity: .25; } 50% { opacity: .7; } 52% { opacity: .35; } 54% { opacity: .65; } }
+html[data-cx-scene="gameboy-dark"] :is(.day, .pg-head h2, .brand-text) { text-shadow: 0 0 10px rgba(153,230,0,.6) !important; }
+
+/* ═══ NES — briques, bandes grises, étiquette de cartouche ═══ */
+html[data-cx-scene="nes"] { --cx-r: 4px; --cx-bw: 2px; --cx-bc: #000; --cx-sh: 4px 4px 0 #000; --cx-hf: 'Press Start 2P', monospace; --cx-day: 10px; --cx-nav: #0d0606; }
+html[data-cx-scene="nes"] .cx-bg__sheen { background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px); }
+html[data-cx-scene="nes"] .cx-bg__sheen::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 26px;
+  background: repeating-linear-gradient(180deg, #2a2a2e 0 4px, #0d0d0f 4px 8px); opacity: .55;
+}
+html[data-cx-scene="nes"] .row { background: linear-gradient(180deg, #e52521 0 4px, #1c1010 4px) !important; }
+html[data-cx-scene="nes"] .day { display: inline-block !important; padding: 6px 8px !important; background: #e52521; color: #fff !important; box-shadow: 3px 3px 0 #000; }
+html[data-cx-scene="nes"] .cta { border-radius: 4px !important; box-shadow: 3px 3px 0 #000 !important; }
+
+/* ═══ SUPER NINTENDO — sol Mode 7 qui défile, quatre couleurs ═══ */
+html[data-cx-scene="snes"] { --cx-r: 16px; --cx-bc: rgba(167,139,250,.28); --cx-sh: inset 0 1px 0 rgba(255,255,255,.07), 0 8px 24px -14px rgba(124,58,237,.7); --cx-hf: 'Exo 2', var(--font); --cx-nav: #0d0b17; }
+html[data-cx-scene="snes"] .cx-bg__sheen::before {
+  content: ""; position: absolute; left: -60%; right: -60%; bottom: -2%; height: 58%;
+  background-image: linear-gradient(rgba(167,139,250,.42) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(167,139,250,.42) 1.5px, transparent 1.5px);
+  background-size: 56px 56px; transform: perspective(240px) rotateX(64deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%); mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  animation: cxMode7 3.2s linear infinite;
+}
+html[data-cx-scene="snes"] .cx-bg__sheen::after { content: ""; position: absolute; left: 0; right: 0; bottom: 56%; height: 120px; background: radial-gradient(60% 100% at 50% 100%, rgba(236,72,153,.22), transparent 70%); }
+@keyframes cxMode7 { to { background-position: 0 56px; } }
+html[data-cx-scene="snes"] .day { background: linear-gradient(90deg, #a78bfa, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+html[data-cx-scene="snes"] .day::after { content: ""; display: inline-block; width: 34px; height: 8px; margin-left: 8px; vertical-align: middle; background: radial-gradient(circle 3.5px at 4px 4px, #22c55e 98%, transparent), radial-gradient(circle 3.5px at 13px 4px, #3b82f6 98%, transparent), radial-gradient(circle 3.5px at 22px 4px, #eab308 98%, transparent), radial-gradient(circle 3.5px at 31px 4px, #ef4444 98%, transparent); }
+
+/* ═══ PLAYSTATION — low-poly, losange de démarrage, menus bleus ═══ */
+html[data-cx-scene="ps1"] { --cx-r: 6px; --cx-bc: rgba(148,163,184,.25); --cx-sh: 0 10px 24px -16px #000; --cx-hf: 'Orbitron', var(--font); --cx-day: 11px; --cx-nav: #08101f; }
+html[data-cx-scene="ps1"] .cx-bg__sheen::before {
+  content: ""; position: absolute; width: 520px; height: 520px; right: -230px; top: -170px; transform: rotate(45deg);
+  background: linear-gradient(135deg, rgba(37,99,235,.28), rgba(14,165,233,.05) 60%, transparent); border: 1px solid rgba(147,197,253,.12); border-radius: 24px;
+}
+html[data-cx-scene="ps1"] .row { background: linear-gradient(90deg, rgba(37,99,235,.22), transparent 38%), var(--card) !important; border-left: 3px solid #3b82f6 !important; }
+html[data-cx-scene="ps1"] .day { color: #93c5fd !important; letter-spacing: 3px !important; }
+
+/* ═══ NINTENDO 64 — cubes 3D, barre quatre couleurs ═══ */
+html[data-cx-scene="n64"] { --cx-r: 18px; --cx-bw: 1.5px; --cx-bc: rgba(234,179,8,.25); --cx-sh: 0 6px 0 rgba(0,0,0,.35); --cx-hf: 'Exo 2', var(--font); --cx-nav: #100d06; }
+html[data-cx-scene="n64"] .cx-bg__sheen::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #ef4444 0 25%, #3b82f6 25% 50%, #eab308 50% 75%, #22c55e 75%); }
+html[data-cx-scene="n64"] .cx-bg__sheen { background: radial-gradient(40% 30% at 0 100%, rgba(59,130,246,.12), transparent), radial-gradient(40% 30% at 100% 70%, rgba(239,68,68,.1), transparent); }
+html[data-cx-scene="n64"] .row { border-top: 3px solid transparent !important; background: linear-gradient(var(--card), var(--card)) padding-box, linear-gradient(90deg, #ef4444, #3b82f6, #eab308, #22c55e) border-box !important; }
+
+/* ═══ DREAMCAST — blanc nacré, tourbillon orange ═══ */
+html[data-cx-scene="dreamcast"] { --cx-r: 20px; --cx-bc: rgba(249,115,22,.22); --cx-sh: 0 10px 26px -18px rgba(124,45,18,.5); --cx-hf: 'Exo 2', var(--font); --cx-nav: #fffaf4; }
+html[data-cx-scene="dreamcast"] .cx-bg__sheen::before {
+  content: ""; position: absolute; width: 420px; height: 420px; right: -120px; bottom: -110px; opacity: .14;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -40 80 80'%3E%3Cpath d='M0 0c0-6 8-8 12-3c6 7-2 18-12 17c-14-1-20-17-11-28c11-13 33-10 38 8' fill='none' stroke='%23f97316' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  animation: cxSpin 60s linear infinite;
+}
+@keyframes cxSpin { to { transform: rotate(360deg); } }
+html[data-cx-scene="dreamcast"] .cx-bg__sheen { background: linear-gradient(160deg, rgba(255,255,255,.7), transparent 40%); }
+html[data-cx-scene="dreamcast"] .day { color: #ea580c !important; }
+
+/* ═══ GAMECUBE — verre indigo, grille de cubes ═══ */
+html[data-cx-scene="gamecube"] { --cx-r: 14px; --cx-bc: rgba(139,92,246,.3); --cx-sh: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 30px -18px rgba(139,92,246,.8); --cx-hf: 'Exo 2', var(--font); --cx-nav: rgba(12,10,29,.92); }
+html[data-cx-scene="gamecube"] .row, html[data-cx-scene="gamecube"] .grid-card { background: linear-gradient(160deg, rgba(139,92,246,.16), rgba(21,18,46,.82) 45%) !important; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+html[data-cx-scene="gamecube"] .cx-bg__sheen::before {
+  content: ""; position: absolute; width: 300px; height: 300px; left: -70px; bottom: 8%; opacity: .1; animation: cxFloat 12s ease-in-out infinite alternate;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23a78bfa' stroke-width='3'%3E%3Cpath d='M50 6L90 28V72L50 94L10 72V28Z'/%3E%3Cpath d='M10 28L50 50L90 28M50 50V94'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+}
+@keyframes cxFloat { to { transform: translateY(-30px) rotate(8deg); } }
+
+/* ═══ ARCADE 90s — néons, sol quadrillé, soleil rayé ═══ */
+html[data-cx-scene="arcade"] { --cx-r: 8px; --cx-bc: rgba(6,182,212,.45); --cx-sh: 0 0 0 1px rgba(217,70,239,.15), 0 0 22px -8px rgba(6,182,212,.6); --cx-hf: 'Press Start 2P', monospace; --cx-day: 10px; --cx-nav: #07020c; }
+html[data-cx-scene="arcade"] .cx-bg__sheen::before {
+  content: ""; position: absolute; left: -60%; right: -60%; bottom: -2%; height: 50%;
+  background-image: linear-gradient(rgba(217,70,239,.55) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(6,182,212,.5) 1.5px, transparent 1.5px);
+  background-size: 50px 50px; transform: perspective(220px) rotateX(66deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 15%, transparent 90%); mask-image: linear-gradient(to top, #000 15%, transparent 90%);
+  animation: cxGrid 1.6s linear infinite;
+}
+html[data-cx-scene="arcade"] .cx-bg__sheen::after {
+  content: ""; position: absolute; width: 220px; height: 110px; left: 50%; bottom: 46%; transform: translateX(-50%); border-radius: 110px 110px 0 0; opacity: .35;
+  background: repeating-linear-gradient(180deg, transparent 0 10px, #09030f 10px 13px), linear-gradient(180deg, #fde047, #f472b6 60%, #a21caf);
+}
+@keyframes cxGrid { to { background-position: 0 50px; } }
+html[data-cx-scene="arcade"] .day { color: #22d3ee !important; text-shadow: 0 0 8px #06b6d4, 2px 2px 0 #a21caf !important; }
+html[data-cx-scene="arcade"] .brand-text { text-shadow: 0 0 12px rgba(217,70,239,.6) !important; }
+
+/* ═══ ATARI 2600 — plastique nervuré + façade bois, bande 70s ═══ */
+html[data-cx-scene="atari"] { --cx-r: 6px; --cx-bc: rgba(245,158,11,.22); --cx-sh: inset 0 1px 0 rgba(255,255,255,.05), 0 6px 0 rgba(0,0,0,.4); --cx-hf: 'Orbitron', var(--font); --cx-day: 11px; --cx-nav: #120b06; }
+html[data-cx-scene="atari"] .cx-bg__sheen::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; opacity: .5;
+  background:
+    repeating-linear-gradient(178deg, rgba(0,0,0,.18) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(181deg, rgba(255,214,150,.08) 0 1px, transparent 1px 13px),
+    linear-gradient(180deg, #6b3a1c, #4a250f 60%, #3a1c0a);
+  border-top: 2px solid rgba(212,212,216,.35);
+  -webkit-mask-image: linear-gradient(to top, #000 40%, transparent); mask-image: linear-gradient(to top, #000 40%, transparent);
+}
+html[data-cx-scene="atari"] .cx-bg__sheen::after { content: ""; position: absolute; top: 0; right: 0; width: 160px; height: 160px; background: linear-gradient(225deg, transparent 0 40px, rgba(234,88,12,.35) 40px 52px, rgba(245,158,11,.3) 52px 64px, rgba(250,204,21,.25) 64px 76px, transparent 76px); }
+html[data-cx-scene="atari"] .row { background: repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 3px, transparent 3px 6px), var(--card) !important; }
+html[data-cx-scene="atari"] .day { color: #f59e0b !important; }
+
+/* ═══ MS-DOS — terminal phosphore vert ═══ */
+html[data-cx-scene="dos"] { --font: 'Share Tech Mono', monospace; --cx-r: 0px; --cx-bw: 3px; --cx-bc: rgba(0,255,0,.4); --cx-sh: none; --cx-hf: 'VT323', monospace; --cx-day: 20px; --cx-nav: #000; }
+html[data-cx-scene="dos"] :is(.row, .grid-card, .theme-card, .cx-set, .quest, .cab, .score-row, .set-list) { border-style: double !important; }
+html[data-cx-scene="dos"] .cx-bg__sheen { background: repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px), radial-gradient(90% 70% at 50% 50%, rgba(0,255,0,.06), transparent 70%); animation: cxFlicker 7s steps(1) infinite; }
+@keyframes cxFlicker { 0%, 100% { opacity: 1; } 47% { opacity: .85; } 48% { opacity: 1; } }
+html[data-cx-scene="dos"] :is(.day, .pg-head h2, .brand-text) { text-shadow: 0 0 6px rgba(0,255,0,.7) !important; }
+html[data-cx-scene="dos"] .day::before { content: "C:\\> "; }
+html[data-cx-scene="dos"] .day::after { content: "_"; animation: cxBlink 1s steps(1) infinite; }
+
+/* ═══ MEGA DRIVE — noir laqué rainuré, rouge et or 16-BIT ═══ */
+html[data-cx-scene="megadrive"] { --cx-r: 10px; --cx-bc: rgba(255,255,255,.08); --cx-sh: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 26px -16px rgba(255,0,51,.45); --cx-hf: 'Orbitron', var(--font); --cx-day: 11px; --cx-nav: #040406; }
+html[data-cx-scene="megadrive"] .cx-bg__sheen::before {
+  content: "16-BIT"; position: absolute; right: -10px; bottom: 9%; transform: skewX(-12deg);
+  font: italic 900 92px/1 'Orbitron', sans-serif; letter-spacing: -2px; color: transparent;
+  -webkit-text-stroke: 1.5px rgba(212,175,55,.16);
+}
+html[data-cx-scene="megadrive"] .cx-bg__sheen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255,0,51,.07) 50%, transparent 60%) 0 0 / 300% 100%; animation: cxSpot 10s ease-in-out infinite alternate; }
+html[data-cx-scene="megadrive"] .row { background: linear-gradient(180deg, #ff0033 0 2px, transparent 2px), linear-gradient(180deg, #161925, #0d0f16) !important; }
+html[data-cx-scene="megadrive"] .day { color: #d4af37 !important; font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cx-scene] .cx-bg__sheen::before, html[data-cx-scene] .cx-bg__sheen::after, html[data-cx-scene] .cx-bg__fx { animation: none !important; }
+}
+
+/* ---------- 28.10 Vitrine : salle de collection ---------- */
+.cx-vit-hero {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; padding: 18px 16px 16px;
+  border-radius: 20px; color: #f5efe0; border: 1px solid rgba(212,175,55,.28);
+  background:
+    radial-gradient(80% 120% at 50% -30%, rgba(255,214,140,.25), transparent 60%),
+    linear-gradient(180deg, #2a1a12, #170e0a);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 18px 40px -24px #000;
+}
+.cx-vit-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 2px, transparent 2px 7px); opacity: .5; }
+.cx-vit-hero-txt { position: relative; z-index: 1; }
+.cx-vit-hero small, .cx-mus-hero small { font: 700 10.5px/1 var(--font); letter-spacing: 2.4px; text-transform: uppercase; color: #d4af37; }
+.cx-vit-hero h2, .cx-mus-hero h2 { margin: 6px 0 4px; font: 700 30px/1 'Cormorant Garamond', Georgia, serif; letter-spacing: .3px; color: #fff8e7; }
+.cx-vit-hero p, .cx-mus-hero p { margin: 0; font-size: 14px; color: #cdbf9f; }
+.cx-gems { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.cx-gem { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 2px 8px; border-radius: 12px; background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.07); }
+.cx-gem i { width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; background: linear-gradient(135deg, #fff, var(--c) 45%, color-mix(in srgb, var(--c) 50%, #000)); box-shadow: 0 0 10px color-mix(in srgb, var(--c) 70%, transparent); }
+.cx-gem b { font-size: 18px; font-weight: 800; color: #fff; line-height: 1.1; margin-top: 3px; }
+.cx-gem small { font-size: 9.5px !important; letter-spacing: .6px !important; color: #b3a689 !important; }
+
+.cx-vit-filters { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 12px; scrollbar-width: none; }
+.cx-vit-filters::-webkit-scrollbar { display: none; }
+.cx-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 999px; cursor: pointer;
+  font: 700 13px/1 var(--font); color: var(--mut); background: var(--card); border: 1px solid var(--line); transition: all .15s ease;
+}
+.cx-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.cx-chip b { font-size: 11px; padding: 2px 6px; border-radius: 999px; background: var(--cov); color: var(--txt); }
+.cx-chip.is-on { color: var(--txt); border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--card)); }
+
+.cx-shelves { display: flex; flex-direction: column; gap: 18px; }
+.cx-shelf {
+  position: relative; padding: 0 10px 6px; border-radius: 18px; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 10%, #14100d), #0e0b09 70%);
+  border: 1px solid color-mix(in srgb, var(--c) 22%, rgba(255,255,255,.06));
+  box-shadow: inset 0 0 50px rgba(0,0,0,.55);
+}
+.cx-plaque { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 4px 6px; }
+.cx-plaque-plate {
+  display: inline-flex; flex-direction: column; gap: 2px; padding: 7px 14px 7px 12px; border-radius: 6px;
+  background: linear-gradient(180deg, #f3dc8f, #c9a24a 55%, #a07b2c); color: #3b2a0a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(0,0,0,.2), 0 3px 8px rgba(0,0,0,.45);
+}
+.cx-plaque-plate b { font: 700 15px/1.05 'Cormorant Garamond', Georgia, serif; letter-spacing: .3px; }
+.cx-plaque-plate small { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: .75; }
+.cx-plaque-count { font: 800 12px/1 var(--font); color: #d6c8a8; padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.35); }
+.cx-shelf-row {
+  position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 10px; align-items: end; padding: 22px 4px 0;
+  background: radial-gradient(60% 90% at 50% 0%, rgba(255,226,170,.16), transparent 70%);
+}
+.cx-plank {
+  height: 12px; margin: 0 -10px 16px; border-radius: 2px;
+  background: linear-gradient(180deg, #8a5a32, #5e3a1d 60%, #3c230f); box-shadow: 0 8px 14px -4px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,220,170,.35);
+}
+.cx-case { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; padding: 0; background: none; border: 0; cursor: pointer; color: inherit; font-family: var(--font); }
+.cx-case-glass {
+  position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; border-radius: 6px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 0 4px rgba(255,255,255,.04), 0 10px 18px -6px rgba(0,0,0,.8);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease;
+}
+.cx-case-glass img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cx-case-shine { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,.08)); pointer-events: none; }
+.cx-case:hover .cx-case-glass { transform: translateY(-6px) rotate(-1deg); box-shadow: 0 0 0 1px var(--rc), 0 0 22px -2px color-mix(in srgb, var(--rc) 60%, transparent), 0 16px 22px -8px #000; }
+.cx-case.rar-legendary .cx-case-glass { box-shadow: 0 0 0 1.5px #fbbf24, 0 0 18px -4px rgba(251,191,36,.7), 0 10px 18px -6px #000; }
+.cx-case.rar-epic .cx-case-glass { box-shadow: 0 0 0 1.5px #a855f7, 0 0 14px -4px rgba(168,85,247,.6), 0 10px 18px -6px #000; }
+.cx-case-jewel {
+  position: absolute; top: -7px; left: 50%; transform: translateX(-50%); z-index: 2; padding: 3px 7px; border-radius: 999px; white-space: nowrap;
+  font: 800 8.5px/1 var(--font); letter-spacing: .8px; text-transform: uppercase; color: #111; background: var(--rc); box-shadow: 0 2px 6px rgba(0,0,0,.5);
+}
+.cx-case-tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; font-weight: 700; color: #d9cfb8; }
+
+/* ---------- 28.11 Musée : exposition ---------- */
+.cx-mus-hero {
+  position: relative; overflow: hidden; margin-bottom: 14px; padding: 22px 18px 18px; border-radius: 20px; color: #f5efe0;
+  background:
+    radial-gradient(40% 90% at 22% -10%, rgba(255,240,200,.22), transparent 70%),
+    radial-gradient(40% 90% at 78% -10%, rgba(255,240,200,.16), transparent 70%),
+    linear-gradient(180deg, #1b1b20, #0c0c0f);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.cx-mus-hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: linear-gradient(180deg, transparent, rgba(0,0,0,.4)), repeating-linear-gradient(90deg, #26211c 0 60px, #2d2721 60px 120px); opacity: .7; }
+.cx-mus-hint { position: relative; z-index: 1; display: inline-block; margin-top: 12px; font-size: 11.5px; color: #9a927f; letter-spacing: .4px; }
+
+.cx-timeline { margin: 0 -20px 18px; padding: 4px 20px 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.cx-timeline::-webkit-scrollbar { display: none; }
+.cx-tl-track { position: relative; display: flex; align-items: center; gap: 4px; width: max-content; padding: 6px 0; }
+.cx-tl-track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: 1px; background: linear-gradient(90deg, transparent, var(--line-2) 4%, var(--line-2) 96%, transparent); }
+.cx-tl-decade { position: relative; flex: none; margin: 0 6px; padding: 5px 9px; border-radius: 6px; font: 800 10px/1 var(--font); letter-spacing: 1.6px; color: #3b2a0a; background: linear-gradient(180deg, #f3dc8f, #c9a24a); }
+.cx-tl-item { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 66px; padding: 0; background: none; border: 0; color: var(--txt); cursor: pointer; font-family: var(--font); }
+.cx-tl-item i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px color-mix(in srgb, var(--c) 60%, transparent), 0 0 12px var(--c); transition: transform .15s ease; }
+.cx-tl-item:hover i { transform: scale(1.35); }
+.cx-tl-year { font: 800 11px/1 var(--font); color: var(--mut); }
+.cx-tl-name { max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; font-weight: 700; }
+
+.cx-wing { margin-bottom: 22px; }
+.cx-wing-head { display: flex; align-items: baseline; gap: 8px; margin: 0 2px 12px; }
+.cx-wing-head small { font: 700 10px/1 var(--font); letter-spacing: 2px; text-transform: uppercase; color: var(--mut); }
+.cx-wing-head b { font: 700 24px/1 'Cormorant Garamond', Georgia, serif; color: var(--txt); }
+.cx-wing-head span { flex: 1; height: 1px; background: var(--line-2); transform: translateY(-4px); }
+.cx-wing-head em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--mut); }
+.cx-ped-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 620px) { .cx-ped-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .cx-ped-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cx-ped {
+  position: relative; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px; cursor: pointer; text-align: left;
+  background: linear-gradient(180deg, #18181d, #0d0d10); border: 1px solid rgba(255,255,255,.07); color: #f5efe0; font-family: var(--font);
+  transition: transform .2s ease, border-color .2s ease;
+}
+.cx-ped:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+.cx-ped-stage { position: relative; height: 128px; display: grid; place-items: center; }
+.cx-ped-stage::before { content: ""; position: absolute; top: -10px; left: 50%; width: 150%; height: 150px; transform: translateX(-50%); background: radial-gradient(38% 100% at 50% 0, rgba(255,244,214,.22), transparent 80%); pointer-events: none; }
+.cx-ped-photo { position: relative; z-index: 1; width: 78%; height: 96px; display: grid; place-items: center; margin-bottom: 14px; }
+.cx-ped-photo img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,.7)); transition: transform .3s ease; }
+.cx-ped:hover .cx-ped-photo img { transform: scale(1.05) translateY(-2px); }
+.cx-ped-badge { font: 800 13px/1.1 'Orbitron', var(--font); text-align: center; color: var(--c); text-shadow: 0 0 12px color-mix(in srgb, var(--c) 60%, transparent); }
+.cx-ped-base { position: absolute; bottom: 6px; left: 18%; right: 18%; height: 14px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.75), transparent); }
+.cx-ped-base::after { content: ""; position: absolute; left: 6%; right: 6%; top: 3px; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--c) 70%, #000); opacity: .6; box-shadow: 0 0 12px var(--c); }
+.cx-cartel { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 12px; border-top: 1px solid rgba(255,255,255,.06); background: #f2ece0; color: #2a241b; }
+.cx-cartel b { font: 700 16px/1.05 'Cormorant Garamond', Georgia, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-cartel span { font-size: 11.5px; font-weight: 700; color: #6b5f4b; }
+.cx-cartel small { font: 600 9.5px/1 'Share Tech Mono', monospace; color: #9a8f7a; letter-spacing: .5px; margin-top: 2px; }
+
+/* Fiche console : grand cartel */
+.cx-exhibit { display: flex; flex-direction: column; gap: 14px; }
+.cx-ex-stage {
+  position: relative; height: 210px; display: grid; place-items: center; overflow: hidden; border-radius: 18px;
+  background: radial-gradient(45% 110% at 50% -5%, rgba(255,244,214,.3), transparent 75%), radial-gradient(70% 50% at 50% 100%, color-mix(in srgb, var(--c) 25%, transparent), transparent 70%), linear-gradient(180deg, #1a1a1f, #09090b);
+}
+.cx-ex-photo { position: relative; z-index: 1; width: 70%; height: 150px; display: grid; place-items: center; margin-bottom: 18px; }
+.cx-ex-photo img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 16px 14px rgba(0,0,0,.75)); }
+.cx-ex-base { position: absolute; bottom: 14px; left: 22%; right: 22%; height: 18px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.85), transparent); }
+.cx-ex-inv { position: absolute; top: 12px; right: 12px; font: 600 10px/1 'Share Tech Mono', monospace; color: #b8ad95; padding: 5px 8px; border-radius: 6px; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.08); }
+.cx-ex-head small { font: 700 11px/1 var(--font); letter-spacing: 2px; text-transform: uppercase; color: var(--c); }
+.cx-ex-head h2 { margin: 6px 0 0; font: 700 32px/1.02 'Cormorant Garamond', Georgia, serif; color: var(--txt); }
+.cx-ex-facts { margin: 0; padding: 4px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+.cx-ex-facts div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.cx-ex-facts div:last-child { border-bottom: 0; }
+.cx-ex-facts dt { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--mut); padding-top: 2px; }
+.cx-ex-facts dd { margin: 0; font-size: 14px; font-weight: 600; color: var(--txt); line-height: 1.35; }
+.cx-ex-quote { margin: 0; padding: 4px 0 4px 16px; border-left: 3px solid var(--c); font: italic 600 18px/1.35 'Cormorant Garamond', Georgia, serif; color: var(--txt); }
+.cx-ex-story h3 { margin: 0 0 6px; font: 700 12px/1 var(--font); letter-spacing: 2px; text-transform: uppercase; color: var(--mut); }
+.cx-ex-story p { margin: 0; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, var(--txt) 88%, transparent); }
+
+/* Le décor « bibliothèque » d'origine laisse place à la galerie */
+#museumMainPage .retro-library-bg { opacity: .35; }
+
 </style>
 </head>
 <body>
@@ -8701,92 +9004,16 @@ function renderMuseumAndVitrinePage() {
     (i) => (i === 0 ? showVitrineTab() : showMuseumTab())
   );
 
-  // --- VITRINE : les jaquettes gagnées dans les boosters ---
+  // --- VITRINE : salle de collection (section 20.10) ---
   function showVitrineTab() {
     displayBox.replaceChildren();
-    const n = myCollection.length;
-    displayBox.append(pageHead("Vitrine", "Les jaquettes gagnées dans tes boosters.", n ? `<b>${n}</b> jaquette${n > 1 ? "s" : ""}` : ""));
-
-    if (n === 0) {
-      displayBox.append(emptyState("box", "Ta vitrine est vide",
-        "Ouvre ton premier booster pour commencer ta collection.", "Ouvrir un booster", () => goToPage("shop", "packs")));
-      return;
-    }
-
-    const categoriesConfig = [
-      { title: "Supreme Collector", color: "#fbbf24", items: myCollection.filter((it) => it.category === "supreme_retro") },
-      { title: "Rétro Classic", color: "#38bdf8", items: myCollection.filter((it) => it.category === "retro") },
-      { title: "Standard", color: "#94a3b8", items: myCollection.filter((it) => !it.category || it.category === "standard") },
-    ];
-
-    categoriesConfig.forEach((cat) => {
-      if (!cat.items.length) return;
-      const sec = el("section", "shelf");
-      sec.style.setProperty("--c", cat.color);
-      const h = el("div", "shelf-head");
-      h.innerHTML = `<span class="shelf-dot"></span><b>${esc(cat.title)}</b><small>${cat.items.length}</small>`;
-      const grid = el("div", "shelf-grid");
-      cat.items.forEach((item) => {
-        const box = el("button", "shelf-item");
-        box.type = "button";
-        box.title = item.name || "";
-        const img = el("img"); img.src = item.cover; img.alt = item.name || ""; img.loading = "lazy";
-        // Les jaquettes Supreme Collector brillent (si l'effet holographique est activé dans le Profil)
-        const rar = RARITY_STYLE[item.rarity] ? item.rarity : "";
-        const coverBox = el("span", "shelf-cover" + (rar ? " rar-" + rar : "") + (item.category === "supreme_retro" || rar === "legendary" ? " card-holo-effect" : ""));
-        coverBox.append(img);
-        if (rar && rar !== "common") coverBox.append(el("i", "shelf-rarity", RARITY_STYLE[rar].label));
-        box.append(coverBox, el("span", "", item.name || ""));
-        box.addEventListener("click", () => {
-          playThemeSound(theme);
-          openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0, 10) });
-        });
-        grid.append(box);
-      });
-      sec.append(h, grid);
-      displayBox.append(sec);
-    });
+    cxRenderVitrine(displayBox);
   }
 
-  // --- MUSÉE : les consoles et leur histoire ---
+  // --- MUSÉE : exposition (section 20.11) ---
   function showMuseumTab() {
     displayBox.replaceChildren();
-    displayBox.append(pageHead("Musée", "Touche une console pour découvrir son histoire.", `<b>${WORLD_CONSOLES.length}</b> consoles`));
-
-    const groups = {};
-    for (const c of WORLD_CONSOLES) (groups[c.brand] = groups[c.brand] || []).push(c);
-
-    for (const [brand, consoles] of Object.entries(groups)) {
-      const section = el("section", "constructor-section");
-      const title = el("div", "constructor-title");
-      title.innerHTML = `<span>${esc(brand)}</span><small>${consoles.length}</small>`;
-      section.append(title);
-
-      const grid = el("div", "vitrine-grid");
-      for (const consoleItem of consoles) {
-        const card = el("div", "console-vitrine-card");
-        card.style.setProperty("--console-color", consoleItem.color || consoleItem.bg || "var(--acc)");
-        const brandTag = el("span", "console-brand-tag", consoleItem.brand);
-        const photoBox = el("div", "console-photo-container");
-        const badge = el("div", "console-icon-badge", consoleItem.code || consoleItem.name);
-        if (consoleItem.image) {
-          // Photo de la console ; si elle ne charge pas, on remet l'étiquette texte
-          const photo = el("img", "console-photo");
-          photo.src = consoleItem.image; photo.alt = consoleItem.name; photo.loading = "lazy";
-          photo.onerror = () => photo.replaceWith(badge);
-          photoBox.append(photo);
-        } else {
-          photoBox.append(badge);
-        }
-        const infoGroup = el("div", "console-info-group");
-        infoGroup.append(el("b", "", consoleItem.name), el("span", "", consoleItem.year));
-        card.append(brandTag, photoBox, infoGroup);
-        card.onclick = (e) => { e.stopPropagation(); playThemeSound(theme); openConsoleDetail(consoleItem); };
-        grid.append(card);
-      }
-      section.append(grid);
-      displayBox.append(section);
-    }
+    cxRenderMuseum(displayBox);
   }
 
   contentArea.append(tabs.el, displayBox);
@@ -10641,10 +10868,10 @@ const cxBanner = (svg, fallback) =>
   `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 160' preserveAspectRatio='xMidYMid slice'>${svg}</svg>`)}") center / cover no-repeat, ${fallback}`;
 
 // Petits motifs réutilisés dans les bannières
-const cxStars = (n, seed, col, maxY = 160) => {
+const cxStars = (n, seed, col, maxY = 160, maxX = 600) => {
   let s = seed, out = "";
   const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
-  for (let i = 0; i < n; i++) out += `<rect x='${Math.round(rnd() * 600)}' y='${Math.round(rnd() * maxY)}' width='${rnd() > 0.85 ? 2 : 1}' height='${rnd() > 0.85 ? 2 : 1}' fill='${col}' opacity='${(0.3 + rnd() * 0.6).toFixed(2)}'/>`;
+  for (let i = 0; i < n; i++) out += `<rect x='${Math.round(rnd() * maxX)}' y='${Math.round(rnd() * maxY)}' width='${rnd() > 0.85 ? 2 : 1}' height='${rnd() > 0.85 ? 2 : 1}' fill='${col}' opacity='${(0.3 + rnd() * 0.6).toFixed(2)}'/>`;
   return out;
 };
 const cxBtn3d = (x, y, r, col, dark) =>
@@ -11278,6 +11505,368 @@ function cxRenderScores(box, rerender, games, openGame) {
   manual.append(form);
   box.append(manual);
 }
+
+// ---------------------------------------------------------------------
+// 20.9 THÈMES CONSOLES RÉTRO — un décor dessiné unique par console
+//      (remplace l'ancien motif plat --pattern des 12 thèmes rétro)
+// ---------------------------------------------------------------------
+
+// ▸ cxSprite : petit sprite pixel (lignes de « X ») → rectangles SVG
+function cxSprite(rows, x, y, s, fill, op = 1) {
+  let r = "";
+  rows.forEach((row, j) => {
+    let i = 0;
+    while (i < row.length) {
+      if (row[i] !== "X") { i++; continue; }
+      let w = 1; while (row[i + w] === "X") w++;
+      r += `<rect x='${x + i * s}' y='${y + j * s}' width='${w * s}' height='${s}'/>`;
+      i += w;
+    }
+  });
+  return `<g fill='${fill}' fill-opacity='${op}'>${r}</g>`;
+}
+const CX_SPR = {
+  heart: [".XX.XX.", "XXXXXXX", "XXXXXXX", ".XXXXX.", "..XXX..", "...X..."],
+  star: ["...X...", "...X...", "XXXXXXX", ".XXXXX.", "..X.X..", ".X...X."],
+  cloud: ["...XXX......", ".XXXXXXX.XX.", "XXXXXXXXXXXX", "XXXXXXXXXXXX", ".XXXXXXXXXX."],
+  tree: ["..XX..", ".XXXX.", "XXXXXX", ".XXXX.", "XXXXXX", "..XX..", "..XX.."],
+  coin: [".XXXX.", "XX..XX", "X.XX.X", "X.XX.X", "XX..XX", ".XXXX."],
+  gem: ["..XXX..", ".XXXXX.", "XXXXXXX", ".XXXXX.", "..XXX..", "...X..."],
+  alien: ["..X.....X..", "...X...X...", "..XXXXXXX..", ".XX.XXX.XX.", "XXXXXXXXXXX", "X.XXXXXXX.X", "X.X.....X.X", "...XX.XX..."],
+  ship: [".....X.....", "....XXX....", "....XXX....", ".XXXXXXXXX.", "XXXXXXXXXXX", "XXXXXXXXXXX"],
+  key: [".XXX.......", "X...XXXXXXX", "X...X..X.X.", ".XXX......."],
+};
+
+const CX_RETRO_SCENES = {
+  // ——— GAME BOY : écran LCD 4 verts, petits sprites de paysage ———
+  gameboy: {
+    size: [216, 216],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='216' height='216'>
+      ${cxSprite(CX_SPR.cloud, 18, 22, 4, "#306230", .55)}${cxSprite(CX_SPR.tree, 150, 34, 4, "#306230", .5)}
+      ${cxSprite(CX_SPR.heart, 112, 112, 3, "#8bac0f", .22)}${cxSprite(CX_SPR.coin, 34, 132, 3, "#8bac0f", .25)}
+      ${cxSprite(CX_SPR.star, 176, 160, 3, "#8bac0f", .2)}${cxSprite(CX_SPR.cloud, 92, 182, 3, "#306230", .4)}
+      <rect x='0' y='96' width='60' height='4' fill='#306230' fill-opacity='.35'/><rect x='140' y='206' width='76' height='4' fill='#306230' fill-opacity='.35'/></svg>`,
+  },
+  // ——— GAME BOY PRO : écran rétroéclairé, sprites lumineux ———
+  "gameboy-dark": {
+    size: [240, 240], fx: true,
+    tile: (bright) => `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>
+      ${cxSprite(CX_SPR.heart, 30, 30, 4, "#99e600", bright ? .9 : .16)}${cxSprite(CX_SPR.gem, 160, 54, 4, "#b8f017", bright ? .9 : .14)}
+      ${cxSprite(CX_SPR.star, 88, 140, 4, "#99e600", bright ? .9 : .15)}${cxSprite(CX_SPR.key, 170, 190, 3, "#729c15", bright ? .7 : .2)}
+      ${bright ? "" : `<g stroke='#99e600' stroke-opacity='.06'><path d='M0 120H240M120 0V240'/></g>`}</svg>`,
+  },
+  // ——— NES : mur de briques 8-bit, pièces et étoiles ———
+  nes: {
+    size: [256, 192],
+    tile: () => {
+      let br = "";
+      for (let r = 0; r < 6; r++) for (let c = 0; c < 9; c++) br += `<rect x='${c * 32 - (r % 2) * 16}' y='${r * 32}' width='30' height='30' rx='1'/>`;
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='256' height='192'>
+        <g fill='none' stroke='#e52521' stroke-opacity='.07' stroke-width='2'>${br}</g>
+        ${cxSprite(CX_SPR.coin, 44, 50, 4, "#fbbf24", .2)}${cxSprite(CX_SPR.star, 180, 22, 4, "#ffffff", .1)}
+        ${cxSprite(CX_SPR.heart, 150, 128, 4, "#e52521", .25)}${cxSprite(CX_SPR.cloud, 20, 150, 3, "#ffffff", .07)}</svg>`;
+    },
+  },
+  // ——— SUPER NINTENDO : étincelles 16-bit + sol Mode 7 (CSS) ———
+  snes: {
+    size: [220, 220],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'>
+      ${[[30, 40, "#7c3aed"], [150, 70, "#a78bfa"], [90, 160, "#c4b5fd"], [190, 190, "#7c3aed"]].map(([x, y, c]) => `<path d='M${x} ${y - 8}L${x + 2} ${y - 2}L${x + 8} ${y}L${x + 2} ${y + 2}L${x} ${y + 8}L${x - 2} ${y + 2}L${x - 8} ${y}L${x - 2} ${y - 2}Z' fill='${c}' fill-opacity='.35'/>`).join("")}
+      <g transform='translate(160 150)' fill-opacity='.18'><circle cx='0' cy='-9' r='5' fill='#3b82f6'/><circle cx='9' cy='0' r='5' fill='#ef4444'/><circle cx='0' cy='9' r='5' fill='#eab308'/><circle cx='-9' cy='0' r='5' fill='#22c55e'/></g>
+      <g transform='translate(50 120)' fill-opacity='.12'><circle cx='0' cy='-9' r='5' fill='#3b82f6'/><circle cx='9' cy='0' r='5' fill='#ef4444'/><circle cx='0' cy='9' r='5' fill='#eab308'/><circle cx='-9' cy='0' r='5' fill='#22c55e'/></g></svg>`,
+  },
+  // ——— PLAYSTATION : maillage low-poly + tramage ———
+  ps1: {
+    size: [240, 208],
+    tile: () => {
+      const pts = [[0, 0], [80, 0], [160, 0], [240, 0], [40, 70], [120, 60], [200, 75], [0, 138], [80, 130], [160, 140], [240, 138], [40, 208], [120, 200], [200, 208], [0, 208], [240, 208]];
+      const tris = [[0, 1, 4], [1, 5, 4], [1, 2, 5], [2, 6, 5], [2, 3, 6], [0, 4, 7], [4, 8, 7], [4, 5, 8], [5, 9, 8], [5, 6, 9], [6, 10, 9], [6, 3, 10], [7, 8, 11], [8, 12, 11], [8, 9, 12], [9, 13, 12], [9, 10, 13], [7, 11, 14], [10, 15, 13]];
+      const op = [.03, .07, .05, .1, .04, .08, .02, .06, .11, .05, .09, .03, .07, .04, .1, .06, .03, .05, .08];
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='208'>
+        ${tris.map((t, i) => `<path d='M${t.map((k) => pts[k].join(" ")).join("L")}Z' fill='#3b82f6' fill-opacity='${op[i]}' stroke='#60a5fa' stroke-opacity='.12'/>`).join("")}
+        <g fill='#93c5fd' fill-opacity='.08'>${Array.from({ length: 40 }, (_, i) => `<rect x='${(i * 37) % 240}' y='${(i * 53) % 208}' width='2' height='2'/>`).join("")}</g></svg>`;
+    },
+  },
+  // ——— NINTENDO 64 : cubes isométriques aux 4 couleurs ———
+  n64: {
+    size: [240, 240],
+    tile: () => {
+      const cube = (x, y, s, c) => `<g transform='translate(${x} ${y})'><path d='M0 ${-s}L${s * 0.87} ${-s / 2}L0 0L${-s * 0.87} ${-s / 2}Z' fill='${c}' fill-opacity='.22'/><path d='M${-s * 0.87} ${-s / 2}L0 0V${s}L${-s * 0.87} ${s / 2}Z' fill='${c}' fill-opacity='.12'/><path d='M${s * 0.87} ${-s / 2}L0 0V${s}L${s * 0.87} ${s / 2}Z' fill='${c}' fill-opacity='.06'/></g>`;
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>${cube(50, 50, 22, "#ef4444")}${cube(180, 70, 16, "#22c55e")}${cube(110, 150, 26, "#3b82f6")}${cube(200, 200, 14, "#eab308")}${cube(30, 200, 12, "#eab308")}</svg>`;
+    },
+  },
+  // ——— DREAMCAST : tourbillons orange sur blanc nacré ———
+  dreamcast: {
+    size: [200, 200],
+    tile: () => {
+      const sw = (x, y, s, o) => `<path transform='translate(${x} ${y}) scale(${s})' d='M0 0c0-6 8-8 12-3c6 7-2 18-12 17c-14-1-20-17-11-28c11-13 33-10 38 8' fill='none' stroke='#f97316' stroke-opacity='${o}' stroke-width='${4 / s}' stroke-linecap='round'/>`;
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>${sw(50, 60, 1.1, .16)}${sw(150, 150, .8, .12)}${sw(160, 40, .5, .1)}${sw(40, 160, .6, .1)}</svg>`;
+    },
+  },
+  // ——— GAMECUBE : grille de cubes en verre indigo ———
+  gamecube: {
+    size: [104, 180],
+    tile: () => {
+      const c = (x, y) => `<path d='M${x} ${y - 30}L${x + 26} ${y - 15}V${y + 15}L${x} ${y + 30}L${x - 26} ${y + 15}V${y - 15}Z M${x - 26} ${y - 15}L${x} ${y}L${x + 26} ${y - 15} M${x} ${y}V${y + 30}'/>`;
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='104' height='180'><g fill='none' stroke='#8b5cf6' stroke-opacity='.13' stroke-width='1.3'>${c(26, 45)}${c(78, 135)}${c(78, -45)}${c(26, 225)}${c(130, 45)}${c(-26, 135)}</g><path d='M26 15L52 30L26 45L0 30Z' fill='#8b5cf6' fill-opacity='.07'/></svg>`;
+    },
+  },
+  // ——— ARCADE 90s : étoiles, aliens pixel, sol néon (CSS) ———
+  arcade: {
+    size: [260, 260],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'>${cxStars(26, 11, "#f5d0fe", 260, 260)}
+      ${cxSprite(CX_SPR.alien, 30, 40, 3, "#06b6d4", .3)}${cxSprite(CX_SPR.alien, 170, 110, 3, "#d946ef", .28)}${cxSprite(CX_SPR.ship, 90, 200, 3, "#22d3ee", .22)}</svg>`,
+  },
+  // ——— ATARI 2600 : plastique nervuré noir + panneau bois (CSS) ———
+  atari: {
+    size: [12, 12],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><rect width='6' height='12' fill='#000' fill-opacity='.22'/><rect x='6' width='1' height='12' fill='#fff' fill-opacity='.025'/></svg>`,
+  },
+  // ——— MS-DOS : terminal ASCII phosphore ———
+  dos: {
+    size: [300, 180],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><g font-family='monospace' font-size='11' fill='#00ff00' fill-opacity='.08'>
+      <text x='8' y='20'>C:\\&gt;DIR /W</text><text x='8' y='38'>╔══════════════╗</text><text x='8' y='52'>║ CARTRIDGE.EXE ║</text><text x='8' y='66'>╚══════════════╝</text>
+      <text x='160' y='96'>10 PRINT "HI"</text><text x='160' y='110'>20 GOTO 10</text><text x='20' y='140'>LOADING ░░░▒▒▓▓</text><text x='170' y='168'>OK_</text></g></svg>`,
+  },
+  // ——— MEGA DRIVE : plastique noir rainuré, anneau 16-bit ———
+  megadrive: {
+    size: [240, 240],
+    tile: () => `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>
+      <g fill='#fff' fill-opacity='.025'>${Array.from({ length: 20 }, (_, i) => `<rect y='${i * 12}' width='240' height='1'/>`).join("")}</g>
+      <g fill='none' stroke='#ff0033' stroke-opacity='.08' stroke-width='2'><circle cx='120' cy='120' r='70'/><circle cx='120' cy='120' r='54'/></g>
+      <g fill='none' stroke='#d4af37' stroke-opacity='.07'><circle cx='120' cy='120' r='62'/></g></svg>`,
+  },
+};
+
+// Polices des thèmes rétro (Google Fonts, chargées une seule fois)
+(function loadRetroFonts() {
+  if (document.getElementById("font-cx-retro")) return;
+  const l = document.createElement("link");
+  l.id = "font-cx-retro"; l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Exo+2:wght@700;800&family=Cormorant+Garamond:wght@600;700&display=swap";
+  document.head.append(l);
+})();
+
+// ▸ applyBgStyle : en thème rétro, le décor de la console remplace le fond choisi
+(function wrapBgForRetro() {
+  const base = applyBgStyle;
+  applyBgStyle = function (bg) {
+    base(bg);
+    const layer = document.getElementById("cxBg");
+    const scene = CX_RETRO_SCENES[theme];
+    if (!layer) return;
+    if (!scene || !CX_RETRO_THEMES.includes(theme)) { delete document.documentElement.dataset.cxScene; return; }
+    document.documentElement.style.setProperty("--pattern", "none");
+    document.documentElement.dataset.cxScene = theme;
+    layer.classList.toggle("is-off", !!document.body.dataset.unique);
+    const [w, h] = scene.size;
+    const tile = layer.querySelector(".cx-bg__tile"), fx = layer.querySelector(".cx-bg__fx");
+    tile.style.backgroundImage = cxSvgUrl(scene.tile(false));
+    tile.style.backgroundSize = `${w}px ${h}px`;
+    fx.style.backgroundImage = scene.fx ? cxSvgUrl(scene.tile(true)) : "none";
+    fx.style.backgroundSize = `${w}px ${h}px`;
+    layer.style.setProperty("--cx-w", w + "px");
+    layer.style.setProperty("--cx-h", h + "px");
+  };
+})();
+
+// ---------------------------------------------------------------------
+// 20.10 VITRINE — salle de collection : étagères éclairées, vitrines en
+//       verre, plaques en laiton, reflet holo sur les Légendaires
+// ---------------------------------------------------------------------
+const CX_RAR_ORDER = ["legendary", "epic", "rare", "common"];
+let cxVitFilter = "all";
+
+function cxRarityOf(item) {
+  if (RARITY_STYLE[item.rarity]) return item.rarity;
+  if (item.category === "supreme_retro") return "legendary";
+  if (item.category === "retro") return "rare";
+  return "common";
+}
+
+function cxRenderVitrine(box) {
+  const items = Array.isArray(myCollection) ? myCollection : [];
+  const counts = { legendary: 0, epic: 0, rare: 0, common: 0 };
+  items.forEach((it) => counts[cxRarityOf(it)]++);
+
+  // — Entrée de la salle —
+  const hero = el("section", "cx-vit-hero");
+  hero.innerHTML = `
+    <div class="cx-vit-hero-txt">
+      <small>Salle de collection</small>
+      <h2>Ma vitrine</h2>
+      <p>${items.length ? `${items.length} jaquette${items.length > 1 ? "s" : ""} exposée${items.length > 1 ? "s" : ""}` : "Aucune pièce exposée pour l'instant"}</p>
+    </div>
+    <div class="cx-gems">${CX_RAR_ORDER.map((r) => `<span class="cx-gem" style="--c:${RARITY_STYLE[r].color}"><i></i><b>${counts[r]}</b><small>${RARITY_STYLE[r].label}</small></span>`).join("")}</div>`;
+  box.append(hero);
+
+  if (!items.length) {
+    box.append(emptyState("box", "Ta vitrine est vide", "Ouvre ton premier booster pour exposer ta première jaquette.", "Ouvrir un booster", () => goToPage("shop", "packs")));
+    return;
+  }
+
+  // — Filtres par rareté —
+  const chips = el("div", "cx-vit-filters");
+  const shelves = el("div", "cx-shelves");
+  [["all", "Tout", "var(--acc)"], ...CX_RAR_ORDER.map((r) => [r, RARITY_STYLE[r].label, RARITY_STYLE[r].color])].forEach(([id, label, c]) => {
+    if (id !== "all" && !counts[id]) return;
+    const b = el("button", "cx-chip" + (cxVitFilter === id ? " is-on" : ""));
+    b.type = "button";
+    b.style.setProperty("--c", c);
+    b.innerHTML = `<i></i>${esc(label)}<b>${id === "all" ? items.length : counts[id]}</b>`;
+    b.addEventListener("click", () => {
+      playThemeSound(theme);
+      cxVitFilter = id;
+      chips.querySelectorAll(".cx-chip").forEach((x) => x.classList.toggle("is-on", x === b));
+      drawShelves();
+    });
+    chips.append(b);
+  });
+  box.append(chips, shelves);
+
+  function perRow() { return innerWidth >= 1100 ? 6 : innerWidth >= 700 ? 5 : innerWidth >= 480 ? 4 : 3; }
+
+  function drawShelves() {
+    shelves.replaceChildren();
+    const pick = (it) => cxVitFilter === "all" || cxRarityOf(it) === cxVitFilter;
+    const cats = [
+      { title: "Supreme Collector", sub: "Grails & pièces holo", color: "#fbbf24", items: items.filter((it) => it.category === "supreme_retro" && pick(it)) },
+      { title: "Rétro Classic", sub: "Pépites 1985 – 2005", color: "#38bdf8", items: items.filter((it) => it.category === "retro" && pick(it)) },
+      { title: "Standard", sub: "Jeux récents", color: "#94a3b8", items: items.filter((it) => (!it.category || it.category === "standard") && pick(it)) },
+    ];
+    cats.forEach((cat) => {
+      if (!cat.items.length) return;
+      const sec = el("section", "cx-shelf");
+      sec.style.setProperty("--c", cat.color);
+      const head = el("div", "cx-plaque");
+      head.innerHTML = `<span class="cx-plaque-plate"><b>${esc(cat.title)}</b><small>${esc(cat.sub)}</small></span><span class="cx-plaque-count">${cat.items.length}</span>`;
+      sec.append(head);
+      const n = perRow();
+      for (let i = 0; i < cat.items.length; i += n) {
+        const row = el("div", "cx-shelf-row");
+        row.style.setProperty("--n", n);
+        cat.items.slice(i, i + n).forEach((item) => {
+          const rar = cxRarityOf(item);
+          const it = el("button", "cx-case rar-" + rar);
+          it.type = "button";
+          it.title = item.name || "";
+          it.style.setProperty("--rc", RARITY_STYLE[rar].color);
+          const glass = el("span", "cx-case-glass" + (rar === "legendary" || item.category === "supreme_retro" ? " card-holo-effect" : ""));
+          const img = el("img"); img.src = item.cover; img.alt = item.name || ""; img.loading = "lazy";
+          glass.append(img, el("span", "cx-case-shine"));
+          it.append(glass);
+          if (rar !== "common") it.append(el("span", "cx-case-jewel", RARITY_STYLE[rar].label));
+          it.append(el("span", "cx-case-tag", item.name || ""));
+          it.addEventListener("click", () => {
+            playThemeSound(theme);
+            openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0, 10) });
+          });
+          row.append(it);
+        });
+        sec.append(row, el("div", "cx-plank"));
+      }
+      shelves.append(sec);
+    });
+  }
+  drawShelves();
+}
+
+// ---------------------------------------------------------------------
+// 20.11 MUSÉE — exposition : frise chronologique, ailes par constructeur,
+//       consoles sur socle sous projecteur, cartels façon musée
+// ---------------------------------------------------------------------
+const cxInv = (c) => `INV. ${c.year}-${String(c.code || c.name).replace(/[^A-Za-z0-9]+/g, "").slice(0, 6).toUpperCase()}`;
+const cxConsoleColor = (c) => c.color || c.bg || "var(--acc)";
+
+function cxConsolePhoto(c, cls) {
+  const wrap = el("div", cls);
+  const badge = el("span", "cx-ped-badge", c.code || c.name);
+  if (c.image) {
+    const img = el("img"); img.src = c.image; img.alt = c.name; img.loading = "lazy";
+    img.onerror = () => img.replaceWith(badge);
+    wrap.append(img);
+  } else wrap.append(badge);
+  return wrap;
+}
+
+function cxRenderMuseum(box) {
+  const all = [...WORLD_CONSOLES].sort((a, b) => (+a.year || 0) - (+b.year || 0));
+  const y0 = all[0] ? all[0].year : "", y1 = all.length ? all[all.length - 1].year : "";
+
+  const hero = el("section", "cx-mus-hero");
+  hero.innerHTML = `<small>Exposition permanente</small><h2>Musée des consoles</h2><p>${all.length} machines · ${esc(y0)} → ${esc(y1)}</p><span class="cx-mus-hint">Touche une console pour lire son cartel</span>`;
+  box.append(hero);
+
+  // — Frise chronologique —
+  const tl = el("div", "cx-timeline");
+  const track = el("div", "cx-tl-track");
+  let lastDecade = "";
+  all.forEach((c) => {
+    const dec = String(c.year).slice(0, 3) + "0";
+    if (dec !== lastDecade) { track.append(el("span", "cx-tl-decade", "ANNÉES " + dec.slice(2) )); lastDecade = dec; }
+    const b = el("button", "cx-tl-item");
+    b.type = "button";
+    b.style.setProperty("--c", cxConsoleColor(c));
+    b.innerHTML = `<span class="cx-tl-year">${esc(c.year)}</span><i></i><span class="cx-tl-name">${esc(c.code || c.name)}</span>`;
+    b.addEventListener("click", () => openConsoleDetail(c));
+    track.append(b);
+  });
+  tl.append(track);
+  box.append(tl);
+
+  // — Ailes par constructeur —
+  const groups = {};
+  WORLD_CONSOLES.forEach((c) => (groups[c.brand] = groups[c.brand] || []).push(c));
+  Object.entries(groups).forEach(([brand, list]) => {
+    const wing = el("section", "cx-wing");
+    const h = el("div", "cx-wing-head");
+    h.innerHTML = `<small>Aile</small><b>${esc(brand)}</b><span></span><em>${list.length} pièce${list.length > 1 ? "s" : ""}</em>`;
+    wing.append(h);
+    const grid = el("div", "cx-ped-grid");
+    [...list].sort((a, b) => (+a.year || 0) - (+b.year || 0)).forEach((c) => {
+      const card = el("button", "cx-ped");
+      card.type = "button";
+      card.style.setProperty("--c", cxConsoleColor(c));
+      const stage = el("div", "cx-ped-stage");
+      stage.append(cxConsolePhoto(c, "cx-ped-photo"), el("span", "cx-ped-base"));
+      const cartel = el("div", "cx-cartel");
+      cartel.innerHTML = `<b>${esc(c.name)}</b><span>${esc(c.brand)} · ${esc(c.year)}</span><small>${esc(cxInv(c))}</small>`;
+      card.append(stage, cartel);
+      card.addEventListener("click", () => openConsoleDetail(c));
+      grid.append(card);
+    });
+    wing.append(grid);
+    box.append(wing);
+  });
+}
+
+// ▸ openConsoleDetail (remplace la version de la section 13) : grand cartel d'exposition
+openConsoleDetail = function (c) {
+  playThemeSound(theme);
+  const p = $("#panel");
+  p.className = "panel cx-exhibit-panel";
+  p.replaceChildren();
+  const ex = el("article", "cx-exhibit");
+  ex.style.setProperty("--c", cxConsoleColor(c));
+  const stage = el("div", "cx-ex-stage");
+  stage.append(cxConsolePhoto(c, "cx-ex-photo"), el("span", "cx-ex-base"), el("span", "cx-ex-inv", cxInv(c)));
+  const head = el("header", "cx-ex-head");
+  head.innerHTML = `<small>${esc(c.brand)} · ${esc(c.year)}</small><h2>${esc(c.name)}</h2>`;
+  const facts = el("dl", "cx-ex-facts");
+  [["Processeur", c.cpu], ["Graphismes", c.gpu], ["Ventes", c.sales]].forEach(([k, v]) => {
+    if (!v) return;
+    facts.insertAdjacentHTML("beforeend", `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`);
+  });
+  ex.append(stage, head, facts);
+  if (c.impact) ex.insertAdjacentHTML("beforeend", `<blockquote class="cx-ex-quote">${esc(c.impact)}</blockquote>`);
+  if (c.desc) ex.insertAdjacentHTML("beforeend", `<section class="cx-ex-story"><h3>Histoire</h3><p>${esc(c.desc)}</p></section>`);
+  const back = el("button", "cta-sec", "Retour au musée");
+  back.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+  ex.append(back);
+  p.append(ex);
+  $("#sheet").classList.add("on");
+};
 
 // ---------------------------------------------------------------------
 // 20.7 PROFIL › APPARENCE — aperçus des fonds + choix des boutons
