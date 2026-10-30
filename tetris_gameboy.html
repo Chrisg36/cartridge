@@ -46,10 +46,10 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    padding: env(safe-area-inset-top, 8px) 6px env(safe-area-inset-bottom, 8px) 6px;
+    padding: env(safe-area-inset-top, 6px) 6px env(safe-area-inset-bottom, 6px) 6px;
   }
 
-  /* Barre supérieure propre : Pause à gauche, Fermer à droite (sans superposition) */
+  /* Barre supérieure propre : Pause à gauche, Fermer à droite */
   .top-bar-actions {
     width: 100%;
     max-width: 480px;
@@ -692,6 +692,7 @@ function dropPiece() {
 let dropCounter = 0;
 let dropInterval = 800;
 let lastTime = 0;
+let isSoftDropping = false;
 
 function gameLoop(time = 0) {
   if (!gameStarted || gameOver || isPaused) return;
@@ -699,7 +700,9 @@ function gameLoop(time = 0) {
   lastTime = time;
   dropCounter += deltaTime;
 
-  let speed = Math.max(100, dropInterval - (level - 1) * 70);
+  // Si on maintient la flèche BAS, la vitesse est multipliée (chute rapide / soft drop)
+  let speed = isSoftDropping ? 50 : Math.max(100, dropInterval - (level - 1) * 70);
+
   if (dropCounter > speed) {
     dropPiece();
   }
@@ -752,11 +755,12 @@ document.getElementById("resumeBtn").onclick = () => {
   requestAnimationFrame(gameLoop);
 };
 
+// Contrôles Clavier (avec gestion de la descente rapide maintenue)
 window.addEventListener("keydown", e => {
   if (!gameStarted || gameOver || isPaused) return;
   if (e.code === "ArrowLeft") movePiece(-1);
   else if (e.code === "ArrowRight") movePiece(1);
-  else if (e.code === "ArrowDown") dropPiece();
+  else if (e.code === "ArrowDown") isSoftDropping = true;
   else if (e.code === "ArrowUp") rotatePiece();
   else if (e.code === "Space") {
     while (!collide(currentPiece, 0, 1)) { currentPiece.y++; }
@@ -766,11 +770,23 @@ window.addEventListener("keydown", e => {
   }
 });
 
+window.addEventListener("keyup", e => {
+  if (e.code === "ArrowDown") isSoftDropping = false;
+});
+
+// Contrôles Tactiles robustes (pointerdown / pointerup)
 document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(-1); });
 document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(1); });
-document.getElementById("btnDown").addEventListener("pointerdown", (e) => { e.preventDefault(); dropPiece(); });
 document.getElementById("btnUp").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
 document.getElementById("btnRotate").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
+
+// Flèche BAS : maintient la chute rapide
+const btnDown = document.getElementById("btnDown");
+btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); isSoftDropping = true; dropPiece(); });
+btnDown.addEventListener("pointerup", (e) => { e.preventDefault(); isSoftDropping = false; });
+btnDown.addEventListener("pointerleave", (e) => { e.preventDefault(); isSoftDropping = false; });
+
+// Bouton DROP : Fait chuter instantanément la pièce tout en bas
 document.getElementById("btnDrop").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   if (gameStarted && !isPaused && !gameOver) {
