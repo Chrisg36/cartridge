@@ -234,7 +234,7 @@ export default {
     // ==========================================
     // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX (?translate=ID&lang=LANG)
     // ==========================================
-    const translateId = url.searchParams.get("translate");
+const translateId = url.searchParams.get("translate");
     const targetLang = url.searchParams.get("lang") || "fr";
 
     if (translateId) {
@@ -247,26 +247,16 @@ export default {
         const originalSummary = raw[0].summary;
         let translatedSummary = originalSummary;
 
-        if (env.AI && targetLang === "fr") {
+        if (targetLang === "fr") {
           try {
-            const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
-              messages: [
-                { role: "system", content: "Tu es un traducteur expert de jeux vidéo. Traduis le texte en français de manière naturelle. Réponds uniquement avec le texte traduit, sans aucune phrase d'introduction ni guillemets." },
-                { role: "user", content: originalSummary }
-              ]
-            });
-            
-            if (aiResponse) {
-              if (typeof aiResponse === "string") {
-                translatedSummary = aiResponse.trim();
-              } else if (aiResponse.response) {
-                translatedSummary = aiResponse.response.trim();
-              } else if (aiResponse.result) {
-                translatedSummary = aiResponse.result.trim();
-              }
+            // Utilisation d'une API de traduction web gratuite et ultra-rapide
+            const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalSummary)}&langpair=en|fr`);
+            const transData = await transRes.json();
+            if (transData && transData.responseData && transData.responseData.translatedText) {
+              translatedSummary = transData.responseData.translatedText;
             }
-          } catch (aiErr) {
-            console.warn("Erreur AI :", aiErr);
+          } catch (trApiErr) {
+            console.warn("Erreur API Traduction :", trApiErr);
           }
         }
 
