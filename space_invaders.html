@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Space Invaders - Édition Rétro Arcade</title>
+<title>Space Invaders - Pro Arcade Édition</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -23,7 +23,28 @@
     --acc: #8bac0f;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+  }
+  
+  html, body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    touch-action: manipulation;
+  }
+
+  button, canvas, select {
+    touch-action: none;
+  }
   
   body {
     margin: 0;
@@ -53,24 +74,6 @@
     z-index: 999;
     pointer-events: none;
   }
-
-  /* Bouton Fermer bien placé en haut à droite */
-  .close-game-btn {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 10px) + 12px);
-    right: 16px;
-    z-index: 1000000;
-    background: var(--card);
-    color: var(--txt);
-    border: 2px solid var(--txt);
-    padding: 6px 12px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    cursor: pointer;
-    border-radius: 6px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
-  }
-  .close-game-btn:active { background: var(--txt); color: var(--bg); }
 
   #game-container {
     position: relative;
@@ -210,8 +213,6 @@
 </head>
 <body>
 
-<button class="close-game-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
-
 <div id="game-container">
   <!-- HUD -->
   <div id="hud">
@@ -270,60 +271,63 @@ document.getElementById("lbl-sound").textContent = soundOn ? "ON" : "OFF";
 
 function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function playSound(type) {
   if (!soundOn) return;
-  initAudio();
-  if (!audioCtx) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
 
-  const now = audioCtx.currentTime;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-  if (type === 'shoot') {
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(800, now);
-    osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-    osc.start(now); osc.stop(now + 0.1);
-  } else if (type === 'hit') {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(180, now);
-    osc.frequency.linearRampToValueAtTime(40, now + 0.2);
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-    osc.start(now); osc.stop(now + 0.2);
-  } else if (type === 'powerup') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-    osc.start(now); osc.stop(now + 0.3);
-  } else if (type === 'extralife') {
-    const notes = [440, 554.37, 659.25, 880];
-    notes.forEach((freq, idx) => {
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination);
-      o.type = 'triangle';
-      o.frequency.setValueAtTime(freq, now + idx * 0.1);
-      g.gain.setValueAtTime(0.12, now + idx * 0.1);
-      g.gain.linearRampToValueAtTime(0.01, now + idx * 0.1 + 0.15);
-      o.start(now + idx * 0.1); o.stop(now + idx * 0.1 + 0.15);
-    });
-  } else if (type === 'gameover') {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(300, now);
-    osc.frequency.linearRampToValueAtTime(60, now + 1.2);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.linearRampToValueAtTime(0.01, now + 1.2);
-    osc.start(now); osc.stop(now + 1.2);
-  }
+    if (type === 'shoot') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(900, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'hit') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.linearRampToValueAtTime(40, now + 0.15);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'powerup') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (type === 'extralife') {
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((freq, idx) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(freq, now + idx * 0.08);
+        g.gain.setValueAtTime(0.1, now + idx * 0.08);
+        g.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.12);
+        o.start(now + idx * 0.08); o.stop(now + idx * 0.08 + 0.12);
+      });
+    } else if (type === 'gameover') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.linearRampToValueAtTime(60, now + 1.0);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 1.0);
+      osc.start(now); osc.stop(now + 1.0);
+    }
+  } catch (e) {}
 }
 
 // --- SPRITES PIXEL ART ---
@@ -391,23 +395,25 @@ let gbFilter = localStorage.getItem("si_gb") === "true";
 if (gbFilter) document.body.classList.add("gameboy-theme");
 document.getElementById("lbl-gb").textContent = gbFilter ? "ON" : "OFF";
 
-let player = { x: 215, y: 530, w: 27, h: 18, speed: 5, invulnerableTimer: 0 };
+let player = { x: 215, y: 530, w: 27, h: 18, speed: 6, invulnerableTimer: 0 };
 let bullets = [];
 let enemyBullets = [];
 let enemies = [];
 let powerups = [];
 
 let keys = { ArrowLeft: false, ArrowRight: false, Space: false };
-let touchLeft = false, touchRight = false;
+let touchLeft = false, touchRight = false, touchFire = false;
 let powerupType = null;
 let powerupTimer = 0;
+let lastShotTime = 0;
+const SHOT_COOLDOWN = 140; // Cadence de tir ultra-fluide et réactive (ms)
 
 // Inputs clavier
 window.addEventListener("keydown", e => {
   if (e.code === "ArrowLeft" || e.code === "KeyA") keys.ArrowLeft = true;
   if (e.code === "ArrowRight" || e.code === "KeyD") keys.ArrowRight = true;
   if (e.code === "Space") {
-    if (!keys.Space) fireBullet();
+    fireBullet();
     keys.Space = true;
     e.preventDefault();
   }
@@ -418,29 +424,43 @@ window.addEventListener("keyup", e => {
   if (e.code === "Space") keys.Space = false;
 });
 
-// Inputs tactiles robustes (pointerdown)
-document.getElementById("btn-left").addEventListener("pointerdown", (e) => { e.preventDefault(); touchLeft = true; });
-document.getElementById("btn-left").addEventListener("pointerup", (e) => { e.preventDefault(); touchLeft = false; });
-document.getElementById("btn-left").addEventListener("pointerleave", (e) => { e.preventDefault(); touchLeft = false; });
+// Inputs tactiles robustes et fluides (pointerdown / pointerup)
+const btnLeft = document.getElementById("btn-left");
+const btnRight = document.getElementById("btn-right");
+const btnFire = document.getElementById("btn-fire");
 
-document.getElementById("btn-right").addEventListener("pointerdown", (e) => { e.preventDefault(); touchRight = true; });
-document.getElementById("btn-right").addEventListener("pointerup", (e) => { e.preventDefault(); touchRight = false; });
-document.getElementById("btn-right").addEventListener("pointerleave", (e) => { e.preventDefault(); touchRight = false; });
+btnLeft.addEventListener("pointerdown", (e) => { e.preventDefault(); touchLeft = true; });
+btnLeft.addEventListener("pointerup", (e) => { e.preventDefault(); touchLeft = false; });
+btnLeft.addEventListener("pointerleave", (e) => { e.preventDefault(); touchLeft = false; });
 
-document.getElementById("btn-fire").addEventListener("pointerdown", (e) => {
-  e.preventDefault();
-  fireBullet();
+btnRight.addEventListener("pointerdown", (e) => { e.preventDefault(); touchRight = true; });
+btnRight.addEventListener("pointerup", (e) => { e.preventDefault(); touchRight = false; });
+btnRight.addEventListener("pointerleave", (e) => { e.preventDefault(); touchRight = false; });
+
+btnFire.addEventListener("pointerdown", (e) => { 
+  e.preventDefault(); 
+  touchFire = true; 
+  fireBullet(); 
 });
+btnFire.addEventListener("pointerup", (e) => { e.preventDefault(); touchFire = false; });
+btnFire.addEventListener("pointerleave", (e) => { e.preventDefault(); touchFire = false; });
 
 function fireBullet() {
   if (gameState !== "PLAYING") return;
-  if (powerupType === 'DOUBLE') {
-    bullets.push({ x: player.x + 2, y: player.y, w: 3, h: 10, vy: -9, fromPlayer: true });
-    bullets.push({ x: player.x + player.w - 5, y: player.y, w: 3, h: 10, vy: -9, fromPlayer: true });
-  } else {
-    bullets.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 10, vy: -8, fromPlayer: true });
+  const now = performance.now();
+  if (now - lastShotTime < SHOT_COOLDOWN) return; // Anti-spam excessif mais ultra-réactif
+  lastShotTime = now;
+
+  // Augmentation du nombre max de tirs simultanés pour un feu très fluide
+  if (bullets.length < 6) {
+    if (powerupType === 'DOUBLE') {
+      bullets.push({ x: player.x + 2, y: player.y, w: 3, h: 12, vy: -11, fromPlayer: true });
+      bullets.push({ x: player.x + player.w - 5, y: player.y, w: 3, h: 12, vy: -11, fromPlayer: true });
+    } else {
+      bullets.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 12, vy: -10, fromPlayer: true });
+    }
+    playSound('shoot');
   }
-  playSound('shoot');
 }
 
 function startWave(wNum) {
@@ -500,6 +520,11 @@ function update() {
     if (powerupTimer <= 0) powerupType = null;
   }
 
+  // Tir en continu si le bouton tactile TIR est maintenu appuyé
+  if (touchFire) {
+    fireBullet();
+  }
+
   if (score >= extraLifeThreshold) {
     lives++;
     extraLifeThreshold += 1000;
@@ -511,6 +536,7 @@ function update() {
   if (player.x < 10) player.x = 10;
   if (player.x > canvas.width - player.w - 10) player.x = canvas.width - player.w - 10;
 
+  // Mise à jour de la physique des tirs (vitesse fluide)
   bullets.forEach(b => b.y += b.vy);
   bullets = bullets.filter(b => b.y > -20 && b.y < canvas.height + 20);
 
@@ -539,7 +565,7 @@ function update() {
   let fireChance = difficulty === "FACILE" ? 0.01 : (difficulty === "DIFFICILE" ? 0.035 : 0.02);
   if (aliveEnemies.length > 0 && Math.random() < fireChance * (1 + wave * 0.05)) {
     let shooter = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
-    enemyBullets.push({ x: shooter.x + shooter.w / 2 - 2, y: shooter.y + shooter.h, w: 4, h: 10, vy: 4 + wave * 0.2 });
+    enemyBullets.push({ x: shooter.x + shooter.w / 2 - 2, y: shooter.y + shooter.h, w: 4, h: 10, vy: 4.5 + wave * 0.2 });
   }
 
   enemyBullets.forEach((eb, ebi) => {
