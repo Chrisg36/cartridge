@@ -247,14 +247,14 @@ const translateId = url.searchParams.get("translate");
         const originalSummary = raw[0].summary;
         let translatedSummary = originalSummary;
 
-        // Utilisation de l'IA native de Cloudflare
-        if (targetLang === "fr" && env.AI) {
+        // Traduction dynamique vers la langue demandée (targetLang)
+        if (targetLang !== "en" && env.AI) {
           try {
             const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
               messages: [
                 {
                   role: "system",
-                  content: "Tu es un traducteur professionnel de jeux vidéo. Traduis le résumé suivant en français de manière fluide et naturelle. Ne renvoie QUE le texte traduit, sans aucun commentaire."
+                  content: `Tu es un traducteur professionnel de jeux vidéo. Traduis le résumé suivant en "${targetLang}" de manière fluide et naturelle. Ne renvoie QUE le texte traduit, sans aucun commentaire.`
                 },
                 {
                   role: "user",
