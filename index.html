@@ -619,6 +619,20 @@ main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding
   .score-mid { background: #F59E0B; color: #451A03; }
   .score-low { background: #EF4444; color: #450A0A; }
 
+  /* Fiche jeu : section « Notes & tests » */
+  .rv-box { margin-top: 16px; }
+  .rv-scores { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .rv-score { flex: 1 1 90px; min-width: 90px; background: var(--cov); border-radius: var(--radius); padding: 10px 8px; text-align: center; text-decoration: none; color: var(--txt); }
+  .rv-score b { display: block; font-size: 24px; font-weight: 900; line-height: 1.1; }
+  .rv-score small { display: block; font-size: 11px; color: var(--mut); margin-top: 3px; }
+  .rv-score.score-high b { color: #10B981; } .rv-score.score-mid b { color: #F59E0B; } .rv-score.score-low b { color: #EF4444; }
+  .rv-score.score-high, .rv-score.score-mid, .rv-score.score-low { background: var(--cov); }
+  .rv-card { display: block; background: var(--cov); border-radius: var(--radius); padding: 10px 12px; margin-top: 8px; text-decoration: none; color: var(--txt); }
+  .rv-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; }
+  .rv-card p { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: var(--mut); }
+  .rv-card .rv-read { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--acc); }
+  .rv-note { font-size: 11px; color: var(--mut); margin-top: 8px; }
+
   .hype-pro-badge {
     display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; border-radius: 10px;
     background: color-mix(in srgb, var(--acc) 20%, var(--cov)); color: var(--acc); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
@@ -3873,6 +3887,11 @@ async function openSheet(it) {
   hltbBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(hltbBtn);
 
+  // Notes & tests : chargés en parallèle, sans bloquer le reste de la fiche
+  const reviewsBox = el("div", "rv-box");
+  p.append(reviewsBox);
+  loadReviews(it, reviewsBox);
+
   if (it.g.summary) {
     const label = el("p", "m", t('summaryLabel')); 
     label.style.marginTop = "16px";
@@ -3901,6 +3920,87 @@ async function openSheet(it) {
     $("#sheet").classList.add("on");
   }
   p.append(close);
+}
+
+// ▸ loadReviews : section « Notes & tests » de la fiche (route ?reviews= du Worker)
+const reviewsMemo = {}; // évite de redemander les notes si on rouvre la même fiche
+async function loadReviews(it, box) {
+  const id = it.g.id;
+  box.replaceChildren(el("p", "m", "⭐ Notes & tests"), el("p", "rv-note", "⏳ Recherche des notes et des tests…"));
+  try {
+    let data = reviewsMemo[id];
+    if (!data) {
+      const res = await fetch(`${API}/?reviews=${id}`);
+      data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || res.status);
+      reviewsMemo[id] = data;
+    }
+    if (box.isConnected) box.replaceChildren(...renderReviews(data, it));
+  } catch (e) {
+    if (box.isConnected) box.replaceChildren(el("p", "m", "⭐ Notes & tests"), el("p", "rv-note", "Notes indisponibles pour le moment."));
+  }
+}
+
+// ▸ scoreClass : couleur d'une note sur 100 (mêmes couleurs que le badge META)
+const scoreClass = (s) => (s < 50 ? "score-low" : s < 75 ? "score-mid" : "score-high");
+
+// ▸ scoreTile : une case de note (gros chiffre + légende), cliquable si un lien existe
+function scoreTile(value, label, sub, url, colorScore) {
+  const tile = el(url ? "a" : "div", "rv-score" + (colorScore != null ? " " + scoreClass(colorScore) : ""));
+  if (url) { tile.href = url; tile.target = "_blank"; tile.rel = "noopener noreferrer"; }
+  tile.append(el("b", "", value), el("small", "", label));
+  if (sub) tile.append(el("small", "", sub));
+  return tile;
+}
+
+// ▸ renderReviews : construit la section à partir de la réponse du Worker
+function renderReviews(data, it) {
+  const out = [el("p", "m", "⭐ Notes & tests")];
+  const tiles = el("div", "rv-scores");
+  const oc = data.opencritic;
+
+  // Note presse : OpenCritic en priorité, sinon la note META d'IGDB
+  if (oc && oc.score != null) {
+    tiles.append(scoreTile(String(oc.score), "Presse", `${oc.count} tests`, oc.url, oc.score));
+  } else if (data.igdb && data.igdb.critics != null) {
+    tiles.append(scoreTile(String(data.igdb.critics), "META presse", data.igdb.criticsCount ? `${data.igdb.criticsCount} critiques` : "", null, data.igdb.critics));
+  }
+  if (data.steam) {
+    tiles.append(scoreTile(`${data.steam.percent}%`, "Joueurs Steam", data.steam.label, data.steam.url, data.steam.percent));
+  } else if (data.igdb && data.igdb.players != null && data.igdb.playersCount >= 5) {
+    tiles.append(scoreTile(String(data.igdb.players), "Joueurs", `${data.igdb.playersCount} votes`, null, data.igdb.players));
+  }
+
+  if (!tiles.children.length) {
+    const upcoming = it.date && it.date > new Date().toISOString().slice(0, 10);
+    out.push(el("p", "rv-note", upcoming
+      ? "Pas encore testé : les notes apparaîtront ici dès la sortie."
+      : "Pas encore de note pour ce jeu."));
+    return out;
+  }
+  out.push(tiles);
+
+  // Cartes des tests (OpenCritic) : les 4 premiers, puis bouton « Voir tous les tests »
+  const reviews = (oc && oc.reviews) || [];
+  reviews.slice(0, 4).forEach((r) => {
+    const card = el("a", "rv-card");
+    card.href = r.url; card.target = "_blank"; card.rel = "noopener noreferrer";
+    card.addEventListener("click", () => playThemeSound(theme));
+    const head = el("div", "rv-card-head");
+    head.append(el("span", "", r.outlet + (r.lang && r.lang !== "fr" ? ` (${r.lang.toUpperCase()})` : "")));
+    if (r.score != null) head.append(el("span", "score-badge " + scoreClass(r.score), `${r.score}/100`));
+    card.append(head);
+    if (r.snippet) card.append(el("p", "", "« " + r.snippet + " »"));
+    card.append(el("span", "rv-read", "Lire le test ↗"));
+    out.push(card);
+  });
+  if (oc && oc.url && (reviews.length > 4 || oc.count > reviews.length)) {
+    const all = el("a", "cta-sec", `📰 Voir tous les tests (${oc.count})`);
+    all.href = oc.url; all.target = "_blank"; all.rel = "noopener noreferrer";
+    out.push(all);
+  }
+  out.push(el("p", "rv-note", `Sources : ${[oc && "OpenCritic", data.steam && "Steam", "IGDB"].filter(Boolean).join(", ")} · mis à jour le ${fmtFull(data.updated)}`));
+  return out;
 }
 
 // ▸ closeSheet : ferme la fiche du jeu
