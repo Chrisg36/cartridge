@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Space Invaders - Immersif</title>
+<title>Space Invaders - Pro Arcade Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-app: #070a0f;
+    --bg-app: #05070a;
     --acc: #FF7A45;
   }
 
@@ -28,7 +28,7 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+    padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 10px) 10px;
   }
 
   .game-header {
@@ -37,38 +37,41 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 16px;
-    background: rgba(21, 27, 38, 0.85);
+    background: rgba(21, 27, 38, 0.9);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
     color: var(--acc);
+    flex-shrink: 0;
   }
 
   .screen-container {
     flex: 1;
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 6px;
     position: relative;
+    min-height: 0;
   }
 
   .screen-lens {
     background-color: #000;
-    padding: 12px;
-    border-radius: 16px;
-    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px rgba(255, 122, 69, 0.15);
+    padding: 14px;
+    border-radius: 18px;
+    box-shadow: inset 0 6px 25px rgba(0,0,0,0.95), 0 0 35px rgba(255, 122, 69, 0.2);
     border: 3px solid #1a1a1a;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 400px;
-    aspect-ratio: 3 / 4;
+    max-width: 440px;
+    height: 100%;
+    max-height: 520px;
     position: relative;
   }
 
@@ -77,11 +80,12 @@
     display: flex;
     justify-content: space-between;
     font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
+    font-size: 9px;
     color: #fff;
     margin-bottom: 8px;
     font-weight: bold;
     padding: 0 4px;
+    flex-shrink: 0;
   }
 
   canvas {
@@ -91,22 +95,24 @@
     display: block;
     background-color: #000;
     border: 2px solid var(--acc);
+    min-height: 0;
   }
 
-  /* Commandes tactiles en bas d'écran (gauche, droite, tir) */
+  /* Commandes tactiles fluides et agrandies pour mobile */
   .controls-container {
     width: 100%;
-    max-width: 420px;
-    padding: 10px 10px 25px;
+    max-width: 440px;
+    padding: 10px 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
   }
 
   .move-group {
     display: flex;
-    gap: 10px;
+    gap: 12px;
   }
 
   .arcade-btn {
@@ -115,15 +121,16 @@
     border-radius: 14px;
     color: #fff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 900;
-    width: 75px;
-    height: 60px;
+    width: 85px;
+    height: 65px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: manipulation;
   }
 
   .arcade-btn:active {
@@ -138,14 +145,15 @@
     border-radius: 14px;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    width: 110px;
-    height: 60px;
+    font-size: 11px;
+    width: 130px;
+    height: 65px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: manipulation;
   }
 
   .shoot-btn:active {
@@ -156,7 +164,7 @@
   /* Écrans de superposition (Menu & Game Over) */
   .screen-overlay {
     position: absolute;
-    inset: 12px;
+    inset: 14px;
     background-color: #000;
     display: flex;
     flex-direction: column;
@@ -165,35 +173,62 @@
     z-index: 10;
     text-align: center;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 2px solid var(--acc);
   }
 
-  .screen-overlay.hidden {
-    display: none;
-  }
+  .screen-overlay.hidden { display: none; }
 
   .screen-overlay h1 {
     font-family: 'Press Start 2P', monospace;
     font-size: 18px;
     color: var(--acc);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     text-shadow: 2px 2px #551100;
   }
 
   .screen-overlay p {
     font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
+    font-size: 7.5px;
     color: #a3a9b8;
-    margin-bottom: 20px;
-    line-height: 1.8;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .menu-group {
+    width: 100%;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  .menu-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #8a99ad;
+  }
+
+  .settings-select {
+    width: 100%;
+    background: #11151c;
+    color: #fff;
+    border: 1.5px solid var(--acc);
+    padding: 8px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7.5px;
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
   }
 
   .menu-btn {
     background-color: var(--acc);
     color: #000;
     border: none;
-    padding: 14px 26px;
+    padding: 12px 24px;
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
     font-weight: 900;
@@ -202,14 +237,10 @@
     box-shadow: 0 4px #803010;
   }
 
-  .menu-btn:active {
-    transform: translateY(2px);
-  }
+  .menu-btn:active { transform: translateY(2px); }
 
   @media (pointer: fine) {
-    .controls-container {
-      display: none; /* Masqué sur PC pour profiter du clavier */
-    }
+    .controls-container { display: none; }
   }
 </style>
 </head>
@@ -227,13 +258,41 @@
       <span id="livesText">VIES:♥♥♥</span>
     </div>
 
-    <div style="position: relative; width: 100%; flex: 1; display: flex; flex-direction: column;">
+    <div style="position: relative; width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0;">
       <canvas id="invadersCanvas" width="240" height="320"></canvas>
 
-      <!-- Menu Principal -->
+      <!-- Menu Principal Options Pro -->
       <div id="menuScreen" class="screen-overlay">
         <h1>SPACE INVADERS</h1>
-        <p>EDITION RETRO<br><br>Détruisez la flotte extraterrestre !</p>
+        <p>EDITION PRO ARCADE</p>
+        
+        <div class="menu-group">
+          <label>FILTRE COULEUR :</label>
+          <select id="colorFilterSelect" class="settings-select">
+            <option value="monochrome">Monochrome Blanc (Base)</option>
+            <option value="green">Vert Phosphore (Game Boy)</option>
+            <option value="cyan">Cyber Cyan</option>
+            <option value="color">Arcade Multicolore</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>DIFFICULTÉ :</label>
+          <select id="difficultySelect" class="settings-select">
+            <option value="easy">Facile (Vitesse lente)</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Expert (Rapide & Intense)</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>AUDIO FX :</label>
+          <select id="audioSelect" class="settings-select">
+            <option value="on" selected>Activé</option>
+            <option value="off">Coupé</option>
+          </select>
+        </div>
+
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -247,7 +306,6 @@
   </div>
 </div>
 
-<!-- Contrôles tactiles plein écran pour mobile (iOS / Android) -->
 <div class="controls-container">
   <div class="move-group">
     <button class="arcade-btn" id="btnLeft">◀</button>
@@ -257,13 +315,24 @@
 </div>
 
 <script>
-// --- WEB AUDIO API ---
+// --- AUDIO SYNTHÉTISEUR 8-BITS ---
 let audioCtx = null;
 function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
+let soundActive = localStorage.getItem("si_audio") !== "off";
+const audioSelect = document.getElementById("audioSelect");
+if (audioSelect) {
+  audioSelect.value = soundActive ? "on" : "off";
+  audioSelect.onchange = (e) => {
+    soundActive = e.target.value === "on";
+    localStorage.setItem("si_audio", e.target.value);
+  };
+}
+
 function playSound(type) {
+  if (!soundActive) return;
   try {
     initAudio();
     if (!audioCtx) return;
@@ -304,6 +373,27 @@ let score = 0;
 let lives = 3;
 let gameStarted = false;
 let gameOver = false;
+
+// Options & Filtres
+let currentFilter = localStorage.getItem("si_filter") || "monochrome";
+const filterSelect = document.getElementById("colorFilterSelect");
+if (filterSelect) {
+  filterSelect.value = currentFilter;
+  filterSelect.onchange = (e) => {
+    currentFilter = e.target.value;
+    localStorage.setItem("si_filter", currentFilter);
+  };
+}
+
+let currentDiff = localStorage.getItem("si_diff") || "normal";
+const diffSelect = document.getElementById("difficultySelect");
+if (diffSelect) {
+  diffSelect.value = currentDiff;
+  diffSelect.onchange = (e) => {
+    currentDiff = e.target.value;
+    localStorage.setItem("si_diff", currentDiff);
+  };
+}
 
 let player = { x: 105, y: 285, width: 24, height: 12, speed: 4 };
 let bullets = [];
@@ -351,33 +441,32 @@ function shootBullet() {
   }
 }
 
+// Contrôles tactiles robustes (pointerdown)
 let touchLeft = false, touchRight = false;
-document.getElementById("btnLeft").onmousedown = () => touchLeft = true;
-document.getElementById("btnLeft").onmouseup = () => touchLeft = false;
-document.getElementById("btnLeft").onttouchstart = (e) => { touchLeft = true; e.preventDefault(); };
-document.getElementById("btnLeft").ontouchend = (e) => { touchLeft = false; e.preventDefault(); };
+document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); touchLeft = true; });
+document.getElementById("btnLeft").addEventListener("pointerup", (e) => { e.preventDefault(); touchLeft = false; });
+document.getElementById("btnLeft").addEventListener("pointerleave", (e) => { e.preventDefault(); touchLeft = false; });
 
-document.getElementById("btnRight").onmousedown = () => touchRight = true;
-document.getElementById("btnRight").onmouseup = () => touchRight = false;
-document.getElementById("btnRight").onttouchstart = (e) => { touchRight = true; e.preventDefault(); };
-document.getElementById("btnRight").ontouchend = (e) => { touchRight = false; e.preventDefault(); };
+document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); touchRight = true; });
+document.getElementById("btnRight").addEventListener("pointerup", (e) => { e.preventDefault(); touchRight = false; });
+document.getElementById("btnRight").addEventListener("pointerleave", (e) => { e.preventDefault(); touchRight = false; });
 
-document.getElementById("btnShoot").onclick = () => { if (gameStarted && !gameOver) shootBullet(); };
+document.getElementById("btnShoot").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  if (gameStarted && !gameOver) shootBullet();
+});
 
 function gameLoop() {
   if (!gameStarted || gameOver) return;
 
-  // Mouvements joueur
   if ((keys.left || touchLeft) && player.x > 5) player.x -= player.speed;
   if ((keys.right || touchRight) && player.x < canvas.width - player.width - 5) player.x += player.speed;
 
-  // Mouvements tirs joueur
   bullets.forEach((b, index) => {
     b.y -= b.speed;
     if (b.y < 0) bullets.splice(index, 1);
   });
 
-  // Mouvements aliens & rebonds
   let hitEdge = false;
   aliens.forEach(a => {
     if (!a.alive) return;
@@ -390,33 +479,29 @@ function gameLoop() {
     aliens.forEach(a => { a.y += 8; });
   }
 
-  // Tirs ennemis aléatoires
-  if (Math.random() < 0.03) {
+  // Fréquence de tir des aliens selon la difficulté
+  let fireRate = currentDiff === "easy" ? 0.015 : (currentDiff === "hard" ? 0.06 : 0.03);
+  if (Math.random() < fireRate) {
     const activeAliens = aliens.filter(a => a.alive);
     if (activeAliens.length > 0) {
       const shooter = activeAliens[Math.floor(Math.random() * activeAliens.length)];
-      alienBullets.push({ x: shooter.x + shooter.width / 2 - 2, y: shooter.y + shooter.height, width: 4, height: 8, speed: 3 });
+      alienBullets.push({ x: shooter.x + shooter.width / 2 - 2, y: shooter.y + shooter.height, width: 4, height: 8, speed: currentDiff === "hard" ? 4.5 : 3 });
     }
   }
 
-  // Mouvements tirs ennemis
   alienBullets.forEach((ab, index) => {
     ab.y += ab.speed;
     if (ab.y > canvas.height) alienBullets.splice(index, 1);
 
-    // Collision joueur
     if (ab.x < player.x + player.width && ab.x + ab.width > player.x && ab.y < player.y + player.height && ab.y + ab.height > player.y) {
       alienBullets.splice(index, 1);
       lives--;
       playSound('hit');
       updateHUD();
-      if (lives <= 0) {
-        endGame();
-      }
+      if (lives <= 0) endGame();
     }
   });
 
-  // Collisions tirs joueur / aliens
   bullets.forEach((b, bIdx) => {
     aliens.forEach(a => {
       if (a.alive && b.x < a.x + a.width && b.x + b.width > a.x && b.y < a.y + a.height && b.y + b.height > a.y) {
@@ -425,11 +510,8 @@ function gameLoop() {
         score += 100;
         playSound('hit');
         updateHUD();
+        alienSpeed += (currentDiff === "hard" ? 0.08 : 0.05);
 
-        // Accélération de la flotte
-        alienSpeed += 0.05;
-
-        // Victoire / Respawn de la vague
         if (aliens.every(al => !al.alive)) {
           initAliens();
           alienSpeed += 0.3;
@@ -438,35 +520,40 @@ function gameLoop() {
     });
   });
 
-  // Vérification Game Over (aliens trop bas)
   aliens.forEach(a => {
-    if (a.alive && a.y >= player.y - 10) {
-      endGame();
-    }
+    if (a.alive && a.y >= player.y - 10) endGame();
   });
 
-  // Rendu graphique
+  // --- COULEURS SELON LE FILTRE CHOISI ---
+  let playerColor = "#ffffff", bulletColor = "#ffffff", alienBulletColor = "#ffffff", alienColor = "#ffffff";
+  if (currentFilter === "green") {
+    playerColor = "#9bbc0f"; bulletColor = "#8bac0f"; alienBulletColor = "#306230"; alienColor = "#9bbc0f";
+  } else if (currentFilter === "cyan") {
+    playerColor = "#00FFFF"; bulletColor = "#00FFFF"; alienBulletColor = "#008888"; alienColor = "#00FFFF";
+  } else if (currentFilter === "color") {
+    playerColor = "#FF7A45"; bulletColor = "#00FF00"; alienBulletColor = "#FF0000"; alienColor = "#00FFFF";
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Dessin du joueur
-  ctx.fillStyle = "#FF7A45";
+  // Joueur
+  ctx.fillStyle = playerColor;
   ctx.fillRect(player.x, player.y + 4, player.width, player.height - 4);
   ctx.fillRect(player.x + player.width / 2 - 2, player.y, 4, 4);
 
-  // Dessin des tirs joueur
-  ctx.fillStyle = "#00FF00";
+  // Tirs joueur
+  ctx.fillStyle = bulletColor;
   bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
 
-  // Dessin des tirs ennemis
-  ctx.fillStyle = "#FF0000";
+  // Tirs ennemis
+  ctx.fillStyle = alienBulletColor;
   alienBullets.forEach(ab => ctx.fillRect(ab.x, ab.y, ab.width, ab.height));
 
-  // Dessin des aliens
+  // Aliens
   aliens.forEach(a => {
     if (!a.alive) return;
-    ctx.fillStyle = "#00FFFF";
+    ctx.fillStyle = alienColor;
     ctx.fillRect(a.x, a.y, a.width, a.height);
-    // Yeux alien
     ctx.fillStyle = "#000";
     ctx.fillRect(a.x + 3, a.y + 3, 2, 2);
     ctx.fillRect(a.x + 11, a.y + 3, 2, 2);
@@ -479,8 +566,8 @@ function startGame() {
   gameStarted = true;
   gameOver = false;
   score = 0;
-  lives = 3;
-  alienSpeed = 0.5;
+  lives = currentDiff === "easy" ? 5 : (currentDiff === "hard" ? 2 : 3);
+  alienSpeed = currentDiff === "easy" ? 0.35 : (currentDiff === "hard" ? 0.75 : 0.5);
   bullets = [];
   alienBullets = [];
   initAliens();
