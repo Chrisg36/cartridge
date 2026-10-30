@@ -694,15 +694,36 @@ let dropInterval = 800;
 let lastTime = 0;
 let isSoftDropping = false;
 
+// --- GESTION DU MAINTIEN DAS (Répétition fluide gauche/droite) ---
+let heldKey = null;
+let dasTimer = 0;
+let arrTimer = 0;
+const DAS_DELAY = 180; // Délai avant répétition (ms)
+const ARR_RATE = 40;   // Fréquence de répétition (ms)
+
+function handleHeldMove(deltaTime) {
+  if (!heldKey || !gameStarted || isPaused || gameOver) return;
+  dasTimer += deltaTime;
+  if (dasTimer >= DAS_DELAY) {
+    arrTimer += deltaTime;
+    if (arrTimer >= ARR_RATE) {
+      if (heldKey === 'left') movePiece(-1);
+      if (heldKey === 'right') movePiece(1);
+      if (heldKey === 'down') { isSoftDropping = true; dropPiece(); }
+      arrTimer = 0;
+    }
+  }
+}
+
 function gameLoop(time = 0) {
   if (!gameStarted || gameOver || isPaused) return;
   const deltaTime = time - lastTime;
   lastTime = time;
   dropCounter += deltaTime;
 
-  // Si on maintient la flèche BAS, la vitesse est multipliée (chute rapide / soft drop)
-  let speed = isSoftDropping ? 50 : Math.max(100, dropInterval - (level - 1) * 70);
+  handleHeldMove(deltaTime);
 
+  let speed = isSoftDropping ? 40 : Math.max(100, dropInterval - (level - 1) * 70);
   if (dropCounter > speed) {
     dropPiece();
   }
@@ -755,14 +776,22 @@ document.getElementById("resumeBtn").onclick = () => {
   requestAnimationFrame(gameLoop);
 };
 
-// Contrôles Clavier (avec gestion de la descente rapide maintenue)
+// --- CONTRÔLES CLAVIER PRO (Flèches + ZQSD) ---
 window.addEventListener("keydown", e => {
   if (!gameStarted || gameOver || isPaused) return;
-  if (e.code === "ArrowLeft") movePiece(-1);
-  else if (e.code === "ArrowRight") movePiece(1);
-  else if (e.code === "ArrowDown") isSoftDropping = true;
-  else if (e.code === "ArrowUp") rotatePiece();
-  else if (e.code === "Space") {
+  if (e.code === "ArrowLeft" || e.code === "KeyQ" || e.code === "KeyA") {
+    if (heldKey !== 'left') { heldKey = 'left'; dasTimer = 0; arrTimer = 0; movePiece(-1); }
+    e.preventDefault();
+  } else if (e.code === "ArrowRight" || e.code === "KeyD") {
+    if (heldKey !== 'right') { heldKey = 'right'; dasTimer = 0; arrTimer = 0; movePiece(1); }
+    e.preventDefault();
+  } else if (e.code === "ArrowDown" || e.code === "KeyS") {
+    if (heldKey !== 'down') { heldKey = 'down'; dasTimer = 0; arrTimer = 0; isSoftDropping = true; dropPiece(); }
+    e.preventDefault();
+  } else if (e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW") {
+    rotatePiece();
+    e.preventDefault();
+  } else if (e.code === "Space") {
     while (!collide(currentPiece, 0, 1)) { currentPiece.y++; }
     playGbSound('drop');
     dropPiece();
@@ -771,22 +800,40 @@ window.addEventListener("keydown", e => {
 });
 
 window.addEventListener("keyup", e => {
-  if (e.code === "ArrowDown") isSoftDropping = false;
+  if (e.code === "ArrowLeft" || e.code === "KeyQ" || e.code === "KeyA") { if (heldKey === 'left') heldKey = null; }
+  if (e.code === "ArrowRight" || e.code === "KeyD") { if (heldKey === 'right') heldKey = null; }
+  if (e.code === "ArrowDown" || e.code === "KeyS") { if (heldKey === 'down') { heldKey = null; isSoftDropping = false; } }
 });
 
-// Contrôles Tactiles robustes (pointerdown / pointerup)
-document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(-1); });
-document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(1); });
+// --- CONTRÔLES TACTILES PRO (Maintien fluide DAS) ---
+function startHold(dir, actionFn) {
+  heldKey = dir;
+  dasTimer = 0;
+  arrTimer = 0;
+  actionFn();
+}
+
+function endHold(dir) {
+  if (heldKey === dir) heldKey = null;
+  if (dir === 'down') isSoftDropping = false;
+}
+
+document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); startHold('left', () => movePiece(-1)); });
+document.getElementById("btnLeft").addEventListener("pointerup", (e) => { e.preventDefault(); endHold('left'); });
+document.getElementById("btnLeft").addEventListener("pointerleave", (e) => { e.preventDefault(); endHold('left'); });
+
+document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); startHold('right', () => movePiece(1)); });
+document.getElementById("btnRight").addEventListener("pointerup", (e) => { e.preventDefault(); endHold('right'); });
+document.getElementById("btnRight").addEventListener("pointerleave", (e) => { e.preventDefault(); endHold('right'); });
+
+const btnDown = document.getElementById("btnDown");
+btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); startHold('down', () => { isSoftDropping = true; dropPiece(); }); });
+btnDown.buttonup = btnDown.addEventListener("pointerup", (e) => { e.preventDefault(); endHold('down'); });
+btnDown.addEventListener("pointerleave", (e) => { e.preventDefault(); endHold('down'); });
+
 document.getElementById("btnUp").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
 document.getElementById("btnRotate").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
 
-// Flèche BAS : maintient la chute rapide
-const btnDown = document.getElementById("btnDown");
-btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); isSoftDropping = true; dropPiece(); });
-btnDown.addEventListener("pointerup", (e) => { e.preventDefault(); isSoftDropping = false; });
-btnDown.addEventListener("pointerleave", (e) => { e.preventDefault(); isSoftDropping = false; });
-
-// Bouton DROP : Fait chuter instantanément la pièce tout en bas
 document.getElementById("btnDrop").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   if (gameStarted && !isPaused && !gameOver) {
