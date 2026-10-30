@@ -2670,6 +2670,7 @@ function renderChallengesTab() {
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
+          showRetroAlert("🎁 RÉCOMPENSE RÉCUPÉRÉE", `Succès ! Vous avez récupéré ${item.reward} avec succès dans votre coffre.`);
           renderChallengesTab();
         });
       } else {
@@ -5853,6 +5854,7 @@ challengesList.forEach(item => {
           }
 
           if (typeof playThemeSound === "function") playThemeSound(theme);
+          showRetroAlert("🎁 RÉCOMPENSE RÉCUPÉRÉE", `Succès ! Vous avez récupéré ${item.reward} avec succès dans votre coffre.`);
           renderChallengesTab();
         });
       } else {
