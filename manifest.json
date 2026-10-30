@@ -1,23 +1,19 @@
 {
+  "id": "/",
   "name": "Cartridge - Rétro & Gaming Calendar",
   "short_name": "Cartridge",
+  "description": "Le calendrier des sorties de jeux vidéo, avec tests, collection et salle d'arcade rétro.",
+  "lang": "fr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111318",
-  "theme_color": "#FF7A45",
+  "theme_color": "#111318",
+  "categories": ["games", "entertainment"],
   "icons": [
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
