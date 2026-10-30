@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pong - Édition Pro Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-app: #05070a;
+    --acc: #ffffff;
+    --txt: #ffffff;
+    --mut: #777777;
+    --canvas-bg: #000000;
+  }
+
+  body.filter-green { --acc: #9bbc0f; --txt: #9bbc0f; --mut: #306230; --canvas-bg: #070d07; }
+  body.filter-cyan { --acc: #00ffff; --txt: #00ffff; --mut: #008888; --canvas-bg: #001a1a; }
+  body.filter-mono { --acc: #ffffff; --txt: #ffffff; --mut: #666666; --canvas-bg: #000000; }
+
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+  }
+  html, body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    touch-action: manipulation;
+  }
+
+  button, canvas, select {
+    touch-action: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-app);
+    color: var(--txt);
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    padding: env(safe-area-inset-top, 6px) 6px env(safe-area-inset-bottom, 6px) 6px;
+  }
+
+  /* Bouton Fermer bien placé en haut à droite */
+  .top-bar-actions {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 6px) + 8px);
+    right: 12px;
+    z-index: 100000;
+  }
+
+  .top-action-btn {
+    background: rgba(21, 27, 38, 0.95);
+    color: var(--txt);
+    border: 1.5px solid var(--acc);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .top-action-btn:active { background: var(--txt); color: #000; }
+
+  .game-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--txt);
+    flex-shrink: 0;
+    max-width: 480px;
+  }
+
+  .screen-container {
+    flex: 1;
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    position: relative;
+    min-height: 0;
+  }
+
+  .screen-lens {
+    background-color: var(--canvas-bg);
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.95), 0 0 30px color-mix(in srgb, var(--acc) 25%, transparent);
+    border: 3px solid var(--mut);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-height: 520px;
+    height: 100%;
+    position: relative;
+  }
+
+  canvas {
+    display: block;
+    background-color: var(--canvas-bg);
+    border: 2px solid var(--mut);
+    width: 100% !important;
+    height: 100% !important;
+    flex: 1;
+    image-rendering: pixelated;
+    min-height: 0;
+  }
+
+  /* Commandes tactiles bas d'écran (Gauches / Droites ou Haut / Bas pour raquette) */
+  .controls-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 10px 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .paddle-btn {
+    background: linear-gradient(145deg, #232c3d, #151b26);
+    border: 1.5px solid color-mix(in srgb, var(--acc) 50%, transparent);
+    border-radius: 14px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    width: 120px;
+    height: 65px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .paddle-btn:active {
+    background: var(--acc);
+    color: #05070a;
+    transform: translateY(2px);
+  }
+
+  /* Écrans de superposition (Menu & Game Over) */
+  .screen-overlay {
+    position: absolute;
+    inset: 10px;
+    background-color: var(--canvas-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .screen-overlay.hidden { display: none; }
+
+  .screen-overlay h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--txt);
+    margin-bottom: 10px;
+    text-shadow: 2px 2px var(--mut);
+  }
+
+  .screen-overlay p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7.5px;
+    color: var(--mut);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .menu-group {
+    width: 100%;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .menu-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--mut);
+  }
+
+  .settings-select {
+    width: 100%;
+    background: var(--mut);
+    color: var(--canvas-bg);
+    border: 1px solid var(--acc);
+    padding: 6px 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .menu-btn {
+    background-color: var(--mut);
+    color: var(--canvas-bg);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    font-weight: 900;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 4px var(--acc);
+  }
+
+  .menu-btn:active { transform: translateY(2px); }
+
+  @media (pointer: fine) {
+    .controls-container { display: none; }
+  }
+</style>
+</head>
+<body class="filter-mono">
+
+<div class="top-bar-actions">
+  <button class="top-action-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
+</div>
+
+<div class="game-header">
+  <span>🏓 PONG // PRO ARCADE</span>
+  <span id="scoreBoard">0 : 0</span>
+</div>
+
+<div class="screen-container">
+  <div class="screen-lens">
+    <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <canvas id="pongCanvas" width="300" height="400"></canvas>
+
+      <!-- Menu Principal Options -->
+      <div id="menuScreen" class="screen-overlay">
+        <h1>PONG</h1>
+        <p>EDITION PRO ARCADE</p>
+
+        <div class="menu-group">
+          <label>FILTRE COULEUR :</label>
+          <select id="colorFilterSelect" class="settings-select">
+            <option value="mono" selected>Monochrome Blanc</option>
+            <option value="green">Vert Phosphore</option>
+            <option value="cyan">Cyber Cyan</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>AUDIO FX :</label>
+          <select id="audioSelect" class="settings-select">
+            <option value="on" selected>Activé</option>
+            <option value="off">Coupé</option>
+          </select>
+        </div>
+
+        <button class="menu-btn" id="startBtn">JOUER</button>
+      </div>
+
+      <!-- Game Over -->
+      <div id="gameOverScreen" class="screen-overlay hidden">
+        <h1 id="winnerText">VICTOIRE</h1>
+        <p id="finalScoreText">SCORE : 0 - 0</p>
+        <button class="menu-btn" id="restartBtn">REJOUER</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-container">
+  <button class="paddle-btn" id="btnUp">▲ HAUT</button>
+  <button class="paddle-btn" id="btnDown">▼ BAS</button>
+</div>
+
+<script>
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+let soundActive = localStorage.getItem("pong_audio") !== "off";
+const audioSelect = document.getElementById("audioSelect");
+if (audioSelect) {
+  audioSelect.value = soundActive ? "on" : "off";
+  audioSelect.onchange = (e) => {
+    soundActive = e.target.value === "on";
+    localStorage.setItem("pong_audio", e.target.value);
+  };
+}
+
+function playPongSound(type) {
+  if (!soundActive) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'square';
+
+    if (type === 'hit') {
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(220, now + 0.08);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } else if (type === 'wall') {
+      osc.frequency.setValueAtTime(220, now);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now); osc.stop(now + 0.05);
+    } else if (type === 'score') {
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.linearRampToValueAtTime(600, now + 0.2);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'gameover') {
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.linearRampToValueAtTime(60, now + 0.6);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.6);
+      osc.start(now); osc.stop(now + 0.6);
+    }
+  } catch (e) {}
+}
+
+let currentFilter = localStorage.getItem("pong_filter") || "mono";
+const filterSelect = document.getElementById("colorFilterSelect");
+if (filterSelect) {
+  filterSelect.value = currentFilter;
+  document.body.className = `filter-${currentFilter}`;
+  filterSelect.onchange = (e) => {
+    currentFilter = e.target.value;
+    document.body.className = `filter-${currentFilter}`;
+    localStorage.setItem("pong_filter", currentFilter);
+  };
+}
+
+const canvas = document.getElementById("pongCanvas");
+const ctx = canvas.getContext("2d");
+
+const PADDLE_WIDTH = 12;
+const PADDLE_HEIGHT = 65;
+const BALL_SIZE = 10;
+
+let player = { x: 10, y: 167, w: PADDLE_WIDTH, h: PADDLE_HEIGHT, vy: 0, score: 0 };
+let ai = { x: 278, y: 167, w: PADDLE_WIDTH, h: PADDLE_HEIGHT, speed: 3.5, score: 0 };
+let ball = { x: 145, y: 195, w: BALL_SIZE, h: BALL_SIZE, vx: 4, vy: 3 };
+
+let gameStarted = false;
+let gameOver = false;
+
+function resetBall(servingToPlayer = true) {
+  ball.x = canvas.width / 2 - BALL_SIZE / 2;
+  ball.y = canvas.height / 2 - BALL_SIZE / 2;
+  ball.vx = (servingToPlayer ? -1 : 1) * (4 + Math.random() * 1.5);
+  ball.vy = (Math.random() * 4 - 2);
+}
+
+function updateHUD() {
+  document.getElementById("scoreBoard").textContent = `${player.score} : ${ai.score}`;
+}
+
+function gameLoop() {
+  if (!gameStarted || gameOver) return;
+
+  // Mouvement du joueur
+  player.y += player.vy;
+  if (player.y < 10) player.y = 10;
+  if (player.y > canvas.height - player.h - 10) player.y = canvas.height - player.h - 10;
+
+  // IA intelligente et fluide
+  let aiCenter = ai.y + ai.h / 2;
+  if (aiCenter < ball.y - 10) ai.y += ai.speed;
+  else if (aiCenter > ball.y + 10) ai.y -= ai.speed;
+  if (ai.y < 10) ai.y = 10;
+  if (ai.y > canvas.height - ai.h - 10) ai.y = canvas.height - ai.h - 10;
+
+  // Physique de la balle
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // Collision murs haut / bas
+  if (ball.y <= 10) {
+    ball.y = 10;
+    ball.vy *= -1;
+    playPongSound('wall');
+  } else if (ball.y >= canvas.height - ball.h - 10) {
+    ball.y = canvas.height - ball.h - 10;
+    ball.vy *= -1;
+    playPongSound('wall');
+  }
+
+  // Collision Raquette Joueur
+  if (ball.x <= player.x + player.w && ball.y + ball.h >= player.y && ball.y <= player.y + player.h) {
+    ball.x = player.x + player.w;
+    let collidePoint = (ball.y + ball.h / 2) - (player.y + player.h / 2);
+    let angleRad = (collidePoint / (player.h / 2)) * (Math.PI / 4);
+    let speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 0.2; // Accélération progressive
+    ball.vx = speed * Math.cos(angleRad);
+    ball.vy = speed * Math.sin(angleRad);
+    playPongSound('hit');
+  }
+
+  // Collision Raquette IA
+  if (ball.x + ball.w >= ai.x && ball.y + ball.h >= ai.y && ball.y <= ai.y + ai.h) {
+    ball.x = ai.x - ball.w;
+    let collidePoint = (ball.y + ball.h / 2) - (ai.y + ai.h / 2);
+    let angleRad = (collidePoint / (ai.h / 2)) * (Math.PI / 4);
+    let speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy) + 0.2;
+    ball.vx = -speed * Math.cos(angleRad);
+    ball.vy = speed * Math.sin(angleRad);
+    playPongSound('hit');
+  }
+
+  // Vérification Buts
+  if (ball.x < 0) {
+    ai.score++;
+    playPongSound('score');
+    updateHUD();
+    if (ai.score >= 5) {
+      endGame("DÉFAITE");
+    } else {
+      resetBall(true);
+    }
+  } else if (ball.x > canvas.width) {
+    player.score++;
+    playPongSound('score');
+    updateHUD();
+    if (player.score >= 5) {
+      endGame("VICTOIRE");
+    } else {
+      resetBall(false);
+    }
+  }
+
+  // Dessin
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const txtColor = getComputedStyle(document.body).getPropertyValue('--txt').trim();
+  const mutColor = getComputedStyle(document.body).getPropertyValue('--mut').trim();
+
+  // Filet central pointillé
+  ctx.strokeStyle = mutColor;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, 0);
+  ctx.lineTo(canvas.width / 2, canvas.height);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Joueur
+  ctx.fillStyle = txtColor;
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+
+  // IA
+  ctx.fillRect(ai.x, ai.y, ai.w, ai.h);
+
+  // Balle
+  ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
+}
+
+function startGame() {
+  player.score = 0;
+  ai.score = 0;
+  updateHUD();
+  gameStarted = true;
+  gameOver = false;
+  document.getElementById("menuScreen").classList.add("hidden");
+  document.getElementById("gameOverScreen").classList.add("hidden");
+  resetBall(Math.random() > 0.5);
+  requestAnimationFrame(gameLoop);
+}
+
+function endGame(result) {
+  gameOver = true;
+  gameStarted = false;
+  playPongSound('gameover');
+  document.getElementById("winnerText").textContent = result;
+  document.getElementById("finalScoreText").textContent = `SCORE : ${player.score} - ${ai.score}`;
+  document.getElementById("gameOverScreen").classList.remove("hidden");
+}
+
+// Contrôles Clavier (Flèches Haut/Bas ou Z/S)
+window.addEventListener("keydown", e => {
+  if (!gameStarted || gameOver) return;
+  if (e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW") { player.vy = -6; e.preventDefault(); }
+  else if (e.code === "ArrowDown" || e.code === "KeyS") { player.vy = 6; e.preventDefault(); }
+});
+
+window.addEventListener("keyup", e => {
+  if (e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW" || e.code === "ArrowDown" || e.code === "KeyS") {
+    player.vy = 0;
+  }
+});
+
+// Contrôles Tactiles (Boutons Haut/Bas)
+const btnUp = document.getElementById("btnUp");
+const btnDown = document.getElementById("btnDown");
+
+btnUp.addEventListener("pointerdown", (e) => { e.preventDefault(); player.vy = -6; });
+btnUp.addEventListener("pointerup", (e) => { e.preventDefault(); player.vy = 0; });
+btnUp.addEventListener("pointerleave", (e) => { e.preventDefault(); player.vy = 0; });
+
+btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); player.vy = 6; });
+btnDown.addEventListener("pointerup", (e) => { e.preventDefault(); player.vy = 0; });
+btnDown.addEventListener("pointerleave", (e) => { e.preventDefault(); player.vy = 0; });
+
+document.getElementById("startBtn").onclick = startGame;
+document.getElementById("restartBtn").onclick = startGame;
+</script>
+</body>
+</html>
