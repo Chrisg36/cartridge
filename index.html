@@ -41,6 +41,7 @@
      21. THÈME DEATH NOTE
      22. CORRECTIFS DE TEXTE & THÈMES GAME BOY
      23. VERSION BUREAU (PC ≥ 900 px)
+     24. FINITION PRO — icônes SVG, en-tête compact, badges, fiche jeu, PC
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -2071,6 +2072,348 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 
+/* ====================================================================
+   24. FINITION PRO — icônes, en-tête compact, badges, fiche jeu, calme visuel
+   Placée en dernier : elle a le dernier mot sur les sections précédentes.
+   Principe : un seul élément lumineux par écran (le bouton principal),
+   des contours gris discrets partout ailleurs.
+   ==================================================================== */
+:root {
+  --line: color-mix(in srgb, var(--txt) 9%, transparent);
+  --line-2: color-mix(in srgb, var(--txt) 16%, transparent);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* --- Icônes SVG (remplacent les emojis) --- */
+.ic {
+  width: 1.15em; height: 1.15em; flex-shrink: 0; display: inline-block; vertical-align: -0.2em;
+  fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; overflow: visible;
+}
+.ic .ic-fill { fill: currentColor; }
+.ic-lead { margin-right: 0.4em; }
+.ic-trail { margin-left: 0.35em; }
+.ic-mid { margin: 0 0.3em; }
+.ic-text { display: inline; }
+.ic-heartFill { color: #FF4757; }
+.ic-apple { color: #EF4444; }
+.ic-dot, .ic-check { color: #22C55E; }
+.ic-xCircle { color: #EF4444; }
+.ic-loader { animation: icSpin 0.9s linear infinite; }
+@keyframes icSpin { to { transform: rotate(360deg); } }
+
+/* --- Fiche ouverte : la page derrière est figée --- */
+body.bg-locked { position: fixed !important; left: 0; right: 0; width: 100%; overflow: hidden; }
+.panel, #sheet { overscroll-behavior: contain; }
+
+/* --- Notification (toast) --- */
+.cart-toast {
+  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 12px); z-index: 10000;
+  transform: translate(-50%, -160%); transition: transform 0.35s var(--ease);
+  display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px);
+  padding: 12px 18px; border-radius: 14px; font-weight: 700; font-size: 14px; color: var(--txt);
+  background: color-mix(in srgb, var(--card) 94%, transparent); border: 1px solid var(--line-2);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.cart-toast.on { transform: translate(-50%, 0); }
+.cart-toast > .ic { width: 20px; height: 20px; color: var(--acc); }
+
+/* --- Pop-ups : plus sobres --- */
+.cartridge-modal-card { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55) !important; }
+
+/* ====================== EN-TÊTE DE L'ACCUEIL ====================== */
+#homeMainContent .magazine-edition-banner { display: none !important; }
+
+.sticky-header-container {
+  background: color-mix(in srgb, var(--bg) 90%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-bottom: 1px solid var(--line) !important;
+  padding-bottom: 10px !important;
+}
+#homeMainContent .header-top { margin-bottom: 8px !important; }
+
+/* Logo : net, sans halo */
+#sub-title.neon-logo {
+  background: transparent !important; border: 0 !important; box-shadow: none !important; text-shadow: none !important;
+  padding: 2px 0 !important; font-size: 15px !important; letter-spacing: 3px !important; gap: 8px !important;
+}
+#sub-title .retro-icon { filter: none !important; width: 24px !important; height: 24px !important; }
+#sub-title .brand-text, .neon-logo span { color: var(--txt) !important; text-shadow: none !important; -webkit-text-stroke: 0 !important; }
+
+/* Profil + crédits */
+.player-badge {
+  border: 1px solid var(--line-2) !important; background: var(--card) !important; box-shadow: none !important;
+  padding: 0 12px !important; height: 34px; font-size: 12px !important; border-radius: 999px !important;
+}
+.player-badge:hover { transform: none !important; border-color: color-mix(in srgb, var(--acc) 50%, transparent) !important; }
+.player-badge .ic { color: var(--mut); }
+.player-avatar { box-shadow: none !important; width: 24px !important; height: 24px !important; font-size: 11px !important; }
+.player-avatar .player-status-dot { box-shadow: none !important; }
+.header-currency-badge {
+  height: 34px; min-height: 34px !important; padding: 0 12px !important; border-radius: 999px !important; gap: 6px !important;
+  background: var(--card) !important; border: 1px solid var(--line-2) !important; box-shadow: none !important;
+  color: var(--txt) !important; font-size: 12px !important;
+}
+.header-currency-badge .retro-icon { filter: none !important; width: 16px !important; height: 16px !important; }
+
+/* Rangée 2 : ‹ mois › + outils */
+#homeMainContent .header-bottom { display: flex !important; align-items: center; gap: 8px !important; margin: 0 0 8px !important; }
+.month-switch {
+  flex: 1; min-width: 0; height: 42px; display: flex; align-items: center; gap: 2px; padding: 3px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+}
+.month-switch .month-nav { flex: none; display: flex; }
+.month-switch .month-nav .chip {
+  width: 34px; height: 34px; min-height: 34px !important; padding: 0 !important; border-radius: 9px !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important; color: var(--txt) !important;
+  font-size: 11px !important; transition: background 0.15s ease;
+}
+.month-switch .month-nav .chip:hover { background: var(--cov) !important; }
+.month-switch .month-nav .chip:active { transform: scale(0.92) !important; }
+.month-switch .month-nav .chip svg { stroke: currentColor !important; color: currentColor !important; width: 18px !important; height: 18px !important; filter: none !important; }
+.month-switch .date-picker-container { flex: 1; min-width: 0; margin: 0 !important; }
+input[type="month"]#dateSelect {
+  background: transparent !important; border: 0 !important; min-height: 34px !important; padding: 0 4px !important;
+  text-align: center; font-size: 14px !important; letter-spacing: 1.5px !important; font-weight: 800 !important;
+}
+input[type="month"]#dateSelect::-webkit-datetime-edit-fields-wrapper { justify-content: center; }
+input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.45; }
+
+.header-tools { display: flex; gap: 6px; flex: none; }
+.tool-btn, .fav-filter-btn {
+  width: 42px !important; height: 42px !important; min-height: 42px !important; padding: 0 !important; flex: none !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  border-radius: 12px !important; background: var(--card) !important; border: 1px solid var(--line) !important;
+  box-shadow: none !important; color: var(--txt) !important;
+}
+.tool-btn svg, .fav-filter-btn svg { width: 18px !important; height: 18px !important; color: currentColor !important; filter: none !important; transform: none !important; }
+.tool-btn:hover, .fav-filter-btn:hover { border-color: var(--line-2) !important; background: var(--cov) !important; }
+.fav-filter-btn span { display: none; }
+.fav-filter-btn[aria-pressed="true"] { background: #FF4757 !important; border-color: #FF4757 !important; color: #fff !important; }
+.fav-filter-btn[aria-pressed="true"] svg { fill: currentColor; }
+
+/* Rangée 3 : recherche + filtre + favoris */
+#homeMainContent .filter-bar-container { display: flex !important; align-items: center; gap: 6px !important; margin: 0 !important; }
+.search-box {
+  flex: 1; min-width: 0; height: 42px; margin: 0 !important; font-size: 14px !important;
+  border-radius: 12px !important; border: 1px solid var(--line) !important; box-shadow: none !important;
+  background: var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238C93A3' stroke-width='2.2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4.6-4.6'/></svg>") no-repeat 12px center !important;
+}
+.search-box:focus { border-color: color-mix(in srgb, var(--acc) 60%, transparent) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 18%, transparent) !important; }
+.platform-select {
+  flex: 0 1 150px !important; max-width: 40%; min-width: 0; height: 42px; font-size: 13px !important;
+  padding: 0 28px 0 12px !important; border-radius: 12px !important; border: 1px solid var(--line) !important; box-shadow: none !important;
+  background-color: var(--card) !important; background-position: right 8px center !important; text-overflow: ellipsis;
+}
+
+
+/* Titres des autres pages (Boutique, Collection, Arcade, Profil) : nets, sans halo */
+.neon-logo { box-shadow: none !important; text-shadow: none !important; background: transparent !important; border: 0 !important; padding: 2px 0 !important; font-size: 14px !important; letter-spacing: 2.5px !important; }
+.neon-logo .retro-icon { filter: none !important; width: 22px !important; height: 22px !important; }
+.magazine-edition-banner {
+  background: var(--card) !important; border: 1px solid var(--line) !important; box-shadow: none !important;
+  color: var(--mut) !important; padding: 6px 10px !important; border-radius: 10px !important;
+}
+.chip[aria-pressed="true"], .chip.active { box-shadow: none !important; }
+
+/* ====================== LISTE DES SORTIES ====================== */
+.day { text-shadow: none !important; font-size: 12px !important; letter-spacing: 1.6px !important; margin: 22px 2px 10px !important; }
+.row {
+  border: 1px solid var(--line) !important; box-shadow: none !important; padding: 10px 12px 10px 10px !important;
+  transition: border-color 0.2s ease, transform 0.2s var(--ease), background 0.2s ease !important;
+}
+.row::before, .grid-card::before { display: none !important; }
+.row.is-hyped, .grid-card.is-hyped { animation: none !important; border-color: color-mix(in srgb, var(--acc) 35%, transparent) !important; }
+.row:hover { transform: translateY(-1px) !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--acc) 45%, transparent) !important; }
+.row:active { transform: scale(0.985) !important; }
+.row .open::after { display: none !important; }
+.cov-container { width: 60px !important; height: 80px !important; border-radius: 10px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+.t { gap: 6px !important; }
+.t b { font-size: 16px !important; letter-spacing: 0.2px !important; line-height: 1.2 !important; }
+.m { gap: 5px !important; }
+.btn-icon { border-radius: 12px !important; width: 40px !important; height: 40px !important; }
+.btn-icon.fav-active { box-shadow: none !important; }
+.add { box-shadow: none !important; }
+.grid-card { border: 1px solid var(--line) !important; }
+.grid-card:hover { box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35) !important; transform: translateY(-3px) !important; border-color: color-mix(in srgb, var(--acc) 45%, transparent) !important; }
+
+/* Badges : consoles en noms courts avec pastille de couleur, note en pastille unique */
+.platform-badge {
+  display: inline-flex !important; align-items: center; gap: 5px; padding: 2px 7px 2px 6px !important;
+  font-size: 11px !important; font-weight: 700 !important; line-height: 1.5; border-radius: 6px !important;
+  background: transparent !important; color: var(--mut) !important; border: 1px solid var(--line-2) !important;
+  box-shadow: none !important; text-shadow: none !important;
+}
+.platform-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand, var(--mut)); flex: none; }
+.badge-ps5, .badge-ps4, .badge-ps3, .badge-ps2, .badge-ps1 { --brand: #3B82F6; }
+.badge-xbox, .badge-xboxone, .badge-xbox360 { --brand: #22C55E; }
+.badge-switch2, .badge-3ds, .badge-ds { --brand: #EF4444; }
+.badge-pc { --brand: #CBD5E1; }
+
+.score-badge { box-shadow: none !important; }
+.score-pill { display: inline-flex !important; align-items: baseline; gap: 4px !important; padding: 2px 7px !important; border-radius: 6px !important; line-height: 1.5; }
+.score-pill b { font-size: 12.5px; font-weight: 900; }
+.score-pill small { font-size: 9.5px; font-weight: 800; letter-spacing: 0.6px; opacity: 0.85; }
+.score-badge.score-high { background: rgba(16, 185, 129, 0.16) !important; color: #34D399 !important; }
+.score-badge.score-mid { background: rgba(245, 158, 11, 0.16) !important; color: #FBBF24 !important; }
+.score-badge.score-low { background: rgba(239, 68, 68, 0.16) !important; color: #F87171 !important; }
+[data-theme="light"] .score-badge.score-high { color: #047857 !important; }
+[data-theme="light"] .score-badge.score-mid { color: #B45309 !important; }
+[data-theme="light"] .score-badge.score-low { color: #B91C1C !important; }
+
+.hype-pro-badge {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  padding: 2px 2px !important; gap: 3px !important; font-size: 11.5px !important; color: var(--acc) !important;
+}
+.hype-pro-badge .ic { width: 13px; height: 13px; }
+.time-badge { border-radius: 6px !important; font-size: 11px !important; padding: 2px 7px !important; }
+.badge-today { box-shadow: none !important; }
+
+/* ====================== FICHE JEU ====================== */
+#sheet { background: rgba(0, 0, 0, 0.6) !important; }
+#sheet.on .panel { animation: sheetUp 0.34s var(--ease); }
+@keyframes sheetUp { from { transform: translateY(48px); opacity: 0; } to { transform: none; opacity: 1; } }
+.cta { box-shadow: 0 6px 20px color-mix(in srgb, var(--acc) 30%, transparent) !important; }
+
+#panel.panel.sheet-game {
+  display: block !important; padding: 0 0 calc(28px + env(safe-area-inset-bottom)) !important;
+  max-height: 92vh; border-radius: 24px 24px 0 0; overflow-x: hidden;
+  background: var(--bg) !important; background-image: none !important;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Croix de fermeture : reste visible en haut même quand on fait défiler */
+.sheet-x {
+  position: sticky; top: 12px; z-index: 5; display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; margin: 12px 12px -48px auto; padding: 0; border: 0; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5); color: #fff; cursor: pointer;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.sheet-x .ic { width: 18px; height: 18px; stroke-width: 2.4; }
+.sheet-x:hover { background: rgba(0, 0, 0, 0.7); }
+
+/* En-tête : fond flouté tiré de la jaquette + jaquette verticale */
+.sheet-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: end;
+  padding: 34px 20px 18px;
+}
+.sheet-hero::before {
+  content: ""; position: absolute; inset: -40px; z-index: -2;
+  background: var(--hero, none) center / cover no-repeat; filter: blur(30px) saturate(1.3); opacity: 0.6; transform: scale(1.1);
+}
+.sheet-hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 25%, transparent) 0%, color-mix(in srgb, var(--bg) 70%, transparent) 55%, var(--bg) 100%);
+}
+.sheet-grab { position: absolute; top: 8px; left: 50%; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: color-mix(in srgb, var(--txt) 35%, transparent); }
+.sheet-hero .big {
+  width: 112px !important; height: auto !important; aspect-ratio: 3 / 4 !important; max-height: none !important;
+  object-fit: cover; border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5) !important; background: var(--cov);
+}
+.sheet-head { min-width: 0; }
+.sheet-title-row { margin: 0 !important; }
+.sheet-title-row h2 { margin: 0 !important; font-size: 22px !important; line-height: 1.15 !important; font-weight: 800 !important; letter-spacing: 0.2px !important; }
+.sheet-genres { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sheet-genre { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: color-mix(in srgb, var(--txt) 11%, transparent); color: var(--txt); }
+.sheet-title-badge { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.sheet-title-badge .score-pill { padding: 4px 10px !important; border-radius: 8px !important; }
+.sheet-title-badge .score-pill b { font-size: 17px; }
+.sheet-title-badge .score-pill small { font-size: 10.5px; }
+
+/* Corps de la fiche */
+.sheet-body { padding: 4px 20px 0; }
+.sheet-cta { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px !important; border-radius: 14px !important; margin-top: 4px !important; }
+.sheet-cta .ic { width: 20px; height: 20px; }
+.sheet-quick { gap: 8px !important; margin-top: 10px !important; }
+.sheet-quick-btn {
+  flex-direction: column; gap: 6px !important; min-height: 64px !important; border-radius: 14px !important;
+  background: var(--card) !important; border: 1px solid var(--line) !important; font-size: 12px !important; color: var(--txt) !important;
+}
+.sheet-quick-btn .ic { width: 20px; height: 20px; }
+.sheet-quick-btn:hover { border-color: var(--line-2) !important; }
+.sheet-quick-btn.is-on { box-shadow: none !important; border-color: rgba(255, 71, 87, 0.45) !important; }
+
+.sheet-facts { margin: 14px 0 0; padding: 2px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.sheet-fact { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.sheet-fact:last-child { border-bottom: 0; }
+.sheet-fact dt { color: var(--mut); font-weight: 600; flex: none; max-width: 48%; }
+.sheet-fact dd { margin: 0; text-align: right; font-weight: 700; min-width: 0; }
+
+.sheet-sec-title {
+  display: flex; align-items: center; gap: 8px; margin: 24px 0 10px; color: var(--mut);
+  font-size: 12.5px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase;
+}
+.sheet-sec-title .ic { width: 16px; height: 16px; color: var(--acc); }
+.rv-box { margin-top: 0 !important; }
+.rv-label { margin: 14px 0 6px !important; font-size: 12.5px !important; color: var(--mut); font-weight: 700 !important; }
+.rv-note { font-size: 13px !important; }
+.rv-sources { opacity: 0.75; margin-top: 12px !important; }
+.rv-score { background: var(--card) !important; border: 1px solid var(--line); border-radius: 14px !important; }
+.rv-site { gap: 6px; border: 1px solid var(--line) !important; border-radius: 12px !important; }
+.rv-site:hover { border-color: var(--line-2) !important; }
+.rv-site .ic { width: 14px; height: 14px; color: var(--mut); }
+.rv-card { background: var(--card) !important; border: 1px solid var(--line); border-radius: 14px !important; }
+.rv-read .ic { width: 12px; height: 12px; }
+.sheet-summary { margin: 0; font-size: 15px !important; line-height: 1.65 !important; font-weight: 500 !important; color: color-mix(in srgb, var(--txt) 88%, var(--mut)); }
+.is-loading { display: flex; align-items: center; gap: 8px; color: var(--mut); }
+.is-loading::before {
+  content: ""; width: 14px; height: 14px; flex: none; border-radius: 50%;
+  border: 2px solid var(--line-2); border-top-color: var(--acc); animation: icSpin 0.8s linear infinite;
+}
+
+/* ====================== BARRE DU BAS ====================== */
+.bottom-nav { border-top: 1px solid var(--line) !important; box-shadow: none !important; }
+.bottom-nav .nav-item.active svg { filter: none !important; }
+.bottom-nav .nav-item.active::before { box-shadow: none !important; }
+
+/* ====================== PC (≥ 900 px) ====================== */
+@media (min-width: 900px) {
+  /* Le contenu se centre dans l'espace à droite de la barre latérale (plus de grand vide) */
+  main {
+    margin: 32px auto 48px !important; width: min(1080px, calc(100% - 64px)) !important;
+    padding: 28px 36px 40px !important; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid var(--line) !important;
+  }
+  /* Le logo est déjà dans la barre latérale : pas de doublon */
+  #homeMainContent #sub-title { display: none !important; }
+  #homeMainContent .header-top { justify-content: flex-end !important; }
+  .sticky-header-container { padding-top: 6px !important; }
+  .platform-select { flex-basis: 200px !important; }
+  .fav-filter-btn { width: auto !important; padding: 0 14px !important; gap: 8px !important; }
+  .fav-filter-btn span { display: inline; font-size: 13px; }
+
+  /* Barre latérale sobre */
+  .bottom-nav { background: color-mix(in srgb, var(--bg) 96%, #000) !important; border-right: 1px solid var(--line) !important; box-shadow: none !important; }
+  .desktop-sidebar-brand {
+    background: transparent !important; border: 0 !important; box-shadow: none !important; text-shadow: none !important;
+    justify-content: flex-start !important; padding: 6px 14px 26px !important; font-size: 17px !important;
+  }
+  .desktop-sidebar-brand .retro-icon { filter: none !important; }
+  .bottom-nav .nav-item { background: transparent !important; border: 1px solid transparent !important; box-shadow: none !important; }
+  .bottom-nav .nav-item:hover { transform: none !important; background: var(--card) !important; border-color: var(--line) !important; box-shadow: none !important; }
+  .bottom-nav .nav-item::before { display: none !important; }
+  .bottom-nav .nav-item.active {
+    background: color-mix(in srgb, var(--acc) 14%, transparent) !important; color: var(--acc) !important;
+    border-color: color-mix(in srgb, var(--acc) 30%, transparent) !important; box-shadow: none !important;
+  }
+  .bottom-nav .nav-item.active svg { stroke: var(--acc) !important; transform: none !important; }
+
+  /* Fiche jeu : fenêtre centrée, en-tête large puis deux colonnes */
+  #sheet { align-items: center !important; }
+  #sheet.on .panel { animation: sheetPop 0.28s var(--ease); }
+  @keyframes sheetPop { from { transform: translateY(16px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+  #panel.panel.sheet-game { max-width: min(1000px, calc(100vw - 340px)) !important; max-height: 88vh; border-radius: 24px !important; }
+  .sheet-grab { display: none; }
+  .sheet-hero { grid-template-columns: 180px minmax(0, 1fr); gap: 28px; padding: 40px 40px 24px; }
+  .sheet-hero .big { width: 180px !important; }
+  .sheet-title-row h2 { font-size: 32px !important; }
+  .sheet-genre { font-size: 12.5px; }
+  .sheet-body { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 32px; padding: 0 40px; align-items: start; }
+  .sheet-col-a { position: sticky; top: 16px; }
+  .sheet-col-b > .rv-box > .sheet-sec-title:first-child { margin-top: 6px; }
+}
+
 </style>
 </head>
 <body>
@@ -2334,39 +2677,38 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
         <span id="editionDateBadge">MONTHLY RELEASES</span>
       </div>
 
+      <!-- Rangée 2 : ‹ mois › + outils (vue grille / partage) -->
       <div class="header-bottom">
-        <div class="date-picker-container" style="flex: 1; margin-right: 6px;">
-          <input type="month" id="dateSelect" min="1970-01" max="2999-12">
+        <div class="month-switch">
+          <div class="month-nav month-nav-prev">
+            <button class="chip" id="prev" aria-label="Mois précédent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          </div>
+          <div class="date-picker-container">
+            <input type="month" id="dateSelect" min="1970-01" max="2999-12" aria-label="Choisir le mois">
+          </div>
+          <div class="month-nav month-nav-next">
+            <button class="chip" id="next" aria-label="Mois suivant"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
         </div>
-        <div class="month-nav">
-          <button class="chip" id="prev" aria-label="Mois précédent">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>
+        <div class="header-tools">
+          <button class="chip tool-btn" id="viewModeBtn" aria-label="Changer de vue" title="Liste / grille">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
           </button>
-          <button class="chip" id="next" aria-label="Mois suivant">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>
+          <button class="chip tool-btn" id="shareBtn" aria-label="Partager mes favoris" title="Partager">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg>
           </button>
         </div>
       </div>
 
-<div class="filter-bar-container">
-  <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
-  
-  <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    <span>Favoris</span>
-  </button>
-
-  <!-- 🕹️ Bouton Vue (Grille/Liste) aligné ici -->
-  <button class="chip" id="viewModeBtn" aria-label="Changer de vue" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-  </button>
-
-  <!-- 📤 Bouton Partager aligné ici -->
-  <button class="chip" id="shareBtn" aria-label="Partager" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-  </button>
-</div>
-<input type="text" id="search" class="search-box" placeholder="Rechercher n'importe quel jeu...">
+      <!-- Rangée 3 : recherche + filtre console + favoris -->
+      <div class="filter-bar-container">
+        <input type="text" id="search" class="search-box" placeholder="Rechercher…" autocomplete="off" enterkeyhint="search">
+        <select id="platformSelect" class="platform-select" aria-label="Filtrer par console"></select>
+        <button class="fav-filter-btn" id="favFilterBtn" aria-pressed="false" aria-label="Afficher mes favoris" title="Mes favoris">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>Favoris</span>
+        </button>
+      </div>
     </div>
     <div id="list"></div>
 </div>
@@ -2388,7 +2730,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
       <polyline points="9 22 9 12 15 12 15 22"></polyline>
     </svg>
-    <span>Home</span>
+    <span>Accueil</span>
   </button>
 
 
@@ -2528,6 +2870,136 @@ function showRetroAlert(title, message, isError = false) {
   document.body.append(overlay);
 }
 
+// ▸ ICONS : jeu d'icônes SVG au trait (24×24, couleur = celle du texte).
+// Pour ajouter une icône : un nom + le contenu du <svg>. S'utilise avec icon("nom").
+const ICONS = {
+  coin: '<circle cx="12" cy="12" r="9.5" fill="#FFC53D" stroke="#B7791F" stroke-width="1.4"/><path d="M14.6 9.2A3.6 3.6 0 1 0 14.6 14.8" stroke="#7A4A00" stroke-width="2"/>',
+  gamepad: '<path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-3.96 3.43l-.7 4.95A2.5 2.5 0 0 0 4.5 16.2c.8 0 1.5-.4 2-1l1.2-1.5a2 2 0 0 1 1.6-.7h5.4a2 2 0 0 1 1.6.7l1.2 1.5c.5.6 1.2 1 2 1a2.5 2.5 0 0 0 2.47-2.82l-.7-4.95A4 4 0 0 0 17.3 5z"/>',
+  joystick: '<circle cx="12" cy="5.5" r="2.8"/><path d="M12 8.3V13M4 17h16l-1 4H5zM8 17v-2.5a1.5 1.5 0 0 1 1.5-1.5h5a1.5 1.5 0 0 1 1.5 1.5V17"/>',
+  sparkles: '<path d="M11 3l1.9 4.6L17.5 9.5l-4.6 1.9L11 16l-1.9-4.6L4.5 9.5l4.6-1.9z"/><path d="M18.5 14.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>',
+  apple: '<path class="ic-fill" d="M12 7.5c-1.6-1.1-5.2-1.2-6.4 1.8-1.3 3.2.4 8 2.7 10.2 1 1 2.1 1 3.7.3 1.6.7 2.7.7 3.7-.3 2.3-2.2 4-7 2.7-10.2-1.2-3-4.8-2.9-6.4-1.8z"/><path d="M12 7.5c0-2 1-3.6 3.2-4.5"/>',
+  museum: '<path d="M12 3l9 5H3zM3 21h18M4.5 18h15M6 10.5V18M10 10.5V18M14 10.5V18M18 10.5V18"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" class="ic-fill"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  heartFill: '<path class="ic-fill" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  loader: '<path d="M21 12a9 9 0 1 1-6.2-8.56"/>',
+  monitor: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  dot: '<circle cx="12" cy="12" r="5" class="ic-fill"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  library: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5M9 7h7M9 11h5"/>',
+  store: '<path d="M3 9l1.5-5h15L21 9M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0M5 11.5V21h14v-9.5M10 21v-5h4v5"/>',
+  ticket: '<path d="M2 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v2M13 11v2M13 17v2"/>',
+  volume: '<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+  volumeX: '<path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/>',
+  check: '<circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.8 2.8L16.5 9"/>',
+  star: '<path d="M12 2.8l2.85 5.8 6.4.93-4.63 4.5 1.1 6.37L12 17.4l-5.72 3 1.1-6.37-4.63-4.5 6.4-.93z"/>',
+  starFill: '<path class="ic-fill" d="M12 2.8l2.85 5.8 6.4.93-4.63 4.5 1.1 6.37L12 17.4l-5.72 3 1.1-6.37-4.63-4.5 6.4-.93z"/>',
+  xCircle: '<circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>',
+  x: '<path d="M18 6L6 18M6 6l12 12"/>',
+  party: '<path d="M4 20l4.5-12.5 8 8z"/><path d="M14.5 3.5l.4 1.8M20 5.5l-1.6 1.4M20.5 10.5l-1.9-.3M11 3.5c1.2 1.6 1.2 3.2 0 4.8M16 13c1.6-1.2 3.2-1.2 4.8 0"/>',
+  palette: '<path d="M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4.3-4.2 4.3h-1.9a2 2 0 0 0-1.5 3.3A1.6 1.6 0 0 1 12 22z"/><circle cx="7.5" cy="11" r="1.3" class="ic-fill"/><circle cx="10.5" cy="7" r="1.3" class="ic-fill"/><circle cx="15.5" cy="7.5" r="1.3" class="ic-fill"/>',
+  cloud: '<path d="M17.5 19H8a6 6 0 1 1 5.7-7.9h.3A4.5 4.5 0 0 1 17.5 19z"/>',
+  invader: '<path class="ic-fill" stroke="none" d="M7 4h2v2H7zm8 0h2v2h-2zM9 6h6v2H9zM6 8h12v2H6zm-2 2h4v2H4zm6 0h4v2h-4zm6 0h4v2h-4zM4 12h16v2H4zm0 2h2v4H4zm4 0h2v2H8zm6 0h2v2h-2zm4 0h2v4h-2zM8 16h3v2H8zm5 0h3v2h-3z"/>',
+  zap: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  flame: '<path d="M12 22c4 0 7-2.7 7-6.6 0-3-1.8-5.2-3.5-7-.4 2-1.5 3.3-2.8 3.6.5-3.4-1-6.6-3.8-9 0 3.5-3.9 6.3-3.9 11.5C5 19.3 8 22 12 22z"/>',
+  notebook: '<rect x="5" y="2" width="15" height="20" rx="2"/><path d="M9 2v20M3 7h4M3 12h4M3 17h4"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.6-4.6"/>',
+  film: '<rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="M16 10.5l6-3.5v10l-6-3.5z"/>',
+  play: '<circle cx="12" cy="12" r="10"/><path class="ic-fill" d="M10 8.5v7l6-3.5z"/>',
+  timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/>',
+  news: '<path d="M4 4h13v16H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/>',
+  external: '<path d="M7 17L17 7M9 7h8v8"/>',
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8C10.5 4 7 3.8 7 6s2.6 2 5 2c2.4 0 5 .2 5-2s-3.5-2-5 2z"/>',
+  trophy: '<path d="M8 21h8M12 16.5V21M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  folder: '<path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2.5h7.5A2.5 2.5 0 0 1 21 9v8.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/>',
+  share: '<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/>',
+  tv: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M17 2l-5 5-5-5"/>',
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  tag: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.4" class="ic-fill"/>',
+  laptop: '<rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  building: '<rect x="4" y="2" width="16" height="20" rx="1.5"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  gem: '<path d="M6 3h12l4 6-10 12L2 9zM2 9h20M12 21L8 9l4-6 4 6z"/>',
+  cassette: '<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><circle cx="16" cy="11" r="2"/><path d="M10 11h4M6 19l2-4h8l2 4"/>',
+  box: '<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+  scroll: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
+  blocks: '<path d="M3 14h6v6H3zM9 14h6v6H9zM9 8h6v6H9zM15 14h6v6h-6z"/>',
+  snake: '<path d="M4 19h9a3.5 3.5 0 0 0 0-7H9a3 3 0 0 1 0-6h10"/><circle cx="19" cy="6" r=".9" class="ic-fill"/>',
+  pong: '<path d="M4 7v6M20 11v6M12 3v2M12 9v2M12 15v2M12 19v2"/><circle cx="16" cy="8" r="1.6" class="ic-fill"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>',
+  dice: '<rect x="3" y="3" width="18" height="18" rx="3.5"/><circle cx="8" cy="8" r="1.3" class="ic-fill"/><circle cx="16" cy="16" r="1.3" class="ic-fill"/><circle cx="12" cy="12" r="1.3" class="ic-fill"/><circle cx="16" cy="8" r="1.3" class="ic-fill"/><circle cx="8" cy="16" r="1.3" class="ic-fill"/>',
+  archive: '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4"/>',
+  chart: '<path d="M3 3v18h18M8 17v-5M13 17V8M18 17v-9"/>',
+  scale: '<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2M16 7l3 3M18.5 4.5l2 2"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18M12 14v5M9.5 16.5h5"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  hourglass: '<path d="M6 2h12M6 22h12M7 2v3.5a5 5 0 0 0 2.2 4.1L12 12l2.8-2.4A5 5 0 0 0 17 5.5V2M7 22v-3.5a5 5 0 0 1 2.2-4.1L12 12l2.8 2.4a5 5 0 0 1 2.2 4.1V22"/>',
+};
+
+// ▸ icon : renvoie le code HTML d'une icône (ex. icon("heart"))
+function icon(name, extraClass = "") {
+  const body = ICONS[name];
+  if (!body) return "";
+  return `<svg class="ic ic-${name}${extraClass ? " " + extraClass : ""}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+}
+
+// ▸ EMOJI_ICONS : chaque emoji encore présent dans un texte est remplacé à l'écran
+// par l'icône correspondante (voir « Icônes à la place des emojis », section 19).
+// null = l'emoji est simplement retiré. Les drapeaux sont retirés aussi.
+const EMOJI_ICONS = {
+  "🪙": "coin", "🕹": "joystick", "🎮": "gamepad", "✨": "sparkles", "🌈": "sparkles", "🍎": "apple",
+  "🏛": "museum", "⚙": "gear", "🎯": "target", "❤": "heartFill", "🤍": "heart", "🖤": "heart",
+  "⏳": "hourglass", "🖥": "monitor", "🟢": "dot", "💾": "save", "📚": "library", "🏬": "store",
+  "🎟": "ticket", "🔊": "volume", "🔇": "volumeX", "✅": "check", "⭐": "star", "🌟": "star", "★": "starFill",
+  "❌": "xCircle", "✕": "x", "🎉": "party", "🎨": "palette", "☁": "cloud", "👾": "invader", "⚡": "zap",
+  "📓": "notebook", "🔍": "search", "🎥": "film", "⏱": "timer", "📰": "news", "↗": "external",
+  "🎁": "gift", "🏆": "trophy", "🔒": "lock", "🌍": "globe", "👤": "user", "🗂": "folder", "📂": "folder",
+  "📤": "share", "📺": "tv", "📋": "copy", "🏷": "tag", "💻": "laptop", "🏢": "building", "🛡": "shield",
+  "💎": "gem", "📼": "cassette", "📦": "box", "📜": "scroll", "🧱": "blocks", "🐍": "snake", "🏓": "pong",
+  "🖼": "image", "🎲": "dice", "🗃": "archive", "📊": "chart", "⚖": "scale", "✉": "mail", "🔑": "key",
+  "👈": null, "🍏": null,
+};
+const EMOJI_RE = new RegExp(
+  "[\\u{1F1E6}-\\u{1F1FF}]{2}\\s?|(?:" +
+  Object.keys(EMOJI_ICONS).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") +
+  ")\\uFE0F?", "gu");
+// ▸ stripEmojis : enlève les emojis d'un texte (menus déroulants, textes d'aide…)
+const stripEmojis = (s) => String(s).replace(EMOJI_RE, "").replace(/\s{2,}/g, " ").trim();
+
+// ▸ showToast : petite notification qui glisse en haut puis disparaît seule
+function showToast(message, iconName = "check") {
+  document.querySelectorAll(".cart-toast").forEach((n) => n.remove());
+  const tst = el("div", "cart-toast");
+  tst.innerHTML = `${icon(iconName)}<span>${message}</span>`;
+  document.body.append(tst);
+  requestAnimationFrame(() => tst.classList.add("on"));
+  setTimeout(() => { tst.classList.remove("on"); setTimeout(() => tst.remove(), 400); }, 2800);
+}
+
+// ▸ lockBackground / unlockBackground : bloque la page derrière une fiche ouverte
+// (sinon la molette ou le doigt fait aussi défiler l'accueil derrière la fiche)
+let _bgLocked = false, _bgScrollY = 0;
+function lockBackground() {
+  if (_bgLocked) return;
+  _bgLocked = true;
+  _bgScrollY = window.scrollY || document.documentElement.scrollTop;
+  document.body.style.top = `-${_bgScrollY}px`;
+  document.body.classList.add("bg-locked");
+}
+function unlockBackground() {
+  if (!_bgLocked) return;
+  _bgLocked = false;
+  document.body.classList.remove("bg-locked");
+  document.body.style.top = "";
+  window.scrollTo(0, _bgScrollY);
+}
+
 // =====================================================================
 // 02. DONNÉES — textes, thèmes, consoles
 // =====================================================================
@@ -2541,14 +3013,14 @@ const TRANSLATIONS = {
     vitrineTabTitle: "🏛️ Vitrine de Collection",
     museumTabTitle: "🕹️ Musée des Consoles",
     subTitle: "CARTRIDGE",
-    searchPlaceholder: "Rechercher n'importe quel jeu...",
-    all: "✨ Tous les jeux",
+    searchPlaceholder: "Rechercher…",
+    all: "Toutes les consoles",
     favorites: "❤️ Mes Favoris",
     noGamesSearch: "Aucun jeu trouvé pour cette recherche.",
     noGamesFav: "Aucun jeu dans vos favoris ce mois-ci.",
     noGamesFilter: "Aucune sortie pour cette console ce mois-ci.",
     loading: "Chargement…",
-    searchDb: "Recherche dans toute la base de données... 🔍",
+    searchDb: "Rechercher dans toute la base…",
     netError: "Impossible de charger les sorties. Vérifie l’adresse du Worker dans config.js.",
     searchError: "Erreur lors de la recherche.",
     settingsTitle: "Réglages",
@@ -2579,7 +3051,7 @@ const TRANSLATIONS = {
     inDays: (d) => `Dans ${d} jours`,
     yesterday: "Hier",
     daysAgo: (d) => `Il y a ${d} jours`,
-    navHome: "Home",
+    navHome: "Accueil",
     navShop: "Boutique",
     navCollection: "Collection",
     navArcade: "Arcade",
@@ -3314,8 +3786,8 @@ function applyTheme(th) {
       img.style.border = "1px solid #729c15";
     });
   } else {
-    if (prevBtn) { prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M14 6L8 12L14 18"/></svg>`; prevBtn.style.fontFamily = ""; }
-    if (nextBtn) { nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 6L16 12L10 18"/></svg>`; nextBtn.style.fontFamily = ""; }
+    if (prevBtn) { prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`; prevBtn.style.fontFamily = ""; }
+    if (nextBtn) { nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`; nextBtn.style.fontFamily = ""; }
     
     document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
       img.style.filter = "";
@@ -3827,14 +4299,28 @@ function getPlatformBadgeClass(plat) {
 // ▸ renderPlatforms : badges des consoles d'un jeu
 function renderPlatforms(releases) {
   if (!releases) return '';
-  const platforms = [...new Set(releases.map(r => r.platform))];
-  return platforms.map(plat => `<span class="platform-badge ${getPlatformBadgeClass(plat)}">${plat}</span>`).join('');
+  const platforms = [...new Set(releases.map(r => shortPlatform(r.platform)))];
+  return platforms.map(plat => `<span class="platform-badge ${getPlatformBadgeClass(plat)}">${esc(plat)}</span>`).join('');
 }
 
-// ▸ renderHypeBadge : badge « HYPE »
+// ▸ shortPlatform : nom court d'une console (« PC (Microsoft Windows) » -> « PC »)
+const PLATFORM_SHORT = {
+  "pc (microsoft windows)": "PC", "pc": "PC", "mac": "Mac", "linux": "Linux",
+  "playstation 5": "PS5", "playstation 4": "PS4", "playstation 3": "PS3", "playstation 2": "PS2", "playstation": "PS1",
+  "playstation vita": "PS Vita", "playstation portable": "PSP",
+  "xbox series x|s": "Xbox Series", "xbox series x": "Xbox Series", "xbox one": "Xbox One", "xbox 360": "Xbox 360",
+  "nintendo switch 2": "Switch 2", "nintendo switch": "Switch", "wii u": "Wii U", "nintendo 3ds": "3DS",
+  "ios": "iOS", "android": "Android", "google stadia": "Stadia", "meta quest 3": "Quest 3", "playstation vr2": "PS VR2",
+};
+function shortPlatform(name) {
+  const key = String(name || "").trim().toLowerCase();
+  return PLATFORM_SHORT[key] || String(name || "");
+}
+
+// ▸ renderHypeBadge : petite flamme + nombre de joueurs qui attendent le jeu
 function renderHypeBadge(game) {
   if (!game.hypes || game.hypes < 5) return '';
-  return `<span class="hype-pro-badge">⚡ HYPE ${game.hypes}</span>`;
+  return `<span class="hype-pro-badge" title="Joueurs qui attendent ce jeu (IGDB)">${icon('flame')}${game.hypes}</span>`;
 }
 
 // ▸ renderTimeBadge : badge « Dans X jours »
@@ -3857,7 +4343,9 @@ function renderScoreBadge(game) {
   if (!scoreRaw) return '';
   const score = Math.round(scoreRaw);
   let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
-  return `<span class="score-badge ${scoreClass}">${isPress ? "META" : "JOUEURS"} ★ ${score}</span>`;
+  const label = isPress ? "META" : "JOUEURS";
+  const tip = isPress ? "Note de la presse (IGDB)" : "Note des joueurs (IGDB)";
+  return `<span class="score-badge score-pill ${scoreClass}" title="${tip}"><b>${score}</b><small>${label}</small></span>`;
 }
 
 // ▸ shortList : « A, B, C, D » -> « A, B +2 » (évite les listes de studios sur 3 lignes)
@@ -3880,6 +4368,19 @@ function groupReleaseDates(releases) {
     .join("\n");
 }
 
+// ▸ groupReleaseRows : même regroupement, mais en lignes { date, consoles } pour le tableau de la fiche
+function groupReleaseRows(releases) {
+  const byDate = new Map();
+  (releases || []).forEach((r) => {
+    const p = shortPlatform(r.platform);
+    if (!byDate.has(r.date)) byDate.set(r.date, []);
+    if (!byDate.get(r.date).includes(p)) byDate.get(r.date).push(p);
+  });
+  return [...byDate.entries()]
+    .sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+    .map(([date, plats]) => ({ date: fmtFull(date), plats: plats.join(" · ") }));
+}
+
 // =====================================================================
 // 09. FICHE JEU & PARTAGE
 // =====================================================================
@@ -3899,123 +4400,163 @@ async function openSheet(it) {
 
   p.classList.add("sheet-game"); // mise en page propre à la fiche jeu (2 colonnes sur PC)
 
-  const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
-  const close = el("button", "close", t('close')); 
+  // --- En-tête : fond flouté tiré de la jaquette, jaquette verticale, titre, note ---
+  const hero = el("div", "sheet-hero");
+  if (it.g.cover) hero.style.setProperty("--hero", `url("${String(it.g.cover).replace(/"/g, "%22")}")`);
+
+  const grab = el("div", "sheet-grab");
+  const close = el("button", "sheet-x");
+  close.setAttribute("aria-label", t('close'));
+  close.innerHTML = icon("x");
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
 
-  // Titre + badge de note juste à côté (on voit tout de suite si le jeu est bon)
+  const img = el("img", "big"); img.src = it.g.cover; img.alt = it.g.name;
+
+  const head = el("div", "sheet-head");
   const titleRow = el("div", "sheet-title-row");
   titleRow.append(el("h2", "", it.g.name));
-  const badgeHtml = renderScoreBadge(it.g);
-  if (badgeHtml) { const b = el("span", "sheet-title-badge"); b.innerHTML = badgeHtml; titleRow.append(b); }
-  
-  const cta = el("button", "cta", t('calendarBtn'));
-  cta.addEventListener("click", () => { playThemeSound(theme); addToCalendar(it); });
+  head.append(titleRow);
 
   const GENRE_FR = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
+    "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG", "Shooter": "Tir",
+    "Racing": "Course", "Horror": "Horreur", "Strategy": "Stratégie", "Simulation": "Simulation",
+    "Sports": "Sport", "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
+    "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade", "Visual Novel": "Visual Novel",
+    "Card & Board Game": "Jeu de cartes", "Real Time Strategy (RTS)": "Stratégie", "Turn-based strategy (TBS)": "Tour par tour",
+    "Hack and slash/Beat 'em up": "Beat'em up", "Tactical": "Tactique", "Point-and-click": "Point & click",
   };
-
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
-  let categoryText = "Action";
-  if (Array.isArray(genresRaw)) {
-    categoryText = genresRaw.map(g => {
-      const name = typeof g === 'object' ? (g.name || '') : g;
-      return GENRE_FR[name] || name;
-    }).filter(Boolean).join(" • ");
-  } else if (typeof genresRaw === 'string' && genresRaw.trim() !== '') {
-    categoryText = GENRE_FR[genresRaw] || genresRaw;
+  let genres = [];
+  if (Array.isArray(genresRaw)) genres = genresRaw.map((g) => (typeof g === "object" ? (g.name || "") : g));
+  else if (typeof genresRaw === "string" && genresRaw.trim() !== "") genres = genresRaw.split(",");
+  genres = [...new Set(genres.map((g) => String(g).trim()).filter(Boolean).map((g) => GENRE_FR[g] || g))].slice(0, 3);
+  if (genres.length) {
+    const chips = el("div", "sheet-genres");
+    genres.forEach((g) => chips.append(el("span", "sheet-genre", g)));
+    head.append(chips);
   }
 
-  const categoryBadge = el("p", "m", `🏷️ Styles : ${categoryText}`);
-  categoryBadge.style.fontWeight = "700";
-  categoryBadge.style.color = "var(--acc)";
-  categoryBadge.style.marginTop = "4px";
+  const badgeHtml = renderScoreBadge(it.g);
+  const hypeHtml = renderHypeBadge(it.g);
+  if (badgeHtml || hypeHtml) {
+    const b = el("div", "sheet-title-badge");
+    b.innerHTML = badgeHtml + hypeHtml;
+    head.append(b);
+  }
+  hero.append(grab, img, head);
 
-  // Studios : 2 noms maximum, puis « +3 » (la liste complète s'affiche au survol / appui long)
-  const devText = it.g.developer ? `💻 Développeur : ${shortList(it.g.developer)}` : "";
-  const pubText = it.g.publisher ? `🏢 Éditeur : ${shortList(it.g.publisher)}` : "";
-  const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
-  companyInfo.title = [it.g.developer, it.g.publisher].filter(Boolean).join("\n");
-  companyInfo.style.whiteSpace = "pre-line";
-  companyInfo.style.marginTop = "6px";
+  // --- Bouton principal + boutons rapides ---
+  const cta = el("button", "cta sheet-cta");
+  cta.innerHTML = `${icon("calendar")}<span>${esc(t('calendarBtn'))}</span>`;
+  cta.addEventListener("click", () => { playThemeSound(theme); addToCalendar(it); });
 
-  // Dates : les plateformes qui sortent le même jour sont regroupées sur une ligne
-  const d = el("p", "m", groupReleaseDates(it.g.releases)); d.style.whiteSpace = "pre-line";
-
-  // Boutons secondaires sur une seule ligne : Favori · Bande-annonce · Durée de vie
   const quick = el("div", "sheet-quick");
-  const favCta = el("button", "sheet-quick-btn" + (isFavorite(it.g.id) ? " is-on" : ""), isFavorite(it.g.id) ? t('favShortOn') : t('favShort'));
+  const fav = isFavorite(it.g.id);
+  const favCta = el("button", "sheet-quick-btn" + (fav ? " is-on" : ""));
+  favCta.innerHTML = `${icon(fav ? "heartFill" : "heart")}<span>${esc(stripEmojis(fav ? t('favShortOn') : t('favShort')))}</span>`;
+  favCta.setAttribute("aria-pressed", fav ? "true" : "false");
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
-  const quickLink = (label, url) => {
-    const a = el("a", "sheet-quick-btn", label);
+  const quickLink = (iconName, label, url) => {
+    const a = el("a", "sheet-quick-btn");
+    a.innerHTML = `${icon(iconName)}<span>${label}</span>`;
     a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
     a.addEventListener("click", () => playThemeSound(theme));
     return a;
   };
   quick.append(
     favCta,
-    quickLink(t('trailerShort'), `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`),
-    quickLink(t('hltbShort'), `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`)
+    quickLink("play", esc(stripEmojis(t('trailerShort'))), `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`),
+    quickLink("timer", esc(stripEmojis(t('hltbShort'))), `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`)
   );
 
-  // Notes & tests : chargés en parallèle, sans bloquer le reste de la fiche
+  // --- Tableau d'infos : studios et dates (plateformes du même jour regroupées) ---
+  const facts = el("dl", "sheet-facts");
+  const addFact = (label, value, full) => {
+    if (!value) return;
+    const row = el("div", "sheet-fact");
+    const dd = el("dd", "", value);
+    if (full && full !== value) dd.title = full;
+    row.append(el("dt", "", label), dd);
+    facts.append(row);
+  };
+  groupReleaseRows(it.g.releases).forEach((r, i, arr) => addFact(arr.length > 1 ? r.plats : "Sortie", arr.length > 1 ? r.date : `${r.date} · ${r.plats}`));
+  addFact("Développeur", it.g.developer ? shortList(it.g.developer) : "", it.g.developer);
+  addFact("Éditeur", it.g.publisher ? shortList(it.g.publisher) : "", it.g.publisher);
+
+  // --- Notes & tests (chargés en parallèle) ---
   const reviewsBox = el("div", "rv-box");
 
-  p.replaceChildren(img, titleRow, categoryBadge, companyInfo, d, cta, quick, reviewsBox);
+  // Mise en page : colonne A (actions + infos) / colonne B (notes + résumé) — côte à côte sur PC
+  const colA = el("div", "sheet-col sheet-col-a");
+  const colB = el("div", "sheet-col sheet-col-b");
+  colA.append(cta, quick, facts);
+  colB.append(reviewsBox);
+  const body = el("div", "sheet-body");
+  body.append(colA, colB);
+
+  p.replaceChildren(close, hero, body);
   loadReviews(it, reviewsBox);
+  setupSheetSwipe(p, hero);
 
   if (it.g.summary) {
-    const label = el("p", "m", t('summaryLabel')); 
-    label.style.marginTop = "16px";
-    
-    const summaryEl = el("p", "", "⏳ Traduction du résumé en cours par l'IA..."); 
-    summaryEl.style.opacity = "0.7";
-    p.append(label, summaryEl);
-    
+    const sec = el("section", "sheet-sec");
+    sec.append(sectionTitle("scroll", t('summaryLabel')));
+    const summaryEl = el("p", "sheet-summary is-loading", "Traduction du résumé…");
+    sec.append(summaryEl);
+    colB.append(sec);
     $("#sheet").classList.add("on");
 
     try {
       const res = await fetch(`${API}/?translate=${it.g.id}&lang=fr`);
       const data = await res.json();
-      
-      summaryEl.style.opacity = "1"; 
-      if (data && data.summary) {
-        summaryEl.textContent = data.summary;
-      } else {
-        summaryEl.textContent = it.g.summary;
-      }
+      summaryEl.textContent = (data && data.summary) ? data.summary : it.g.summary;
     } catch (e) {
-      summaryEl.style.opacity = "1"; 
       summaryEl.textContent = it.g.summary;
     }
+    summaryEl.classList.remove("is-loading");
   } else {
     $("#sheet").classList.add("on");
   }
-  p.append(close);
+}
+
+// ▸ sectionTitle : titre de section de la fiche (icône + texte)
+function sectionTitle(iconName, text) {
+  const h = el("h3", "sheet-sec-title");
+  h.innerHTML = `${icon(iconName)}<span>${esc(text)}</span>`;
+  return h;
+}
+
+// ▸ setupSheetSwipe : sur téléphone, glisser l'en-tête de la fiche vers le bas la ferme
+function setupSheetSwipe(panel, handle) {
+  let startY = null, dy = 0;
+  handle.addEventListener("touchstart", (e) => {
+    if (panel.scrollTop > 0) return;
+    startY = e.touches[0].clientY; dy = 0;
+    panel.style.transition = "none";
+  }, { passive: true });
+  handle.addEventListener("touchmove", (e) => {
+    if (startY == null) return;
+    dy = Math.max(0, e.touches[0].clientY - startY);
+    panel.style.transform = `translateY(${dy}px)`;
+  }, { passive: true });
+  handle.addEventListener("touchend", () => {
+    if (startY == null) return;
+    startY = null;
+    panel.style.transition = "transform .25s ease";
+    if (dy > 110) {
+      panel.style.transform = "translateY(100%)";
+      setTimeout(() => { closeSheet(); panel.style.transform = ""; panel.style.transition = ""; }, 220);
+    } else {
+      panel.style.transform = "";
+    }
+  });
 }
 
 // ▸ loadReviews : section « Notes & tests » de la fiche (route ?reviews= du Worker)
 const reviewsMemo = {}; // évite de redemander les notes si on rouvre la même fiche
 async function loadReviews(it, box) {
   const id = it.g.id;
-  box.replaceChildren(el("p", "m", "⭐ Notes & tests"), el("p", "rv-note", "⏳ Recherche des notes et des tests…"));
+  box.replaceChildren(sectionTitle("star", "Notes & tests"), el("p", "rv-note is-loading", "Recherche des notes et des tests…"));
   try {
     let data = reviewsMemo[id];
     if (!data) {
@@ -4026,7 +4567,7 @@ async function loadReviews(it, box) {
     }
     if (box.isConnected) box.replaceChildren(...renderReviews(data, it));
   } catch (e) {
-    if (box.isConnected) box.replaceChildren(el("p", "m", "⭐ Notes & tests"), el("p", "rv-note", "Notes indisponibles pour le moment."));
+    if (box.isConnected) box.replaceChildren(sectionTitle("star", "Notes & tests"), el("p", "rv-note", "Notes indisponibles pour le moment."));
   }
 }
 
@@ -4052,10 +4593,11 @@ const TEST_SITES = [
 ];
 function renderTestSites(gameName) {
   const wrap = el("div", "rv-sites-wrap");
-  wrap.append(el("p", "rv-note", "📰 Lire le test sur :"));
+  wrap.append(el("p", "rv-label", "Lire le test sur"));
   const grid = el("div", "rv-sites");
   TEST_SITES.forEach((s) => {
-    const a = el("a", "rv-site", s.name + " ↗");
+    const a = el("a", "rv-site");
+    a.innerHTML = `<span>${esc(s.name)}</span>${icon("external")}`;
     a.href = "https://duckduckgo.com/?q=" + encodeURIComponent(`\\test ${gameName} site:${s.domain}`);
     a.target = "_blank"; a.rel = "noopener noreferrer";
     a.addEventListener("click", () => playThemeSound(theme));
@@ -4067,7 +4609,7 @@ function renderTestSites(gameName) {
 
 // ▸ renderReviews : construit la section à partir de la réponse du Worker
 function renderReviews(data, it) {
-  const out = [el("p", "m", "⭐ Notes & tests")];
+  const out = [sectionTitle("star", "Notes & tests")];
   const tiles = el("div", "rv-scores");
   const oc = data.opencritic;
 
@@ -4104,20 +4646,29 @@ function renderReviews(data, it) {
     if (r.score != null) head.append(el("span", "score-badge " + scoreClass(r.score), `${r.score}/100`));
     card.append(head);
     if (r.snippet) card.append(el("p", "", "« " + r.snippet + " »"));
-    card.append(el("span", "rv-read", "Lire le test ↗"));
+    const read = el("span", "rv-read"); read.innerHTML = `Lire le test ${icon("external")}`; card.append(read);
     out.push(card);
   });
   if (oc && oc.url && (reviews.length > 4 || oc.count > reviews.length)) {
-    const all = el("a", "cta-sec", `📰 Voir tous les tests (${oc.count})`);
+    const all = el("a", "cta-sec"); all.innerHTML = `${icon("news")}<span>Voir tous les tests (${oc.count})</span>`;
     all.href = oc.url; all.target = "_blank"; all.rel = "noopener noreferrer";
     out.push(all);
   }
-  out.push(el("p", "rv-note", `Sources : ${[oc && "OpenCritic", data.steam && "Steam", "IGDB"].filter(Boolean).join(", ")} · mis à jour le ${fmtFull(data.updated)}`));
+  // « mis à jour le … » seulement si le Worker a renvoyé une date valide (sinon « Invalid Date »)
+  let upd = data.updated;
+  if (typeof upd === "number") upd = new Date(upd < 1e12 ? upd * 1000 : upd).toISOString();
+  upd = upd ? String(upd).slice(0, 10) : "";
+  const updated = upd && !isNaN(utc(upd)) ? ` · mis à jour le ${fmtFull(upd)}` : "";
+  out.push(el("p", "rv-note rv-sources", `Sources : ${[oc && "OpenCritic", data.steam && "Steam", "IGDB"].filter(Boolean).join(", ")}${updated}`));
   return out;
 }
 
 // ▸ closeSheet : ferme la fiche du jeu
-function closeSheet() { $("#sheet").classList.remove("on"); delete $("#panel").dataset.gameId; }
+function closeSheet() {
+  $("#sheet").classList.remove("on");
+  delete $("#panel").dataset.gameId;
+  unlockBackground(); // tout de suite (avant un éventuel « retour en haut » de la navigation)
+}
 
 // ▸ addToCalendar : télécharge un fichier .ics pour le calendrier
 function addToCalendar(it) {
@@ -4270,7 +4821,7 @@ function checkDailyReward() {
     lastDailyClaim = todayStr;
     try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
     setTimeout(() => {
-      showRetroAlert("Bonus Journalier", "🎁 +50 🪙 crédits de connexion offerts !");
+      showToast("Bonus du jour : +50 🪙 crédits offerts", "gift");
     }, 1000);
   }
 }
@@ -4762,7 +5313,7 @@ challengesList.forEach(item => {
 function buyAndOpenPack(cost, typeName, category) {
   playThemeSound(theme);
   if (userCoins < cost) {
-    alert(`❌ Pas assez de crédits ! Il vous faut ${cost} 🪙 pour ce pack.`);
+    showRetroAlert("Crédits insuffisants", `Il vous faut ${cost} 🪙 pour ce pack.`, true);
     return;
   }
   userCoins -= cost;
@@ -5492,7 +6043,7 @@ function renderArcadeMainPage() {
       const scoreVal = scoreInput.value.trim();
 
       if (!gameName || !scoreVal) {
-        alert("Veuillez remplir le nom du jeu et le score !");
+        showRetroAlert("Champs manquants", "Remplis le nom du jeu et le score.", true);
         return;
       }
 
@@ -5622,7 +6173,7 @@ function openSettingsMainPage(tabIndex = 0) {
   const uniqueGrid = el("div", "themes-grid-container");
   const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
   
-  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note (150🪙)");
+  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note · 150 🪙");
   const dnUniqueDot = el("span", "dot"); 
   dnUniqueDot.style.background = isThemeUnlocked ? "#ef4444" : "#555"; 
   dnUniqueDot.innerHTML = "🍎";
@@ -6043,7 +6594,7 @@ async function cloudSave({ silent = true } = {}) {
     }
     if (!r.ok) throw new Error(r.json.error || "Erreur " + r.status);
     lastCloudSnapshot = snapshot;
-    if (!silent) showRetroAlert("Sauvegarde", "☁️ Ta progression est sauvegardée sur le cloud.");
+    if (!silent) showToast("Progression sauvegardée sur le cloud", "cloud");
     return true;
   } catch (e) {
     if (!silent) showRetroAlert("Sauvegarde impossible", esc(e.message), true);
@@ -6315,10 +6866,10 @@ function importCartridgeSave() {
         localStorage.setItem("favorites", JSON.stringify(favorites));
         
         updateCoinsUI();
-        alert("✅ Sauvegarde (.sav) importée avec succès ! Bon retour collectionneur.");
+        showToast("Sauvegarde importée. Bon retour collectionneur !", "check");
         openSettingsMainPage(1);
       } catch (err) {
-        alert("❌ Erreur lors de l'importation du fichier de sauvegarde.");
+        showRetroAlert("Import impossible", "Le fichier de sauvegarde n'a pas pu être lu.", true);
       }
     };
     reader.readAsText(file);
@@ -6645,6 +7196,79 @@ window.addEventListener("DOMContentLoaded", updateNavbarTranslations);
 
 // --- Sauvegarde automatique sur le cloud (si le joueur est connecté) ---
 startCloudAutoSave();
+
+// --- Icônes à la place des emojis ---
+// Tout emoji listé dans EMOJI_ICONS (section 01) est remplacé à l'écran par une icône SVG,
+// y compris dans les textes ajoutés plus tard (boutique, réglages, pop-ups…).
+(function setupEmojiIcons() {
+  const SKIP = new Set(["SCRIPT", "STYLE", "TEXTAREA", "INPUT", "svg", "SVG", "TITLE"]);
+  const has = (s) => { EMOJI_RE.lastIndex = 0; return EMOJI_RE.test(s); };
+
+  function convertText(node) {
+    const text = node.nodeValue;
+    if (!text || !has(text)) return;
+    const parent = node.parentNode;
+    if (!parent || SKIP.has(parent.nodeName) || parent.closest("svg")) return;
+    // Menus déroulants : impossible d'y mettre une icône, on retire juste l'emoji
+    if (parent.nodeName === "OPTION" || parent.nodeName === "SELECT") { node.nodeValue = stripEmojis(text); return; }
+
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    EMOJI_RE.lastIndex = 0;
+    for (const m of text.matchAll(EMOJI_RE)) {
+      const before = text.slice(last, m.index);
+      if (before) frag.append(before);
+      const key = m[0].replace(/️|\s/g, "");
+      const name = EMOJI_ICONS[key];
+      if (name) {
+        const atStart = !text.slice(0, m.index).trim();
+        const atEnd = !text.slice(m.index + m[0].length).trim();
+        const tpl = document.createElement("template");
+        tpl.innerHTML = icon(name, atStart ? "ic-lead" : atEnd ? "ic-trail" : "ic-mid");
+        frag.append(tpl.content);
+      }
+      last = m.index + m[0].length;
+      // l'espace qui suit l'icône est remplacé par la marge de l'icône
+      if (name && text[last] === " ") last++;
+    }
+    if (last < text.length) frag.append(text.slice(last));
+    // Un seul bloc (texte + icônes) : la mise en page d'origine ne bouge pas
+    const wrap = document.createElement("span");
+    wrap.className = "ic-text";
+    wrap.append(frag);
+    parent.replaceChild(wrap, node);
+  }
+
+  function scan(root) {
+    if (!root) return;
+    if (root.nodeType === 3) return convertText(root);
+    if (root.nodeType !== 1 || SKIP.has(root.nodeName)) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const found = [];
+    while (walker.nextNode()) if (has(walker.currentNode.nodeValue)) found.push(walker.currentNode);
+    found.forEach(convertText);
+  }
+
+  scan(document.body);
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.type === "characterData") convertText(m.target);
+      else m.addedNodes.forEach(scan);
+    }
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+
+  // Textes d'aide des champs (placeholder) : on retire les emojis
+  document.querySelectorAll("[placeholder]").forEach((n) => { n.placeholder = stripEmojis(n.placeholder); });
+})();
+
+// --- Fiche ouverte : la page derrière ne défile plus ---
+(function setupSheetLock() {
+  const sheet = document.getElementById("sheet");
+  if (!sheet) return;
+  new MutationObserver(() => {
+    if (sheet.classList.contains("on")) lockBackground(); else unlockBackground();
+  }).observe(sheet, { attributes: true, attributeFilter: ["class"] });
+})();
 </script>
 
 </body>
