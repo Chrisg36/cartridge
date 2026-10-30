@@ -523,6 +523,202 @@ async function getReviews(idParam, env, refresh) {
 }
 
 
+
+// =====================================================================
+//  BOOSTERS : ?pack=standard | retro | supreme_retro  (&exclude=id1,id2…)
+//  Tire UNE jaquette selon une vraie rareté, sur le catalogue complet IGDB.
+//  4 raretés :
+//   - legendary (Légendaire) : « grails » du rétro, jeux réputés introuvables / très chers en boîte
+//   - epic      (Épique)     : jeux rétro sortis sur des consoles rares (Neo Geo, PC Engine, Saturn JP…)
+//   - rare      (Rare)       : pépites rétro 1985-2005, bien notées mais peu connues
+//   - common    (Commune)    : jeux récents connus (2010 → aujourd'hui)
+//  « exclude » = jeux déjà dans la vitrine du joueur : on évite les doublons.
+// =====================================================================
+const DETAIL_FIELDS = `fields name, summary, hypes, total_rating_count, rating, aggregated_rating, first_release_date, cover.image_id, genres.name,
+  release_dates.date, release_dates.platform.name, release_dates.human,
+  involved_companies.company.name, involved_companies.developer, involved_companies.publisher;`;
+
+// Chances de chaque rareté selon le booster (total = 100)
+const PACK_ODDS = {
+  standard:      { common: 85, rare: 12, epic: 3, legendary: 0 },
+  retro:         { common: 0, rare: 72, epic: 22, legendary: 6 },
+  supreme_retro: { common: 0, rare: 0, epic: 30, legendary: 70 },
+};
+const RARITY_LABEL = { common: "Commune", rare: "Rare", epic: "Épique", legendary: "Légendaire" };
+
+const Y = (y) => Math.floor(Date.UTC(y, 0, 1) / 1000);
+// Consoles rétro « grand public »
+const RETRO_PLATFORMS = [18, 19, 4, 21, 7, 8, 32, 23, 29, 64, 33, 22, 24, 11, 35, 59];
+// Consoles rares / confidentielles : Neo Geo AES & CD, Virtual Boy, PC Engine (+CD), Mega-CD, 32X,
+// Jaguar, 3DO, PC-FX, Neo Geo Pocket (+Color), WonderSwan (+Color), CD-i
+const RARE_PLATFORMS = [80, 136, 87, 86, 150, 78, 30, 62, 50, 274, 119, 120, 57, 123, 117];
+const MODERN_PLATFORMS = [6, 167, 169, 508, 48, 49, 130];
+
+// Réservoirs de jeux (filtres IGDB) pour chaque rareté tirée au hasard
+function poolWhere(rarity) {
+  const now = Math.floor(Date.now() / 1000);
+  if (rarity === "epic") {
+    return `cover != null & game_type = (0,8,9,10) & release_dates.platform = (${RARE_PLATFORMS.join(",")}) & first_release_date >= ${Y(1984)} & first_release_date < ${Y(2004)} & total_rating_count >= 1`;
+  }
+  if (rarity === "rare") {
+    // pépites : bien notées, mais peu de votes (pas les Mario / Zelda archi-connus)
+    return `cover != null & game_type = (0,8,9) & release_dates.platform = (${RETRO_PLATFORMS.join(",")}) & first_release_date >= ${Y(1985)} & first_release_date < ${Y(2006)} & rating >= 65 & total_rating_count >= 3 & total_rating_count <= 90`;
+  }
+  // common
+  return `cover != null & game_type = (0,4,8,9) & release_dates.platform = (${MODERN_PLATFORMS.join(",")}) & first_release_date >= ${Y(2010)} & first_release_date < ${now} & total_rating_count >= 20`;
+}
+
+// « Grails » : jeux rétro réputés rares / chers sur le marché de la collection (nom + année approximative)
+const GRAILS = [
+  // NES
+  ["Little Samson", 1992], ["Stadium Events", 1987], ["Bubble Bobble Part 2", 1993], ["Panic Restaurant", 1992],
+  ["The Flintstones: The Surprise at Dinosaur Peak!", 1994], ["Gimmick!", 1992], ["Power Blade 2", 1992],
+  ["Snow Bros.", 1991], ["Zombie Nation", 1991], ["Recca", 1992], ["Chip 'n Dale: Rescue Rangers 2", 1993], ["DuckTales 2", 1993],
+  // Super Nintendo
+  ["EarthBound", 1994], ["Hagane: The Final Conflict", 1994], ["Pocky & Rocky 2", 1994], ["Wild Guns", 1994],
+  ["Harvest Moon", 1996], ["Terranigma", 1995], ["Rendering Ranger: R2", 1995], ["Super Turrican 2", 1995],
+  ["Demon's Crest", 1994], ["Mega Man X3", 1995], ["Mega Man 7", 1995], ["Star Ocean", 1996], ["Tales of Phantasia", 1995],
+  ["Seiken Densetsu 3", 1995], ["Final Fight 3", 1995], ["Sutte Hakkun", 1998],
+  // Mega Drive / Mega-CD
+  ["Crusader of Centy", 1994], ["Pulseman", 1994], ["Phantasy Star IV: The End of the Millennium", 1993], ["Gley Lancer", 1992],
+  ["MUSHA", 1990], ["Elemental Master", 1990], ["Mega Turrican", 1994], ["Snatcher", 1994], ["Lunar: Eternal Blue", 1994],
+  ["Popful Mail", 1994], ["Alien Soldier", 1995], ["Shining Force II", 1993],
+  // PC Engine / TurboGrafx
+  ["Air Zonk", 1992], ["Magical Chase", 1991], ["Neutopia II", 1991], ["Lords of Thunder", 1993], ["Gate of Thunder", 1992],
+  ["Castlevania: Rondo of Blood", 1993], ["Spriggan Mark 2: Re-Terraform Project", 1992],
+  // Neo Geo
+  ["Kizuna Encounter: Super Tag Battle", 1996], ["Metal Slug", 1996], ["The Last Blade 2", 1998], ["Garou: Mark of the Wolves", 1999],
+  ["Twinkle Star Sprites", 1996], ["Blazing Star", 1998], ["Pulstar", 1995], ["Magician Lord", 1990], ["Sengoku 3", 2001],
+  ["Shock Troopers", 1997], ["Neo Turf Masters", 1996],
+  // Nintendo 64
+  ["Conker's Bad Fur Day", 2001], ["Bomberman 64: The Second Attack!", 2000], ["Stunt Racer 64", 2000], ["Ogre Battle 64: Person of Lordly Caliber", 1999],
+  ["Harvest Moon 64", 1999], ["Mischief Makers", 1997], ["Sin and Punishment", 2000],
+  // PlayStation
+  ["Suikoden II", 1998], ["Valkyrie Profile", 1999], ["Tail Concerto", 1998], ["Mega Man Legends 2", 2000],
+  ["The Misadventures of Tron Bonne", 1999], ["Rhapsody: A Musical Adventure", 1998], ["Brigandine: The Legend of Forsena", 1998],
+  ["Thousand Arms", 1998], ["Persona 2: Eternal Punishment", 2000], ["Tomba! 2: The Evil Swine Return", 1999], ["Hellnight", 1998],
+  // Saturn
+  ["Panzer Dragoon Saga", 1998], ["Radiant Silvergun", 1998], ["Shining Force III", 1997], ["Burning Rangers", 1998],
+  ["Magic Knight Rayearth", 1995], ["Dragon Force", 1996], ["Guardian Heroes", 1996], ["Princess Crown", 1997], ["Battle Garegga", 1996],
+  // Dreamcast
+  ["Ikaruga", 2001], ["Cannon Spike", 2000], ["Bangai-O", 1999], ["Mars Matrix: Hyper Solid Shooting", 2000], ["Project Justice", 2000],
+  ["Gunbird 2", 1998], ["Shenmue II", 2001],
+  // GameCube
+  ["Gotcha Force", 2003], ["Chibi-Robo!", 2005], ["Pokémon XD: Gale of Darkness", 2005], ["Skies of Arcadia Legends", 2002],
+  ["Cubivore: Survival of the Fittest", 2002], ["Baten Kaitos: Eternal Wings and the Lost Ocean", 2003], ["Fire Emblem: Path of Radiance", 2005],
+  // PS2
+  ["Rule of Rose", 2006], ["Haunting Ground", 2005], ["Kuon", 2004], ["Shadow Hearts: From the New World", 2005], ["Steambot Chronicles", 2005],
+  // Portables
+  ["Kid Dracula", 1993], ["Mega Man V", 1994], ["Shantae", 2002], ["Ninja Five-O", 2003], ["Kirby Tilt 'n' Tumble", 2000],
+  ["Jack Bros.", 1995], ["Virtual Boy Wario Land", 1995], ["Mother 3", 2006],
+  // Jaguar
+  ["Alien vs Predator", 1994], ["Tempest 2000", 1994],
+];
+
+async function igdbAt(env, endpoint, query) {
+  const token = await getToken(env);
+  const res = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+    method: "POST",
+    headers: { "Client-ID": env.CLIENT_ID.trim(), Authorization: `Bearer ${token}`, "Content-Type": "text/plain" },
+    body: query,
+  });
+  if (!res.ok) throw new Error(`Erreur IGDB (${res.status}) : ${await res.text()}`);
+  return res.json();
+}
+
+// Petit cache JSON (API Cache de Cloudflare) pour éviter de refaire les mêmes requêtes
+async function cacheJson(ctx, key, ttl, compute) {
+  const req = new Request("https://cache.cartridge/" + encodeURIComponent(key));
+  const hit = await cacheGet(req);
+  if (hit) { try { return await hit.json(); } catch (e) {} }
+  const value = await compute();
+  if (value != null) {
+    cachePut(ctx, req, new Response(JSON.stringify(value), { headers: { "Content-Type": "application/json", "Cache-Control": `public, max-age=${ttl}` } }));
+  }
+  return value;
+}
+
+function rollRarity(odds) {
+  let r = Math.random() * 100;
+  for (const k of ["legendary", "epic", "rare", "common"]) {
+    if ((r -= odds[k] || 0) < 0) return k;
+  }
+  return Object.keys(odds).find((k) => odds[k] > 0) || "common";
+}
+
+// Un grail au hasard (le jeu IGDB correspondant est gardé 30 jours en cache)
+async function drawGrail(env, ctx, exclude) {
+  const order = [...GRAILS].sort(() => Math.random() - 0.5);
+  for (const [name, year] of order.slice(0, 6)) {
+    const g = await cacheJson(ctx, "grail:v1:" + name, 30 * DAY, async () => {
+      const safe = name.replace(/["\;]/g, "");
+      const list = await igdbAt(env, "games", `search "${safe}"; ${DETAIL_FIELDS} where cover != null; limit 15;`);
+      const yearOf = (x) => (x.first_release_date ? new Date(x.first_release_date * 1000).getUTCFullYear() : 0);
+      const near = (x) => Math.abs(yearOf(x) - year) <= 3;
+      const best = list.find((x) => normName(x.name) === normName(name) && near(x))
+        || list.find((x) => normName(x.name) === normName(name))
+        || list.find((x) => near(x) && normName(x.name).includes(normName(name).slice(0, 8)));
+      return best || null;
+    });
+    if (g && !exclude.has(g.id)) return g;
+  }
+  return null;
+}
+
+// Un jeu au hasard dans un réservoir (nombre total mis en cache 1 jour, puis position au hasard)
+async function drawFromPool(env, ctx, rarity, exclude) {
+  const where = poolWhere(rarity);
+  const total = await cacheJson(ctx, "poolcount:v1:" + rarity, DAY, async () => {
+    const r = await igdbAt(env, "games/count", `where ${where};`);
+    return r && typeof r.count === "number" ? r.count : null;
+  });
+  if (!total) return null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const offset = Math.floor(Math.random() * Math.max(1, total - 50));
+    let list;
+    try {
+      list = await igdbAt(env, "games", `${DETAIL_FIELDS} where ${where}; sort id asc; limit 50; offset ${offset};`);
+    } catch (e) {
+      // certaines positions trop lointaines peuvent être refusées : on reprend depuis le début
+      list = await igdbAt(env, "games", `${DETAIL_FIELDS} where ${where}; sort id asc; limit 200;`);
+    }
+    const fresh = (list || []).filter((g) => !exclude.has(g.id));
+    if (fresh.length) return fresh[Math.floor(Math.random() * fresh.length)];
+  }
+  return null;
+}
+
+async function drawPack(url, env, ctx) {
+  const pack = PACK_ODDS[url.searchParams.get("pack")] ? url.searchParams.get("pack") : "standard";
+  const exclude = new Set(
+    String(url.searchParams.get("exclude") || "").split(",").map(Number).filter((n) => Number.isInteger(n) && n > 0).slice(0, 600)
+  );
+  const noStore = { ...CORS, "Cache-Control": "no-store" };
+  try {
+    let rarity = rollRarity(PACK_ODDS[pack]);
+    let raw = null;
+    // Si une rareté ne donne rien (tout déjà possédé, panne…), on descend d'un cran
+    const chain = ["legendary", "epic", "rare", "common"];
+    for (let i = chain.indexOf(rarity); i < chain.length && !raw; i++) {
+      rarity = chain[i];
+      if (pack !== "standard" && rarity === "common") rarity = "rare"; // un booster rétro ne donne jamais de jeu récent
+      raw = rarity === "legendary" ? await drawGrail(env, ctx, exclude) : await drawFromPool(env, ctx, rarity, exclude);
+    }
+    if (!raw) return Response.json({ error: "Aucun jeu disponible" }, { status: 404, headers: noStore });
+    const [game] = buildGames([raw], { allowedIds: null, searchMode: true });
+    const out = game || {
+      id: raw.id, name: raw.name, summary: raw.summary || null, genres: [], releases: [], date: null,
+      cover: raw.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${raw.cover.image_id}.jpg` : "",
+    };
+    out.rarity = rarity;
+    out.rarityLabel = RARITY_LABEL[rarity];
+    out.pack = pack;
+    return Response.json(out, { headers: noStore });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500, headers: noStore });
+  }
+}
+
 // =====================================================================
 //  COMPTES JOUEURS (base D1, binding « DB ») : /api/auth, /api/save, /api/recover
 // =====================================================================
@@ -568,6 +764,19 @@ function cleanData(d) {
     if (Array.isArray(d.favorites)) out.favorites = d.favorites.filter((x) => Number.isInteger(x));
     if (Array.isArray(d.gameScores)) out.gameScores = d.gameScores;
     if (typeof d.theme === "string") out.theme = d.theme.slice(0, 30);
+    // Achats de la Boutique (thèmes collector, avatars, bannières) : listes de petits identifiants
+    if (d.unlocks && typeof d.unlocks === "object") {
+      const ids = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,40}$/i.test(x)).slice(0, 100) : []);
+      const one = (x) => (typeof x === "string" && /^[a-z0-9_-]{0,40}$/i.test(x) ? x : "");
+      out.unlocks = {
+        themes: ids(d.unlocks.themes),
+        avatars: ids(d.unlocks.avatars),
+        banners: ids(d.unlocks.banners),
+        avatar: one(d.unlocks.avatar),
+        banner: one(d.unlocks.banner),
+        uniqueTheme: one(d.unlocks.uniqueTheme),
+      };
+    }
   }
   return JSON.stringify(out).length <= MAX_DATA_BYTES ? out : null;
 }
@@ -745,6 +954,10 @@ export default {
 
     if (url.searchParams.has("translate")) {
       return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
+    }
+
+    if (url.searchParams.has("pack")) {
+      return drawPack(url, env, ctx);
     }
 
     if (url.searchParams.has("reviews")) {
