@@ -284,20 +284,26 @@ function cleanData(d) {
   return JSON.stringify(out).length <= MAX_DATA_BYTES ? out : null;
 }
 
-// Protection contre les essais de mots de passe en série (15 minutes)
+// Durée de vie d'une connexion : 90 jours, puis il faut se reconnecter
+const SESSION_MAX_AGE = 90 * 24 * 3600;
+// Créations de comptes : 3 maximum par connexion internet sur 24 heures
+const MAX_SIGNUPS_PER_IP = 3;
+const SIGNUP_WINDOW = 24 * 3600;
+
+// Protection contre les essais en série (fenêtre de 15 minutes par défaut)
 async function tooManyAttempts(env, limits) {
-  for (const { key, max } of limits) {
+  for (const { key, max, window = 900 } of limits) {
     const row = await env.DB.prepare("SELECT n, ts FROM attempts WHERE key = ?").bind(key).first();
-    if (row && nowSec() - row.ts < 900 && row.n >= max) return true;
+    if (row && nowSec() - row.ts < window && row.n >= max) return true;
   }
   return false;
 }
 async function noteFailure(env, limits) {
   const t = nowSec();
-  for (const { key } of limits) {
+  for (const { key, window = 900 } of limits) {
     await env.DB.prepare(
-      "INSERT INTO attempts (key, n, ts) VALUES (?, 1, ?) ON CONFLICT(key) DO UPDATE SET n = CASE WHEN ? - ts >= 900 THEN 1 ELSE n + 1 END, ts = CASE WHEN ? - ts >= 900 THEN ? ELSE ts END"
-    ).bind(key, t, t, t, t).run();
+      "INSERT INTO attempts (key, n, ts) VALUES (?, 1, ?) ON CONFLICT(key) DO UPDATE SET n = CASE WHEN ? - ts >= ? THEN 1 ELSE n + 1 END, ts = CASE WHEN ? - ts >= ? THEN ? ELSE ts END"
+    ).bind(key, t, t, window, t, window, t).run();
   }
 }
 async function clearFailures(env, key) {
@@ -307,6 +313,8 @@ async function clearFailures(env, key) {
 // Crée une session (jeton aléatoire ; seul son empreinte est gardée), 5 appareils maximum
 async function newSession(env, userId) {
   const token = randomToken();
+  // Ménage : on efface les connexions de plus de 90 jours (tous joueurs confondus)
+  await env.DB.prepare("DELETE FROM sessions WHERE created_at < ?").bind(nowSec() - SESSION_MAX_AGE).run();
   await env.DB.prepare("INSERT INTO sessions (token_hash, user_id, created_at) VALUES (?, ?, ?)")
     .bind(await sha256Hex(token), userId, nowSec()).run();
   await env.DB.prepare(
@@ -329,10 +337,27 @@ async function handleAuth(request, env) {
   const limits = [{ key: "u:" + nameLower, max: 8 }, { key: "ip:" + ip, max: 30 }];
   if (await tooManyAttempts(env, limits)) return jsonRes({ error: "Trop d'essais. Réessaie dans 15 minutes." }, 429);
 
+  // mode : "register" (créer un compte) ou "login" (se connecter).
+  // Sans mode, ancien comportement (un seul bouton) pour ne pas casser l'app actuelle.
+  const mode = body.mode === "register" || body.mode === "login" ? body.mode : "auto";
+
   const user = await env.DB.prepare("SELECT * FROM users WHERE name_lower = ?").bind(nameLower).first();
+
+  if (user && mode === "register") {
+    return jsonRes({ error: "Ce pseudo est déjà pris. Choisis-en un autre, ou connecte-toi." }, 409);
+  }
+  if (!user && mode === "login") {
+    // Même message qu'un mauvais mot de passe : on ne révèle pas si le pseudo existe
+    await noteFailure(env, limits);
+    return jsonRes({ error: "Pseudo ou mot de passe incorrect." }, 401);
+  }
 
   if (!user) {
     // ----- Création du compte -----
+    const signupLimit = [{ key: "c:" + ip, max: MAX_SIGNUPS_PER_IP, window: SIGNUP_WINDOW }];
+    if (await tooManyAttempts(env, signupLimit)) {
+      return jsonRes({ error: "Trop de comptes créés depuis cette connexion. Réessaie demain." }, 429);
+    }
     const data = cleanData(body.data);
     if (data === null) return jsonRes({ error: "Sauvegarde trop volumineuse." }, 400);
     const p = await makeHash(password);
@@ -347,6 +372,7 @@ async function handleAuth(request, env) {
     } catch (e) {
       return jsonRes({ error: "Ce pseudo vient d'être pris. Réessaie." }, 409);
     }
+    await noteFailure(env, signupLimit); // compte une création pour cette connexion internet
     return jsonRes({ status: "created", token: await newSession(env, id) });
   }
 
@@ -366,8 +392,13 @@ async function handleSave(request, env) {
   const auth = request.headers.get("Authorization") || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
   if (!/^[0-9a-f]{64}$/.test(token)) return jsonRes({ error: "Non connecté." }, 401);
-  const sess = await env.DB.prepare("SELECT user_id FROM sessions WHERE token_hash = ?").bind(await sha256Hex(token)).first();
+  const tokenHash = await sha256Hex(token);
+  const sess = await env.DB.prepare("SELECT user_id, created_at FROM sessions WHERE token_hash = ?").bind(tokenHash).first();
   if (!sess) return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
+  if (nowSec() - sess.created_at > SESSION_MAX_AGE) {
+    await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(tokenHash).run();
+    return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
+  }
   let body;
   try { body = await request.json(); } catch (e) { return jsonRes({ error: "Requête invalide." }, 400); }
   const data = cleanData(body.data);
