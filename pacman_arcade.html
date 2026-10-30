@@ -4,672 +4,1066 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Pac-Man // Édition Pro Arcade Ultime</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07080c">
+<title>Pac-Man — Cartridge Arcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-app: #030406;
-    --acc: #ffb700;
-    --txt: #ffdc5e;
-    --mut: #3a4454;
-    --canvas-bg: #000000;
-    --glow: rgba(255, 183, 0, 0.4);
+/* =====================================================================
+   CARTRIDGE ARCADE — châssis commun des bornes (généré, ne pas éditer
+   dans les jeux : modifier src/shell.css puis relancer build.py)
+   ===================================================================== */
+:root {
+  --g: #ffcc00;            /* couleur de la borne (donnée par chaque jeu) */
+  --g2: #ff3b6b;           /* couleur secondaire */
+  --bg: #07080c;
+  --deck: #11131b;
+  --line: rgba(255, 255, 255, 0.08);
+  --txt: #eef0f6;
+  --mut: #8a91a5;
+  --px: 'Press Start 2P', ui-monospace, Menlo, monospace;
+  --ui: 'Rajdhani', system-ui, -apple-system, sans-serif;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--txt); font-family: var(--ui); touch-action: none; overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+button { font: inherit; color: inherit; touch-action: manipulation; }
+
+/* ---------- Fond de salle d'arcade ---------- */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 50% -10%, color-mix(in srgb, var(--g) 22%, transparent), transparent 60%),
+    radial-gradient(90% 50% at 50% 110%, color-mix(in srgb, var(--g2) 16%, transparent), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 28px),
+    var(--bg);
+}
+
+/* ---------- Grille principale ---------- */
+#cab {
+  position: fixed; inset: 0;
+  padding: calc(var(--sat) + 6px) calc(var(--sar) + 10px) calc(var(--sab) + 6px) calc(var(--sal) + 10px);
+  display: grid; gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "mq" "hud" "st" "pad";
+  max-width: 560px; margin: 0 auto;
+}
+
+/* ---------- Fronton (marquee) ---------- */
+.mq { grid-area: mq; display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.mq-title {
+  flex: 1; min-width: 0; text-align: center; font-family: var(--px); font-size: clamp(11px, 3.6vw, 15px); letter-spacing: 2px;
+  color: #fff; text-shadow: 0 0 6px var(--g), 0 0 18px var(--g), 0 2px 0 rgba(0,0,0,.6);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 12px 6px; border-radius: 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--g) 18%, #0b0c12), #0b0c12);
+  border: 1px solid color-mix(in srgb, var(--g) 45%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 22px color-mix(in srgb, var(--g) 25%, transparent);
+}
+.hb {
+  flex: none; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); cursor: pointer;
+  display: grid; place-items: center; background: linear-gradient(180deg, #1a1d28, #0e1017); color: var(--txt);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 10px rgba(0,0,0,.4); transition: transform .1s, border-color .15s;
+}
+.hb svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.hb:hover { border-color: color-mix(in srgb, var(--g) 50%, transparent); }
+.hb:active { transform: scale(.94); }
+.hb[hidden] { display: none; }
+
+/* ---------- Tableau de score ---------- */
+.hud {
+  grid-area: hud; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+  font-family: var(--px); font-size: clamp(8px, 2.5vw, 10px);
+}
+.hud > div { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 7px 4px; border-radius: 10px; background: rgba(0,0,0,.35); border: 1px solid var(--line); min-width: 0; }
+.hud small { font-size: .78em; color: var(--mut); letter-spacing: 1px; }
+.hud b { font-weight: 400; color: #fff; white-space: nowrap; overflow: hidden; max-width: 100%; }
+.hud .hi b { color: var(--g); text-shadow: 0 0 8px color-mix(in srgb, var(--g) 60%, transparent); }
+.hud b.bump { animation: bump .3s ease-out; }
+@keyframes bump { 40% { transform: scale(1.25); } }
+
+/* ---------- Écran + cadre ---------- */
+.st { grid-area: st; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+.bezel {
+  position: relative; padding: 9px; border-radius: 20px;
+  background: linear-gradient(160deg, #262a37, #0c0e14 55%, #171a24);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 18px 40px rgba(0,0,0,.6), 0 0 40px color-mix(in srgb, var(--g) 18%, transparent), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.screen { position: relative; overflow: hidden; border-radius: 12px; background: #000; box-shadow: inset 0 0 0 2px rgba(0,0,0,.8); }
+.screen canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+/* Effet tube cathodique */
+.screen .crt { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+body.crt-on .screen .crt {
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 100% at 50% 50%, transparent 62%, rgba(0,0,0,.55) 100%);
+  mix-blend-mode: multiply;
+}
+body.crt-on .screen .crt::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), transparent 18%, transparent 82%, rgba(255,255,255,.03));
+  animation: flicker 4s steps(2) infinite;
+}
+@keyframes flicker { 50% { opacity: .7; } }
+
+/* ---------- Écrans superposés (titre, pause, fin) ---------- */
+.ov {
+  position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 16px; text-align: center; background: rgba(4, 5, 9, .84); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  font-family: var(--px); overflow-y: auto;
+}
+.ov[hidden] { display: none; }
+.ov-logo { font-size: clamp(16px, 6vw, 26px); line-height: 1.25; color: #fff; text-shadow: 0 0 8px var(--g), 0 0 22px var(--g), 3px 3px 0 var(--g2); letter-spacing: 1px; }
+.ov-sub { font-size: 8px; letter-spacing: 3px; color: var(--g); }
+.ov-big { font-size: clamp(18px, 7vw, 28px); color: #fff; text-shadow: 0 0 14px var(--g); }
+.ov-line { font-size: 9px; color: var(--mut); line-height: 1.8; }
+.ov-line b { color: #fff; font-weight: 400; }
+.ov-badge { font-size: 9px; padding: 7px 10px; border-radius: 8px; color: #111; background: var(--g); box-shadow: 0 0 18px var(--g); animation: blink .7s steps(1) infinite; }
+.ov-coins { font-size: 11px; color: #ffd84a; text-shadow: 0 0 10px rgba(255, 200, 0, .6); min-height: 14px; }
+.ov-coins.pop { animation: bump .45s ease-out; }
+.ov-missions { display: flex; flex-direction: column; gap: 4px; font-size: 7px; color: #9ef0b8; line-height: 1.6; }
+.ov-btns { display: flex; flex-direction: column; gap: 8px; width: min(240px, 100%); }
+.btn {
+  border: 0; cursor: pointer; padding: 13px 10px; border-radius: 10px; font-family: var(--px); font-size: 10px; letter-spacing: 1px;
+  color: #111; background: var(--g); box-shadow: 0 4px 0 color-mix(in srgb, var(--g) 50%, #000), 0 0 22px color-mix(in srgb, var(--g) 40%, transparent);
+  transition: transform .08s, box-shadow .08s;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--g) 50%, #000); }
+.btn.sec { color: var(--txt); background: #1b1e29; box-shadow: 0 4px 0 #07080c; border: 1px solid var(--line); }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 300px; }
+.opt { border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--mut); padding: 8px 9px; border-radius: 8px; font-family: var(--px); font-size: 7px; cursor: pointer; }
+.opt b { color: #fff; font-weight: 400; }
+.opt:active { transform: scale(.96); }
+.blink { animation: blink 1s steps(1) infinite; font-size: 8px; color: var(--g); letter-spacing: 2px; }
+@keyframes blink { 50% { opacity: 0; } }
+.help { font-size: 8px; color: var(--mut); line-height: 1.9; max-width: 290px; }
+.toast-c { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 3; pointer-events: none; font-family: var(--px); font-size: clamp(12px, 4vw, 16px); color: var(--g); text-shadow: 0 0 10px var(--g), 2px 2px 0 #000; white-space: nowrap; }
+.toast-c[hidden] { display: none; }
+
+/* ---------- Pupitre tactile ---------- */
+.pad { grid-area: pad; display: none; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 6px 2px; }
+.pad-l, .pad-r { display: flex; align-items: center; justify-content: center; }
+.pad-r { gap: 16px; }
+.pad.solo { justify-content: center; }
+.pad.solo .dpad { transform: scale(1.12); margin: 8px 0; }
+@media (hover: none), (pointer: coarse) { .pad { display: flex; } .keys { display: none !important; } }
+body.touch .pad { display: flex; }
+body.touch .keys { display: none !important; }
+
+/* Croix directionnelle (on peut glisser le pouce d'une direction à l'autre) */
+.dpad { position: relative; width: 150px; height: 150px; touch-action: none; flex: none; }
+.dpad::before, .dpad::after {
+  content: ""; position: absolute; border-radius: 12px;
+  background: linear-gradient(180deg, #2a2e3c, #161924); border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 6px 0 #05060a, 0 10px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.dpad::before { left: 50px; top: 0; width: 50px; height: 150px; }
+.dpad::after { top: 50px; left: 0; width: 150px; height: 50px; }
+.dpad.h::before { display: none; }
+.dpad.v::after { display: none; }
+.dpad.h { height: 60px; } .dpad.h::after { top: 5px; }
+.dpad.v { width: 70px; } .dpad.v::before { left: 10px; }
+.dpad i { position: absolute; z-index: 1; width: 50px; height: 50px; display: grid; place-items: center; pointer-events: none; color: rgba(255,255,255,.55); transition: color .08s, transform .08s; }
+.dpad i::before { content: ""; width: 0; height: 0; border: 9px solid transparent; }
+.dpad .u { left: 50px; top: 0; } .dpad .u::before { border-bottom-color: currentColor; border-top: 0; }
+.dpad .d { left: 50px; bottom: 0; } .dpad .d::before { border-top-color: currentColor; border-bottom: 0; }
+.dpad .l { left: 0; top: 50px; } .dpad .l::before { border-right-color: currentColor; border-left: 0; }
+.dpad .r { right: 0; top: 50px; } .dpad .r::before { border-left-color: currentColor; border-right: 0; }
+.dpad.h .l, .dpad.h .r { top: 5px; }
+.dpad.v .u, .dpad.v .d { left: 10px; }
+.dpad i.on { color: var(--g); transform: scale(.88); filter: drop-shadow(0 0 6px var(--g)); }
+.dpad.h .u, .dpad.h .d, .dpad.v .l, .dpad.v .r { display: none; }
+
+/* Boutons d'arcade ronds */
+.abtn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; touch-action: none; border: 0; background: none; padding: 0; cursor: pointer; }
+.abtn span {
+  width: 72px; height: 72px; border-radius: 50%; display: block;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c, var(--g2)) 70%, #fff) 0 12%, var(--c, var(--g2)) 45%, color-mix(in srgb, var(--c, var(--g2)) 55%, #000) 100%);
+  box-shadow: 0 7px 0 color-mix(in srgb, var(--c, var(--g2)) 35%, #000), 0 12px 20px rgba(0,0,0,.55), inset 0 -4px 8px rgba(0,0,0,.25);
+  transition: transform .06s, box-shadow .06s;
+}
+.abtn.sm span { width: 58px; height: 58px; }
+.abtn small { font-family: var(--px); font-size: 7px; color: var(--mut); letter-spacing: 1px; }
+.abtn.on span { transform: translateY(5px); box-shadow: 0 2px 0 color-mix(in srgb, var(--c, var(--g2)) 35%, #000), 0 4px 10px rgba(0,0,0,.5); }
+.abtn[hidden] { display: none; }
+
+/* Aide clavier (PC) */
+.keys { grid-area: pad; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; font-family: var(--px); font-size: 7px; color: var(--mut); padding: 4px 0 2px; }
+.keys kbd { font-family: var(--px); font-size: 7px; color: #fff; padding: 4px 6px; border-radius: 5px; background: #1b1e29; border: 1px solid var(--line); box-shadow: 0 2px 0 #05060a; }
+
+/* ---------- Téléphone couché : manettes de chaque côté ---------- */
+@media (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+  #cab {
+    max-width: none; gap: 6px 10px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "mq hud hud" "pl st pr";
   }
+  .mq { min-height: 36px; } .hb { width: 36px; height: 36px; }
+  .mq-title { padding: 8px 6px; font-size: 10px; }
+  .hud { grid-template-columns: repeat(3, auto); align-self: center; }
+  .hud > div { flex-direction: row; padding: 6px 10px; }
+  .pad { display: contents !important; }
+  .pad-l { grid-area: pl; } .pad-r { grid-area: pr; flex-direction: row-reverse; }
+  .keys { display: none !important; }
+}
+/* ---------- Grand écran PC : un peu plus d'air ---------- */
+@media (min-width: 900px) and (min-height: 700px) {
+  #cab { max-width: 760px; padding-top: 18px; padding-bottom: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
 
-  body.filter-green { --acc: #9bbc0f; --txt: #b8f017; --mut: #306230; --canvas-bg: #070d07; --glow: rgba(155, 188, 15, 0.4); }
-  body.filter-cyan { --acc: #00f0ff; --txt: #70ffff; --mut: #005f73; --canvas-bg: #001219; --glow: rgba(0, 240, 255, 0.4); }
-  body.filter-neon { --acc: #ff007f; --txt: #ff66b2; --mut: #700035; --canvas-bg: #1a000f; --glow: rgba(255, 0, 127, 0.4); }
-  body.filter-mono { --acc: #ffffff; --txt: #ffffff; --mut: #555555; --canvas-bg: #000000; --glow: rgba(255, 255, 255, 0.3); }
-
-  * { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent; 
-    user-select: none; 
-    -webkit-user-select: none; 
-    -webkit-touch-callout: none; 
-  }
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    background-color: var(--bg-app);
-    color: var(--txt);
-    font-family: 'Rajdhani', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;
-    touch-action: none;
-    padding: env(safe-area-inset-top, 6px) 8px env(safe-area-inset-bottom, 8px) 8px;
-  }
-
-  .top-bar-actions {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 6px) + 6px);
-    right: 12px;
-    z-index: 100000;
-  }
-
-  .top-action-btn {
-    background: rgba(15, 20, 30, 0.9);
-    color: var(--txt);
-    border: 1.5px solid var(--acc);
-    padding: 6px 12px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: 0 0 12px var(--glow);
-    transition: all 0.2s ease;
-  }
-  .top-action-btn:active { background: var(--acc); color: #000; transform: scale(0.95); }
-
-  .game-header {
-    width: 100%;
-    max-width: 440px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 12px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: var(--txt);
-    flex-shrink: 0;
-    text-shadow: 0 0 8px var(--glow);
-  }
-
-  .screen-container {
-    flex: 1;
-    width: 100%;
-    max-width: 440px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-height: 0;
-  }
-
-  .screen-lens {
-    background-color: var(--canvas-bg);
-    padding: 8px;
-    border-radius: 20px;
-    box-shadow: inset 0 6px 25px rgba(0,0,0,0.95), 0 0 35px var(--glow);
-    border: 3px solid var(--mut);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-height: 500px;
-    height: 100%;
-    position: relative;
-  }
-
-  canvas {
-    display: block;
-    background-color: var(--canvas-bg);
-    border: 2px solid var(--mut);
-    border-radius: 12px;
-    width: 100% !important;
-    height: 100% !important;
-    flex: 1;
-    image-rendering: pixelated;
-    min-height: 0;
-  }
-
-  .controls-container {
-    width: 100%;
-    max-width: 420px;
-    padding: 10px 10px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .dpad {
-    display: grid;
-    grid-template-columns: repeat(3, 76px);
-    grid-template-rows: repeat(3, 62px);
-    gap: 6px;
-  }
-
-  .arcade-btn {
-    background: linear-gradient(145deg, #182030, #0c1018);
-    border: 2px solid color-mix(in srgb, var(--acc) 60%, transparent);
-    border-radius: 16px;
-    color: var(--txt);
-    font-size: 26px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.1s ease, background 0.1s ease;
-  }
-
-  .arcade-btn:active {
-    background: var(--acc);
-    color: #000;
-    transform: translateY(3px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-
-  .btn-up { grid-column: 2; grid-row: 1; }
-  .btn-left { grid-column: 1; grid-row: 2; }
-  .btn-right { grid-column: 3; grid-row: 2; }
-  .btn-down { grid-column: 2; grid-row: 3; }
-
-  .screen-overlay {
-    position: absolute;
-    inset: 8px;
-    background-color: rgba(3, 4, 6, 0.96);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    text-align: center;
-    padding: 20px;
-    border-radius: 14px;
-    border: 2px solid var(--acc);
-    box-shadow: 0 0 30px var(--glow);
-  }
-
-  .screen-overlay.hidden { display: none; }
-
-  .screen-overlay h1 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: var(--txt);
-    margin-bottom: 14px;
-    text-shadow: 0 0 12px var(--glow);
-  }
-
-  .screen-overlay p {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--mut);
-    margin-bottom: 18px;
-    line-height: 1.6;
-  }
-
-  .menu-group {
-    width: 100%;
-    max-width: 250px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 14px;
-    text-align: left;
-  }
-
-  .menu-group label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: var(--mut);
-  }
-
-  .settings-select {
-    width: 100%;
-    background: #111622;
-    color: var(--txt);
-    border: 1.5px solid var(--acc);
-    padding: 8px 10px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    border-radius: 6px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .menu-btn {
-    background-color: var(--acc);
-    color: #030406;
-    border: none;
-    padding: 14px 28px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
-    font-weight: 900;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: 0 0 20px var(--glow);
-    transition: transform 0.1s ease, filter 0.1s ease;
-  }
-
-  .menu-btn:active { transform: translateY(2px); filter: brightness(1.2); }
-
-  @media (pointer: fine) {
-    .controls-container { display: none; }
-  }
 </style>
 </head>
 <body>
-
-<div class="top-bar-actions">
-  <button class="top-action-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
-</div>
-
-<div class="game-header">
-  <span id="hudScore">SCORE: 0000</span>
-  <span id="hudLives">♥♥♥</span>
-</div>
-
-<div class="screen-container">
-  <div class="screen-lens">
-    <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <canvas id="pacCanvas" width="384" height="416"></canvas>
-
-      <!-- Menu Principal Options -->
-      <div id="menuScreen" class="screen-overlay">
-        <h1>PAC-MAN</h1>
-        <p>EDITION PRO ARCADE</p>
-
-        <div class="menu-group">
-          <label>FILTRE COULEUR :</label>
-          <select id="colorFilterSelect" class="settings-select">
-            <option value="mono" selected>Classique Or</option>
-            <option value="green">Vert Phosphore</option>
-            <option value="cyan">Cyber Cyan</option>
-            <option value="neon">Néon Magenta</option>
-          </select>
-        </div>
-
-        <div class="menu-group">
-          <label>AUDIO FX :</label>
-          <select id="audioSelect" class="settings-select">
-            <option value="on" selected>Activé</option>
-            <option value="off">Coupé</option>
-          </select>
-        </div>
-
-        <button class="menu-btn" id="startBtn">JOUER</button>
-      </div>
-
-      <!-- Game Over -->
-      <div id="gameOverScreen" class="screen-overlay hidden">
-        <h1>GAME OVER</h1>
-        <p id="finalScoreText">SCORE : 0</p>
-        <button class="menu-btn" id="restartBtn">REJOUER</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="controls-container">
-  <div class="dpad">
-    <button class="arcade-btn btn-up" id="btnUp">▲</button>
-    <button class="arcade-btn btn-left" id="btnLeft">◀</button>
-    <button class="arcade-btn btn-right" id="btnRight">▶</button>
-    <button class="arcade-btn btn-down" id="btnDown">▼</button>
-  </div>
-</div>
-
 <script>
-// --- AUDIO SYNTHÉTISEUR 8-BITS ---
-let audioCtx = null;
-function initAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-}
-
-let soundActive = localStorage.getItem("pac_audio") !== "off";
-const audioSelect = document.getElementById("audioSelect");
-if (audioSelect) {
-  audioSelect.value = soundActive ? "on" : "off";
-  audioSelect.onchange = (e) => {
-    soundActive = e.target.value === "on";
-    localStorage.setItem("pac_audio", e.target.value);
+/* =====================================================================
+   CARTRIDGE ARCADE — moteur commun des bornes
+   - boucle à pas fixe (même vitesse sur un écran 60 Hz ou 120 Hz)
+   - écran net sur Retina, mis à l'échelle sans déformation
+   - croix tactile glissable, boutons ronds, clavier, glisser sur l'écran
+   - écrans Titre / Pause / Fin, options enregistrées, son 8-bit
+   - plein écran (PC, Android, iPad) et dialogue avec l'app Cartridge :
+       jeu → app : cartridge:ready | score | gameover | close
+       app → jeu : cartridge:init {best} | reward {coins, record, missions} | pause
+   ===================================================================== */
+(function () {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const EMBED = window.parent !== window;
+  const SVG = {
+    x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',
+    full: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+    exit: '<svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>',
   };
-}
 
-function playPacSound(type) {
-  if (!soundActive) return;
-  try {
-    initAudio();
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.type = 'square';
+  const CX = (window.CX = {
+    state: "boot", input: { up: 0, down: 0, left: 0, right: 0, a: 0, b: 0 },
+    opts: {}, best: 0, score: 0, time: 0, scale: 1,
+  });
+  let G = null; // configuration du jeu
+  let ctx, canvas, dpr = 1;
 
-    if (type === 'waka') {
-      osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(160, now + 0.06);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.06);
-      osc.start(now); osc.stop(now + 0.06);
-    } else if (type === 'eatghost') {
-      osc.frequency.setValueAtTime(450, now);
-      osc.frequency.exponentialRampToValueAtTime(950, now + 0.25);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.25);
-      osc.start(now); osc.stop(now + 0.25);
-    } else if (type === 'powerpill') {
-      osc.frequency.setValueAtTime(650, now);
-      osc.frequency.linearRampToValueAtTime(220, now + 0.35);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
-      osc.start(now); osc.stop(now + 0.35);
-    } else if (type === 'death') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(450, now);
-      osc.frequency.linearRampToValueAtTime(70, now + 0.7);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.7);
-      osc.start(now); osc.stop(now + 0.7);
+  // -------------------------------------------------------------------
+  // SON — une seule puce audio, débloquée au premier geste (obligatoire sur iOS)
+  // -------------------------------------------------------------------
+  let ac = null, master = null, noiseBuf = null;
+  function audio() {
+    if (!ac) {
+      const A = window.AudioContext || window.webkitAudioContext;
+      if (!A) return null;
+      ac = new A(); master = ac.createGain(); master.gain.value = 0.55; master.connect(ac.destination);
+      noiseBuf = ac.createBuffer(1, ac.sampleRate * 0.6, ac.sampleRate);
+      const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
-  } catch (e) {}
-}
-
-let currentFilter = localStorage.getItem("pac_filter") || "mono";
-const filterSelect = document.getElementById("colorFilterSelect");
-if (filterSelect) {
-  filterSelect.value = currentFilter;
-  document.body.className = `filter-${currentFilter}`;
-  filterSelect.onchange = (e) => {
-    currentFilter = e.target.value;
-    document.body.className = `filter-${currentFilter}`;
-    localStorage.setItem("pac_filter", currentFilter);
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
+  CX.tone = function (f, d = 0.1, type = "square", v = 0.08, f2 = null, delay = 0) {
+    if (!CX.opts.sound) return;
+    const a = audio(); if (!a) return;
+    try {
+      const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + d);
+      g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + d + 0.02);
+    } catch (e) {}
   };
-}
+  CX.noise = function (d = 0.2, v = 0.12, delay = 0, hp = 600) {
+    if (!CX.opts.sound) return;
+    const a = audio(); if (!a) return;
+    try {
+      const t = a.currentTime + delay, s = a.createBufferSource(), g = a.createGain(), f = a.createBiquadFilter();
+      s.buffer = noiseBuf; f.type = "highpass"; f.frequency.value = hp;
+      g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+      s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + d + 0.02);
+    } catch (e) {}
+  };
+  CX.melody = function (notes, step = 0.09, type = "square", v = 0.07) {
+    notes.forEach((f, i) => f && CX.tone(f, step * 0.95, type, v, null, i * step));
+  };
+  CX.buzz = function (ms = 15) { try { if (CX.opts.vibe !== false && navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
 
-const canvas = document.getElementById("pacCanvas");
-const ctx = canvas.getContext("2d");
+  // -------------------------------------------------------------------
+  // STOCKAGE
+  // -------------------------------------------------------------------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  };
+  CX.store = store;
 
-// Labyrinthe original optimisé (1 = Mur, 2 = Pac-Gomme, 3 = Super Pac-Gomme, 0 = Vide)
-const INITIAL_MAP = [
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-  [1,3,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,3,1],
-  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-  [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-  [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
-  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-  [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
-  [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-  [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
-  [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
-  [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-  [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-  [1,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,1],
-  [1,3,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,3,1],
-  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-  [1,2,2,1,2,2,2,2,2,0,2,2,2,2,2,1,2,2,1],
-  [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
-  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-  [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
+  // -------------------------------------------------------------------
+  // CONSTRUCTION DE LA BORNE
+  // -------------------------------------------------------------------
+  function build() {
+    document.documentElement.style.setProperty("--g", G.color);
+    document.documentElement.style.setProperty("--g2", G.color2 || "#ff3b6b");
+    const c = G.controls || {};
+    const btn = (id, label, cls, color) =>
+      label ? `<button class="abtn ${cls || ""}" id="${id}" type="button" aria-label="${label}" ${color ? `style="--c:${color}"` : ""}><span></span><small>${label}</small></button>` : "";
+    document.body.insertAdjacentHTML("afterbegin", `
+      <div id="cab">
+        <div class="mq">
+          <button class="hb" id="hbQuit" type="button" aria-label="Quitter">${SVG.x}</button>
+          <div class="mq-title">${G.title}</div>
+          <button class="hb" id="hbPause" type="button" aria-label="Pause">${SVG.pause}</button>
+          <button class="hb" id="hbFull" type="button" aria-label="Plein écran" hidden>${SVG.full}</button>
+        </div>
+        <div class="hud">
+          <div><small>SCORE</small><b id="hudScore">0</b></div>
+          <div class="hi"><small>HI-SCORE</small><b id="hudHi">0</b></div>
+          <div><small id="hudXl">${G.hudLabel || "VIES"}</small><b id="hudX">-</b></div>
+        </div>
+        <div class="st"><div class="bezel"><div class="screen" id="screen">
+          <canvas id="cv"></canvas><div class="crt"></div>
+          <div class="toast-c" id="toastC" hidden></div>
+          <div class="ov" id="ovTitle" hidden></div>
+          <div class="ov" id="ovPause" hidden></div>
+          <div class="ov" id="ovOver" hidden></div>
+        </div></div></div>
+        <div class="pad${c.a || c.b ? "" : " solo"}">
+          <div class="pad-l">${c.dpad ? `<div class="dpad ${c.dpad === "h" ? "h" : c.dpad === "v" ? "v" : ""}" id="dpad"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i></div>` : ""}</div>
+          <div class="pad-r">${btn("btnB", c.b, "sm", c.bColor || "#3b82f6")}${btn("btnA", c.a, "", c.aColor)}</div>
+        </div>
+        <div class="keys">${(G.keys || []).map(([k, t]) => `<span><kbd>${k}</kbd> ${t}</span>`).join("")}<span><kbd>P</kbd> pause</span></div>
+      </div>`);
+    canvas = $("#cv"); ctx = canvas.getContext("2d");
+    CX.ctx = ctx; CX.canvas = canvas;
+  }
 
-let MAP = JSON.parse(JSON.stringify(INITIAL_MAP));
-const TILE_SIZE = 19.8;
-let score = 0;
-let lives = 3;
-let gameStarted = false;
-let gameOver = false;
-let frightenedTimer = 0;
-let wakaCounter = 0;
+  // Mise à l'échelle : le jeu dessine toujours en W×H « logiques »
+  function fit() {
+    const st = $(".st"), bz = $(".bezel");
+    const pad = 18; // padding du cadre ×2
+    const aw = Math.max(50, st.clientWidth - pad), ah = Math.max(50, st.clientHeight - pad);
+    const s = Math.min(aw / G.W, ah / G.H);
+    const cw = Math.floor(G.W * s), ch = Math.floor(G.H * s);
+    dpr = Math.min(3, window.devicePixelRatio || 1);
+    canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
+    canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
+    CX.scale = s;
+    ctx.setTransform(s * dpr, 0, 0, s * dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    bz.style.width = cw + pad + "px";
+    if (CX.state !== "play" && G.draw) G.draw(ctx, 0);
+  }
 
-let pacman = { x: 9, y: 16, dx: 0, dy: 0, nextDx: 0, nextDy: 0, speed: 0.075 };
-let ghosts = [
-  { x: 9, y: 9, dx: 0, dy: -1, color: "#ff0000" },
-  { x: 9, y: 10, dx: -1, dy: 0, color: "#ffb8ff" },
-  { x: 8, y: 10, dx: 1, dy: 0, color: "#00ffff" },
-  { x: 10, y: 10, dx: 0, dy: 1, color: "#ffb851" }
-];
+  // -------------------------------------------------------------------
+  // OPTIONS (son, écran cathodique, vibrations + options du jeu)
+  // -------------------------------------------------------------------
+  function loadOpts() {
+    const saved = store.get(`cxarc_${G.id}_opt`, {});
+    const defs = [
+      { id: "sound", label: "SON", values: [true, false], names: ["ON", "OFF"] },
+      { id: "crt", label: "ÉCRAN CRT", values: [true, false], names: ["ON", "OFF"], def: G.crt !== undefined ? G.crt : true },
+      ...(G.options || []),
+    ];
+    CX.optDefs = defs;
+    defs.forEach((d) => { CX.opts[d.id] = d.values.includes(saved[d.id]) ? saved[d.id] : (d.def !== undefined ? d.def : d.values[0]); });
+    applyOpts();
+  }
+  function applyOpts() {
+    document.body.classList.toggle("crt-on", !!CX.opts.crt);
+    store.set(`cxarc_${G.id}_opt`, CX.opts);
+    if (G.onOptions) G.onOptions(CX.opts);
+  }
+  function optsHTML() {
+    return `<div class="opts">${CX.optDefs.map((d) => {
+      const i = d.values.indexOf(CX.opts[d.id]);
+      return `<button class="opt" type="button" data-opt="${d.id}">${d.label} : <b>${(d.names || d.values)[i]}</b></button>`;
+    }).join("")}</div>`;
+  }
+  function bindOpts(root) {
+    root.querySelectorAll("[data-opt]").forEach((b) => b.addEventListener("click", () => {
+      const d = CX.optDefs.find((x) => x.id === b.dataset.opt);
+      const i = (d.values.indexOf(CX.opts[d.id]) + 1) % d.values.length;
+      CX.opts[d.id] = d.values[i];
+      applyOpts();
+      b.querySelector("b").textContent = (d.names || d.values)[i];
+      CX.tone(660, 0.05, "square", 0.06);
+    }));
+  }
 
-function resetPositions() {
-  pacman.x = 9; pacman.y = 16; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
-  ghosts = [
-    { x: 9, y: 9, dx: 0, dy: -1, color: "#ff0000" },
-    { x: 9, y: 10, dx: -1, dy: 0, color: "#ffb8ff" },
-    { x: 8, y: 10, dx: 1, dy: 0, color: "#00ffff" },
-    { x: 10, y: 10, dx: 0, dy: 1, color: "#ffb851" }
+  // -------------------------------------------------------------------
+  // ÉCRANS
+  // -------------------------------------------------------------------
+  const pad6 = (n) => String(Math.max(0, Math.floor(n))).padStart(G.scoreDigits || 6, "0");
+  function showTitle() {
+    CX.state = "title";
+    hide("#ovPause"); hide("#ovOver");
+    const o = $("#ovTitle");
+    o.innerHTML = `
+      <div class="ov-logo">${G.logo || G.title}</div>
+      <div class="ov-sub">ÉDITION CARTRIDGE</div>
+      <div class="ov-line">HI-SCORE <b>${pad6(CX.best)}</b></div>
+      <div class="ov-btns"><button class="btn" id="bStart" type="button">▶ JOUER</button></div>
+      ${optsHTML()}
+      <div class="help">${G.help || ""}</div>
+      <div class="blink">INSERT COIN</div>`;
+    o.hidden = false;
+    bindOpts(o);
+    $("#bStart").addEventListener("click", start);
+    if (G.onTitle) G.onTitle();
+  }
+  function start() {
+    audio();
+    hide("#ovTitle"); hide("#ovOver"); hide("#ovPause");
+    CX.score = 0; CX.setScore(0, true);
+    CX.state = "play";
+    G.start();
+    post({ type: "cartridge:start" });
+  }
+  CX.restart = start;
+  function pause(on) {
+    if (on && CX.state === "play") {
+      CX.state = "pause";
+      const o = $("#ovPause");
+      o.innerHTML = `<div class="ov-big">PAUSE</div>
+        <div class="ov-btns"><button class="btn" id="bResume" type="button">▶ REPRENDRE</button>
+        <button class="btn sec" id="bRetry" type="button">RECOMMENCER</button>
+        <button class="btn sec" id="bMenu" type="button">MENU</button></div>${optsHTML()}`;
+      o.hidden = false; bindOpts(o);
+      $("#bResume").onclick = () => pause(false);
+      $("#bRetry").onclick = start;
+      $("#bMenu").onclick = showTitle;
+      clearInput();
+      if (G.onPause) G.onPause(true);
+    } else if (!on && CX.state === "pause") {
+      hide("#ovPause"); CX.state = "play"; last = performance.now();
+      if (G.onPause) G.onPause(false);
+    }
+  }
+  CX.pause = pause;
+  function hide(s) { const e = $(s); if (e) e.hidden = true; }
+
+  // Fin de partie : record local, envoi à l'app, attente des pièces gagnées
+  CX.gameOver = function (stats = {}) {
+    if (CX.state === "over") return;
+    CX.state = "over";
+    clearInput();
+    const score = Math.floor(CX.score);
+    const record = score > 0 && score > CX.best;
+    if (record) { CX.best = score; store.set(`cxarc_${G.id}_pb`, score); $("#hudHi").textContent = pad6(score); }
+    post({ type: "cartridge:score", game: G.name, score });
+    post({ type: "cartridge:gameover", game: G.name, id: G.id, score, stats });
+    const o = $("#ovOver");
+    o.innerHTML = `
+      <div class="ov-big">${stats.title || "GAME OVER"}</div>
+      ${record ? `<div class="ov-badge">★ NOUVEAU RECORD ★</div>` : ""}
+      <div class="ov-line">SCORE</div>
+      <div class="ov-logo" style="font-size:clamp(16px,6vw,24px)">${pad6(score)}</div>
+      ${stats.line ? `<div class="ov-line">${stats.line}</div>` : ""}
+      <div class="ov-coins" id="ovCoins">${EMBED ? "" : ""}</div>
+      <div class="ov-missions" id="ovMissions"></div>
+      <div class="ov-btns">
+        <button class="btn" id="bAgain" type="button">↻ REJOUER</button>
+        <button class="btn sec" id="bMenu2" type="button">MENU</button>
+        <button class="btn sec" id="bQuit2" type="button">QUITTER</button>
+      </div>`;
+    setTimeout(() => { if (CX.state === "over") o.hidden = false; }, stats.delay || 600);
+    $("#bAgain").onclick = start;
+    $("#bMenu2").onclick = showTitle;
+    $("#bQuit2").onclick = quit;
+    if (record) setTimeout(() => CX.melody([523, 659, 784, 1047, 784, 1047], 0.1, "square", 0.08), 650);
+  };
+
+  // Score
+  let lastPost = 0, postTimer = null;
+  CX.setScore = function (n, silent) {
+    CX.score = n;
+    const el = $("#hudScore");
+    el.textContent = pad6(n);
+    if (!silent) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+    if (n > CX.best) $("#hudHi").textContent = pad6(n);
+    const now = Date.now();
+    clearTimeout(postTimer);
+    if (n > 0) {
+      if (now - lastPost > 400) { lastPost = now; post({ type: "cartridge:score", game: G.name, score: Math.floor(n) }); }
+      else postTimer = setTimeout(() => { lastPost = Date.now(); post({ type: "cartridge:score", game: G.name, score: Math.floor(CX.score) }); }, 450);
+    }
+  };
+  CX.addScore = (n) => CX.setScore(CX.score + n);
+  CX.setHud = function (v, label) { $("#hudX").textContent = v; if (label) $("#hudXl").textContent = label; };
+
+  // Message central (READY!, NIVEAU 2…)
+  let toastT = null;
+  CX.toast = function (txt, ms = 1500) {
+    const t = $("#toastC"); t.textContent = txt; t.hidden = !txt;
+    clearTimeout(toastT); if (txt && ms) toastT = setTimeout(() => (t.hidden = true), ms);
+  };
+
+  // -------------------------------------------------------------------
+  // DIALOGUE AVEC L'APP CARTRIDGE
+  // -------------------------------------------------------------------
+  function post(m) { if (EMBED) try { window.parent.postMessage(m, "*"); } catch (e) {} }
+  CX.post = post;
+  window.addEventListener("message", (e) => {
+    const d = e.data; if (!d || typeof d !== "object") return;
+    if (d.type === "cartridge:init") {
+      const b = Number(d.best);
+      if (Number.isFinite(b) && b > CX.best) { CX.best = b; $("#hudHi").textContent = pad6(b); if (CX.state === "title") showTitle(); }
+    } else if (d.type === "cartridge:reward") {
+      const c = $("#ovCoins"), m = $("#ovMissions");
+      if (c && d.coins > 0) { c.textContent = `+${d.coins} PIÈCES`; c.classList.add("pop"); CX.melody([988, 1319], 0.08, "square", 0.06); }
+      else if (c && d.capped) c.textContent = "LIMITE DE PIÈCES DU JOUR ATTEINTE";
+      if (m && Array.isArray(d.missions)) m.innerHTML = d.missions.map((x) => `✔ ${String(x).replace(/[<>&]/g, "")}`).join("<br>");
+    } else if (d.type === "cartridge:pause") pause(true);
+  });
+  function quit() {
+    if (EMBED) post({ type: "cartridge:close" });
+    else if (history.length > 1) history.back();
+    else location.href = "./";
+  }
+
+  // Plein écran : PC, Android, iPad (l'iPhone ne le permet pas → bouton caché ;
+  // l'app installée sur l'écran d'accueil est déjà en plein écran)
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const fsOK = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  function toggleFull() {
+    const de = document.documentElement;
+    try {
+      if (fsEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      else (de.requestFullscreen || de.webkitRequestFullscreen).call(de, { navigationUI: "hide" });
+    } catch (e) {}
+  }
+  function fsIcon() { $("#hbFull").innerHTML = fsEl() ? SVG.exit : SVG.full; setTimeout(fit, 120); }
+
+  // -------------------------------------------------------------------
+  // COMMANDES
+  // -------------------------------------------------------------------
+  function press(k) {
+    if (CX.input[k]) return;
+    CX.input[k] = 1;
+    if (CX.state === "play" && G.onPress) G.onPress(k);
+  }
+  function release(k) { if (!CX.input[k]) return; CX.input[k] = 0; if (G.onRelease) G.onRelease(k); }
+  function clearInput() { Object.keys(CX.input).forEach((k) => (CX.input[k] = 0)); document.querySelectorAll(".dpad i.on,.abtn.on").forEach((e) => e.classList.remove("on")); }
+  CX.press = press; CX.release = release;
+
+  const KEYMAP = {
+    ArrowUp: "up", KeyW: "up", KeyZ: "up", ArrowDown: "down", KeyS: "down",
+    ArrowLeft: "left", KeyA: "left", KeyQ: "left", ArrowRight: "right", KeyD: "right",
+    Space: "a", Enter: "a", KeyK: "a", KeyX: "a", ShiftLeft: "b", ShiftRight: "b", KeyC: "b", KeyJ: "b",
+  };
+  function bindKeys() {
+    window.addEventListener("keydown", (e) => {
+      audio();
+      if (e.code === "KeyP" || e.code === "Escape") { e.preventDefault(); if (CX.state === "play") pause(true); else if (CX.state === "pause") pause(false); return; }
+      if (CX.state === "title" && (e.code === "Enter" || e.code === "Space")) { e.preventDefault(); start(); return; }
+      if (CX.state === "over" && e.code === "Enter") { e.preventDefault(); start(); return; }
+      if (CX.state === "pause" && e.code === "Enter") { e.preventDefault(); pause(false); return; }
+      const remap = G.keymap && G.keymap[e.code];
+      const k = remap || KEYMAP[e.code];
+      if (!k) return;
+      e.preventDefault();
+      if (e.repeat) return;
+      press(k);
+    });
+    window.addEventListener("keyup", (e) => {
+      const k = (G.keymap && G.keymap[e.code]) || KEYMAP[e.code];
+      if (k) release(k);
+    });
+  }
+
+  function bindPad() {
+    const dp = $("#dpad");
+    if (dp) {
+      const mode = G.controls.dpad;
+      let cur = null;
+      const set = (dir) => {
+        if (dir === cur) return;
+        if (cur) { release(cur); dp.querySelector("." + cur[0]).classList.remove("on"); }
+        cur = dir;
+        if (dir) { press(dir); dp.querySelector("." + dir[0]).classList.add("on"); CX.buzz(8); }
+      };
+      const pick = (e) => {
+        const r = dp.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        const dead = Math.min(r.width, r.height) * 0.12;
+        if (Math.hypot(dx, dy) < dead) return set(null);
+        if (mode === "h") return set(dx < 0 ? "left" : "right");
+        if (mode === "v") return set(dy < 0 ? "up" : "down");
+        set(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down"));
+      };
+      dp.addEventListener("pointerdown", (e) => { e.preventDefault(); audio(); try { dp.setPointerCapture(e.pointerId); } catch (_) {} pick(e); });
+      dp.addEventListener("pointermove", (e) => { if (cur !== null || e.buttons) pick(e); });
+      const end = () => set(null);
+      dp.addEventListener("pointerup", end); dp.addEventListener("pointercancel", end); dp.addEventListener("lostpointercapture", end);
+    }
+    [["#btnA", "a"], ["#btnB", "b"]].forEach(([s, k]) => {
+      const b = $(s); if (!b) return;
+      b.addEventListener("pointerdown", (e) => { e.preventDefault(); audio(); try { b.setPointerCapture(e.pointerId); } catch (_) {} b.classList.add("on"); press(k); CX.buzz(12); });
+      const up = () => { b.classList.remove("on"); release(k); };
+      b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up); b.addEventListener("lostpointercapture", up);
+    });
+
+    // Glisser / toucher directement l'écran de jeu
+    const sc = $("#screen");
+    let sx = 0, sy = 0, down = false, swiped = false, t0 = 0;
+    const logical = (e) => { const r = canvas.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * G.W, y: ((e.clientY - r.top) / r.height) * G.H }; };
+    sc.addEventListener("pointerdown", (e) => {
+      if (e.target.closest(".ov")) return;
+      audio(); down = true; swiped = false; sx = e.clientX; sy = e.clientY; t0 = Date.now();
+      try { sc.setPointerCapture(e.pointerId); } catch (_) {}
+      if (CX.state === "play" && G.onDrag) { const p = logical(e); G.onDrag(p.x, p.y, "start"); }
+    });
+    sc.addEventListener("pointermove", (e) => {
+      if (!down || CX.state !== "play") return;
+      if (G.onDrag) { const p = logical(e); G.onDrag(p.x, p.y, "move"); }
+      if (G.onSwipe) {
+        const dx = e.clientX - sx, dy = e.clientY - sy, th = G.swipeStep || 26;
+        if (Math.hypot(dx, dy) >= th) {
+          G.onSwipe(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down"), Math.abs(dy) > Math.abs(dx) ? dy : dx);
+          swiped = true; sx = e.clientX; sy = e.clientY;
+        }
+      }
+    });
+    const upS = (e) => {
+      if (!down) return; down = false;
+      if (CX.state !== "play") return;
+      if (G.onDrag) { const p = logical(e); G.onDrag(p.x, p.y, "end"); }
+      if (!swiped && Date.now() - t0 < 300 && G.onTap) G.onTap();
+    };
+    sc.addEventListener("pointerup", upS); sc.addEventListener("pointercancel", () => { down = false; });
+
+    window.addEventListener("touchstart", () => document.body.classList.add("touch"), { once: true, passive: true });
+    document.addEventListener("gesturestart", (e) => e.preventDefault());
+    document.addEventListener("dblclick", (e) => e.preventDefault());
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+  }
+
+  // -------------------------------------------------------------------
+  // BOUCLE À PAS FIXE (60 mises à jour par seconde, quel que soit l'écran)
+  // -------------------------------------------------------------------
+  const STEP = 1 / 60;
+  let last = 0, acc = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    let dt = (now - last) / 1000; last = now;
+    if (!(dt > 0)) dt = 0; if (dt > 0.25) dt = 0.25;
+    CX.time += dt;
+    if (CX.state === "play") {
+      acc += dt;
+      let n = 0;
+      while (acc >= STEP && n < 6) { G.update(STEP); acc -= STEP; n++; if (CX.state !== "play") break; }
+      if (n === 6) acc = 0;
+    } else acc = 0;
+    G.draw(ctx, dt);
+  }
+
+  // -------------------------------------------------------------------
+  // DÉMARRAGE
+  // -------------------------------------------------------------------
+  CX.boot = function (cfg) {
+    G = cfg;
+    build();
+    loadOpts();
+    CX.best = Number(store.get(`cxarc_${G.id}_pb`, 0)) || 0;
+    $("#hudHi").textContent = pad6(CX.best);
+    $("#hudScore").textContent = pad6(0);
+    bindKeys(); bindPad();
+    $("#hbQuit").onclick = quit;
+    $("#hbPause").onclick = () => (CX.state === "play" ? pause(true) : CX.state === "pause" ? pause(false) : null);
+    if (fsOK()) { $("#hbFull").hidden = false; $("#hbFull").onclick = toggleFull; }
+    document.addEventListener("fullscreenchange", fsIcon); document.addEventListener("webkitfullscreenchange", fsIcon);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) pause(true); });
+    window.addEventListener("blur", () => pause(true));
+    window.addEventListener("resize", fit);
+    if (window.ResizeObserver) new ResizeObserver(fit).observe($(".st"));
+    if (G.init) G.init();
+    fit();
+    showTitle();
+    last = performance.now();
+    requestAnimationFrame(frame);
+    post({ type: "cartridge:ready", game: G.name, id: G.id });
+    // Les polices pixel arrivent parfois après : on redessine
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => G.draw(ctx, 0));
+  };
+})();
+
+</script>
+<script>
+/* PAC-MAN — Édition Cartridge
+   Déplacement case par case (fini les murs traversés / les blocages),
+   IA classique des 4 fantômes (Blinky chasse, Pinky anticipe, Inky prend
+   en tenaille, Clyde hésite), modes dispersion/chasse, fantômes mangés
+   qui rentrent à la maison, fruits, niveaux, vie bonus à 10 000. */
+(function () {
+  const MAZE = [
+    "###################",
+    "#........#........#",
+    "#o##.###.#.###.##o#",
+    "#.................#",
+    "#.##.#.#####.#.##.#",
+    "#....#...#...#....#",
+    "####.###_#_###.####",
+    "####.#_______#.####",
+    "####.#_##-##_#.####",
+    "____.__#GGG#__.____",
+    "####.#_#####_#.####",
+    "####.#_______#.####",
+    "####.#_#####_#.####",
+    "#........#........#",
+    "#o##.###.#.###.##o#",
+    "#..#.....P.....#..#",
+    "##.#.#.#####.#.#.##",
+    "#....#...#...#....#",
+    "#.######.#.######.#",
+    "#.................#",
+    "###################",
   ];
-}
+  const COLS = 19, ROWS = 21, T = 16, TOP = 0;
+  const W = COLS * T, H = ROWS * T;
+  const TUN = 9; // rangée du tunnel
+  const DIRS = { up: [0, -1], left: [-1, 0], down: [0, 1], right: [1, 0] };
+  const ORDER = ["up", "left", "down", "right"];
+  const OPP = { up: "down", down: "up", left: "right", right: "left" };
 
-function initGame() {
-  score = 0;
-  lives = 3;
-  MAP = JSON.parse(JSON.stringify(INITIAL_MAP));
-  resetPositions();
-  gameStarted = true;
-  gameOver = false;
-  document.getElementById("menuScreen").classList.add("hidden");
-  document.getElementById("gameOverScreen").classList.add("hidden");
-  requestAnimationFrame(gameLoop);
-}
+  let grid, dots, totalDots, level, lives, pac, ghosts, mode, modeIdx, modeT, frightT, frightChain;
+  let phase, phaseT, fruit, fruitShown, extraGiven, dotsEaten, flashT, wakaFlip, globalT;
+  const MODES = [7, 20, 7, 20, 5, 20, 5, Infinity]; // dispersion / chasse alternées
 
-// 🛡️ COLLISION ANTI-CLIP ULTRA PRÉCISE (Vérification des coins géométriques)
-function isWall(gx, gy) {
-  let rx = Math.round(gx);
-  let ry = Math.round(gy);
-  if (ry === 10 && (rx < 0 || rx > 18)) return false; // Tunnels latéraux
-  if (rx < 0 || rx >= 19 || ry < 0 || ry >= 21) return true;
-  return MAP[ry][rx] === 1;
-}
-
-function canMoveTo(nx, ny, radius = 0.35) {
-  // Vérifie les 4 coins autour de la position future pour empêcher de rentrer dans les murs
-  let corners = [
-    {x: nx - radius, y: ny - radius},
-    {x: nx + radius, y: ny - radius},
-    {x: nx - radius, y: ny + radius},
-    {x: nx + radius, y: ny + radius}
+  const GHOST_DEF = [
+    { name: "blinky", color: "#ff2a2a", home: [9, 7], corner: [17, -2], wait: 0 },
+    { name: "pinky", color: "#ff9ff3", home: [9, 9], corner: [1, -2], wait: 0.6 },
+    { name: "inky", color: "#25f4ff", home: [8, 9], corner: [18, 22], wait: 4 },
+    { name: "clyde", color: "#ffad3b", home: [10, 9], corner: [0, 22], wait: 8 },
   ];
-  for (let c of corners) {
-    if (isWall(c.x, c.y)) return false;
+
+  function tile(c, r) {
+    if (r === TUN && (c < 0 || c >= COLS)) return "_";
+    if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return "#";
+    return grid[r][c];
   }
-  return true;
-}
+  const open = (c, r, ghost) => { const t = tile(c, r); return t !== "#" && (ghost || (t !== "-" && t !== "G")); };
 
-function update() {
-  if (!gameStarted || gameOver) return;
-
-  if (frightenedTimer > 0) frightenedTimer--;
-
-  // Anticipation et alignement fluide sur les intersections (Corner-cutting / Snap intelligent)
-  if (pacman.nextDx !== 0 || pacman.nextDy !== 0) {
-    let testX = pacman.x + pacman.nextDx * pacman.speed;
-    let testY = pacman.y + pacman.nextDy * pacman.speed;
-    if (canMoveTo(testX, testY)) {
-      pacman.dx = pacman.nextDx;
-      pacman.dy = pacman.nextDy;
+  function newMaze() {
+    grid = MAZE.map((row) => row.split(""));
+    dots = 0;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (grid[r][c] === "P") grid[r][c] = "_";
+      if (grid[r][c] === "." || grid[r][c] === "o") dots++;
     }
+    totalDots = dots; dotsEaten = 0; fruitShown = 0;
   }
 
-  let nextX = pacman.x + pacman.dx * pacman.speed;
-  let nextY = pacman.y + pacman.dy * pacman.speed;
-
-  // Gestion des tunnels latéraux
-  if (nextX < -0.5) nextX = 18.5;
-  else if (nextX > 18.5) nextX = -0.5;
-
-  if (canMoveTo(nextX, nextY)) {
-    pacman.x = nextX;
-    pacman.y = nextY;
-  } else {
-    pacman.dx = 0;
-    pacman.dy = 0;
+  const speedK = () => Math.min(1.25, 1 + (level - 1) * 0.05);
+  function resetActors() {
+    pac = { x: 9, y: 15, dir: "left", want: "left", moving: true, mouth: 0, dead: 0 };
+    ghosts = GHOST_DEF.map((d, i) => ({
+      ...d, x: d.home[0], y: d.home[1], dir: i === 0 ? "left" : "up",
+      state: i === 0 ? "out" : "house", wait: d.wait / Math.min(2, 1 + (level - 1) * 0.25), bob: i * 0.7,
+    }));
+    mode = "scatter"; modeIdx = 0; modeT = MODES[0]; frightT = 0; frightChain = 0; fruit = null;
   }
 
-  // Manger pac-gomme ou super pac-gomme
-  let gridX = Math.round(pacman.x);
-  let gridY = Math.round(pacman.y);
-  if (gridX >= 0 && gridX < 19 && gridY >= 0 && gridY < 21) {
-    if (MAP[gridY][gridX] === 2) {
-      MAP[gridY][gridX] = 0;
-      score += 10;
-      wakaCounter++;
-      if (wakaCounter % 2 === 0) playPacSound('waka');
-    } else if (MAP[gridY][gridX] === 3) {
-      MAP[gridY][gridX] = 0;
-      score += 50;
-      frightenedTimer = 480;
-      playPacSound('powerpill');
-    }
+  function startLevel(first) {
+    newMaze(); resetActors();
+    phase = "ready"; phaseT = first ? 2.2 : 1.6;
+    CX.toast(first ? "READY!" : `NIVEAU ${level}`, 0);
+    if (first) CX.melody([494, 988, 740, 622, 988, 740, 622, 0, 523, 1047, 784, 659, 1047, 784, 659], 0.12, "square", 0.06);
   }
 
-  // Mise à jour des fantômes avec IA fluide
-  ghosts.forEach(g => {
-    let gx = g.x + g.dx * (pacman.speed * 0.82);
-    let gy = g.y + g.dy * (pacman.speed * 0.82);
+  function hud() { CX.setHud("♥".repeat(Math.max(0, lives - 1)) + "  N" + level); }
 
-    if (canMoveTo(gx, gy, 0.3)) {
-      g.x = gx;
-      g.y = gy;
-    } else {
-      // Choix d'une nouvelle direction valide aux intersections
-      let dirs = [{dx:0, dy:-1}, {dx:0, dy:1}, {dx:-1, dy:0}, {dx:1, dy:0}];
-      let validDirs = dirs.filter(d => {
-        let nx = g.x + d.dx * 0.5;
-        let ny = g.y + d.dy * 0.5;
-        return canMoveTo(nx, ny, 0.3) && !(d.dx === -g.dx && d.dy === -g.dy);
-      });
-      if (validDirs.length === 0) validDirs = [{dx:-g.dx, dy:-g.dy}];
-      let chosen = validDirs[Math.floor(Math.random() * validDirs.length)];
-      g.dx = chosen.dx;
-      g.dy = chosen.dy;
-    }
-
-    // Collision Pac-Man / Fantôme
-    let dist = Math.hypot(pacman.x - g.x, pacman.y - g.y);
-    if (dist < 0.55) {
-      if (frightenedTimer > 0) {
-        score += 200;
-        playPacSound('eatghost');
-        g.x = 9; g.y = 10;
+  // Avance une entité de « dist » cases ; les virages se décident au centre des cases
+  function advance(e, dist, chooser, ghost) {
+    let guard = 0;
+    while (dist > 1e-6 && guard++ < 12) {
+      if (!ghost && e.want === OPP[e.dir]) e.dir = e.want; // demi-tour immédiat
+      const rx = Math.round(e.x), ry = Math.round(e.y);
+      const atC = Math.abs(e.x - rx) < 1e-4 && Math.abs(e.y - ry) < 1e-4;
+      if (atC) {
+        e.x = rx; e.y = ry;
+        if (e.x <= -1 && e.dir === "left") e.x = COLS;        // tunnel
+        else if (e.x >= COLS && e.dir === "right") e.x = -1;
+        const nd = chooser(e, e.x, e.y);
+        if (nd === null) { e.moving = false; return; }
+        e.dir = nd; e.moving = true;
+        const step = Math.min(dist, 1);
+        e.x += DIRS[nd][0] * step; e.y += DIRS[nd][1] * step; dist -= step;
       } else {
-        lives--;
-        playPacSound('death');
-        if (lives <= 0) {
-          gameOver = true;
-          gameStarted = false;
-          document.getElementById("finalScoreText").textContent = `SCORE FINAL : ${score}`;
-          document.getElementById("gameOverScreen").classList.remove("hidden");
-        } else {
-          resetPositions();
-        }
-      }
-    }
-  });
-
-  document.getElementById("hudScore").textContent = `SCORE: ${String(score).padStart(4, '0')}`;
-  document.getElementById("hudLives").textContent = '♥'.repeat(Math.max(0, lives));
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const accColor = getComputedStyle(document.body).getPropertyValue('--acc').trim();
-  const mutColor = getComputedStyle(document.body).getPropertyValue('--mut').trim();
-  const glowColor = getComputedStyle(document.body).getPropertyValue('--glow').trim();
-
-  // Dessin du labyrinthe avec effet néon OLED
-  for (let r = 0; r < MAP.length; r++) {
-    for (let c = 0; c < MAP[r].length; c++) {
-      if (MAP[r][c] === 1) {
-        ctx.fillStyle = mutColor;
-        ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 6;
-        ctx.fillRect(c * TILE_SIZE + 1, r * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
-        ctx.shadowBlur = 0;
-      } else if (MAP[r][c] === 2) {
-        ctx.fillStyle = accColor;
-        ctx.beginPath();
-        ctx.arc(c * TILE_SIZE + TILE_SIZE/2, r * TILE_SIZE + TILE_SIZE/2, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (MAP[r][c] === 3) {
-        if (Math.floor(Date.now() / 180) % 2 === 0) {
-          ctx.fillStyle = accColor;
-          ctx.shadowColor = accColor;
-          ctx.shadowBlur = 10;
-          ctx.beginPath();
-          ctx.arc(c * TILE_SIZE + TILE_SIZE/2, r * TILE_SIZE + TILE_SIZE/2, 6.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        }
+        const [dx, dy] = DIRS[e.dir];
+        let toC;
+        if (dx > 0) toC = Math.ceil(e.x) - e.x; else if (dx < 0) toC = e.x - Math.floor(e.x);
+        else if (dy > 0) toC = Math.ceil(e.y) - e.y; else toC = e.y - Math.floor(e.y);
+        if (toC < 1e-6) toC = 1;
+        const step = Math.min(dist, toC);
+        e.x += dx * step; e.y += dy * step; dist -= step;
+        if (step === toC) { e.x = Math.round(e.x); e.y = Math.round(e.y); }
+        e.moving = true;
       }
     }
   }
 
-  // Dessin Pac-Man
-  ctx.fillStyle = accColor;
-  ctx.shadowColor = accColor;
-  ctx.shadowBlur = 12;
-  ctx.beginPath();
-  let angle = 0;
-  if (pacman.dx === 1) angle = 0;
-  else if (pacman.dx === -1) angle = Math.PI;
-  else if (pacman.dy === 1) angle = Math.PI / 2;
-  else if (pacman.dy === -1) angle = Math.PI * 1.5;
+  function pacChoose(e, tx, ty) {
+    if (e.want && open(tx + DIRS[e.want][0], ty + DIRS[e.want][1])) return e.want;
+    if (open(tx + DIRS[e.dir][0], ty + DIRS[e.dir][1])) return e.dir;
+    return null;
+  }
 
-  let mouth = Math.abs(Math.sin(Date.now() / 70)) * 0.42 + 0.08;
-  ctx.arc(
-    pacman.x * TILE_SIZE + TILE_SIZE/2,
-    pacman.y * TILE_SIZE + TILE_SIZE/2,
-    TILE_SIZE / 2 - 1.5,
-    angle + mouth,
-    angle + Math.PI * 2 - mouth
-  );
-  ctx.lineTo(pacman.x * TILE_SIZE + TILE_SIZE/2, pacman.y * TILE_SIZE + TILE_SIZE/2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
+  function target(g) {
+    const pd = DIRS[pac.dir], px = Math.round(pac.x), py = Math.round(pac.y);
+    if (g.state === "eaten") return [9, 7];
+    if (mode === "scatter") return g.corner;
+    switch (g.name) {
+      case "blinky": return [px, py];
+      case "pinky": return [px + pd[0] * 4, py + pd[1] * 4];
+      case "inky": { const b = ghosts[0]; const ax = px + pd[0] * 2, ay = py + pd[1] * 2; return [ax * 2 - Math.round(b.x), ay * 2 - Math.round(b.y)]; }
+      default: return Math.hypot(px - g.x, py - g.y) > 8 ? [px, py] : g.corner;
+    }
+  }
 
-  // Dessin des Fantômes
-  ghosts.forEach(g => {
-    ctx.fillStyle = frightenedTimer > 0 ? (Math.floor(frightenedTimer / 20) % 2 === 0 ? "#ffffff" : "#2121ff") : g.color;
-    ctx.shadowColor = ctx.fillStyle;
-    ctx.shadowBlur = 10;
-    ctx.beginPath();
-    let gx = g.x * TILE_SIZE + TILE_SIZE/2;
-    let gy = g.y * TILE_SIZE + TILE_SIZE/2;
-    ctx.arc(gx, gy - 2, TILE_SIZE / 2 - 2, Math.PI, 0, false);
-    ctx.lineTo(gx + TILE_SIZE/2 - 1.5, gy + TILE_SIZE/2);
-    ctx.lineTo(gx - TILE_SIZE/2 + 1.5, gy + TILE_SIZE/2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  });
-}
+  function ghostChoose(g, tx, ty) {
+    if (g.state === "eaten" && tx === 9 && ty === 7) { g.state = "enter"; return null; }
+    const opts = ORDER.filter((d) => {
+      if (d === OPP[g.dir]) return false;
+      const nx = tx + DIRS[d][0], ny = ty + DIRS[d][1];
+      const t = tile(nx, ny);
+      if (t === "#" || t === "G") return false;
+      if (t === "-") return g.state === "eaten";
+      return true;
+    });
+    if (!opts.length) return OPP[g.dir];
+    if (g.state === "fright") return opts[(Math.random() * opts.length) | 0];
+    const [txg, tyg] = target(g);
+    let best = opts[0], bd = Infinity;
+    opts.forEach((d) => { const nx = tx + DIRS[d][0], ny = ty + DIRS[d][1]; const dd = (nx - txg) ** 2 + (ny - tyg) ** 2; if (dd < bd) { bd = dd; best = d; } });
+    return best;
+  }
 
-function gameLoop() {
-  update();
-  draw();
-  if (gameStarted) requestAnimationFrame(gameLoop);
-}
+  function ghostSpeed(g) {
+    const k = speedK();
+    if (g.state === "eaten") return 12;
+    if (g.state === "enter" || g.state === "leave" || g.state === "house") return 3.5;
+    if (Math.round(g.y) === TUN && (g.x < 4 || g.x > 14)) return 3.6 * k;
+    if (g.state === "fright") return 4.4 * k;
+    let s = 6.8 * k;
+    if (g.name === "blinky" && dots < 20) s *= 1.08; // « Elroy » : Blinky s'énerve en fin de niveau
+    return s;
+  }
 
-// Contrôles Clavier
-window.addEventListener("keydown", e => {
-  if (!gameStarted || gameOver) return;
-  if (e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW") { pacman.nextDx = 0; pacman.nextDy = -1; e.preventDefault(); }
-  else if (e.code === "ArrowDown" || e.code === "KeyS") { pacman.nextDx = 0; pacman.nextDy = 1; e.preventDefault(); }
-  else if (e.code === "ArrowLeft" || e.code === "KeyQ" || e.code === "KeyA") { pacman.nextDx = -1; pacman.nextDy = 0; e.preventDefault(); }
-  else if (e.code === "ArrowRight" || e.code === "KeyD") { pacman.nextDx = 1; pacman.nextDy = 0; e.preventDefault(); }
-});
+  function updateGhost(g, dt) {
+    if (g.state === "house") {
+      g.bob += dt * 5; g.y = 9 + Math.sin(g.bob) * 0.25;
+      g.wait -= dt; if (g.wait <= 0 && phase === "play") { g.state = "leave"; g.y = 9; }
+      return;
+    }
+    if (g.state === "leave" || g.state === "enter") {
+      const s = ghostSpeed(g) * dt;
+      const tx = 9, ty = g.state === "leave" ? 7 : 9;
+      if (Math.abs(g.x - tx) > 0.01) g.x += Math.sign(tx - g.x) * Math.min(s, Math.abs(tx - g.x));
+      else if (Math.abs(g.y - ty) > 0.01) g.y += Math.sign(ty - g.y) * Math.min(s, Math.abs(ty - g.y));
+      else if (g.state === "leave") { g.x = 9; g.y = 7; g.state = frightT > 0 && g.fr ? "fright" : "out"; g.dir = "left"; }
+      else { g.state = "leave"; g.fr = false; }
+      return;
+    }
+    advance(g, ghostSpeed(g) * dt, ghostChoose, true);
+  }
 
-// Contrôles Tactiles D-Pad
-const btnUp = document.getElementById("btnUp");
-const btnDown = document.getElementById("btnDown");
-const btnLeft = document.getElementById("btnLeft");
-const btnRight = document.getElementById("btnRight");
+  function setMode(m) {
+    if (m !== mode) ghosts.forEach((g) => { if (g.state === "out") g.dir = OPP[g.dir]; });
+    mode = m;
+  }
 
-btnUp.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = -1; });
-btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = 1; });
-btnLeft.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = -1; pacman.nextDy = 0; });
-btnRight.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 1; pacman.nextDy = 0; });
+  function eat(c, r) {
+    const t = tile(c, r);
+    if (t !== "." && t !== "o") return;
+    grid[r][c] = "_"; dots--; dotsEaten++;
+    if (t === ".") { CX.addScore(10); wakaFlip = !wakaFlip; CX.tone(wakaFlip ? 520 : 380, 0.06, "triangle", 0.07, wakaFlip ? 380 : 520); }
+    else {
+      CX.addScore(50);
+      frightT = Math.max(1.5, 7 - (level - 1) * 0.8); frightChain = 0;
+      ghosts.forEach((g) => { if (g.state === "out") { g.state = "fright"; g.dir = OPP[g.dir]; } else if (g.state === "house" || g.state === "leave") g.fr = true; });
+      CX.tone(220, 0.35, "sawtooth", 0.06, 880);
+    }
+    if (dotsEaten === 60 || dotsEaten === 130) { fruit = { x: 9, y: 11, t: 9.5 }; fruitShown++; }
+    if (dots <= 0) { phase = "clear"; phaseT = 2.2; flashT = 0; CX.melody([784, 988, 1175, 1568], 0.1, "square", 0.07); }
+  }
 
-document.getElementById("startBtn").onclick = () => { playPacSound('powerpill'); initGame(); };
-document.getElementById("restartBtn").onclick = () => { playPacSound('powerpill'); initGame(); };
+  const G = {
+    id: "pacman", name: "Pac-Man", title: "PAC-MAN", color: "#ffd21f", color2: "#2a6bff",
+    W, H, hudLabel: "VIES · NIV",
+    controls: { dpad: "4" },
+    swipeStep: 22,
+    keys: [["↑↓←→", "diriger"], ["ZQSD", "diriger"]],
+    help: "Mange toutes les pac-gommes.<br>Les grosses gommes rendent les fantômes vulnérables.<br>Glisse le doigt sur l'écran ou utilise la croix.",
+    init() { level = 1; newMaze(); resetActors(); phase = "attract"; globalT = 0; },
+    start() {
+      level = 1; lives = 3; extraGiven = false; globalT = 0;
+      startLevel(true); hud();
+    },
+    onPress(k) { if (DIRS[k]) pac.want = k; },
+    onSwipe(d) { pac.want = d; },
+    update(dt) {
+      globalT += dt;
+      if (phase === "ready") { phaseT -= dt; if (phaseT <= 0) { phase = "play"; CX.toast(""); } return; }
+      if (phase === "dying") { phaseT -= dt; pac.dead = Math.min(1, pac.dead + dt / 1.3); if (phaseT <= 0) {
+        lives--; hud();
+        if (lives <= 0) { CX.gameOver({ line: `NIVEAU <b>${level}</b>`, level, delay: 300 }); return; }
+        resetActors(); phase = "ready"; phaseT = 1.6; CX.toast("READY!", 0);
+      } return; }
+      if (phase === "clear") { phaseT -= dt; flashT += dt; if (phaseT <= 0) { level++; hud(); startLevel(false); } return; }
+      if (phase === "eatpause") { phaseT -= dt; if (phaseT <= 0) phase = "play"; return; }
+      if (phase !== "play") return;
+
+      // modes globaux
+      if (frightT > 0) {
+        frightT -= dt;
+        if (frightT <= 0) ghosts.forEach((g) => { if (g.state === "fright") g.state = "out"; g.fr = false; });
+      } else {
+        modeT -= dt;
+        if (modeT <= 0) { modeIdx = Math.min(MODES.length - 1, modeIdx + 1); modeT = MODES[modeIdx]; setMode(modeIdx % 2 ? "chase" : "scatter"); }
+      }
+
+      // Pac-Man
+      const ps = (frightT > 0 ? 8.2 : 7.4) * speedK();
+      advance(pac, ps * dt, pacChoose, false);
+      if (pac.moving) pac.mouth += dt * 16;
+      eat(Math.round(pac.x), Math.round(pac.y));
+      if (phase !== "play") return;
+
+      if (fruit) {
+        fruit.t -= dt; if (fruit.t <= 0) fruit = null;
+        else if (Math.abs(pac.x - fruit.x) < 0.6 && Math.abs(pac.y - fruit.y) < 0.6) {
+          const pts = [100, 300, 500, 700, 1000, 2000, 3000, 5000][Math.min(7, level - 1)];
+          CX.addScore(pts); CX.toast(String(pts), 900); fruit = null; CX.melody([660, 880, 1320], 0.06, "square", 0.07);
+        }
+      }
+      if (!extraGiven && CX.score >= 10000) { extraGiven = true; lives++; hud(); CX.melody([523, 659, 784, 1047], 0.08, "triangle", 0.09); }
+
+      // Fantômes + collisions
+      for (const g of ghosts) {
+        updateGhost(g, dt);
+        if (g.state === "house" || g.state === "leave" || g.state === "enter" || g.state === "eaten") continue;
+        let dx = Math.abs(g.x - pac.x); if (dx > COLS / 2) dx = COLS - dx;
+        if (dx < 0.6 && Math.abs(g.y - pac.y) < 0.6) {
+          if (g.state === "fright") {
+            const pts = 200 * Math.pow(2, frightChain++);
+            g.state = "eaten"; g.x = Math.round(g.x * 2) / 2; g.y = Math.round(g.y * 2) / 2;
+            CX.addScore(pts); CX.toast(String(pts), 700); CX.tone(300, 0.3, "square", 0.08, 1400); CX.buzz(30);
+            phase = "eatpause"; phaseT = 0.5;
+          } else {
+            phase = "dying"; phaseT = 1.8; pac.dead = 0; CX.buzz(120);
+            CX.tone(880, 1.2, "sawtooth", 0.07, 90);
+            return;
+          }
+        }
+      }
+    },
+
+    draw(c, dt) {
+      c.fillStyle = "#000"; c.fillRect(0, 0, W, H);
+      const t = CX.time;
+      // murs : contour néon façon borne d'origine
+      const flash = phase === "clear" && Math.floor((flashT || 0) * 5) % 2 === 1;
+      c.strokeStyle = flash ? "#ffffff" : "#2a6bff"; c.lineWidth = 2; c.lineCap = "round";
+      c.shadowColor = flash ? "#fff" : "#2a6bff"; c.shadowBlur = 6;
+      c.beginPath();
+      for (let r = 0; r < ROWS; r++) for (let col = 0; col < COLS; col++) {
+        if (grid[r][col] !== "#") continue;
+        const x = col * T, y = TOP + r * T, i = 3;
+        const w = (cc, rr) => tile(cc, rr) === "#";
+        if (!w(col, r - 1)) { c.moveTo(x + (w(col - 1, r) && !w(col - 1, r - 1) ? 0 : i), y + i); c.lineTo(x + T - (w(col + 1, r) && !w(col + 1, r - 1) ? 0 : i), y + i); }
+        if (!w(col, r + 1)) { c.moveTo(x + (w(col - 1, r) && !w(col - 1, r + 1) ? 0 : i), y + T - i); c.lineTo(x + T - (w(col + 1, r) && !w(col + 1, r + 1) ? 0 : i), y + T - i); }
+        if (!w(col - 1, r)) { c.moveTo(x + i, y + (w(col, r - 1) && !w(col - 1, r - 1) ? 0 : i)); c.lineTo(x + i, y + T - (w(col, r + 1) && !w(col - 1, r + 1) ? 0 : i)); }
+        if (!w(col + 1, r)) { c.moveTo(x + T - i, y + (w(col, r - 1) && !w(col + 1, r - 1) ? 0 : i)); c.lineTo(x + T - i, y + T - (w(col, r + 1) && !w(col + 1, r + 1) ? 0 : i)); }
+      }
+      c.stroke(); c.shadowBlur = 0;
+      // porte de la maison
+      c.fillStyle = "#ffb8de"; c.fillRect(9 * T + 1, TOP + 8 * T + 7, T - 2, 3);
+
+      // gommes
+      for (let r = 0; r < ROWS; r++) for (let col = 0; col < COLS; col++) {
+        const v = grid[r][col], x = col * T + T / 2, y = TOP + r * T + T / 2;
+        if (v === ".") { c.fillStyle = "#ffcfa8"; c.fillRect(x - 1.5, y - 1.5, 3, 3); }
+        else if (v === "o" && (Math.floor(t * 4) % 2 || CX.state !== "play")) {
+          c.fillStyle = "#ffcfa8"; c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill();
+        }
+      }
+      if (fruit) drawCherry(c, fruit.x * T + T / 2, TOP + fruit.y * T + T / 2);
+
+      if (CX.state === "title") { drawAttract(c, t); return; }
+
+      // Pac-Man
+      drawPac(c, pac.x * T + T / 2, TOP + pac.y * T + T / 2, pac.dir, phase === "dying" ? pac.dead : 0, pac.moving || phase === "ready" ? pac.mouth : 0.6);
+      if (phase !== "dying" || pac.dead < 0.2) ghosts.forEach((g) => drawGhost(c, g, t));
+    },
+  };
+
+  function drawPac(c, x, y, dir, dead, m) {
+    const ang = { right: 0, down: Math.PI / 2, left: Math.PI, up: -Math.PI / 2 }[dir] || 0;
+    c.fillStyle = "#ffd21f"; c.shadowColor = "#ffd21f"; c.shadowBlur = 8;
+    c.beginPath();
+    if (dead > 0) {
+      const a = Math.PI * Math.min(1, dead * 1.1);
+      if (a < Math.PI - 0.02) { c.moveTo(x, y); c.arc(x, y, 7, -Math.PI / 2 + a, -Math.PI / 2 - a + Math.PI * 2); }
+    } else {
+      const open = 0.08 + Math.abs(Math.sin(m)) * 0.42;
+      c.moveTo(x, y); c.arc(x, y, 7, ang + open, ang + Math.PI * 2 - open);
+    }
+    c.closePath(); c.fill(); c.shadowBlur = 0;
+  }
+
+  function drawGhost(c, g, t) {
+    const x = g.x * T + T / 2, y = TOP + g.y * T + T / 2;
+    const fr = g.state === "fright" || (g.fr && (g.state === "house" || g.state === "leave") && frightT > 0);
+    const eyesOnly = g.state === "eaten" || g.state === "enter";
+    if (!eyesOnly) {
+      const blink = fr && frightT < 2 && Math.floor(t * 6) % 2;
+      c.fillStyle = fr ? (blink ? "#ffffff" : "#2121ff") : g.color;
+      c.shadowColor = c.fillStyle; c.shadowBlur = 6;
+      c.beginPath();
+      c.arc(x, y - 1, 7, Math.PI, 0);
+      c.lineTo(x + 7, y + 7);
+      const wv = Math.floor(t * 8) % 2 ? 0 : 1.2;
+      for (let i = 0; i < 4; i++) { const bx = x + 7 - (i + 0.5) * 3.5; c.lineTo(bx, y + 4 + wv * (i % 2 ? 1 : -1) + 1); c.lineTo(bx - 1.75, y + 7); }
+      c.lineTo(x - 7, y + 7); c.closePath(); c.fill(); c.shadowBlur = 0;
+      if (fr) {
+        c.fillStyle = blink ? "#ff2a2a" : "#ffcfa8";
+        c.fillRect(x - 4, y - 3, 2, 2); c.fillRect(x + 2, y - 3, 2, 2);
+        for (let i = 0; i < 4; i++) c.fillRect(x - 5 + i * 3, y + 2 + (i % 2), 2, 1);
+        return;
+      }
+    }
+    const [dx, dy] = DIRS[g.dir] || [0, 0];
+    [-3, 3].forEach((ox) => {
+      c.fillStyle = "#fff"; c.beginPath(); c.ellipse(x + ox, y - 2, 2.6, 3.2, 0, 0, 7); c.fill();
+      c.fillStyle = "#1d3cff"; c.fillRect(x + ox - 1 + dx * 1.3, y - 3 + dy * 1.6, 2, 2);
+    });
+  }
+
+  function drawCherry(c, x, y) {
+    c.strokeStyle = "#7dd36b"; c.lineWidth = 1.3; c.beginPath(); c.moveTo(x - 3, y + 1); c.quadraticCurveTo(x, y - 7, x + 4, y - 6); c.moveTo(x + 3, y + 2); c.lineTo(x + 4, y - 6); c.stroke();
+    c.fillStyle = "#ff2a3c"; c.beginPath(); c.arc(x - 3, y + 3, 3.2, 0, 7); c.arc(x + 3, y + 4, 3.2, 0, 7); c.fill();
+    c.fillStyle = "#fff"; c.fillRect(x - 4, y + 2, 1, 1); c.fillRect(x + 2, y + 3, 1, 1);
+  }
+
+  // Écran titre : Pac-Man poursuivi par les fantômes, puis l'inverse
+  function drawAttract(c, t) {
+    const y = TOP + 9 * T + T / 2, cyc = (t % 8) / 8;
+    c.fillStyle = "rgba(0,0,0,.55)"; c.fillRect(0, y - 14, W, 28);
+    const chase = cyc < 0.5, p = chase ? cyc * 2 : (cyc - 0.5) * 2;
+    const px = chase ? W + 20 - p * (W + 140) : -120 + p * (W + 140);
+    drawPac(c, px, y, chase ? "left" : "right", 0, t * 14);
+    GHOST_DEF.forEach((d, i) => {
+      const gx = chase ? px + 28 + i * 20 : px - 28 - i * 20;
+      drawGhost(c, { x: (gx - T / 2) / T, y: (y - TOP - T / 2) / T, dir: chase ? "left" : "right", state: chase ? "out" : "fright", color: d.color }, t);
+    });
+  }
+
+  CX.boot(G);
+})();
+
 </script>
 </body>
 </html>
