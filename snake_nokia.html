@@ -4,24 +4,49 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Snake - Nokia 3310 Immersif</title>
+<title>Snake - Édition Pro Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gb-bg: #9bbc0f;
-    --gb-dark: #0f380f;
-    --gb-medium: #306230;
-    --gb-light: #8bac0f;
-    --bg-app: #070a0f;
+    --bg-app: #05070a;
+    --acc: #9bbc0f;
+    --txt: #9bbc0f;
+    --mut: #306230;
+    --canvas-bg: #9bbc0f;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  body.filter-green { --acc: #9bbc0f; --txt: #9bbc0f; --mut: #306230; --canvas-bg: #9bbc0f; }
+  body.filter-cyan { --acc: #00ffff; --txt: #00ffff; --mut: #008888; --canvas-bg: #001a1a; }
+  body.filter-neon { --acc: #ff00ff; --txt: #ff00ff; --mut: #880088; --canvas-bg: #110011; }
+  body.filter-mono { --acc: #ffffff; --txt: #ffffff; --mut: #666666; --canvas-bg: #000000; }
+
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+  }
+  html, body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    touch-action: manipulation;
+  }
+
+  button, canvas, select {
+    touch-action: none;
+  }
 
   body {
     margin: 0;
     padding: 0;
     background-color: var(--bg-app);
-    color: #f2f3f5;
+    color: var(--txt);
     font-family: 'Rajdhani', sans-serif;
     display: flex;
     flex-direction: column;
@@ -31,81 +56,94 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+    padding: env(safe-area-inset-top, 6px) 6px env(safe-area-inset-bottom, 6px) 6px;
   }
 
-  /* En-tête minimaliste du jeu */
+  /* Barre supérieure propre : Fermer en haut à droite */
+  .top-bar-actions {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 6px) + 8px);
+    right: 12px;
+    z-index: 100000;
+  }
+
+  .top-action-btn {
+    background: rgba(21, 27, 38, 0.95);
+    color: var(--txt);
+    border: 1.5px solid var(--acc);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .top-action-btn:active { background: var(--txt); color: #000; }
+
+  /* En-tête / HUD supérieur */
   .game-header {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
-    background: rgba(21, 27, 38, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 16px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: #9bbc0f;
+    font-size: 9px;
+    color: var(--txt);
+    flex-shrink: 0;
+    max-width: 480px;
   }
 
-  /* Zone de l'écran principal qui prend le maximum de place */
+  /* Écran de jeu maximisé pour occuper tout l'espace sur iOS/Android/PC */
   .screen-container {
     flex: 1;
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 2px;
     position: relative;
+    min-height: 0;
   }
 
   .screen-lens {
     background-color: #070d07;
-    padding: 14px;
+    padding: 10px;
     border-radius: 16px;
-    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px rgba(153, 230, 0, 0.15);
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.95), 0 0 30px color-mix(in srgb, var(--acc) 25%, transparent);
     border: 3px solid #182418;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
-    max-width: 420px;
-    aspect-ratio: 1 / 1.1;
+    max-height: 480px;
+    height: 100%;
     position: relative;
   }
 
-  .hud-top {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: var(--gb-dark);
-    margin-bottom: 8px;
-    font-weight: bold;
-    padding: 0 4px;
-  }
-
   canvas {
+    display: block;
+    background-color: var(--canvas-bg);
+    border: 3px solid var(--mut);
     width: 100% !important;
     height: 100% !important;
     flex: 1;
-    display: block;
-    background-color: var(--gb-bg);
-    border: 3px solid var(--gb-dark);
     image-rendering: pixelated;
+    min-height: 0;
   }
 
-  /* Commandes tactiles en bas d'écran (optimisées iOS & Android) */
+  /* Contrôles tactiles épurés sans texte superflux sur les flèches */
   .controls-container {
     width: 100%;
-    max-width: 400px;
-    padding: 15px 10px 25px;
+    max-width: 420px;
+    padding: 10px 10px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
   }
 
   .dpad {
@@ -117,25 +155,23 @@
 
   .arcade-btn {
     background: linear-gradient(145deg, #232c3d, #151b26);
-    border: 1.5px solid color-mix(in srgb, var(--gb-light) 50%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--acc) 50%, transparent);
     border-radius: 14px;
     color: #fff;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 900;
     cursor: pointer;
     box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.08s ease;
+    touch-action: manipulation;
   }
 
   .arcade-btn:active {
-    background: var(--gb-light);
-    color: #0f380f;
-    transform: translateY(3px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    background: var(--acc);
+    color: #05070a;
+    transform: translateY(2px);
   }
 
   .btn-up { grid-column: 2; grid-row: 1; }
@@ -146,81 +182,128 @@
   /* Écrans de superposition (Menu & Game Over) */
   .screen-overlay {
     position: absolute;
-    inset: 14px;
-    background-color: var(--gb-bg);
+    inset: 10px;
+    background-color: var(--canvas-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 10;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
   }
 
-  .screen-overlay.hidden {
-    display: none;
-  }
+  .screen-overlay.hidden { display: none; }
 
   .screen-overlay h1 {
     font-family: 'Press Start 2P', monospace;
-    font-size: 20px;
-    color: var(--gb-dark);
-    margin-bottom: 14px;
-    text-shadow: 2px 2px var(--gb-light);
+    font-size: 18px;
+    color: var(--mut);
+    margin-bottom: 12px;
+    text-shadow: 2px 2px var(--acc);
   }
 
   .screen-overlay p {
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    color: var(--gb-medium);
-    margin-bottom: 20px;
-    line-height: 1.8;
+    font-size: 7.5px;
+    color: var(--mut);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .menu-group {
+    width: 100%;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .menu-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6.5px;
+    color: var(--mut);
+  }
+
+  .settings-select {
+    width: 100%;
+    background: var(--mut);
+    color: var(--canvas-bg);
+    border: 1px solid var(--acc);
+    padding: 6px 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
   }
 
   .menu-btn {
-    background-color: var(--gb-dark);
-    color: var(--gb-bg);
+    background-color: var(--mut);
+    color: var(--canvas-bg);
     border: none;
-    padding: 14px 26px;
+    padding: 12px 24px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 900;
     cursor: pointer;
     border-radius: 6px;
-    box-shadow: 0 4px var(--gb-medium);
+    box-shadow: 0 4px var(--acc);
   }
 
-  .menu-btn:active {
-    transform: translateY(2px);
-  }
+  .menu-btn:active { transform: translateY(2px); }
 
   @media (pointer: fine) {
-    .controls-container {
-      display: none; /* Masqué sur PC pour profiter de tout l'écran avec le clavier */
-    }
+    .controls-container { display: none; }
   }
 </style>
 </head>
-<body>
+<body class="filter-green">
+
+<div class="top-bar-actions">
+  <button class="top-action-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
+</div>
 
 <div class="game-header">
-  <span>🐍 SNAKE // NOKIA 3310</span>
+  <span>🐍 SNAKE // PRO</span>
   <span id="headerHi">HI:00</span>
 </div>
 
 <div class="screen-container">
   <div class="screen-lens">
-    <div class="hud-top">
-      <span id="scoreText">SCORE:00</span>
-    </div>
+    <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div style="width: 100%; display: flex; justify-content: space-between; font-family:'Press Start 2P', monospace; font-size: 8px; color: var(--mut); margin-bottom: 6px; padding: 0 4px;">
+        <span id="scoreText">SCORE:00</span>
+      </div>
 
-    <div style="position: relative; width: 100%; flex: 1; display: flex; flex-direction: column;">
       <canvas id="snakeCanvas" width="200" height="200"></canvas>
 
-      <!-- Menu Principal -->
+      <!-- Menu Principal Options -->
       <div id="menuScreen" class="screen-overlay">
         <h1>SNAKE</h1>
-        <p>NOKIA EDITION<br><br>Utilise les flèches du clavier ou le pavé tactile géant en bas !</p>
+        <p>EDITION PRO ARCADE</p>
+
+        <div class="menu-group">
+          <label>FILTRE COULEUR :</label>
+          <select id="colorFilterSelect" class="settings-select">
+            <option value="green" selected>Vert Phosphore (Game Boy)</option>
+            <option value="cyan">Cyber Cyan</option>
+            <option value="neon">Néon Magenta</option>
+            <option value="mono">Monochrome Blanc</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>AUDIO BUZZER :</label>
+          <select id="audioSelect" class="settings-select">
+            <option value="on" selected>Activé</option>
+            <option value="off">Coupé</option>
+          </select>
+        </div>
+
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -234,7 +317,6 @@
   </div>
 </div>
 
-<!-- Contrôles tactiles plein écran pour mobile -->
 <div class="controls-container">
   <div class="dpad">
     <button class="arcade-btn btn-up" id="btnUp">▲</button>
@@ -245,13 +327,25 @@
 </div>
 
 <script>
-// --- AUDIO BUZZER 8-BITS ---
+// --- AUDIO SYNTHÉTISEUR 8-BITS ---
 let audioCtx = null;
 function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+let soundActive = localStorage.getItem("snake_audio") !== "off";
+const audioSelect = document.getElementById("audioSelect");
+if (audioSelect) {
+  audioSelect.value = soundActive ? "on" : "off";
+  audioSelect.onchange = (e) => {
+    soundActive = e.target.value === "on";
+    localStorage.setItem("snake_audio", e.target.value);
+  };
 }
 
 function playNokiaSound(type) {
+  if (!soundActive) return;
   try {
     initAudio();
     if (!audioCtx) return;
@@ -270,7 +364,7 @@ function playNokiaSound(type) {
       osc.start(now); osc.stop(now + 0.08);
     } else if (type === 'gameover') {
       osc.frequency.setValueAtTime(250, now);
-      osc.frequency.linearRampToValueAtTime(80, now + 0.5);
+      osc.frequency.linearRampToValueAtTime(60, now + 0.5);
       gain.gain.setValueAtTime(0.15, now);
       gain.gain.linearRampToValueAtTime(0.001, now + 0.5);
       osc.start(now); osc.stop(now + 0.5);
@@ -278,12 +372,24 @@ function playNokiaSound(type) {
   } catch (e) {}
 }
 
-// --- LOGIQUE SNAKE ---
+// Filtres de couleur
+let currentFilter = localStorage.getItem("snake_filter") || "green";
+const filterSelect = document.getElementById("colorFilterSelect");
+if (filterSelect) {
+  filterSelect.value = currentFilter;
+  document.body.className = `filter-${currentFilter}`;
+  filterSelect.onchange = (e) => {
+    currentFilter = e.target.value;
+    document.body.className = `filter-${currentFilter}`;
+    localStorage.setItem("snake_filter", currentFilter);
+  };
+}
+
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
 const GRID_SIZE = 20;
-const TILE_SIZE = 10; // 20x10 = 200px
+const TILE_SIZE = 10;
 
 let snake = [];
 let food = { x: 0, y: 0 };
@@ -296,21 +402,16 @@ let highScore = parseInt(localStorage.getItem("nokia_snake_hi") || "0", 10);
 let gameStarted = false;
 let gameOver = false;
 let gameInterval = null;
-let speed = 100;
+let speed = 110;
 
-document.getElementById("highScoreText")?.remove(); // Remplacé par l'en-tête
 document.getElementById("headerHi").textContent = `HI:${String(highScore).padStart(2, '0')}`;
 
 function resetGame() {
-  snake = [
-    { x: 10, y: 10 },
-    { x: 9, y: 10 },
-    { x: 8, y: 10 }
-  ];
+  snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
   dx = 1; dy = 0;
   nextDx = 1; nextDy = 0;
   score = 0;
-  speed = 100;
+  speed = 110;
   updateHUD();
   spawnFood();
 }
@@ -330,14 +431,19 @@ function updateHUD() {
 }
 
 function drawBlock(x, y, isHead = false) {
-  ctx.fillStyle = "#306230";
+  const mutColor = getComputedStyle(document.body).getPropertyValue('--mut').trim();
+  const txtColor = getComputedStyle(document.body).getPropertyValue('--txt').trim();
+  const canvasBg = getComputedStyle(document.body).getPropertyValue('--canvas-bg').trim();
+
+  ctx.fillStyle = mutColor;
   ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  ctx.fillStyle = isHead ? "#0f380f" : "#8bac0f";
+  ctx.fillStyle = isHead ? canvasBg : txtColor;
   ctx.fillRect(x * TILE_SIZE + 1, y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
 }
 
 function drawFood() {
-  ctx.fillStyle = "#0f380f";
+  const mutColor = getComputedStyle(document.body).getPropertyValue('--mut').trim();
+  ctx.fillStyle = mutColor;
   ctx.fillRect(food.x * TILE_SIZE + 2, food.y * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 }
 
@@ -363,7 +469,7 @@ function gameStep() {
     }
     updateHUD();
     spawnFood();
-    if (score % 50 === 0 && speed > 50) {
+    if (score % 50 === 0 && speed > 55) {
       speed -= 8;
       clearInterval(gameInterval);
       gameInterval = setInterval(gameStep, speed);
@@ -398,20 +504,26 @@ function endGame() {
   document.getElementById("gameOverScreen").classList.remove("hidden");
 }
 
-// Contrôles Clavier
+// Contrôles Clavier (Flèches + ZQSD)
 window.addEventListener("keydown", e => {
   if (!gameStarted || gameOver) return;
-  if ((e.code === "ArrowUp" || e.code === "KeyW") && dy === 0) { nextDx = 0; nextDy = -1; e.preventDefault(); }
+  if ((e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW") && dy === 0) { nextDx = 0; nextDy = -1; e.preventDefault(); }
   else if ((e.code === "ArrowDown" || e.code === "KeyS") && dy === 0) { nextDx = 0; nextDy = 1; e.preventDefault(); }
-  else if ((e.code === "ArrowLeft" || e.code === "KeyA") && dx === 0) { nextDx = -1; nextDy = 0; e.preventDefault(); }
+  else if ((e.code === "ArrowLeft" || e.code === "KeyQ" || e.code === "KeyA") && dx === 0) { nextDx = -1; nextDy = 0; e.preventDefault(); }
   else if ((e.code === "ArrowRight" || e.code === "KeyD") && dx === 0) { nextDx = 1; nextDy = 0; e.preventDefault(); }
 });
 
-// Contrôles Tactiles Plein Écran
-document.getElementById("btnUp").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = -1; } };
-document.getElementById("btnDown").onclick = () => { if (gameStarted && !gameOver && dy === 0) { nextDx = 0; nextDy = 1; } };
-document.getElementById("btnLeft").onclick = () => { if (gameStarted && !gameOver && dx === 0) { nextDx = -1; nextDy = 0; } };
-document.getElementById("btnRight").onclick = () => { if (gameStarted && !gameOver && dx === 0) { nextDx = 1; nextDy = 0; } };
+// Contrôles Tactiles robustes (pointerdown)
+function handleDirection(newDx, newDy) {
+  if (!gameStarted || gameOver) return;
+  if (newDx !== 0 && dx === 0) { nextDx = newDx; nextDy = 0; }
+  else if (newDy !== 0 && dy === 0) { nextDx = 0; nextDy = newDy; }
+}
+
+document.getElementById("btnUp").addEventListener("pointerdown", (e) => { e.preventDefault(); handleDirection(0, -1); });
+document.getElementById("btnDown").addEventListener("pointerdown", (e) => { e.preventDefault(); handleDirection(0, 1); });
+document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); handleDirection(-1, 0); });
+document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); handleDirection(1, 0); });
 
 document.getElementById("startBtn").onclick = startGame;
 document.getElementById("restartBtn").onclick = startGame;
