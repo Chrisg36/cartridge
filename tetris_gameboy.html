@@ -4,24 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Tetris - Game Boy Immersif</title>
+<title>Tetris - Édition Pro Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gb-bg: #9bbc0f;
-    --gb-dark: #0f380f;
-    --gb-medium: #306230;
-    --gb-light: #8bac0f;
-    --bg-app: #070a0f;
+    --bg-app: #05070a;
+    --card-app: #11151c;
+    --acc: #8bac0f;
+    --txt: #9bbc0f;
+    --mut: #306230;
+    --canvas-bg: #9bbc0f;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  /* Filtres de couleur thématiques */
+  body.filter-green { --acc: #8bac0f; --txt: #9bbc0f; --mut: #306230; --canvas-bg: #9bbc0f; }
+  body.filter-neon { --acc: #00ffff; --txt: #00ffff; --mut: #a200ff; --canvas-bg: #09030f; }
+  body.filter-mono { --acc: #ffffff; --txt: #ffffff; --mut: #666666; --canvas-bg: #000000; }
+  body.filter-cyan { --acc: #38bdf8; --txt: #38bdf8; --mut: #0369a1; --canvas-bg: #0c1829; }
+
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+  }
+  button, canvas, select {
+    touch-action: none;
+  }
 
   body {
     margin: 0;
     padding: 0;
     background-color: var(--bg-app);
-    color: #f2f3f5;
+    color: var(--txt);
     font-family: 'Rajdhani', sans-serif;
     display: flex;
     flex-direction: column;
@@ -31,22 +47,49 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+    padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 10px) 10px;
   }
 
+  /* Boutons haut d'écran (Fermer & Pause) */
+  .top-bar-actions {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 10px) + 8px);
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100000;
+    pointer-events: none;
+  }
+
+  .top-action-btn {
+    pointer-events: auto;
+    background: rgba(21, 27, 38, 0.9);
+    color: var(--txt);
+    border: 1.5px solid var(--acc);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .top-action-btn:active { background: var(--txt); color: var(--bg-app); }
+
+  /* En-tête / HUD */
   .game-header {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 10px 16px;
-    background: rgba(21, 27, 38, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px;
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
-    color: #8bac0f;
+    color: var(--txt);
+    flex-shrink: 0;
   }
 
+  /* Zone de l'écran principal en plein écran */
   .screen-container {
     flex: 1;
     width: 100%;
@@ -55,90 +98,94 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 4px;
     position: relative;
+    min-height: 0;
   }
 
   .screen-lens {
     background-color: #070d07;
-    padding: 12px;
+    padding: 10px;
     border-radius: 16px;
-    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px rgba(139, 172, 15, 0.15);
+    box-shadow: inset 0 6px 20px rgba(0,0,0,0.95), 0 0 30px color-mix(in srgb, var(--acc) 25%, transparent);
     border: 3px solid #182418;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 380px;
+    max-width: 420px;
+    height: 100%;
+    max-height: 520px;
     position: relative;
   }
 
   canvas {
     display: block;
-    background-color: var(--gb-bg);
-    border: 3px solid var(--gb-dark);
+    background-color: var(--canvas-bg);
+    border: 3px solid #0f380f;
+    height: 100% !important;
+    max-height: 480px;
+    image-rendering: pixelated;
   }
 
   .side-panel {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 95px;
-    height: 320px;
-    background-color: var(--gb-bg);
-    border: 3px solid var(--gb-dark);
-    padding: 8px;
+    justify-content: space-around;
+    width: 90px;
+    height: 100%;
+    max-height: 480px;
+    background-color: var(--canvas-bg);
+    border: 3px solid #0f380f;
+    padding: 6px;
     text-align: center;
   }
 
-  .panel-box {
-    margin-bottom: 4px;
-  }
-
+  .panel-box { margin-bottom: 2px; }
   .panel-title {
     font-family: 'Press Start 2P', monospace;
-    font-size: 6.5px;
-    color: var(--gb-dark);
-    margin-bottom: 3px;
+    font-size: 6px;
+    color: #0f380f;
+    margin-bottom: 2px;
     text-transform: uppercase;
   }
-
   .panel-value {
     font-family: 'Press Start 2P', monospace;
-    font-size: 8.5px;
-    color: var(--gb-dark);
+    font-size: 8px;
+    color: #0f380f;
     font-weight: bold;
   }
 
   #nextCanvas {
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
     margin: 0 auto;
-    background-color: var(--gb-bg);
+    background-color: var(--canvas-bg);
   }
 
-  /* Commandes tactiles fluides en bas d'écran */
+  /* Commandes tactiles en bas d'écran */
   .controls-container {
     width: 100%;
-    max-width: 420px;
-    padding: 10px 10px 20px;
+    max-width: 440px;
+    padding: 8px 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
   }
 
   .dpad {
     display: grid;
-    grid-template-columns: repeat(3, 60px);
+    grid-template-columns: repeat(3, 65px);
     grid-template-rows: repeat(3, 52px);
     gap: 5px;
   }
 
   .arcade-btn {
     background: linear-gradient(145deg, #232c3d, #151b26);
-    border: 1.5px solid color-mix(in srgb, var(--gb-light) 50%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--acc) 50%, transparent);
     border-radius: 12px;
     color: #fff;
     font-family: 'Rajdhani', sans-serif;
@@ -149,12 +196,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.08s ease;
+    touch-action: manipulation;
   }
 
-  .arcade-btn:active {
-    background: var(--gb-light);
-    color: #0f380f;
+  .arcade-btn:active, .arcade-btn.pressed {
+    background: var(--acc);
+    color: #000;
     transform: translateY(2px);
   }
 
@@ -173,9 +220,9 @@
   .action-btn {
     background: #800020;
     border: none;
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
+    width: 70px;
+    height: 55px;
+    border-radius: 14px;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
@@ -184,17 +231,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: manipulation;
   }
 
-  .action-btn:active {
-    transform: translateY(2px);
-  }
+  .action-btn:active { transform: translateY(2px); }
 
-  /* Écrans de superposition (Menu & Game Over) */
+  /* Écrans de superposition (Menu, Pause, Game Over) */
   .screen-overlay {
     position: absolute;
-    inset: 12px;
-    background-color: var(--gb-bg);
+    inset: 10px;
+    background-color: var(--canvas-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -202,70 +248,143 @@
     z-index: 10;
     text-align: center;
     padding: 15px;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 
-  .screen-overlay.hidden {
-    display: none;
-  }
+  .screen-overlay.hidden { display: none; }
 
   .screen-overlay h1 {
     font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: var(--gb-dark);
-    margin-bottom: 12px;
-    text-shadow: 2px 2px var(--gb-light);
+    font-size: 16px;
+    color: #0f380f;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px var(--acc);
   }
 
   .screen-overlay p {
     font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--gb-medium);
-    margin-bottom: 16px;
-    line-height: 1.8;
+    font-size: 7.5px;
+    color: #306230;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .menu-group {
+    width: 100%;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .menu-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6.5px;
+    color: #0f380f;
+  }
+
+  .settings-select {
+    width: 100%;
+    background: #0f380f;
+    color: #9bbc0f;
+    border: 1px solid #306230;
+    padding: 6px 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
   }
 
   .menu-btn {
-    background-color: var(--gb-dark);
-    color: var(--gb-bg);
+    background-color: #0f380f;
+    color: #9bbc0f;
     border: none;
-    padding: 12px 22px;
+    padding: 10px 20px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
+    font-size: 9px;
     cursor: pointer;
     border-radius: 6px;
-    box-shadow: 0 4px var(--gb-medium);
+    box-shadow: 0 4px #306230;
+    margin-top: 4px;
   }
 
-  .menu-btn:active {
-    transform: translateY(2px);
-  }
+  .menu-btn:active { transform: translateY(2px); }
 
   @media (pointer: fine) {
-    .controls-container {
-      display: none; /* Masqué sur PC pour profiter du clavier */
-    }
+    .controls-container { display: none; }
   }
 </style>
 </head>
-<body>
+<body class="filter-green">
+
+<div class="top-bar-actions">
+  <button class="top-action-btn" id="pauseBtn">⏸️ PAUSE</button>
+  <button class="top-action-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
+</div>
 
 <div class="game-header">
-  <span>🧱 TETRIS // GAME BOY</span>
-  <span>CLAVIER : ← → ↕ ESPACE</span>
+  <span id="headerTitle">🧱 TETRIS // PRO ARCADE</span>
 </div>
 
 <div class="screen-container">
   <div class="screen-lens">
-    <!-- Grille de jeu Tetris (10x20 blocs) -->
-    <div style="position: relative;">
+    <div style="position: relative; height: 100%; display: flex; align-items: center;">
       <canvas id="tetrisCanvas" width="160" height="320"></canvas>
       
-      <!-- Écran Menu Principal -->
+      <!-- Panneau latéral -->
+      <div class="side-panel">
+        <div class="panel-box">
+          <div class="panel-title">SCORE</div>
+          <div class="panel-value" id="scoreVal">000000</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-title">LIGNES</div>
+          <div class="panel-value" id="linesVal">000</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-title">NIVEAU</div>
+          <div class="panel-value" id="levelVal">1</div>
+        </div>
+        <div class="panel-box">
+          <div class="panel-title">SUIVANT</div>
+          <canvas id="nextCanvas" width="44" height="44"></canvas>
+        </div>
+      </div>
+
+      <!-- Écran Menu Principal & Options -->
       <div id="menuScreen" class="screen-overlay">
         <h1>TETRIS</h1>
-        <p>EDITION GAME BOY<br><br>Alignez les lignes et montez de niveau !</p>
+        <p>PRO ARCADE EDITION</p>
+
+        <div class="menu-group">
+          <label>FILTRE COULEUR :</label>
+          <select id="filterSelect" class="settings-select">
+            <option value="green" selected>Vert Phosphore (Game Boy)</option>
+            <option value="neon">Néon Cyberpunk</option>
+            <option value="cyan">Cyan Rétro</option>
+            <option value="mono">Monochrome Blanc</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>MUSIQUE & AUDIO :</label>
+          <select id="audioSelect" class="settings-select">
+            <option value="on" selected>Activé (Mélodie 8-bit)</option>
+            <option value="off">Coupé</option>
+          </select>
+        </div>
+
         <button class="menu-btn" id="startBtn">JOUER</button>
+      </div>
+
+      <!-- Écran Pause -->
+      <div id="pauseScreen" class="screen-overlay hidden">
+        <h1>PAUSE</h1>
+        <p>LE JEU EST EN PAUSE</p>
+        <button class="menu-btn" id="resumeBtn">REPRENDRE</button>
       </div>
 
       <!-- Écran Game Over -->
@@ -275,30 +394,10 @@
         <button class="menu-btn" id="restartBtn">REJOUER</button>
       </div>
     </div>
-
-    <!-- Panneau latéral -->
-    <div class="side-panel">
-      <div class="panel-box">
-        <div class="panel-title">SCORE</div>
-        <div class="panel-value" id="scoreVal">000000</div>
-      </div>
-      <div class="panel-box">
-        <div class="panel-title">LIGNES</div>
-        <div class="panel-value" id="linesVal">000</div>
-      </div>
-      <div class="panel-box">
-        <div class="panel-title">NIVEAU</div>
-        <div class="panel-value" id="levelVal">1</div>
-      </div>
-      <div class="panel-box">
-        <div class="panel-title">SUIVANT</div>
-        <canvas id="nextCanvas" width="48" height="48"></canvas>
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- Contrôles tactiles plein écran pour mobile (iOS / Android) -->
+<!-- Contrôles tactiles optimisés -->
 <div class="controls-container">
   <div class="dpad">
     <button class="arcade-btn btn-up" id="btnUp">▲</button>
@@ -313,13 +412,38 @@
 </div>
 
 <script>
-// --- WEB AUDIO API (Effets sonores Game Boy) ---
+// --- AUDIO SYNTHÉTISEUR & MUSIQUE DE FOND 8-BITS ---
 let audioCtx = null;
+let soundActive = localStorage.getItem("tetris_audio") !== "off";
+let bgmInterval = null;
+
+const audioSelect = document.getElementById("filterSelect"); // Géré plus bas
+document.getElementById("audioSelect").value = soundActive ? "on" : "off";
+document.getElementById("audioSelect").onchange = (e) => {
+  soundActive = e.target.value === "on";
+  localStorage.setItem("tetris_audio", e.target.value);
+  if (!soundActive) stopBgm();
+  else if (gameStarted && !isPaused) startBgm();
+};
+
+const filterSelect = document.getElementById("filterSelect");
+let currentFilter = localStorage.getItem("tetris_filter") || "green";
+filterSelect.value = currentFilter;
+document.body.className = `filter-${currentFilter}`;
+
+filterSelect.onchange = (e) => {
+  currentFilter = e.target.value;
+  document.body.className = `filter-${currentFilter}`;
+  localStorage.setItem("tetris_filter", currentFilter);
+};
+
 function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
-function playGbSound(type) {
+function playNote(freq, duration, type = 'square', vol = 0.05) {
+  if (!soundActive) return;
   try {
     initAudio();
     if (!audioCtx) return;
@@ -328,43 +452,56 @@ function playGbSound(type) {
     const gain = audioCtx.createGain();
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-    osc.type = 'square';
-
-    if (type === 'move') {
-      osc.frequency.setValueAtTime(300, now);
-      gain.gain.setValueAtTime(0.05, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
-      osc.start(now); osc.stop(now + 0.05);
-    } else if (type === 'rotate') {
-      osc.frequency.setValueAtTime(500, now);
-      osc.frequency.exponentialRampToValueAtTime(700, now + 0.08);
-      gain.gain.setValueAtTime(0.06, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
-      osc.start(now); osc.stop(now + 0.08);
-    } else if (type === 'drop') {
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.linearRampToValueAtTime(60, now + 0.12);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
-      osc.start(now); osc.stop(now + 0.12);
-    } else if (type === 'clear') {
-      [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
-        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = 'square';
-        o.frequency.setValueAtTime(f, now + idx * 0.06);
-        g.gain.setValueAtTime(0.08, now + idx * 0.06);
-        g.gain.linearRampToValueAtTime(0.001, now + idx * 0.06 + 0.08);
-        o.start(now + idx * 0.06); o.stop(now + idx * 0.06 + 0.08);
-      });
-    } else if (type === 'gameover') {
-      osc.frequency.setValueAtTime(300, now);
-      osc.frequency.linearRampToValueAtTime(80, now + 0.8);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.8);
-      osc.start(now); osc.stop(now + 0.8);
-    }
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(vol, now);
+    gain.gain.linearRampToValueAtTime(0.001, now + duration);
+    osc.start(now);
+    osc.stop(now + duration);
   } catch (e) {}
+}
+
+function playGbSound(type) {
+  if (!soundActive) return;
+  if (type === 'move') playNote(300, 0.04, 'square', 0.04);
+  else if (type === 'rotate') playNote(600, 0.06, 'square', 0.06);
+  else if (type === 'drop') playNote(150, 0.1, 'sawtooth', 0.08);
+  else if (type === 'clear') {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+      setTimeout(() => playNote(f, 0.1, 'square', 0.08), idx * 60);
+    });
+  } else if (type === 'gameover') {
+    [300, 240, 180, 100].forEach((f, idx) => {
+      setTimeout(() => playNote(f, 0.2, 'sawtooth', 0.12), idx * 150);
+    });
+  }
+}
+
+// Mélodie de fond emblématique Tetris (Korobeiniki) simplifiée en boucle
+const tetrisThemeNotes = [
+  {f: 659.25, d: 0.3}, {f: 493.88, d: 0.15}, {f: 523.25, d: 0.15}, {f: 587.33, d: 0.3}, {f: 523.25, d: 0.15}, {f: 493.88, d: 0.15},
+  {f: 440.00, d: 0.3}, {f: 440.00, d: 0.15}, {f: 523.25, d: 0.15}, {f: 659.25, d: 0.3}, {f: 587.33, d: 0.15}, {f: 523.25, d: 0.15},
+  {f: 493.88, d: 0.45}, {f: 523.25, d: 0.15}, {f: 587.33, d: 0.3}, {f: 659.25, d: 0.3},
+  {f: 523.25, d: 0.3}, {f: 440.00, d: 0.3}, {f: 440.00, d: 0.3}
+];
+let noteIdx = 0;
+
+function startBgm() {
+  if (!soundActive || bgmInterval) return;
+  bgmInterval = setInterval(() => {
+    if (!gameStarted || isPaused || gameOver) return;
+    const note = tetrisThemeNotes[noteIdx];
+    playNote(note.f, note.d * 0.8, 'triangle', 0.03);
+    noteIdx = (noteIdx + 1) % tetrisThemeNotes.length;
+  }, 320);
+}
+
+function stopBgm() {
+  if (bgmInterval) {
+    clearInterval(bgmInterval);
+    bgmInterval = null;
+  }
+  noteIdx = 0;
 }
 
 // --- LOGIQUE TETRIS ---
@@ -373,7 +510,7 @@ const ctx = canvas.getContext("2d");
 const nextCanvas = document.getElementById("nextCanvas");
 const nextCtx = nextCanvas.getContext("2d");
 
-const BLOCK_SIZE = 16;
+const BLOCK_SIZE = 15;
 const COLS = 10;
 const ROWS = 20;
 
@@ -383,6 +520,7 @@ let lines = 0;
 let level = 1;
 let gameOver = false;
 let gameStarted = false;
+let isPaused = false;
 
 const SHAPES = [
   [],
@@ -412,16 +550,17 @@ function getRandomPieceType() {
 }
 
 function drawBlock(context, x, y, size, colorIndex) {
+  const isGb = currentFilter === 'green';
   if (colorIndex === 0) {
-    context.fillStyle = "#9bbc0f";
+    context.fillStyle = isGb ? "#9bbc0f" : "#05070a";
     context.fillRect(x * size, y * size, size, size);
     return;
   }
-  context.fillStyle = "#306230";
+  context.fillStyle = isGb ? "#306230" : "#222";
   context.fillRect(x * size, y * size, size, size);
-  context.fillStyle = "#8bac0f";
+  context.fillStyle = isGb ? "#8bac0f" : "#acc";
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  context.fillStyle = "#0f380f";
+  context.fillStyle = isGb ? "#0f380f" : "#05070a";
   context.fillRect(x * size + 3, y * size + 3, size - 6, size - 6);
 }
 
@@ -447,7 +586,7 @@ function drawBoard() {
 function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   if (!nextPiece) return;
-  const size = 12;
+  const size = 10;
   const offsetX = Math.floor((4 - nextPiece.shape[0].length) / 2);
   const offsetY = Math.floor((4 - nextPiece.shape.length) / 2);
 
@@ -513,6 +652,7 @@ function updateHUD() {
 }
 
 function rotatePiece() {
+  if (!gameStarted || isPaused || gameOver) return;
   let rotated = currentPiece.shape[0].map((_, index) => currentPiece.shape.map(row => row[index]).reverse());
   if (!collide(currentPiece, 0, 0, rotated)) {
     currentPiece.shape = rotated;
@@ -525,6 +665,7 @@ function rotatePiece() {
 }
 
 function movePiece(dx) {
+  if (!gameStarted || isPaused || gameOver) return;
   if (!collide(currentPiece, dx, 0)) {
     currentPiece.x += dx;
     playGbSound('move');
@@ -533,6 +674,7 @@ function movePiece(dx) {
 }
 
 function dropPiece() {
+  if (!gameStarted || isPaused || gameOver) return;
   if (!collide(currentPiece, 0, 1)) {
     currentPiece.y++;
     drawBoard();
@@ -544,6 +686,7 @@ function dropPiece() {
     drawNext();
     if (collide(currentPiece, 0, 0)) {
       gameOver = true;
+      stopBgm();
       playGbSound('gameover');
       document.getElementById("finalScoreText").textContent = `SCORE : ${score}`;
       document.getElementById("gameOverScreen").classList.remove("hidden");
@@ -557,7 +700,7 @@ let dropInterval = 800;
 let lastTime = 0;
 
 function gameLoop(time = 0) {
-  if (!gameStarted || gameOver) return;
+  if (!gameStarted || gameOver || isPaused) return;
   const deltaTime = time - lastTime;
   lastTime = time;
   dropCounter += deltaTime;
@@ -576,6 +719,7 @@ function startGame() {
   lines = 0;
   level = 1;
   gameOver = false;
+  isPaused = false;
   gameStarted = true;
   updateHUD();
 
@@ -585,14 +729,39 @@ function startGame() {
 
   document.getElementById("menuScreen").classList.add("hidden");
   document.getElementById("gameOverScreen").classList.add("hidden");
+  document.getElementById("pauseScreen").classList.add("hidden");
 
+  startBgm();
   lastTime = performance.now();
   requestAnimationFrame(gameLoop);
 }
 
+// Pause toggle
+document.getElementById("pauseBtn").onclick = () => {
+  if (!gameStarted || gameOver) return;
+  isPaused = !isPaused;
+  if (isPaused) {
+    stopBgm();
+    document.getElementById("pauseScreen").classList.remove("hidden");
+  } else {
+    startBgm();
+    document.getElementById("pauseScreen").classList.add("hidden");
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+  }
+};
+
+document.getElementById("resumeBtn").onclick = () => {
+  isPaused = false;
+  startBgm();
+  document.getElementById("pauseScreen").classList.add("hidden");
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+};
+
 // Contrôles Clavier
 window.addEventListener("keydown", e => {
-  if (!gameStarted || gameOver) return;
+  if (!gameStarted || gameOver || isPaused) return;
   if (e.code === "ArrowLeft") movePiece(-1);
   else if (e.code === "ArrowRight") movePiece(1);
   else if (e.code === "ArrowDown") dropPiece();
@@ -605,19 +774,20 @@ window.addEventListener("keydown", e => {
   }
 });
 
-// Contrôles Tactiles Plein Écran
-document.getElementById("btnLeft").onclick = () => { if (gameStarted && !gameOver) movePiece(-1); };
-document.getElementById("btnRight").onclick = () => { if (gameStarted && !gameOver) movePiece(1); };
-document.getElementById("btnDown").onclick = () => { if (gameStarted && !gameOver) dropPiece(); };
-document.getElementById("btnUp").onclick = () => { if (gameStarted && !gameOver) rotatePiece(); };
-document.getElementById("btnRotate").onclick = () => { if (gameStarted && !gameOver) rotatePiece(); };
-document.getElementById("btnDrop").onclick = () => {
-  if (gameStarted && !gameOver) {
+// Contrôles Tactiles robustes (pointerdown)
+document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(-1); });
+document.getElementById("btnRight").addEventListener("pointerdown", (e) => { e.preventDefault(); movePiece(1); });
+document.getElementById("btnDown").addEventListener("pointerdown", (e) => { e.preventDefault(); dropPiece(); });
+document.getElementById("btnUp").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
+document.getElementById("btnRotate").addEventListener("pointerdown", (e) => { e.preventDefault(); rotatePiece(); });
+document.getElementById("btnDrop").addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  if (gameStarted && !isPaused && !gameOver) {
     while (!collide(currentPiece, 0, 1)) { currentPiece.y++; }
     playGbSound('drop');
     dropPiece();
   }
-};
+});
 
 document.getElementById("startBtn").onclick = startGame;
 document.getElementById("restartBtn").onclick = startGame;
