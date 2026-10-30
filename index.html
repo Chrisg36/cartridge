@@ -45,6 +45,7 @@
      25. PAGES BOUTIQUE, COLLECTION, ARCADE, PROFIL — onglets, cartes, réglages
      26. OUVERTURE DES BOOSTERS & MINI-JEUX EN PLEIN ÉCRAN
      28. REFONTE PRO — fonds dessinés, thèmes adoucis, boutons de page, sets, scores en direct
+     30. BOUTIQUE : THÈMES CONSOLES RÉTRO & BOOSTER OFFERT (tout en bas)
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -5543,6 +5544,45 @@ div.cxa-mission { cursor: default; }
 .cxa-ach small { font-size: 12px; color: var(--mut); font-weight: 600; line-height: 1.3; }
 .cxa-ach em { margin-top: 4px; font: normal 7px 'Press Start 2P', monospace; color: #ffd21f; }
 body[data-layout-style="pixel art"] :is(.cxa-cab, .cxa-card, .cxa-ach, .cxa-hero) { border-radius: 2px !important; box-shadow: 3px 3px 0 rgba(0, 0, 0, .8) !important; }
+
+/* =====================================================================
+   30. BOUTIQUE : THÈMES CONSOLES RÉTRO & BOOSTER OFFERT — doit rester tout en bas
+   ===================================================================== */
+.rt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+@media (min-width: 900px) { .rt-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; } }
+.rt-card { display: flex; flex-direction: column; min-width: 0; background: var(--card); border: 1px solid var(--line, rgba(255,255,255,.08)); border-radius: 16px; overflow: hidden; }
+.rt-card.is-owned { border-color: rgba(34, 197, 94, 0.3); }
+.rt-card.is-active { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc); }
+
+/* Aperçu aux vraies couleurs du thème (l'élément porte data-theme) */
+.rt-prev {
+  position: relative; aspect-ratio: 16 / 10; padding: 10px; display: flex; flex-direction: column; gap: 7px; overflow: hidden;
+  background-color: var(--bg); background-image: var(--pattern); color: var(--txt); font-family: var(--font);
+}
+.rt-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px; background: var(--card); border-radius: min(var(--radius), 8px); border: 1px solid color-mix(in srgb, var(--acc) 45%, transparent); }
+.rt-bar b { font-family: 'Press Start 2P', monospace; font-size: 6.5px; color: var(--acc); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .3px; }
+.rt-bar i { flex: none; width: 14px; height: 6px; border-radius: 3px; background: var(--acc); }
+.rt-row { display: flex; gap: 7px; align-items: center; padding: 6px; background: var(--card); border-radius: min(var(--radius), 8px); }
+.rt-row em { flex: none; width: 20px; height: 26px; border-radius: 3px; background: var(--cov); }
+.rt-row > span { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rt-row s { display: block; height: 5px; border-radius: 3px; background: var(--txt); opacity: .75; text-decoration: none; }
+.rt-row s.short { width: 55%; background: var(--acc); opacity: 1; }
+.rt-rank { position: absolute; left: 8px; bottom: 7px; font-size: 9.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: rgba(0,0,0,.55); color: #fff; }
+.rt-lock { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.42); color: #fff; }
+.rt-lock .ic, .rt-lock svg { width: 26px; height: 26px; }
+
+.rt-body { display: flex; flex-direction: column; gap: 6px; padding: 10px 11px 12px; flex: 1; }
+.rt-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
+.rt-head b { font-size: 14.5px; font-weight: 800; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rt-head .price-tag { flex: none; font-size: 12px; }
+.rt-body small { font-size: 12px; font-weight: 500; color: var(--mut); line-height: 1.35; flex: 1; }
+.rt-body .cta, .rt-body .cta-sec { margin: 4px 0 0 !important; min-height: 36px !important; padding: 6px 8px !important; font-size: 13px !important; border-radius: 12px !important; width: 100%; }
+.rt-body button:disabled { opacity: .7; cursor: default; }
+
+/* Booster offert du jour */
+.booster.is-free { border-color: color-mix(in srgb, #22c55e 60%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, #22c55e 40%, transparent), 0 8px 22px -10px #22c55e; }
+.booster.is-free .booster-buy { background: #22c55e; color: #052e16; }
+.booster.is-free .booster-info small { color: #22c55e; }
 </style>
 </head>
 <body>
@@ -8380,6 +8420,18 @@ function closeSheet() {
 function addToCalendar(it) {
   const day = it.date.replace(/-/g, "");
   const next = new Date(utc(it.date).getTime() + 864e5).toISOString().slice(0, 10).replace(/-/g, "");
+  // Android : un fichier .ics atterrit dans « Téléchargements » et Google Agenda ne sait pas toujours l'ouvrir.
+  // On ouvre donc directement l'écran « Nouvel événement » de Google Agenda (l'appli s'ouvre si elle est installée).
+  if (/Android/i.test(navigator.userAgent)) {
+    const q = new URLSearchParams({
+      action: "TEMPLATE",
+      text: "Sortie : " + it.g.name,
+      dates: `${day}/${next}`,
+      details: it.rel.map((r) => r.platform).join(", "),
+    });
+    window.open("https://calendar.google.com/calendar/render?" + q.toString(), "_blank", "noopener");
+    return;
+  }
   const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const lines = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sorties Jeux//FR", "BEGIN:VEVENT",
@@ -8519,15 +8571,19 @@ function addCoins(amount) {
   updateCoinsUI();
 }
 
-// ▸ checkDailyReward : bonus de connexion du jour (+50 crédits)
+// ▸ checkDailyReward : bonus de connexion du jour, qui grimpe avec la série
+//   Jour 1 : +60 · jour 2 : +70 · … · jour 7 et plus : +120
 function checkDailyReward() {
   const todayStr = localDay();
   if (lastDailyClaim !== todayStr) {
-    addCoins(50);
+    checkDailyConnection(); // met la série à jour avant de calculer le bonus
+    const streak = Math.max(1, Math.min(7, loadChallengesData().loginStreak || 1));
+    const bonus = 50 + streak * 10;
+    addCoins(bonus);
     lastDailyClaim = todayStr;
     try { localStorage.setItem("lastDailyClaim", lastDailyClaim); } catch (e) {}
     setTimeout(() => {
-      showToast("Bonus du jour : +50 🪙 crédits offerts", "gift");
+      showToast(streak > 1 ? `Série de ${streak} jours : +${bonus} 🪙 offerts` : `Bonus du jour : +${bonus} 🪙 offerts`, "gift");
     }, 1000);
   }
 }
@@ -8574,7 +8630,7 @@ function loadChallengesData() {
     if (parsed.lastResetDate !== today) {
       parsed.dailyProgress = { curious: false, favorite: false, filterConsole: false };
       // les défis du jour se réclament de nouveau (avant, seuls d'anciens noms étaient remis à zéro)
-      ["dailyLogin", "dailyExploration", "dailyFavorite", "dailyConsoleFilter", "daily1", "daily2", "daily3"]
+      ["dailyLogin", "dailyExploration", "dailyFavorite", "dailyConsoleFilter", "dailyAll", "daily1", "daily2", "daily3"]
         .forEach((k) => { parsed.claimedRewards[k] = false; });
       parsed.lastResetDate = today;
     }
@@ -8588,6 +8644,7 @@ function loadChallengesData() {
       parsed.weeklyProgress.login7Days = false;
       parsed.weeklyLoginsCount = 0; // avant, ce compteur ne revenait jamais à zéro
       parsed.claimedRewards.weeklyPacks = false;
+      parsed.claimedRewards.weeklyLogins = false;
       parsed.weekKey = weekKey;
     }
     return parsed;
@@ -8627,10 +8684,7 @@ function checkDailyConnection() {
     if (cData.weeklyLoginsCount >= 3) cData.weeklyProgress.login3Days = true;
     if (cData.loginStreak >= 7) cData.weeklyProgress.login7Days = true;
 
-    // Bonus de connexion automatique (10 crédits)
-    userCoins += 10;
-    if (typeof updateCoinsUI === "function") updateCoinsUI();
-    
+    // (l'ancien +10 invisible est remplacé par le bonus du jour qui grimpe avec la série)
     saveChallengesData(cData);
   }
 }
@@ -8780,7 +8834,13 @@ function renderShopMainPage(tab = 0) {
  // --- ONGLET 1 : THÈMES ---
   function showThemes() {
     displayBox.replaceChildren();
-    displayBox.append(pageHead("Thèmes", "Débloque des ambiances uniques et collector avec tes crédits."));
+    displayBox.append(pageHead("Thèmes", "Débloque des ambiances rétro et collector avec tes crédits.", `${icon("coin")}<b class="coins-value">${userCoins}</b>`));
+
+    // Consoles rétro achetables (section 22.1)
+    if (typeof cxRenderRetroShop === "function") {
+      cxRenderRetroShop(displayBox, showThemes);
+      displayBox.append(el("div", "settings-section-title", "Thèmes collector"));
+    }
 
     const grid = el("div", "shop-grid");
     Object.keys(UNIQUE_THEMES_DATA).forEach(loadThemeFont);
@@ -8857,9 +8917,13 @@ function renderShopMainPage(tab = 0) {
       { name: "Supreme Collector", sub: "Grails introuvables · holo", costNum: 100, type: "Collector Rétro", cat: "supreme_retro", color: "#fbbf24", odds: "70 % Légendaire · 30 % Épique" },
     ];
 
+    // Booster Standard offert une fois par jour (section 22.2) : une raison de revenir chaque jour
+    const freeReady = typeof cxFreePackReady === "function" && cxFreePackReady();
+    if (freeReady) packsConfig[0] = Object.assign({}, packsConfig[0], { costNum: 0, sub: "Offert aujourd'hui · 1 / jour" });
+
     const row = el("div", "booster-row");
     packsConfig.forEach((cfg) => {
-      const card = el("article", "booster" + (cfg.cat === "supreme_retro" ? " card-holo-effect" : ""));
+      const card = el("article", "booster" + (cfg.cat === "supreme_retro" ? " card-holo-effect" : "") + (cfg.costNum === 0 ? " is-free" : ""));
       card.style.setProperty("--c", cfg.color);
       card.innerHTML = `
         <div class="booster-art">
@@ -8871,8 +8935,8 @@ function renderShopMainPage(tab = 0) {
           <p>${esc(cfg.odds)}</p>
         </div>`;
       const buyBtn = el("button", "booster-buy");
-      buyBtn.innerHTML = `${icon("coin")}<span>${cfg.costNum}</span>`;
-      buyBtn.setAttribute("aria-label", `Acheter le booster ${cfg.name} pour ${cfg.costNum} crédits`);
+      buyBtn.innerHTML = cfg.costNum === 0 ? `${icon("gift")}<span>Gratuit</span>` : `${icon("coin")}<span>${cfg.costNum}</span>`;
+      buyBtn.setAttribute("aria-label", cfg.costNum === 0 ? `Ouvrir le booster ${cfg.name} offert` : `Acheter le booster ${cfg.name} pour ${cfg.costNum} crédits`);
       buyBtn.addEventListener("click", (e) => { e.stopPropagation(); buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat); });
       card.append(buyBtn);
       card.addEventListener("click", () => buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat));
@@ -8888,13 +8952,18 @@ function renderShopMainPage(tab = 0) {
     const streak = cData.loginStreak || 1;
     const packs = cData.weeklyProgress?.packsOpened || 0;
 
+    // Récompenses revues à la hausse : il faut pouvoir ouvrir des boosters régulièrement
+    const dp = cData.dailyProgress || {};
+    const dailyDone = [dp.curious, dp.favorite, dp.filterConsole].filter(Boolean).length;
     const challengesList = [
-      { id: "dailyLogin", icon: "zap", title: "Série de connexion", desc: `Connecté ${streak} jour${streak > 1 ? "s" : ""} d'affilée`, reward: 10, rewardText: "+10 🪙 / jour", done: 1, goal: 1 },
-      { id: "dailyExploration", icon: "search", title: "Explorateur", desc: "Ouvre la fiche d'un jeu", reward: 10, done: cData.dailyProgress?.curious ? 1 : 0, goal: 1 },
-      { id: "dailyFavorite", icon: "heart", title: "Coup de cœur", desc: "Ajoute un jeu à tes favoris", reward: 10, done: cData.dailyProgress?.favorite ? 1 : 0, goal: 1 },
-      { id: "dailyConsoleFilter", icon: "globe", title: "Tour des consoles", desc: "Filtre la liste par console", reward: 10, done: cData.dailyProgress?.filterConsole ? 1 : 0, goal: 1 },
-      { id: "weeklyPacks", icon: "box", title: "Collectionneur de la semaine", desc: "Ouvre 3 boosters cette semaine", reward: 20, done: Math.min(packs, 3), goal: 3 },
-      { id: "streak7Days", icon: "trophy", title: "Fidèle 7 jours", desc: "Connecte-toi 7 jours de suite", reward: 100, rewardText: "+100 🪙", done: Math.min(cData.loginStreak || 0, 7), goal: 7 },
+      { id: "dailyLogin", icon: "zap", title: "Série de connexion", desc: `Connecté ${streak} jour${streak > 1 ? "s" : ""} d'affilée`, reward: 15, rewardText: "+15 🪙 / jour", done: 1, goal: 1 },
+      { id: "dailyExploration", icon: "search", title: "Explorateur", desc: "Ouvre la fiche d'un jeu", reward: 20, done: dp.curious ? 1 : 0, goal: 1 },
+      { id: "dailyFavorite", icon: "heart", title: "Coup de cœur", desc: "Ajoute un jeu à tes favoris", reward: 20, done: dp.favorite ? 1 : 0, goal: 1 },
+      { id: "dailyConsoleFilter", icon: "globe", title: "Tour des consoles", desc: "Filtre la liste par console", reward: 20, done: dp.filterConsole ? 1 : 0, goal: 1 },
+      { id: "dailyAll", icon: "sparkles", title: "Journée complète", desc: "Termine les 3 défis du jour", reward: 30, done: dailyDone, goal: 3 },
+      { id: "weeklyLogins", icon: "calendar", title: "Habitué de la semaine", desc: "Viens 3 jours différents cette semaine", reward: 50, done: Math.min(cData.weeklyLoginsCount || 0, 3), goal: 3 },
+      { id: "weeklyPacks", icon: "box", title: "Collectionneur de la semaine", desc: "Ouvre 3 boosters cette semaine", reward: 60, done: Math.min(packs, 3), goal: 3 },
+      { id: "streak7Days", icon: "trophy", title: "Fidèle 7 jours", desc: "Connecte-toi 7 jours de suite", reward: 200, rewardText: "+200 🪙", done: Math.min(cData.loginStreak || 0, 7), goal: 7 },
     ];
 
     const todo = challengesList.filter((c) => c.done >= c.goal && !(cData.claimedRewards && cData.claimedRewards[c.id])).length;
@@ -8974,6 +9043,8 @@ function buyAndOpenPack(cost, typeName, category) {
     showRetroAlert("Crédits insuffisants", `Il vous faut ${cost} 🪙 pour ce pack.`, true);
     return;
   }
+  // booster offert du jour : on le marque comme utilisé (rendu si l'ouverture échoue)
+  if (cost === 0 && category === "standard" && typeof cxUseFreePack === "function") cxUseFreePack();
   userCoins -= cost;
   if (typeof updateCoinsUI === "function") updateCoinsUI();
   const coinSpan = document.getElementById("shopPageCoins");
@@ -9060,6 +9131,7 @@ async function triggerRandomPackDraw(type, category = "standard", cost = 0) {
   if (!randomGame) {
     // Aucun jeu trouvé (hors ligne) : on rend les crédits au lieu d'inventer une fausse jaquette
     userCoins += cost;
+    if (cost === 0 && typeof cxRestoreFreePack === "function") cxRestoreFreePack(); // le booster offert reste disponible
     updateCoinsUI();
     closeOverlay();
     showRetroAlert("Booster indisponible", "Impossible de joindre le catalogue pour l'instant. Tes crédits t'ont été rendus.", true);
@@ -9073,7 +9145,8 @@ async function triggerRandomPackDraw(type, category = "standard", cost = 0) {
 
   // Ajout à la vitrine (sauf si on l'a déjà : c'est un doublon, une partie des crédits est rendue)
   const isNew = !myCollection.some((item) => Number(item.id) === Number(randomGame.id));
-  const refund = isNew ? 0 : Math.round(cost * 0.4);
+  // doublon : la moitié du prix est rendue (5 crédits minimum, même pour le booster offert)
+  const refund = isNew ? 0 : Math.max(5, Math.round(cost * 0.5));
   if (isNew) {
     randomGame.category = category;
     randomGame.rarity = rarity;
@@ -9352,17 +9425,24 @@ function openSettingsMainPage(tabIndex = 0) {
   pageGeneral.append(gUnique.el);
 
 
-  // Consoles rétro
+  // Consoles rétro (3 offertes, les autres s'achètent dans la Boutique — section 22.1)
   const gRetro = settingsGroup("Consoles rétro", "joystick");
   const retroGrid = el("div", "choice-grid");
   ["gameboy", "gameboy-dark", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"].forEach((key) => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
+    const unlocked = typeof isRetroUnlocked !== "function" || isRetroUnlocked(key);
     retroGrid.append(choiceTile(label, key === theme && !isDeathNote, acc, () => {
+      if (!unlocked) {
+        playThemeSound(theme);
+        showRetroAlert("Thème verrouillé", `Débloque « ${esc(label)} » dans la Boutique pour ${RETRO_THEMES_DATA[key].price} 🪙.`);
+        return;
+      }
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
+      if (typeof cloudSave === "function") cloudSave();
       openSettingsMainPage();
-    }));
+    }, !unlocked));
   });
   gRetro.list.replaceWith(retroGrid);
   pageGeneral.append(gRetro.el);
@@ -9665,7 +9745,9 @@ function readUnlocks() {
   const list = (key, def) => { try { const v = JSON.parse(localStorage.getItem(key) || "null"); return Array.isArray(v) ? v : def; } catch (e) { return def; } };
   const get = (key) => { try { return localStorage.getItem(key) || ""; } catch (e) { return ""; } };
   return {
-    themes: Object.keys(UNIQUE_THEMES_DATA).filter(isUniqueUnlocked),
+    // thèmes collector + consoles rétro achetées (préfixe « retro_ », section 22.1)
+    themes: Object.keys(UNIQUE_THEMES_DATA).filter(isUniqueUnlocked)
+      .concat(typeof RETRO_THEMES_DATA === "object" ? Object.keys(RETRO_THEMES_DATA).filter((k) => RETRO_THEMES_DATA[k].price > 0 && isRetroUnlocked(k)).map((k) => "retro_" + k) : []),
     avatars: list("cartridge_avatars_owned", []),
     banners: list("cartridge_banners_owned", []),
     avatar: get("cartridge_avatar"),
@@ -9680,7 +9762,10 @@ function mergeUnlocks(u) {
   const local = readUnlocks();
   const union = (a, b) => [...new Set([...(a || []), ...(Array.isArray(b) ? b : [])])].filter((x) => typeof x === "string");
   try {
-    union(local.themes, u.themes).forEach((id) => { if (UNIQUE_THEMES_DATA[id]) localStorage.setItem(`unlocked_${id}`, "true"); });
+    union(local.themes, u.themes).forEach((id) => {
+      if (UNIQUE_THEMES_DATA[id]) localStorage.setItem(`unlocked_${id}`, "true");
+      else if (id.startsWith("retro_") && typeof RETRO_THEMES_DATA === "object" && RETRO_THEMES_DATA[id.slice(6)]) localStorage.setItem(`unlocked_${id}`, "true");
+    });
     localStorage.setItem("cartridge_avatars_owned", JSON.stringify(union(local.avatars, u.avatars).filter((id) => AVATARS_DATA[id])));
     localStorage.setItem("cartridge_banners_owned", JSON.stringify(union(local.banners, u.banners).filter((id) => BANNERS_DATA[id])));
     if (u.avatar && AVATARS_DATA[u.avatar]) localStorage.setItem("cartridge_avatar", u.avatar);
@@ -9715,6 +9800,10 @@ function applyServerData(d) {
     localStorage.setItem("gameScores", JSON.stringify(gameScores));
   } catch (e) {}
   mergeUnlocks(d.unlocks);
+  // Un thème console déjà utilisé sur le compte (avant la mise à jour) reste acquis
+  if (typeof d.theme === "string" && typeof RETRO_THEMES_DATA === "object" && RETRO_THEMES_DATA[d.theme]) {
+    try { localStorage.setItem(`unlocked_retro_${d.theme}`, "true"); } catch (e) {}
+  }
   if (typeof d.theme === "string" && THEMES[d.theme]) {
     theme = applyTheme(d.theme, { keepUnique: true });
     try { localStorage.setItem("theme", theme); } catch (e) {}
@@ -12082,7 +12171,7 @@ function cxPixelSVG(id) {
 // ---------------------------------------------------------------------
 // 21.2 GAINS DE PIÈCES
 // ---------------------------------------------------------------------
-const CX_ARCADE_CAP = 120;   // pièces max par jour gagnées au score (missions et succès en plus)
+const CX_ARCADE_CAP = 150;   // pièces max par jour gagnées au score (missions et succès en plus) — était 120
 const CX_GAME_CAP = 20;      // pièces max par partie
 const cxToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 // Générateur pseudo-aléatoire « du jour » : même tirage pour tout le monde le même jour
@@ -12533,6 +12622,165 @@ function cxRenderRewardsExtras(box, rerender) {
   });
   box.append(grid);
 }
+
+// =====================================================================
+// 22. THÈMES CONSOLES ACHETABLES, BOOSTER OFFERT & BOUTON RETOUR ANDROID
+//   22.1 Thèmes consoles rétro : 3 offerts, les autres en Boutique
+//   22.2 Booster Standard offert une fois par jour
+//   22.3 Bouton / geste « retour » d'Android (ferme la fiche au lieu de quitter l'app)
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// 22.1 THÈMES CONSOLES RÉTRO
+//   price 0 = offert. Achat gardé dans localStorage « unlocked_retro_<id> »
+//   et sur le compte (unlocks.themes, préfixe « retro_ »).
+// ---------------------------------------------------------------------
+const RETRO_THEMES_DATA = {
+  gameboy:        { price: 0,   rank: "Offert",     desc: "L'écran vert d'origine, pixels compris." },
+  nes:            { price: 0,   rank: "Offert",     desc: "Le rouge et gris de la NES, lignes cathodiques." },
+  arcade:         { price: 0,   rank: "Offert",     desc: "Néons cyan et magenta d'une salle des années 90." },
+  atari:          { price: 80,  rank: "Commune",    desc: "Bois, orange et bandes de l'Atari 2600." },
+  dos:            { price: 80,  rank: "Commune",    desc: "Terminal vert phosphore façon MS-DOS." },
+  megadrive:      { price: 120, rank: "Rare",       desc: "Noir profond et rouge 16-bit de la Mega Drive." },
+  snes:           { price: 120, rank: "Rare",       desc: "Violet et gris de la Super Nintendo." },
+  ps1:            { price: 150, rank: "Rare",       desc: "Bleu nuit et formes de la PlayStation." },
+  n64:            { price: 150, rank: "Rare",       desc: "Jaune doré et polygones de la Nintendo 64." },
+  gamecube:       { price: 180, rank: "Épique",     desc: "Indigo et petits cubes de la GameCube." },
+  dreamcast:      { price: 180, rank: "Épique",     desc: "Thème clair et spirale orange de la Dreamcast." },
+  "gameboy-dark": { price: 220, rank: "Légendaire", desc: "Game Boy rétroéclairée, vert néon sur noir." },
+};
+
+// ▸ isRetroUnlocked : vrai si le thème est offert, acheté, ou n'est pas un thème console
+function isRetroUnlocked(key) {
+  const info = RETRO_THEMES_DATA[key];
+  if (!info || info.price === 0) return true;
+  try { return localStorage.getItem(`unlocked_retro_${key}`) === "true"; } catch (e) { return false; }
+}
+
+// Au démarrage : un joueur qui utilisait déjà un thème console le garde (une seule fois),
+// puis un thème verrouillé (ex. venu d'un autre appareil) est remplacé par « Sombre ».
+(function cxRetroThemesBoot() {
+  try {
+    if (localStorage.getItem("cx_retro_migrated") !== "1") {
+      if (RETRO_THEMES_DATA[theme]) localStorage.setItem(`unlocked_retro_${theme}`, "true");
+      localStorage.setItem("cx_retro_migrated", "1");
+    }
+  } catch (e) {}
+  if (!isRetroUnlocked(theme)) theme = applyTheme("dark", { keepUnique: true });
+})();
+
+// Le code secret f12() offre le thème Game Boy Pro (sinon il serait retiré au prochain lancement)
+if (typeof window.f12 === "function") {
+  const cxOrigF12 = window.f12;
+  window.f12 = function () {
+    try { localStorage.setItem("unlocked_retro_gameboy-dark", "true"); } catch (e) {}
+    theme = "gameboy-dark";
+    return cxOrigF12.apply(this, arguments);
+  };
+}
+
+// ▸ cxRenderRetroShop : grille « Consoles rétro » en haut de l'onglet Thèmes de la Boutique
+function cxRenderRetroShop(box, rerender) {
+  const owned = Object.keys(RETRO_THEMES_DATA).filter(isRetroUnlocked).length;
+  box.append(el("div", "settings-section-title", `Consoles rétro · ${owned}/${Object.keys(RETRO_THEMES_DATA).length}`));
+  const grid = el("div", "rt-grid");
+  const active = document.body.dataset.unique ? "" : theme;
+
+  Object.entries(RETRO_THEMES_DATA).forEach(([key, info]) => {
+    if (!THEMES[key]) return;
+    const label = THEMES[key][0];
+    const isOwned = isRetroUnlocked(key);
+    const isActive = isOwned && active === key;
+
+    const card = el("article", "rt-card" + (isOwned ? " is-owned" : "") + (isActive ? " is-active" : ""));
+    // Aperçu : l'élément porte data-theme, il reçoit donc les vraies couleurs et motifs du thème
+    const prev = el("div", "rt-prev");
+    prev.dataset.theme = key;
+    prev.innerHTML = `
+      <span class="rt-bar"><b>${esc(label)}</b><i></i></span>
+      <span class="rt-row"><em></em><span><s></s><s class="short"></s></span></span>
+      <span class="rt-rank">${esc(info.rank)}</span>
+      ${isOwned ? "" : `<span class="rt-lock">${icon("lock")}</span>`}`;
+
+    const body = el("div", "rt-body");
+    const head = el("div", "rt-head");
+    head.append(el("b", "", label));
+    const tag = el("span", "price-tag" + (isOwned ? " is-owned" : ""));
+    tag.innerHTML = isOwned ? `${icon("check")}${info.price === 0 ? "Offert" : "À toi"}` : `${icon("coin")}${info.price}`;
+    head.append(tag);
+    body.append(head, el("small", "", info.desc));
+
+    const btn = el("button", isActive ? "cta-sec" : "cta", !isOwned ? `Acheter · ${info.price}` : isActive ? "Thème actif" : "Activer");
+    btn.type = "button";
+    if (isActive) btn.disabled = true;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      playThemeSound(theme);
+      if (!isOwned) {
+        if (userCoins < info.price) {
+          showRetroAlert("Crédits insuffisants", `Il te manque ${info.price - userCoins} 🪙 pour débloquer ${esc(label)}.`, true);
+          return;
+        }
+        userCoins -= info.price;
+        updateCoinsUI();
+        try { localStorage.setItem(`unlocked_retro_${key}`, "true"); } catch (err) {}
+        showToast(`Thème ${esc(label)} débloqué !`, "party");
+      }
+      // on l'active tout de suite (retire un éventuel thème collector)
+      theme = applyTheme(key);
+      try { localStorage.setItem("theme", theme); } catch (err) {}
+      if (typeof cloudSave === "function") cloudSave();
+      rerender();
+    });
+    body.append(btn);
+    card.append(prev, body);
+    grid.append(card);
+  });
+  box.append(grid);
+}
+
+// ---------------------------------------------------------------------
+// 22.2 BOOSTER OFFERT DU JOUR
+// ---------------------------------------------------------------------
+const CX_FREE_PACK_KEY = "cartridge_free_pack_day";
+function cxFreePackReady() { try { return localStorage.getItem(CX_FREE_PACK_KEY) !== localDay(); } catch (e) { return false; } }
+function cxUseFreePack() { try { localStorage.setItem(CX_FREE_PACK_KEY, localDay()); } catch (e) {} }
+function cxRestoreFreePack() { try { localStorage.removeItem(CX_FREE_PACK_KEY); } catch (e) {} }
+
+// ---------------------------------------------------------------------
+// 22.3 BOUTON « RETOUR » D'ANDROID
+//   Sans ça, le retour d'Android quitte l'appli même quand une fiche est ouverte.
+//   On garde une entrée d'historique « tampon » : chaque appui ferme ce qui est
+//   au-dessus (borne, alerte, booster, fiche, page) ; sur l'accueil, 2e appui = quitter.
+// ---------------------------------------------------------------------
+(function cxAndroidBack() {
+  if (!/Android/i.test(navigator.userAgent)) return;
+  let armed = false;
+  const arm = () => {
+    if (armed) return;
+    try { history.pushState({ cxGuard: 1 }, ""); armed = true; } catch (e) {}
+  };
+  const isHome = () => { const h = document.getElementById("homeMainContent"); return !h || h.style.display !== "none"; };
+  const closeTop = () => {
+    if (typeof CXArcade === "object" && CXArcade.cur) { CXArcade.close(); return true; }
+    const modal = [...document.querySelectorAll(".cartridge-modal-overlay")].pop();
+    if (modal) { modal.remove(); return true; }
+    const pack = document.querySelector(".pack-fullscreen-overlay");
+    if (pack) { const x = pack.querySelector(".pack-x"); if (x) x.click(); else { packOpening = false; pack.remove(); } return true; }
+    const sheet = document.getElementById("sheet");
+    if (sheet && sheet.classList.contains("on")) { closeSheet(); return true; }
+    if (!isHome()) { const home = document.getElementById("navHome"); if (home) { home.click(); return true; } }
+    return false;
+  };
+  window.addEventListener("popstate", () => {
+    armed = false;
+    if (closeTop()) { arm(); return; }
+    showToast("Appuie encore sur retour pour quitter", "joystick");
+  });
+  // Chrome n'accepte l'entrée tampon qu'après un geste : on l'ajoute au premier toucher (et après chaque retour)
+  window.addEventListener("pointerdown", arm, { passive: true });
+  window.addEventListener("keydown", arm);
+})();
 </script>
 </body>
 </html>
