@@ -775,6 +775,28 @@ function cleanData(d) {
         avatar: one(d.unlocks.avatar),
         banner: one(d.unlocks.banner),
         uniqueTheme: one(d.unlocks.uniqueTheme),
+        // sets de boutons de la Boutique (avant, ils étaient effacés à chaque sauvegarde)
+        buttons: ids(d.unlocks.buttons),
+        buttonSkin: one(d.unlocks.buttonSkin),
+      };
+    }
+    // Gains de l'Arcade : succès, statistiques, missions/quiz/machine du jour
+    if (d.rewards && typeof d.rewards === "object" && !Array.isArray(d.rewards)) {
+      const r = d.rewards;
+      const num = (x) => (Number.isFinite(+x) && +x >= 0 ? Math.floor(+x) : 0);
+      const nums = (o) => { const out = {}; if (o && typeof o === "object") for (const [k, v] of Object.entries(o).slice(0, 20)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) out[k] = num(v); return out; };
+      const strs = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,20}$/i.test(x)).slice(0, 20) : []);
+      const ach = {};
+      if (r.ach && typeof r.ach === "object") for (const [k, v] of Object.entries(r.ach).slice(0, 50)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) ach[k] = String(v).slice(0, 10);
+      const st = r.stats && typeof r.stats === "object" ? r.stats : {};
+      out.rewards = {
+        day: typeof r.day === "string" ? r.day.slice(0, 10) : "",
+        arcadeCoins: num(r.arcadeCoins), gamesToday: num(r.gamesToday),
+        gamesSet: strs(r.gamesSet), missionsDone: strs(r.missionsDone),
+        slot: r.slot && typeof r.slot === "object" ? { reels: strs(r.slot.reels).slice(0, 3), win: num(r.slot.win) } : null,
+        quiz: { answers: Array.isArray(r.quiz && r.quiz.answers) ? r.quiz.answers.slice(0, 3).map((a) => (Number.isInteger(a) && a >= 0 && a < 4 ? a : null)) : [null, null, null] },
+        ach,
+        stats: { games: num(st.games), quizGood: num(st.quizGood), played: nums(st.played), best: nums(st.best), max: nums(st.max), pongExpert: !!st.pongExpert, jackpot: !!st.jackpot },
       };
     }
   }
