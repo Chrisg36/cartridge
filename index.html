@@ -5783,9 +5783,10 @@ async function cloudAuth(mode, username, password, recoveryQ) {
   }
   const r = await cloudPost("/api/auth", body);
   if (!r.ok || !r.json.token) throw new Error(r.json.error || "Erreur du serveur (" + r.status + ").");
+  const shownName = r.json.username || username; // pseudo tel qu'il a été créé (ex. « ChrisG36 »)
   try {
     localStorage.setItem(CLOUD_TOKEN_KEY, r.json.token);
-    localStorage.setItem(CLOUD_USER_KEY, username);
+    localStorage.setItem(CLOUD_USER_KEY, shownName);
   } catch (e) {}
   if (mode === "login") applyServerData(r.json.data);
   lastCloudSnapshot = JSON.stringify(collectSaveData());
@@ -5934,8 +5935,8 @@ function buildAccountSection(container) {
       showRetroAlert(
         result === "created" ? "Compte créé" : "Connexion réussie",
         result === "created"
-          ? "🎉 Bienvenue " + esc(username) + " ! Ta progression est maintenant sauvegardée sur le cloud."
-          : "🎮 Bon retour " + esc(username) + " ! Ta progression a été récupérée."
+          ? "🎉 Bienvenue " + esc(getCloudUser()) + " ! Ta progression est maintenant sauvegardée sur le cloud."
+          : "🎮 Bon retour " + esc(getCloudUser()) + " ! Ta progression a été récupérée."
       );
     } catch (e) {
       loginBtn.disabled = registerBtn.disabled = false;
