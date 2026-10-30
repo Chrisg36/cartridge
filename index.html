@@ -4681,24 +4681,30 @@ async function openSheet(it) {
   hltbBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(hltbBtn);
 
-  if (it.g.summary) {
+if (it.g.summary) {
     const label = el("p", "m", t('summaryLabel')); label.style.marginTop = "16px";
     const summaryEl = el("p", "", t('summaryLoading')); summaryEl.style.opacity = "0.7";
     p.append(label, summaryEl);
     $("#sheet").classList.add("on");
 
     try {
-      const res = await fetch(`${API}/?translate=${it.g.id}&lang=${currentLang}`);
+      // On force explicitement &lang=fr pour être sûr à 100%
+      const res = await fetch(`${API}/?translate=${it.g.id}&lang=fr`);
       const data = await res.json();
-      summaryEl.style.opacity = "1"; summaryEl.textContent = data.summary || it.g.summary;
+      
+      summaryEl.style.opacity = "1"; 
+      if (data && data.summary) {
+        summaryEl.textContent = data.summary; // Affiche la traduction
+      } else {
+        summaryEl.textContent = it.g.summary; // Fallback si vide
+      }
     } catch (e) {
-      summaryEl.style.opacity = "1"; summaryEl.textContent = it.g.summary;
+      summaryEl.style.opacity = "1"; 
+      summaryEl.textContent = it.g.summary;
     }
   } else {
     $("#sheet").classList.add("on");
   }
-  p.append(close);
-}
 
 function closeSheet() { $("#sheet").classList.remove("on"); }
 $("#sheet").classList.remove("on");
