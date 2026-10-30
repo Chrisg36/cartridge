@@ -17,7 +17,9 @@ const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  // « Authorization » est indispensable : la sauvegarde envoie le jeton de connexion dans cet en-tête
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400",
 };
 
 // Corrections manuelles : numéro IGDB du jeu -> vraie date de sortie (AAAA-MM-JJ)
@@ -285,6 +287,8 @@ async function translateSummary(idParam, langParam, env, ctx) {
 //  Tout est rangé dans la table D1 « reviews » et revérifié tout seul selon la date de sortie.
 // =====================================================================
 const DAY = 86400;
+// Version des notes : l'augmenter force la revérification de tous les jeux déjà enregistrés
+const RV_VERSION = 2;
 const STEAM_LABELS = {
   9: "Extrêmement positives", 8: "Très positives", 7: "Positives", 6: "Plutôt positives",
   5: "Moyennes", 4: "Plutôt négatives", 3: "Négatives", 2: "Très négatives", 1: "Extrêmement négatives",
@@ -417,10 +421,11 @@ async function getReviews(idParam, env, refresh) {
     await ensureRvTables(env);
     const row = await env.DB.prepare("SELECT data, oc_id, next_check FROM reviews WHERE game_id = ?").bind(id).first();
     // &refresh=1 : force une nouvelle vérification (les plafonds OpenCritic restent appliqués)
-    if (row && row.next_check > nowSec() && !refresh) {
-      return Response.json(JSON.parse(row.data), { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
-    }
     const old = row ? JSON.parse(row.data) : {};
+    // Résultat encore frais ET fait par la version actuelle du code ? On le renvoie tel quel.
+    if (row && row.next_check > nowSec() && old.v === RV_VERSION && !refresh) {
+      return Response.json(old, { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
+    }
     let ocId = row ? row.oc_id : null;
 
     // 1) IGDB : notes + liens (pour trouver le jeu sur Steam)
@@ -434,6 +439,7 @@ async function getReviews(idParam, env, refresh) {
     const released = releaseTs && releaseTs - nowSec() < 14 * DAY; // sorti, ou tests imminents
 
     const data = {
+      v: RV_VERSION,
       id,
       name: g.name,
       igdb: {
