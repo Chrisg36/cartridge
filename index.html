@@ -44,6 +44,7 @@
      24. FINITION PRO — icônes SVG, en-tête compact, badges, fiche jeu, PC
      25. PAGES BOUTIQUE, COLLECTION, ARCADE, PROFIL — onglets, cartes, réglages
      26. OUVERTURE DES BOOSTERS & MINI-JEUX EN PLEIN ÉCRAN
+     28. REFONTE PRO — fonds dessinés, thèmes adoucis, boutons de page, sets, scores en direct
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -4694,6 +4695,340 @@ body.theme-nichirin::before { display: none; }
 .player-banner-card::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,0) 65%); pointer-events: none; }
 .banner-pick-preview { height: 54px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
 .avatar-pick-card .avatar-box { width: 52px; height: 52px; background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--acc) 22%, var(--cov)), var(--cov) 70%); }
+
+/* ====================================================================
+   28. REFONTE PRO — fonds dessinés, thèmes classiques adoucis, boutons
+       de page (sets), cartes de sets en Boutique, scores en direct
+   ==================================================================== */
+
+/* ---------- 28.1 Thèmes classiques retravaillés en douceur ----------
+   Palette légèrement plus profonde + une 2e couleur (--acc2) pour les halos */
+[data-theme="dark"] { --bg:#101218; --card:#1A1D25; --cov:#272C38; --acc2:#FFB547; }
+[data-theme="light"]    { --bg:#F3F4F7; --card:#FFFFFF; --cov:#E3E6EC; --acc2:#0EA5E9; }
+[data-theme="midnight"] { --bg:#0A0F1F; --card:#131A31; --cov:#202A49; --acc:#66AEFF; --acc2:#7DE3F5; }
+[data-theme="forest"]   { --bg:#0C1410; --card:#15211A; --cov:#213128; --acc:#55E089; --acc2:#2DD4BF; }
+[data-theme="violet"]   { --bg:#110D1C; --card:#1C162E; --cov:#2B2346; --acc:#BB9BFF; --acc2:#F0A1FF; }
+[data-theme="ruby"]     { --bg:#150B0F; --card:#231318; --cov:#381F26; --acc:#FF6684; --acc2:#FFA45C; }
+html { --acc2: color-mix(in srgb, var(--acc) 60%, #fff); }
+
+/* Logo : léger reflet d'accent sur le nom */
+#homeMainContent .brand-text {
+  background: linear-gradient(92deg, var(--txt) 0 55%, color-mix(in srgb, var(--acc) 70%, var(--txt)) 80%, var(--txt));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- 28.2 Fonds d'écran dessinés ---------- */
+.app-bg-cartridges { display: none !important; }
+.cx-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; contain: strict; }
+.cx-bg.is-off { display: none; }
+.cx-bg__tile, .cx-bg__fx { position: absolute; inset: -340px; background-repeat: repeat; will-change: transform; }
+.cx-bg__sheen, .cx-bg__vignette { position: absolute; inset: 0; }
+.cx-bg__vignette {
+  background:
+    radial-gradient(70% 45% at 15% -5%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 70%),
+    radial-gradient(60% 40% at 95% 105%, color-mix(in srgb, var(--acc2) 11%, transparent), transparent 70%),
+    radial-gradient(130% 95% at 50% 45%, transparent 45%, color-mix(in srgb, var(--bg) 92%, transparent) 100%);
+}
+[data-theme="light"] .cx-bg__tile { opacity: .85; }
+
+/* Cartouches : le mur dérive lentement en diagonale */
+[data-cx-bg="cartridges"] .cx-bg__tile { animation: cxDrift 140s linear infinite; }
+@keyframes cxDrift { to { transform: translate3d(var(--cx-w), var(--cx-h), 0); } }
+[data-cx-bg="cartridges"] .cx-bg__sheen {
+  background: linear-gradient(115deg, transparent 38%, color-mix(in srgb, var(--acc) 7%, transparent) 47%, color-mix(in srgb, #fff 5%, transparent) 50%, transparent 58%);
+  background-size: 260% 100%; animation: cxSheen 11s ease-in-out infinite;
+}
+@keyframes cxSheen { 0% { background-position: 120% 0; } 55%, 100% { background-position: -40% 0; } }
+
+/* Circuit : impulsions électriques qui parcourent les pistes */
+[data-cx-bg="circuit"] .cx-bg__fx {
+  opacity: .9;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000, transparent), radial-gradient(circle closest-side, #000, transparent);
+          mask-image: radial-gradient(circle closest-side, #000, transparent), radial-gradient(circle closest-side, #000, transparent);
+  -webkit-mask-size: 300px 300px, 220px 220px; mask-size: 300px 300px, 220px 220px;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  animation: cxPulse 9s linear infinite;
+}
+@keyframes cxPulse {
+  0%   { -webkit-mask-position: -10% 30%, 110% 80%; mask-position: -10% 30%, 110% 80%; }
+  50%  { -webkit-mask-position: 60% 45%, 30% 55%; mask-position: 60% 45%, 30% 55%; }
+  100% { -webkit-mask-position: 110% 70%, -10% 25%; mask-position: 110% 70%, -10% 25%; }
+}
+
+/* Magasin rétro : spot lumineux qui balaie les étagères + néon */
+[data-cx-bg="retroshop"] .cx-bg__sheen {
+  background:
+    linear-gradient(100deg, transparent 40%, color-mix(in srgb, var(--acc2) 9%, transparent) 50%, transparent 60%) 0 0 / 300% 100%,
+    linear-gradient(180deg, color-mix(in srgb, var(--acc) 22%, transparent) 0, transparent 2px, transparent);
+  animation: cxSpot 14s ease-in-out infinite alternate;
+}
+[data-cx-bg="retroshop"] .cx-bg__sheen::after {
+  content: ""; position: absolute; left: 8%; right: 8%; top: 0; height: 3px; border-radius: 3px;
+  background: var(--acc); box-shadow: 0 0 18px 4px color-mix(in srgb, var(--acc) 45%, transparent);
+  opacity: .5; animation: cxNeon 6s steps(1) infinite;
+}
+@keyframes cxSpot { from { background-position: 100% 0, 0 0; } to { background-position: 0 0, 0 0; } }
+@keyframes cxNeon { 0%, 100% { opacity: .5; } 41% { opacity: .15; } 42% { opacity: .5; } 44% { opacity: .2; } 45% { opacity: .5; } }
+
+/* Boutons : les gros boutons s'allument doucement */
+[data-cx-bg="buttons"] .cx-bg__fx { animation: cxGlow 4.5s ease-in-out infinite; mix-blend-mode: screen; }
+[data-theme="light"][data-cx-bg="buttons"] .cx-bg__fx { mix-blend-mode: multiply; }
+@keyframes cxGlow { 0%, 100% { opacity: 0; } 50% { opacity: .9; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-bg__tile, .cx-bg__fx, .cx-bg__sheen, .cx-bg__sheen::after { animation: none !important; }
+}
+
+/* ---------- 28.3 Micro-animations ---------- */
+.cx-coin-bump { display: inline-block; animation: cxBump .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes cxBump { 0% { transform: scale(1); } 35% { transform: scale(1.35); color: var(--acc2); } 100% { transform: scale(1); } }
+
+#homeMainContent { perspective: 1200px; }
+#list.cx-turn-next { animation: cxTurnNext .42s cubic-bezier(.2, .8, .2, 1) !important; }
+#list.cx-turn-prev { animation: cxTurnPrev .42s cubic-bezier(.2, .8, .2, 1) !important; }
+@keyframes cxTurnNext { from { opacity: 0; transform: translateX(34px) rotateY(-9deg); transform-origin: left center; } to { opacity: 1; transform: none; } }
+@keyframes cxTurnPrev { from { opacity: 0; transform: translateX(-34px) rotateY(9deg); transform-origin: right center; } to { opacity: 1; transform: none; } }
+.date-picker-container.cx-turn-next { animation: cxDateNext .32s ease-out; }
+.date-picker-container.cx-turn-prev { animation: cxDatePrev .32s ease-out; }
+@keyframes cxDateNext { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes cxDatePrev { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---------- 28.4 Boutons de page : base commune ---------- */
+[data-cx-btn] .cxb-btn.cxb-btn.cxb-btn {
+  position: relative; display: inline-flex !important; align-items: center; justify-content: center; flex: none;
+  width: 38px !important; height: 34px !important; min-height: 34px !important; padding: 0 !important; margin: 0 !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 10px !important;
+  color: var(--txt) !important; font-family: var(--font) !important; font-size: 12px !important; line-height: 1 !important;
+  transform: none !important; filter: none !important; cursor: pointer; -webkit-user-select: none; user-select: none; overflow: visible;
+  transition: none !important;
+}
+[data-cx-btn] .cxb-btn.cxb-btn.cxb-btn:hover { background: transparent !important; }
+[data-cx-btn] .cxb-btn > span { transition: transform .09s ease, box-shadow .09s ease, filter .15s ease; }
+[data-cx-btn] .cxb-btn:focus-visible { outline: 2px solid var(--acc) !important; outline-offset: 2px; }
+
+/* Chevron Pro (offert) */
+[data-cx-btn="classic"] .cxb-btn.cxb-btn.cxb-btn { border-radius: 10px !important; }
+[data-cx-btn="classic"] .cxb-btn.cxb-btn .cxb-ico.cxb-ico {
+  width: 30px !important; height: 30px !important; padding: 6px; box-sizing: border-box; stroke: currentColor !important; color: inherit !important; border-radius: 9px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
+  background: color-mix(in srgb, var(--txt) 5%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--txt) 8%, transparent);
+  transition: transform .1s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+}
+[data-cx-btn="classic"] .cxb-btn:hover .cxb-ico { background: color-mix(in srgb, var(--acc) 14%, transparent); color: var(--acc); }
+[data-cx-btn="classic"] .cxb-btn.is-press .cxb-ico, [data-cx-btn="classic"] .cxb-btn:active .cxb-ico {
+  transform: scale(.88); color: var(--acc); background: color-mix(in srgb, var(--acc) 20%, transparent);
+  box-shadow: inset 0 0 0 1px var(--acc), 0 0 14px color-mix(in srgb, var(--acc) 55%, transparent);
+}
+
+/* Croix 8-bit : les deux bras de la croix */
+.cxb-arm {
+  position: relative; display: block; width: 30px; height: 24px;
+  background: linear-gradient(180deg, #3d3d42, #1d1d20 70%); border-radius: 7px 3px 3px 7px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), inset 0 -2px 0 rgba(0,0,0,.4), 0 3px 0 #0a0a0b, 0 5px 8px rgba(0,0,0,.35);
+}
+.cxb-next .cxb-arm { border-radius: 3px 7px 7px 3px; }
+.cxb-arm i { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform: translate(-60%, -50%); border-style: solid; border-width: 5px 7px 5px 0; border-color: transparent #0b0b0c transparent transparent; filter: drop-shadow(0 1px 0 rgba(255,255,255,.18)); }
+.cxb-next .cxb-arm i { transform: translate(-40%, -50%); border-width: 5px 0 5px 7px; border-color: transparent transparent transparent #0b0b0c; }
+.cxb-arm::after { content: ""; position: absolute; top: 3px; bottom: 3px; width: 2px; right: 3px; border-radius: 2px; background: rgba(229, 37, 33, .0); }
+.cxb-btn.is-press .cxb-arm, .cxb-btn:active .cxb-arm { transform: translateY(2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.4), 0 1px 0 #0a0a0b; }
+.cxb-btn.is-press .cxb-arm::after { background: rgba(229, 37, 33, .9); box-shadow: 0 0 6px #e52521; }
+.cxb-prev .cxb-arm::after { right: auto; left: 3px; }
+
+/* Duo A·B : boutons ronds magenta, posés en diagonale */
+.cxb-round {
+  display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%;
+  font-family: 'Press Start 2P', monospace; font-size: 8px; color: rgba(255,255,255,.88); text-shadow: 0 1px 0 rgba(0,0,0,.35);
+  background: radial-gradient(circle at 35% 28%, #ec5b94, #b5175e 52%, #7d0f40);
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,.3), 0 3px 0 #560a2c, 0 5px 8px rgba(0,0,0,.35);
+}
+.cxb-prev .cxb-round { transform: translateY(3px); }
+.cxb-next .cxb-round { transform: translateY(-3px); }
+.cxb-prev.is-press .cxb-round, .cxb-prev:active .cxb-round { transform: translateY(5px); box-shadow: inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 #560a2c; }
+.cxb-next.is-press .cxb-round, .cxb-next:active .cxb-round { transform: translateY(-1px); box-shadow: inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 #560a2c; }
+
+/* Gâchettes 16-bit : L et R */
+[data-cx-btn="trig16"] .cxb-btn.cxb-btn.cxb-btn { width: 42px !important; }
+.cxb-trig {
+  display: grid; place-items: center; width: 38px; height: 24px;
+  font: 800 12px/1 'Orbitron', var(--font); color: #4a4480; letter-spacing: 1px;
+  background: linear-gradient(180deg, #ecebf6, #c6c2e4 55%, #a9a3d6); border-radius: 15px 8px 6px 6px;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(74,68,128,.25), 0 3px 0 #6c64a6, 0 5px 8px rgba(0,0,0,.3);
+}
+.cxb-next .cxb-trig { border-radius: 8px 15px 6px 6px; }
+.cxb-btn.is-press .cxb-trig, .cxb-btn:active .cxb-trig { transform: translateY(3px); box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(74,68,128,.25), 0 0 0 #6c64a6; }
+
+/* Boutons Arcade : dômes concaves cerclés de noir */
+.cxb-dome {
+  display: block; width: 26px; height: 26px; border-radius: 50%; --c: #22d3ee; --d: #0e7490;
+  background: radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--d) 45%, var(--c)) 0 44%, transparent 48%), radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--c) 55%, #fff), var(--c) 55%, var(--d));
+  box-shadow: 0 0 0 3px #0b0b0f, 0 0 0 4px rgba(255,255,255,.1), 0 4px 0 3px #000, 0 6px 10px 3px rgba(0,0,0,.35);
+}
+.cxb-next .cxb-dome { --c: #f472b6; --d: #9d174d; }
+.cxb-btn.is-press .cxb-dome, .cxb-btn:active .cxb-dome { transform: translateY(2px) scale(.94); filter: brightness(1.35); box-shadow: 0 0 0 3px #0b0b0f, 0 0 0 4px rgba(255,255,255,.1), 0 1px 0 3px #000, 0 0 16px 4px color-mix(in srgb, var(--c) 60%, transparent); }
+
+/* Touches Clavier : keycaps beiges */
+.cxb-key {
+  display: grid; place-items: center; width: 32px; height: 29px; padding-bottom: 5px; box-sizing: border-box; border-radius: 5px;
+  background: linear-gradient(180deg, #f6efdf, #e4d8bd); color: #3d362b;
+  box-shadow: inset 0 -5px 0 #c9ba96, inset 0 1px 0 #fff, 0 2px 0 #8a7d5b, 0 4px 6px rgba(0,0,0,.35);
+}
+.cxb-key b { font: 900 15px/1 var(--font); }
+.cxb-btn.is-press .cxb-key, .cxb-btn:active .cxb-key { transform: translateY(2px); box-shadow: inset 0 -3px 0 #c9ba96, inset 0 1px 0 #fff, 0 0 0 #8a7d5b, 0 1px 2px rgba(0,0,0,.3); }
+
+/* Lecteur K7 : touches piano chromées */
+[data-cx-btn="k7"] .cxb-btn.cxb-btn.cxb-btn { width: 42px !important; }
+.cxb-deck {
+  position: relative; display: grid; place-items: center; width: 38px; height: 26px; border-radius: 3px 3px 5px 5px;
+  font: 700 9px/1 var(--font); letter-spacing: -2px; color: #27272a;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 1px, transparent 1px 3px), linear-gradient(180deg, #fafafa, #b4b4bb 55%, #dcdce0);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.18), 0 4px 0 #4b4b52, 0 6px 8px rgba(0,0,0,.35);
+}
+.cxb-deck::after { content: ""; position: absolute; top: 3px; right: 4px; width: 5px; height: 2px; border-radius: 1px; background: #5b1220; }
+.cxb-btn.is-press .cxb-deck, .cxb-btn:active .cxb-deck { transform: translateY(4px); box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(0,0,0,.18), 0 0 0 #4b4b52, 0 1px 2px rgba(0,0,0,.3); }
+.cxb-btn.is-press .cxb-deck::after { background: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
+
+/* Boutons C 64-bit : ronds jaunes à flèche */
+.cxb-c {
+  position: relative; display: block; width: 26px; height: 26px; border-radius: 50%;
+  background: radial-gradient(circle at 36% 28%, #fef3c7, #facc15 48%, #b45309);
+  box-shadow: inset 0 -2px 2px rgba(113,63,18,.35), 0 3px 0 #713f12, 0 5px 8px rgba(0,0,0,.35);
+}
+.cxb-c i { position: absolute; top: 50%; left: 50%; width: 0; height: 0; transform: translate(-62%, -50%); border-style: solid; border-width: 5px 7px 5px 0; border-color: transparent #713f12 transparent transparent; }
+.cxb-next .cxb-c i { transform: translate(-38%, -50%); border-width: 5px 0 5px 7px; border-color: transparent transparent transparent #713f12; }
+.cxb-btn.is-press .cxb-c, .cxb-btn:active .cxb-c { transform: translateY(2px); box-shadow: inset 0 2px 2px rgba(113,63,18,.35), 0 1px 0 #713f12; filter: brightness(1.08); }
+
+/* La barre du mois s'adapte un peu au set équipé */
+#homeMainContent .month-switch[data-cx-btn]:not([data-cx-btn="classic"]) input[type="month"]#dateSelect { letter-spacing: .8px !important; font-size: 13px !important; }
+#homeMainContent .month-switch[data-cx-btn]:not([data-cx-btn="classic"]) { height: 46px; padding: 3px 4px; }
+#homeMainContent .month-switch[data-cx-btn="cross8"] { background: linear-gradient(180deg, color-mix(in srgb, var(--card) 85%, #2a0f10), var(--card)); }
+#homeMainContent .month-switch[data-cx-btn="keycap"] { background: linear-gradient(180deg, color-mix(in srgb, var(--card) 88%, #8a7d5b), var(--card)); }
+#homeMainContent .month-switch[data-cx-btn="k7"] { background: linear-gradient(180deg, color-mix(in srgb, var(--card) 85%, #52525b), var(--card)); }
+
+/* ---------- 28.5 Boutique › Style : cartes des sets ---------- */
+.cx-sets-hint { margin: -4px 0 12px; color: var(--mut); font-size: 13.5px; line-height: 1.4; }
+.cx-set-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 22px; }
+@media (min-width: 620px) { .cx-set-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cx-set {
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 18px;
+  background: var(--card); border: 1px solid var(--line); transition: border-color .2s ease, transform .2s ease;
+}
+.cx-set.is-on { border-color: var(--set-acc); box-shadow: 0 0 0 1px var(--set-acc), 0 10px 30px -12px color-mix(in srgb, var(--set-acc) 60%, transparent); }
+.cx-set-top { position: relative; height: 112px; display: grid; place-items: center start; padding: 18px 0 0 14px; background: linear-gradient(135deg, #15161c, #262838); }
+.cx-set--classic .cx-set-top { background: radial-gradient(120% 120% at 20% 0%, color-mix(in srgb, var(--acc) 28%, #12141a), #0f1116 70%); }
+.cx-set-rank {
+  position: absolute; top: 10px; left: 10px; padding: 4px 9px; border-radius: 999px;
+  font: 800 10px/1 var(--font); letter-spacing: 1.2px; text-transform: uppercase; color: #fff;
+  background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.cx-set--c64 .cx-set-rank { color: #facc15; border-color: rgba(250,204,21,.45); }
+.cx-set-body { display: flex; flex-direction: column; gap: 8px; padding: 14px; }
+.cx-set-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cx-set-head h3 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: .2px; }
+.cx-set-body p { margin: 0; color: var(--mut); font-size: 13.5px; line-height: 1.4; }
+.cx-set-inc { display: flex; flex-wrap: wrap; gap: 6px; }
+.cx-inc-chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 5px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; color: var(--txt); background: var(--cov);
+}
+.cx-inc-chip .ic { width: 15px; height: 15px; margin-left: 2px; color: var(--set-acc); }
+.cx-inc-av { width: 18px !important; height: 18px !important; border-radius: 5px; background: rgba(0,0,0,.35); padding: 1px; }
+.cx-inc-av svg { width: 16px; height: 16px; display: block; }
+.cx-inc-bn { width: 30px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
+.cx-set .cta, .cx-set .cta-sec { margin-top: 4px; }
+
+/* Mini barre d'essai « ‹ OCT 2026 › » */
+.cx-stage {
+  position: relative; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 8px;
+  border-radius: 14px; background: rgba(8, 9, 12, .62); border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.cx-stage .cxb-btn { color: #f2f3f5 !important; }
+.cx-stage-date { min-width: 78px; text-align: center; font: 800 12px/1 'Orbitron', var(--font); letter-spacing: 1.6px; color: #fff; }
+.cx-stage.is-mini { height: 36px; gap: 2px; padding: 0 2px; background: transparent; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; transform: scale(.78); transform-origin: left center; margin-right: -14px; }
+
+/* ---------- 28.6 Profil › Apparence ---------- */
+.cx-bg-grid .cx-bg-choice { height: auto; flex-wrap: wrap; padding: 6px 10px 8px 6px; row-gap: 6px; }
+.cx-bg-thumb {
+  flex: 0 0 100%; height: 62px; border-radius: 8px; background-color: var(--bg); background-repeat: repeat;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cx-bg-choice .choice-label { padding-left: 4px; }
+.cx-skin-grid .cx-skin-choice { height: auto; flex-wrap: wrap; padding: 6px 10px 9px; row-gap: 4px; }
+.cx-skin-grid .cx-stage.is-mini { flex: 0 0 100%; justify-content: flex-start; gap: 4px; transform: none; margin: 0; height: 38px; }
+.cx-skin-grid .cx-skin-choice.is-locked .cx-stage { filter: grayscale(.6) brightness(.8); }
+
+/* ---------- 28.7 Scores en direct ---------- */
+.cx-live-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #22c55e; white-space: nowrap; }
+.cx-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,.6); animation: cxLive 1.6s ease-out infinite; flex: none; }
+@keyframes cxLive { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); } 100% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } }
+
+.cx-hof {
+  position: relative; overflow: hidden; margin-bottom: 18px; padding: 14px 12px 8px; border-radius: 18px;
+  background: radial-gradient(120% 80% at 50% 0%, #10131d, #05060a 70%); color: #e8eaf0;
+  border: 1px solid color-mix(in srgb, var(--acc) 35%, #1c1f2a);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.6), 0 12px 32px -16px color-mix(in srgb, var(--acc) 55%, transparent);
+}
+.cx-hof::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px); }
+.cx-hof-head { display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 12px; }
+.cx-hof-title {
+  font: 12px/1 'Press Start 2P', monospace; letter-spacing: 1px;
+  background: linear-gradient(90deg, var(--acc), var(--acc2)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--acc) 55%, transparent));
+}
+.cx-hof-blink { font: 7px/1 'Press Start 2P', monospace; color: #8b93a7; animation: cxBlink 1.2s steps(1) infinite; }
+@keyframes cxBlink { 50% { opacity: 0; } }
+.cx-hof-table { display: flex; flex-direction: column; }
+.cx-hof-row {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 6px; background: none; border: 0; border-top: 1px dashed rgba(255,255,255,.08); color: inherit; text-align: left;
+  font-family: var(--font); cursor: pointer; border-radius: 10px; transition: background .15s ease;
+}
+.cx-hof-row:hover { background: rgba(255,255,255,.04); }
+.cx-hof-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: color-mix(in srgb, var(--g) 14%, #0b0d14); color: var(--g); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g) 30%, transparent); }
+.cx-hof-ic .ic { width: 18px; height: 18px; }
+.cx-hof-name { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cx-hof-name b { font-size: 15px; font-weight: 800; color: #f2f3f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-hof-name small { font-size: 11.5px; color: #8b93a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-hof-name sup { font-size: 8px; }
+.cx-hof-score { font: 11px/1 'Press Start 2P', monospace; color: var(--g); text-shadow: 0 0 8px color-mix(in srgb, var(--g) 55%, transparent); white-space: nowrap; }
+.cx-hof-row.is-empty .cx-hof-score { color: #3a3f4f; text-shadow: none; }
+.cx-tag-live { font: 800 9px/1 var(--font); letter-spacing: 1px; padding: 4px 6px; border-radius: 6px; color: #052e16; background: #22c55e; }
+.cx-hof-row:not(:has(.cx-tag-live)) { grid-template-columns: 34px minmax(0, 1fr) auto; }
+.cx-recent .score-rank .ic { width: 16px; height: 16px; }
+.cx-manual { margin-top: 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); overflow: hidden; }
+.cx-manual summary { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; list-style: none; font-weight: 800; font-size: 14px; color: var(--mut); }
+.cx-manual summary::-webkit-details-marker { display: none; }
+.cx-manual summary .ic { width: 18px; height: 18px; }
+.cx-manual[open] summary { color: var(--txt); border-bottom: 1px solid var(--line); }
+.cx-manual .score-form { border: 0; border-radius: 0; background: transparent; }
+.cx-manual .score-form input[name="g"] { grid-column: 1 / -1; }
+
+/* HUD en jeu : score en direct */
+.cx-hud {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 12px; z-index: 3; pointer-events: none;
+  display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 999px;
+  font: 8px/1 'Press Start 2P', monospace; color: #e8eaf0; background: rgba(0,0,0,.62);
+  border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.cx-hud b { color: #22c55e; }
+.cx-hud-game { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; }
+.cx-hud-sep { width: 1px; height: 14px; background: rgba(255,255,255,.2); }
+.cx-hud-lbl { color: #8b93a7; }
+.cx-hud-me { display: inline-block; min-width: 2ch; color: #fff; }
+.cx-hud-me.is-bump { animation: cxBump .35s ease-out; }
+.cx-hud.is-record .cx-hud-hi { color: #facc15; animation: cxBlink .6s steps(1) 4; }
+@media (max-width: 420px) { .cx-hud-game, .cx-hud-sep { display: none; } }
+
+/* ---------- 28.8 Grilles avatars / bannières : plus de débordement ---------- */
+.avatar-shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.banner-shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+@media (min-width: 500px) {
+  .avatar-shop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .banner-shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+.avatar-pick-card, .banner-pick-card { min-width: 0; }
+.avatar-pick-card .pick-title, .banner-pick-card .pick-title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.banner-pick-card .banner-pick-preview { width: 100% !important; height: auto !important; aspect-ratio: 600 / 160; border-radius: 8px; }
+
 </style>
 </head>
 <body>
@@ -5096,6 +5431,7 @@ body.theme-nichirin::before { display: none; }
 //   17. SAUVEGARDES .SAV
 //   18. CODE SECRET
 //   19. DÉMARRAGE
+//   20. REFONTE PRO (2e script, en bas) — sons, fonds, boutons de page, sets, scores en direct
 // =====================================================================
 
 
@@ -7834,13 +8170,15 @@ function renderShopMainPage(tab = 0) {
   // Ordre des onglets = ordre des vues (avant : 4 onglets mais 3 vues, « Boosters » ouvrait « Avatars »)
   const views = [showThemes, showAvatarsAndBanners, showPacks, showChallenges];
   const tabs = pageTabs(
-    [{ label: "Thèmes", icon: "palette" }, { label: "Avatars", icon: "user" }, { label: "Boosters", icon: "ticket" }, { label: "Défis", icon: "target" }],
+    [{ label: "Thèmes", icon: "palette" }, { label: "Style", icon: "gamepad" }, { label: "Boosters", icon: "ticket" }, { label: "Défis", icon: "target" }],
     (i) => views[i]()
   );
 // --- ONGLET : AVATARS & BANNIÈRES ---
  function showAvatarsAndBanners() {
     displayBox.replaceChildren();
-    displayBox.append(pageHead("Avatars & Bannières", "Personnalise ton profil avec des éléments exclusifs.", `${icon("coin")}<b class="coins-value">${userCoins}</b>`));
+    displayBox.append(pageHead("Style joueur", "Boutons de page, avatars et bannières exclusifs.", `${icon("coin")}<b class="coins-value">${userCoins}</b>`));
+    // Sets de boutons (section 20.5) : boutons + avatar + bannière assortis
+    cxRenderButtonSets(displayBox, showAvatarsAndBanners);
 
     // Section 1 : Avatars
     displayBox.append(el("div", "settings-section-title", "Collection d'Avatars Pixel Art"));
@@ -8527,6 +8865,7 @@ function renderArcadeMainPage() {
     quit.innerHTML = `${icon("x")}<span>Quitter</span>`;
     const close = () => {
       playThemeSound(theme);
+      CXScores.end(); // fin de partie → record ? (section 20.6)
       overlay.remove();
       document.removeEventListener("keydown", onKey);
       unlockBackground();
@@ -8536,6 +8875,7 @@ function renderArcadeMainPage() {
     document.addEventListener("keydown", onKey);
     overlay.append(iframe, quit);
     document.body.append(overlay);
+    CXScores.begin(name, overlay); // scores en direct (section 20.6)
     lockBackground(); // la page derrière ne bouge pas pendant la partie
     iframe.focus();
   }
@@ -8570,61 +8910,10 @@ function renderArcadeMainPage() {
     displayBox.append(grid);
   }
 
-  // --- SCORES : les records du joueur ---
+  // --- SCORES : tableau relié en direct aux bornes (section 20.6) ---
   function showScoresTab() {
     displayBox.replaceChildren();
-    const count = Array.isArray(gameScores) ? gameScores.length : 0;
-    displayBox.append(pageHead("Scores", "Note tes meilleurs records.", count ? `<b>${count}</b> record${count > 1 ? "s" : ""}` : ""));
-
-    const form = el("form", "score-form");
-    form.innerHTML = `
-      <input type="text" id="scoreGameName" class="search-box field" placeholder="Nom du jeu" autocomplete="off">
-      <input type="text" id="scoreValue" class="search-box field" placeholder="Score ou temps (ex. 15 480)" autocomplete="off">
-      <button id="saveScoreBtn" class="cta" type="submit">Ajouter</button>`;
-    displayBox.append(form);
-
-    if (!count) {
-      displayBox.append(emptyState("trophy", "Aucun record pour l'instant", "Joue à une borne puis note ton meilleur score ici."));
-    } else {
-      const list = el("div", "score-list");
-      gameScores.forEach((s, index) => {
-        const row = el("div", "score-row" + (index < 3 ? " is-top" : ""));
-        row.innerHTML = `
-          <span class="score-rank">${index + 1}</span>
-          <div class="score-txt"><b>${esc(s.game)}</b><small>${esc(s.date)}</small></div>
-          <span class="score-val">${esc(s.score)}</span>`;
-        const del = el("button", "score-del");
-        del.type = "button";
-        del.title = "Supprimer";
-        del.setAttribute("aria-label", "Supprimer ce record");
-        del.innerHTML = icon("x");
-        del.addEventListener("click", () => {
-          playThemeSound(theme);
-          gameScores.splice(index, 1);
-          try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch (e) {}
-          showScoresTab();
-        });
-        row.append(del);
-        list.append(row);
-      });
-      displayBox.append(list);
-    }
-
-    const gameInput = form.querySelector("#scoreGameName");
-    const scoreInput = form.querySelector("#scoreValue");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const gameName = gameInput.value.trim();
-      const scoreVal = scoreInput.value.trim();
-      if (!gameName || !scoreVal) {
-        showRetroAlert("Champs manquants", "Remplis le nom du jeu et le score.", true);
-        return;
-      }
-      playThemeSound(theme);
-      gameScores.unshift({ game: gameName, score: scoreVal, date: new Date().toLocaleDateString() });
-      try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch (e) {}
-      showScoresTab();
-    });
+    cxRenderScores(displayBox, showScoresTab, GAMES, openFullscreenGame);
   }
 
   contentArea.append(tabs.el, displayBox);
@@ -8690,6 +8979,7 @@ function openSettingsMainPage(tabIndex = 0) {
     })));
   gBg.list.replaceWith(bgGrid);
   pageGeneral.append(gBg.el);
+  cxSettingsExtras(pageGeneral, bgGrid); // section 20.7
 
   // Thèmes
   const activeUnique = document.body.dataset.unique || "";
@@ -9870,5 +10160,1195 @@ startCloudAutoSave();
 })();
 </script>
 
+<script>
+
+// =====================================================================
+// 20. REFONTE PRO — sons, fonds, boutons de page, sets, scores en direct
+//     (tout ce bloc est nouveau ; il s'appuie sur les sections 01 → 19)
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// 20.1 MOTEUR DE SONS — une seule « puce son » partagée (iOS n'accepte
+//      qu'un petit nombre d'AudioContext : avant, chaque son en créait un)
+// ---------------------------------------------------------------------
+const CXAudio = (() => {
+  let ac = null, out = null;
+  const waves = {};
+  let lastAt = 0, lastKey = "";
+
+  function ctx() {
+    if (!ac) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ac = new AC();
+      // Compresseur doux : les sons superposés ne saturent jamais
+      const comp = ac.createDynamicsCompressor();
+      comp.threshold.value = -18; comp.knee.value = 12; comp.ratio.value = 4;
+      comp.attack.value = 0.003; comp.release.value = 0.15;
+      out = ac.createGain();
+      out.gain.value = 0.9;
+      out.connect(comp); comp.connect(ac.destination);
+    }
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
+
+  // Onde « pulse » à rapport cyclique réglable (12,5 % / 25 % = son NES)
+  function pulse(duty) {
+    const key = "p" + duty;
+    if (waves[key]) return waves[key];
+    const n = 48, re = new Float32Array(n), im = new Float32Array(n);
+    for (let k = 1; k < n; k++) im[k] = (2 / (k * Math.PI)) * Math.sin(k * Math.PI * duty);
+    waves[key] = ac.createPeriodicWave(re, im);
+    return waves[key];
+  }
+
+  // ▸ tone : une note avec enveloppe (attaque, décroissance), glissando optionnel
+  function tone({ f = 440, to = null, type = "square", duty = null, t = 0, d = 0.1, v = 0.06, a = 0.004, lp = null, vib = 0 } = {}) {
+    const c = ctx(); if (!c) return;
+    const now = c.currentTime + t;
+    const o = c.createOscillator(), g = c.createGain();
+    if (duty) o.setPeriodicWave(pulse(duty)); else o.type = type;
+    o.frequency.setValueAtTime(f, now);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, now + d * 0.9);
+    if (vib) {
+      const l = c.createOscillator(), lg = c.createGain();
+      l.frequency.value = 6; lg.gain.value = vib;
+      l.connect(lg); lg.connect(o.frequency); l.start(now); l.stop(now + d + 0.05);
+    }
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(v, now + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + d);
+    let last = o;
+    if (lp) {
+      const fl = c.createBiquadFilter(); fl.type = "lowpass";
+      fl.frequency.setValueAtTime(lp, now); fl.frequency.exponentialRampToValueAtTime(Math.max(200, lp / 6), now + d);
+      o.connect(fl); last = fl;
+    }
+    last.connect(g); g.connect(out);
+    o.start(now); o.stop(now + d + 0.02);
+  }
+
+  // ▸ noise : souffle filtré (clic mécanique, déclic de cartouche, bande K7)
+  function noise({ t = 0, d = 0.05, v = 0.05, f = 2000, q = 1, type = "bandpass" } = {}) {
+    const c = ctx(); if (!c) return;
+    const now = c.currentTime + t;
+    const len = Math.max(1, Math.floor(c.sampleRate * d));
+    const buf = c.createBuffer(1, len, c.sampleRate), data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(); src.buffer = buf;
+    const fl = c.createBiquadFilter(); fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+    const g = c.createGain();
+    g.gain.setValueAtTime(v, now); g.gain.exponentialRampToValueAtTime(0.0001, now + d);
+    src.connect(fl); fl.connect(g); g.connect(out);
+    src.start(now); src.stop(now + d + 0.01);
+  }
+
+  // Anti-rafale : le même son ne part pas deux fois en 45 ms (double appel)
+  function guard(key) {
+    const n = performance.now();
+    if (key === lastKey && n - lastAt < 45) return false;
+    lastKey = key; lastAt = n; return true;
+  }
+
+  // Débloque l'audio iOS au premier contact
+  ["touchstart", "pointerdown", "keydown"].forEach((ev) =>
+    window.addEventListener(ev, () => { try { ctx(); } catch (e) {} }, { once: true, passive: true }));
+
+  return { tone, noise, guard, ctx };
+})();
+
+// ---------------------------------------------------------------------
+// 20.2 BIBLIOTHÈQUE DE BRUITAGES — les classiques des consoles
+// ---------------------------------------------------------------------
+const CXSfx = {
+  // Clic de menu très court
+  tick() { CXAudio.tone({ f: 1760, duty: 0.25, d: 0.035, v: 0.035 }); },
+  // Validation (deux notes montantes)
+  select() { CXAudio.tone({ f: 988, duty: 0.125, d: 0.06, v: 0.045 }); CXAudio.tone({ f: 1319, duty: 0.125, t: 0.055, d: 0.1, v: 0.045 }); },
+  // Retour (deux notes descendantes)
+  back() { CXAudio.tone({ f: 784, duty: 0.25, d: 0.05, v: 0.04 }); CXAudio.tone({ f: 523, duty: 0.25, t: 0.05, d: 0.08, v: 0.04 }); },
+  // Pièce ramassée : si – mi, la pièce de plateforme 8-bit
+  coin() { CXAudio.tone({ f: 987.77, duty: 0.5, d: 0.07, v: 0.05 }); CXAudio.tone({ f: 1318.5, duty: 0.5, t: 0.065, d: 0.38, v: 0.05 }); },
+  // Achat : tiroir-caisse 8-bit
+  buy() {
+    CXAudio.noise({ d: 0.04, v: 0.05, f: 5000, q: 0.8 });
+    [1568, 2093, 2637].forEach((f, i) => CXAudio.tone({ f, duty: 0.25, t: 0.04 + i * 0.05, d: 0.12, v: 0.04 }));
+  },
+  // Déblocage : petite fanfare + scintillement
+  unlock() {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => CXAudio.tone({ f, duty: 0.25, t: i * 0.07, d: 0.16, v: 0.045 }));
+    CXAudio.tone({ f: 1046.5, type: "triangle", t: 0.3, d: 0.5, v: 0.06, vib: 8 });
+    [2637, 3136, 3520].forEach((f, i) => CXAudio.tone({ f, type: "sine", t: 0.34 + i * 0.06, d: 0.12, v: 0.02 }));
+  },
+  // Erreur : bourdon grave
+  error() { CXAudio.tone({ f: 130, duty: 0.5, d: 0.12, v: 0.05 }); CXAudio.tone({ f: 98, duty: 0.5, t: 0.13, d: 0.2, v: 0.05 }); },
+  // Nouveau record : fanfare de fin de niveau
+  hiscore() {
+    const seq = [[784, 0], [784, 0.1], [784, 0.2], [1046.5, 0.32], [987.77, 0.5], [1046.5, 0.62], [1318.5, 0.74]];
+    seq.forEach(([f, t], i) => CXAudio.tone({ f, duty: 0.25, t, d: i === seq.length - 1 ? 0.5 : 0.1, v: 0.045 }));
+    seq.forEach(([f, t]) => CXAudio.tone({ f: f / 2, type: "triangle", t, d: 0.12, v: 0.05 }));
+  },
+  // Score en direct : petit « bip » de compteur
+  scoreTick() { CXAudio.tone({ f: 2093, duty: 0.125, d: 0.03, v: 0.025 }); },
+  // Cartouche insérée : déclic mécanique + ronronnement
+  cartridge() {
+    CXAudio.noise({ d: 0.03, v: 0.09, f: 1800, q: 2 });
+    CXAudio.tone({ f: 90, type: "sine", d: 0.08, v: 0.08 });
+    CXAudio.noise({ t: 0.06, d: 0.025, v: 0.05, f: 3200, q: 3 });
+  },
+};
+
+// ---------------------------------------------------------------------
+// 20.3 SONS DES THÈMES — un « tap » court à chaque action, et un jingle
+//      complet seulement quand on choisit le thème (avant : le jingle
+//      entier jouait à chaque toucher)
+// ---------------------------------------------------------------------
+// voice : timbre · notes : jingle · step : écart entre notes · d : durée
+const CX_THEME_VOICES = {
+  // — Thèmes classiques, retravaillés en douceur —
+  dark:     { duty: 0.25, notes: [659.25, 987.77, 1318.5], step: 0.06, d: 0.14, tap: 1318.5, v: 0.04 },
+  light:    { type: "sine", notes: [1046.5, 1318.5, 1568, 2093], step: 0.055, d: 0.3, tap: 1568, v: 0.05, bell: true },
+  midnight: { type: "triangle", notes: [440, 659.25, 880, 1318.5], step: 0.09, d: 0.4, tap: 880, v: 0.06, echo: true },
+  forest:   { type: "sine", notes: [523.25, 659.25, 783.99, 1046.5], step: 0.07, d: 0.18, tap: 783.99, v: 0.07, marimba: true },
+  violet:   { type: "sine", notes: [880, 1108.73, 1318.5, 1760], step: 0.065, d: 0.35, tap: 1318.5, v: 0.045, glass: true },
+  ruby:     { type: "sawtooth", notes: [329.63, 493.88, 659.25, 987.77], step: 0.07, d: 0.22, tap: 659.25, v: 0.05, lp: 2600 },
+  // — Consoles rétro (mêmes mélodies qu'avant, enveloppes propres) —
+  gameboy:        { duty: 0.5, notes: [1046.5, 2093], step: 0.1, d: 0.18, tap: 2093, v: 0.045 },
+  "gameboy-dark": { duty: 0.5, notes: [1046.5, 2093], step: 0.1, d: 0.18, tap: 2093, v: 0.045 },
+  nes:       { duty: 0.25, notes: [330, 440, 659.25], step: 0.07, d: 0.16, tap: 880, v: 0.045 },
+  snes:      { type: "sine", notes: [392, 523.25, 659.25, 783.99], step: 0.06, d: 0.25, tap: 1046.5, v: 0.06, echo: true },
+  ps1:       { type: "sine", notes: [130.81, 261.63, 523.25, 659.25], step: 0.07, d: 0.4, tap: 659.25, v: 0.06, lp: 3000 },
+  n64:       { type: "triangle", notes: [523.25, 587.33, 659.25, 783.99, 1046.5], step: 0.05, d: 0.15, tap: 1046.5, v: 0.06 },
+  dreamcast: { type: "sine", notes: [329.63, 880], step: 0.14, d: 0.3, tap: 880, v: 0.06, glide: true },
+  gamecube:  { type: "triangle", notes: [880, 659.25, 740, 587.33], step: 0.08, d: 0.2, tap: 880, v: 0.06 },
+  arcade:    { type: "sawtooth", notes: [523.25, 659.25, 783.99, 1046.5], step: 0.05, d: 0.14, tap: 1046.5, v: 0.035, lp: 4000 },
+  atari:     { type: "sawtooth", notes: [150, 450], step: 0.08, d: 0.2, tap: 300, v: 0.04, glide: true, lp: 1800 },
+  dos:       { duty: 0.5, notes: [800], step: 0.08, d: 0.08, tap: 1000, v: 0.035 },
+  megadrive: { type: "sawtooth", notes: [261.63, 392, 523.25], step: 0.06, d: 0.18, tap: 523.25, v: 0.035, lp: 3200 },
+};
+
+function cxVoiceNote(vc, f, t, d, v) {
+  if (vc.glide) return CXAudio.tone({ f, to: f * 2, type: vc.type, duty: vc.duty, t, d, v, lp: vc.lp });
+  CXAudio.tone({ f, type: vc.type, duty: vc.duty, t, d, v, lp: vc.lp, a: vc.bell || vc.glass ? 0.002 : 0.004 });
+  if (vc.marimba) CXAudio.tone({ f: f * 4, type: "sine", t, d: d * 0.35, v: v * 0.35 });
+  if (vc.bell) CXAudio.tone({ f: f * 2.76, type: "sine", t, d: d * 0.5, v: v * 0.25 });
+  if (vc.glass) CXAudio.tone({ f: f * 3.01, type: "sine", t: t + 0.004, d: d * 0.7, v: v * 0.3 });
+  if (vc.echo) CXAudio.tone({ f, type: vc.type, duty: vc.duty, t: t + 0.12, d: d * 0.8, v: v * 0.3 });
+}
+
+let cxJingleNext = false;
+
+// ▸ playThemeSound (remplace la version de la section 04) : même nom,
+//   donc tous les boutons de l'app profitent du nouveau moteur
+playThemeSound = function (th) {
+  if (!soundEnabled) return;
+  try {
+    // Thème collector actif : son « cristal » commun, discret
+    const unique = document.body.dataset.unique;
+    if (localStorage.getItem("cartridgeFx") === "true") {
+      if (CXAudio.guard("fx")) CXSfx.cartridge();
+      return;
+    }
+    const vc = CX_THEME_VOICES[th] || CX_THEME_VOICES.dark;
+    if (cxJingleNext) {
+      cxJingleNext = false;
+      vc.notes.forEach((f, i) => cxVoiceNote(vc, f, i * vc.step, i === vc.notes.length - 1 ? vc.d * 1.6 : vc.d, vc.v));
+      return;
+    }
+    if (!CXAudio.guard("tap")) return;
+    if (unique) { CXAudio.tone({ f: 1567.98, type: "sine", d: 0.09, v: 0.04 }); CXAudio.tone({ f: 2349.3, type: "sine", t: 0.03, d: 0.08, v: 0.02 }); return; }
+    cxVoiceNote(vc, vc.tap, 0, Math.min(0.09, vc.d), vc.v * 0.8);
+  } catch (e) {}
+};
+
+// Le jingle complet joue quand on CHOISIT un thème
+(function wrapApplyTheme() {
+  const orig = applyTheme;
+  applyTheme = function (th, opts) {
+    cxJingleNext = !(opts && opts.keepUnique);
+    const r = orig(th, opts);
+    cxJingleNext = false;
+    if (typeof cxRefreshDecor === "function") cxRefreshDecor();
+    return r;
+  };
+})();
+
+// Pièces gagnées / dépensées → bruitage automatique (achats, défis, bonus)
+(function wrapCoins() {
+  let prev = userCoins;
+  const orig = updateCoinsUI;
+  updateCoinsUI = function () {
+    const r = orig.apply(this, arguments);
+    if (soundEnabled && userCoins !== prev) {
+      if (userCoins > prev) CXSfx.coin(); else CXSfx.buy();
+      document.querySelectorAll(".coins-value").forEach((n) => {
+        n.classList.remove("cx-coin-bump"); void n.offsetWidth; n.classList.add("cx-coin-bump");
+      });
+    }
+    prev = userCoins;
+    return r;
+  };
+})();
+
+// Fenêtre d'erreur → bourdon ; déblocage → fanfare
+(function wrapFeedback() {
+  const origAlert = showRetroAlert;
+  showRetroAlert = function (title, message, isError) {
+    if (soundEnabled) (isError ? CXSfx.error : CXSfx.select)();
+    return origAlert.apply(this, arguments);
+  };
+  const origToast = showToast;
+  showToast = function (message, iconName) {
+    if (soundEnabled && /débloqu|record/i.test(String(message))) setTimeout(() => CXSfx.unlock(), 120);
+    return origToast.apply(this, arguments);
+  };
+})();
+
+// ---------------------------------------------------------------------
+// 20.4 FONDS D'ÉCRAN PRO — dessinés en SVG aux couleurs du thème actif
+//      Cartouches · Circuit · Magasin rétro · Boutons
+// ---------------------------------------------------------------------
+const CX_RETRO_THEMES = ["nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive", "gameboy", "gameboy-dark"];
+
+// ▸ cxColor : lit une variable CSS et la renvoie en #rrggbb
+function cxColor(varName, fallback) {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  if (/^#[0-9a-f]{6}$/i.test(raw)) return raw;
+  if (/^#[0-9a-f]{3}$/i.test(raw)) return "#" + raw.slice(1).split("").map((c) => c + c).join("");
+  const m = raw.match(/rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/);
+  if (m) return "#" + [m[1], m[2], m[3]].map((n) => (+n).toString(16).padStart(2, "0")).join("");
+  return fallback;
+}
+const cxSvgUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+
+// ▸ Les 4 décors. A = couleur d'accent, T = couleur du texte, B = fond
+const CX_BACKGROUNDS = {
+  // ——— CARTOUCHES : un mur de cartouches de toutes les générations ———
+  cartridges: {
+    label: "Cartouches", size: [320, 280],
+    tile(A, T, B) {
+      const body = `fill='${T}' fill-opacity='.035' stroke='${T}' stroke-opacity='.15' stroke-width='1.4'`;
+      const shadow = (d, tr) => `<path d='${d}' transform='${tr} translate(3 5)' fill='#000' fill-opacity='.18'/>`;
+      const label = (x, y, w, h) => `<rect x='${x}' y='${y}' width='${w}' height='${h}' rx='3' fill='${A}' fill-opacity='.13' stroke='${A}' stroke-opacity='.32'/><path d='M${x + 6} ${y + h - 9}h${w * 0.55}M${x + 6} ${y + h - 5}h${w * 0.32}' stroke='${T}' stroke-opacity='.22' stroke-width='1.6' stroke-linecap='round'/><circle cx='${x + w - 10}' cy='${y + 10}' r='4' fill='${A}' fill-opacity='.3'/>`;
+      const gb = "M0 6Q0 0 6 0H52L64 12V70Q64 76 58 76H6Q0 76 0 70Z";
+      const sn = "M0 10Q0 0 10 0H86Q96 0 96 10V68H0Z";
+      const n6 = "M4 0H80Q84 0 84 4V60L76 78H8L0 60V4Q0 0 4 0Z";
+      const cd = "M0 6Q0 0 6 0H32L44 8V54Q44 58 40 58H4Q0 58 0 54Z";
+      const cart = {
+        gb: (tr) => `${shadow(gb, tr)}<g transform='${tr}'><path d='${gb}' ${body}/><path d='M8 5h22M8 8.5h22' stroke='${T}' stroke-opacity='.18'/>${label(8, 15, 48, 38)}<path d='M28 62l4 5 4-5' fill='none' stroke='${T}' stroke-opacity='.2' stroke-width='1.4'/></g>`,
+        sn: (tr) => `${shadow(sn, tr)}<g transform='${tr}'><path d='${sn}' ${body}/><path d='M6 20v36M10 20v36M86 20v36M90 20v36' stroke='${T}' stroke-opacity='.14'/>${label(18, 8, 60, 42)}<rect x='26' y='58' width='44' height='4' rx='1' fill='${A}' fill-opacity='.35'/></g>`,
+        n6: (tr) => `${shadow(n6, tr)}<g transform='${tr}'><path d='${n6}' ${body}/><path d='M10 6h64M10 10h64M10 14h64' stroke='${T}' stroke-opacity='.13'/>${label(14, 22, 56, 32)}</g>`,
+        cd: (tr) => `${shadow(cd, tr)}<g transform='${tr}'><path d='${cd}' ${body}/>${label(5, 9, 34, 30)}<path d='M8 49h28' stroke='${A}' stroke-opacity='.4' stroke-width='3' stroke-dasharray='2 2'/></g>`,
+      };
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='280' viewBox='0 0 320 280'>
+        ${cart.gb("translate(18 22) rotate(-7)")}
+        ${cart.sn("translate(118 34) rotate(4)")}
+        ${cart.n6("translate(228 26) rotate(-3)")}
+        ${cart.cd("translate(36 168) rotate(9)")}
+        ${cart.sn("translate(104 178) rotate(-5)")}
+        ${cart.gb("translate(236 162) rotate(6)")}
+      </svg>`;
+    },
+  },
+
+  // ——— CIRCUIT : carte mère, pistes dorées, puce centrale ———
+  circuit: {
+    label: "Circuit", size: [240, 240],
+    traces: [
+      "M90 100H60L30 70V44L16 30H0", "M90 112H0", "M90 124H50L30 144V180L0 210", "M90 136H70L58 148",
+      "M150 100H176L206 70V44L220 30H240", "M150 112H240", "M150 124H196L214 142V184L240 210", "M150 136H168L180 148",
+      "M100 90V60L80 40V0", "M100 150V176L80 196V240", "M124 90V50L140 34V0", "M124 150V190L140 206V240",
+      "M136 90V70L160 46H186", "M112 150V170L96 186",
+    ],
+    tile(A, T, B, bright) {
+      const tr = this.traces.map((d) => `<path d='${d}'/>`).join("");
+      const vias = [[58, 148], [180, 148], [186, 46], [96, 186], [30, 70], [206, 70], [80, 40], [140, 206]];
+      const op = bright ? 1 : 0.24;
+      const pins = [];
+      for (let i = 0; i < 5; i++) {
+        const p = 100 + i * 12 - 2;
+        pins.push(`<rect x='84' y='${p}' width='6' height='4'/><rect x='150' y='${p}' width='6' height='4'/><rect x='${p}' y='84' width='4' height='6'/><rect x='${p}' y='150' width='4' height='6'/>`);
+      }
+      if (bright) {
+        return `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><g fill='none' stroke='${A}' stroke-width='2.2' stroke-linejoin='round' stroke-linecap='round'>${tr}</g><g fill='${A}'>${vias.map(([x, y]) => `<circle cx='${x}' cy='${y}' r='3.4'/>`).join("")}</g></svg>`;
+      }
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'>
+        <g fill='none' stroke='${A}' stroke-opacity='.06' stroke-width='7' stroke-linejoin='round' stroke-linecap='round'>${tr}</g>
+        <g fill='none' stroke='${A}' stroke-opacity='${op}' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'>${tr}</g>
+        <g fill='${B}' stroke='${A}' stroke-opacity='.45' stroke-width='1.6'>${vias.map(([x, y]) => `<circle cx='${x}' cy='${y}' r='4'/>`).join("")}</g>
+        <g fill='${A}' fill-opacity='.4'>${pins.join("")}</g>
+        <rect x='90' y='90' width='60' height='60' rx='5' fill='${T}' fill-opacity='.06' stroke='${T}' stroke-opacity='.2' stroke-width='1.4'/>
+        <rect x='96' y='96' width='48' height='48' rx='3' fill='none' stroke='${T}' stroke-opacity='.08'/>
+        <circle cx='101' cy='101' r='2.2' fill='${T}' fill-opacity='.25'/>
+        <text x='120' y='124' text-anchor='middle' font-family='monospace' font-size='9' font-weight='700' fill='${T}' fill-opacity='.28' letter-spacing='1'>CR-26</text>
+        <g fill='${T}' fill-opacity='.08' stroke='${T}' stroke-opacity='.18'><rect x='46' y='198' width='16' height='7' rx='1.5'/><rect x='176' y='196' width='16' height='7' rx='1.5'/><rect x='20' y='96' width='7' height='16' rx='1.5'/><rect x='224' y='150' width='7' height='14' rx='1.5'/></g>
+        <g fill='${A}' fill-opacity='.45'><rect x='46' y='198' width='3' height='7'/><rect x='59' y='198' width='3' height='7'/><rect x='176' y='196' width='3' height='7'/><rect x='189' y='196' width='3' height='7'/></g>
+      </svg>`;
+    },
+  },
+
+  // ——— MAGASIN RÉTRO : étagères de boîtes de jeux, étiquettes de prix ———
+  retroshop: {
+    label: "Magasin rétro", size: [300, 220],
+    tile(A, T, B) {
+      const floor = 196;
+      const spine = (x, w, h, col, o, tilt) => {
+        const y = floor - h;
+        const g = `<rect x='${x}' y='${y}' width='${w}' height='${h}' rx='1.5' fill='${col}' fill-opacity='${o}' stroke='${T}' stroke-opacity='.14'/>
+          <rect x='${x}' y='${y + 6}' width='${w}' height='9' fill='${col === A ? T : A}' fill-opacity='.18'/>
+          <circle cx='${x + w / 2}' cy='${y + h - 16}' r='${Math.min(4, w / 4)}' fill='${T}' fill-opacity='.18'/>
+          <path d='M${x + w / 2} ${y + 24}v${h * 0.45}' stroke='${T}' stroke-opacity='.16' stroke-width='${Math.max(2, w / 5)}' stroke-linecap='round' stroke-dasharray='${w / 2.5} 3'/>`;
+        return tilt ? `<g transform='rotate(${tilt} ${x} ${floor})'>${g}</g>` : g;
+      };
+      const caseBox = (x, w, h, small) => {
+        const y = floor - h;
+        return `<rect x='${x + 3}' y='${y + 4}' width='${w}' height='${h}' rx='3' fill='#000' fill-opacity='.18'/>
+          <rect x='${x}' y='${y}' width='${w}' height='${h}' rx='3' fill='${T}' fill-opacity='.05' stroke='${T}' stroke-opacity='.18' stroke-width='1.3'/>
+          <rect x='${x}' y='${y}' width='${w}' height='${small ? 12 : 17}' rx='3' fill='${A}' fill-opacity='.24'/>
+          <rect x='${x + 6}' y='${y + (small ? 18 : 24)}' width='${w - 12}' height='${h - (small ? 30 : 40)}' rx='2' fill='${A}' fill-opacity='.07' stroke='${T}' stroke-opacity='.1'/>
+          <circle cx='${x + w * 0.68}' cy='${y + h * 0.36}' r='${w * 0.11}' fill='${A}' fill-opacity='.2'/>
+          <path d='M${x + 8} ${y + h - (small ? 14 : 20)}l${w * 0.22} -${h * 0.18} ${w * 0.16} ${h * 0.1} ${w * 0.2} -${h * 0.16} ${w * 0.2} ${h * 0.24}' fill='none' stroke='${T}' stroke-opacity='.18' stroke-width='1.4' stroke-linejoin='round'/>`;
+      };
+      const tag = (x) => `<path d='M${x} ${floor + 6}h20v10h-20l-5 -5z' fill='${A}' fill-opacity='.28' stroke='${A}' stroke-opacity='.5' stroke-width='.8'/><circle cx='${x + 1}' cy='${floor + 11}' r='1.4' fill='${B}'/><path d='M${x + 6} ${floor + 11}h10' stroke='${T}' stroke-opacity='.4' stroke-width='1.6'/>`;
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='220' viewBox='0 0 300 220'>
+        ${spine(8, 16, 120, A, 0.13)}${spine(26, 12, 138, T, 0.06)}${spine(40, 18, 128, A, 0.08)}${spine(60, 14, 112, T, 0.09)}
+        ${caseBox(80, 74, 148)}
+        ${spine(162, 14, 124, T, 0.07)}${spine(178, 20, 140, A, 0.12)}${spine(200, 12, 118, T, 0.08)}${spine(216, 16, 130, A, 0.09, 11)}
+        ${caseBox(240, 54, 96, true)}
+        <rect x='0' y='${floor}' width='300' height='10' fill='${T}' fill-opacity='.08'/>
+        <rect x='0' y='${floor}' width='300' height='1.6' fill='${T}' fill-opacity='.22'/>
+        <rect x='0' y='${floor + 10}' width='300' height='5' fill='#000' fill-opacity='.2'/>
+        <path d='M22 ${floor + 10}l10 12h-10zM272 ${floor + 10}l-10 12h10z' fill='${T}' fill-opacity='.1'/>
+        ${tag(96)}${tag(250)}
+      </svg>`;
+    },
+  },
+
+  // ——— BOUTONS : panneau de contrôle d'arcade, croix, ABXY, stick ———
+  buttons: {
+    label: "Boutons", size: [260, 260],
+    tile(A, T, B, glow) {
+      const arcadeBtn = (x, y, r, col) => `<circle cx='${x}' cy='${y + 3}' r='${r + 6}' fill='#000' fill-opacity='.2'/>
+        <circle cx='${x}' cy='${y}' r='${r + 6}' fill='${T}' fill-opacity='.05' stroke='${T}' stroke-opacity='.16' stroke-width='1.4'/>
+        <circle cx='${x}' cy='${y}' r='${r}' fill='${col}' fill-opacity='.17' stroke='${col}' stroke-opacity='.4' stroke-width='1.4'/>
+        <circle cx='${x}' cy='${y + 1}' r='${r * 0.72}' fill='none' stroke='${col}' stroke-opacity='.18'/>
+        <ellipse cx='${x - r * 0.32}' cy='${y - r * 0.38}' rx='${r * 0.4}' ry='${r * 0.22}' fill='#fff' fill-opacity='.13'/>`;
+      if (glow) {
+        return `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'><defs><radialGradient id='g'><stop offset='0' stop-color='${A}' stop-opacity='.55'/><stop offset='1' stop-color='${A}' stop-opacity='0'/></radialGradient></defs><circle cx='58' cy='62' r='44' fill='url(#g)'/><circle cx='88' cy='190' r='26' fill='url(#g)'/></svg>`;
+      }
+      const dpad = (x, y) => `<g transform='translate(${x} ${y})'><path d='M-8 -26h16a2 2 0 0 1 2 2v16h16a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-16v16a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-16h-16a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2h16v-16a2 2 0 0 1 2 -2z' transform='translate(0 3)' fill='#000' fill-opacity='.2'/><path d='M-8 -26h16a2 2 0 0 1 2 2v16h16a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-16v16a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-16h-16a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2h16v-16a2 2 0 0 1 2 -2z' fill='${T}' fill-opacity='.07' stroke='${T}' stroke-opacity='.2' stroke-width='1.4'/><circle r='5' fill='none' stroke='${T}' stroke-opacity='.15'/><path d='M0 -21l4 5h-8zM0 21l4 -5h-8zM-21 0l5 4v-8zM21 0l-5 4v-8z' fill='${T}' fill-opacity='.22'/></g>`;
+      const face = (x, y) => [[0, -18, A], [18, 0, T], [0, 18, T], [-18, 0, A]].map(([dx, dy, c]) =>
+        `<circle cx='${x + dx}' cy='${y + dy + 2}' r='9' fill='#000' fill-opacity='.18'/><circle cx='${x + dx}' cy='${y + dy}' r='9' fill='${c}' fill-opacity='.14' stroke='${c}' stroke-opacity='.38' stroke-width='1.3'/>`).join("");
+      return `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'>
+        ${arcadeBtn(58, 62, 20, A)}
+        ${dpad(190, 62)}
+        <g transform='translate(130 132)'><circle r='26' fill='${T}' fill-opacity='.04' stroke='${T}' stroke-opacity='.13' stroke-width='1.3'/><rect x='-15' y='-15' width='30' height='30' rx='6' transform='rotate(45)' fill='none' stroke='${T}' stroke-opacity='.1'/><circle cx='2' cy='4' r='12' fill='#000' fill-opacity='.2'/><circle r='12' fill='${A}' fill-opacity='.22' stroke='${A}' stroke-opacity='.45' stroke-width='1.3'/><ellipse cx='-4' cy='-5' rx='5' ry='3' fill='#fff' fill-opacity='.16'/></g>
+        ${face(70, 190)}
+        ${arcadeBtn(200, 196, 17, T)}
+        <g fill='${T}' fill-opacity='.1' stroke='${T}' stroke-opacity='.2'><rect x='196' y='118' width='24' height='8' rx='4' transform='rotate(-25 208 122)'/><rect x='222' y='130' width='24' height='8' rx='4' transform='rotate(-25 234 134)'/></g>
+        <circle cx='22' cy='132' r='6' fill='${A}' fill-opacity='.18' stroke='${A}' stroke-opacity='.4'/><circle cx='242' cy='22' r='6' fill='${T}' fill-opacity='.1' stroke='${T}' stroke-opacity='.25'/>
+      </svg>`;
+    },
+  },
+};
+
+// ▸ cxEnsureBgLayer : crée le calque de fond (une seule fois)
+function cxEnsureBgLayer() {
+  let bg = document.getElementById("cxBg");
+  if (bg) return bg;
+  bg = document.createElement("div");
+  bg.id = "cxBg";
+  bg.className = "cx-bg";
+  bg.setAttribute("aria-hidden", "true");
+  bg.innerHTML = `<div class="cx-bg__tile"></div><div class="cx-bg__fx"></div><div class="cx-bg__sheen"></div><div class="cx-bg__vignette"></div>`;
+  document.body.prepend(bg);
+  return bg;
+}
+
+// ▸ cxBgPreview : petite image d'aperçu d'un fond (réglages, boutique)
+function cxBgPreview(id) {
+  const def = CX_BACKGROUNDS[id]; if (!def) return "none";
+  return cxSvgUrl(def.tile(cxColor("--acc", "#ff7a45"), cxColor("--txt", "#f2f3f5"), cxColor("--bg", "#111318")));
+}
+
+// ▸ applyBgStyle (remplace la version de la section 05)
+applyBgStyle = function (bg) {
+  if (!CX_BACKGROUNDS[bg]) bg = "cartridges";
+  try { localStorage.setItem("bgStyle", bg); } catch (e) {}
+  currentBg = bg;
+  const layer = cxEnsureBgLayer();
+  const isRetro = CX_RETRO_THEMES.includes(theme);
+  // Les consoles rétro gardent leur propre motif ; sinon on efface l'ancien motif
+  if (!isRetro) document.documentElement.style.setProperty("--pattern", "none");
+  document.documentElement.dataset.cxBg = bg;
+  layer.classList.toggle("is-off", isRetro || !!document.body.dataset.unique);
+
+  const A = cxColor("--acc", "#ff7a45"), T = cxColor("--txt", "#f2f3f5"), B = cxColor("--bg", "#111318");
+  const def = CX_BACKGROUNDS[bg];
+  const [w, h] = def.size;
+  const tile = layer.querySelector(".cx-bg__tile"), fx = layer.querySelector(".cx-bg__fx");
+  tile.style.backgroundImage = cxSvgUrl(def.tile(A, T, B));
+  tile.style.backgroundSize = `${w}px ${h}px`;
+  fx.style.backgroundImage = bg === "circuit" ? cxSvgUrl(def.tile(A, T, B, true))
+    : bg === "buttons" ? cxSvgUrl(def.tile(A, T, B, true)) : "none";
+  fx.style.backgroundSize = `${w}px ${h}px`;
+  layer.style.setProperty("--cx-w", w + "px");
+  layer.style.setProperty("--cx-h", h + "px");
+};
+
+// ▸ cxRefreshDecor : redessine fond + boutons après un changement de thème
+function cxRefreshDecor() {
+  requestAnimationFrame(() => {
+    applyBgStyle(localStorage.getItem("bgStyle") || "cartridges");
+    if (typeof cxApplyButtonSkin === "function") cxApplyButtonSkin();
+  });
+}
+
+// Thème collector activé / retiré → le fond se cache / revient
+(function watchUnique() {
+  ["applyUniqueTheme", "clearUniqueTheme"].forEach((name) => {
+    const orig = window[name];
+    if (typeof orig !== "function") return;
+    window[name] = function () { const r = orig.apply(this, arguments); cxRefreshDecor(); return r; };
+  });
+})();
+
+// ---------------------------------------------------------------------
+// 20.5 SETS DE BOUTONS — boutons ‹ › pour tourner les mois, chacun avec
+//      son bruitage, son avatar et sa bannière assortis (Boutique › Style)
+// ---------------------------------------------------------------------
+
+// ▸ cxPixel : dessine un avatar 12×12 à partir d'une grille de lettres
+function cxPixel(rows, pal) {
+  let rects = "";
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      const ch = row[x];
+      if (ch === "." || !pal[ch]) { x++; continue; }
+      let w = 1;
+      while (row[x + w] === ch) w++;
+      rects += `<rect x="${x}" y="${y}" width="${w}" height="1" fill="${pal[ch]}"/>`;
+      x += w;
+    }
+  });
+  return `<svg viewBox="0 0 12 12" shape-rendering="crispEdges">${rects}</svg>`;
+}
+
+// ▸ cxBanner : habille un dessin 600×160 au format des bannières existantes
+const cxBanner = (svg, fallback) =>
+  `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 160' preserveAspectRatio='xMidYMid slice'>${svg}</svg>`)}") center / cover no-repeat, ${fallback}`;
+
+// Petits motifs réutilisés dans les bannières
+const cxStars = (n, seed, col, maxY = 160) => {
+  let s = seed, out = "";
+  const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  for (let i = 0; i < n; i++) out += `<rect x='${Math.round(rnd() * 600)}' y='${Math.round(rnd() * maxY)}' width='${rnd() > 0.85 ? 2 : 1}' height='${rnd() > 0.85 ? 2 : 1}' fill='${col}' opacity='${(0.3 + rnd() * 0.6).toFixed(2)}'/>`;
+  return out;
+};
+const cxBtn3d = (x, y, r, col, dark) =>
+  `<circle cx='${x}' cy='${y + 4}' r='${r + 4}' fill='#000' opacity='.45'/><circle cx='${x}' cy='${y}' r='${r + 4}' fill='#111'/>` +
+  `<circle cx='${x}' cy='${y}' r='${r}' fill='${col}'/><circle cx='${x}' cy='${y + r * 0.18}' r='${r * 0.78}' fill='${dark}' opacity='.35'/>` +
+  `<ellipse cx='${x - r * 0.3}' cy='${y - r * 0.42}' rx='${r * 0.42}' ry='${r * 0.22}' fill='#fff' opacity='.45'/>`;
+
+// ▸ CX_BUTTON_SETS : les sets (boutons + avatar + bannière)
+//   cap(dir) = contenu du bouton · sfx(dir) = bruitage quand on tourne la page
+const CX_BUTTON_SETS = {
+  classic: {
+    name: "Chevron Pro", price: 0, rank: "Offert", acc: "#FF7A45",
+    desc: "Les flèches d'origine, affinées : verre fumé et halo d'accent.",
+    cap: (d) => `<svg viewBox="0 0 24 24" class="cxb-ico"><path d="${d < 0 ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}"/></svg>`,
+    sfx(d) {
+      CXAudio.noise({ d: 0.09, v: 0.03, f: d < 0 ? 2400 : 3600, q: 0.6, type: "bandpass" });
+      CXAudio.tone({ f: d < 0 ? 880 : 1175, to: d < 0 ? 660 : 1568, type: "sine", d: 0.08, v: 0.035 });
+    },
+  },
+  cross8: {
+    name: "Croix 8-bit", price: 140, rank: "Rare", acc: "#E52521",
+    desc: "Les deux bras de la croix directionnelle des salons de 1985.",
+    cap: (d) => `<span class="cxb-arm"><i></i></span>`,
+    sfx(d) { [d < 0 ? 660 : 880, d < 0 ? 440 : 1320].forEach((f, i) => CXAudio.tone({ f, duty: 0.125, t: i * 0.045, d: 0.07, v: 0.045 })); },
+    avatar: { name: "Pad 8-bit", price: 70, svg: cxPixel([
+      "............", "............", "............", ".llllllllll.", ".lkdkkkkkkl.", ".ldddkgrkrl.",
+      ".lkdkkgrkrl.", ".lkkkkkkkkl.", ".llllllllll.", "............", "............", "............",
+    ], { l: "#c9c9c9", k: "#1f1f22", d: "#6b6b70", r: "#e52521", g: "#8a8a8f" }) },
+    banner: { name: "Bannière Croix 8-bit", price: 90, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' x2='1'><stop offset='0' stop-color='#141416'/><stop offset='.6' stop-color='#1d1213'/><stop offset='1' stop-color='#3a1012'/></linearGradient><pattern id='l' width='4' height='4' patternUnits='userSpaceOnUse'><rect width='4' height='1' fill='#fff' opacity='.035'/></pattern></defs>
+       <rect width='600' height='160' fill='url(#b)'/><rect width='600' height='160' fill='url(#l)'/>
+       <rect y='0' width='600' height='5' fill='#e52521'/><rect y='5' width='600' height='2' fill='#e52521' opacity='.35'/>
+       ${[[30, 120], [62, 104], [96, 128], [130, 112], [168, 132], [206, 118]].map(([x, y], i) => `<rect x='${x}' y='${y}' width='10' height='10' fill='#e52521' opacity='${0.12 + i * 0.05}'/>`).join("")}
+       <g transform='translate(410 84)'><path d='M-20 -62h40v42h42v40h-42v42h-40v-42h-42v-40h42z' fill='#000' opacity='.5' transform='translate(4 6)'/><path d='M-20 -62h40v42h42v40h-42v42h-40v-42h-42v-40h42z' fill='#2b2b2f' stroke='#4a4a50' stroke-width='2'/><circle r='12' fill='#232327'/><path d='M0 -52l9 12h-18zM0 52l9 -12h-18zM-52 0l12 9v-18zM52 0l-12 9v-18z' fill='#151517'/><path d='M-18 -60h36' stroke='#fff' opacity='.12' stroke-width='2'/></g>
+       ${cxBtn3d(520, 102, 18, "#e52521", "#7a0f0e")}${cxBtn3d(570, 72, 18, "#e52521", "#7a0f0e")}
+       <text x='520' y='140' text-anchor='middle' font-family='monospace' font-weight='700' font-size='11' fill='#e52521'>B</text><text x='570' y='110' text-anchor='middle' font-family='monospace' font-weight='700' font-size='11' fill='#e52521'>A</text>`,
+      "linear-gradient(90deg,#141416,#3a1012)") },
+  },
+  duoab: {
+    name: "Duo A·B", price: 160, rank: "Rare", acc: "#B5175E",
+    desc: "Les boutons ronds de la console de poche : B pour reculer, A pour avancer.",
+    cap: (d) => `<span class="cxb-round">${d < 0 ? "B" : "A"}</span>`,
+    sfx(d) { [d < 0 ? 2093 : 1046.5, d < 0 ? 1046.5 : 2093].forEach((f, i) => CXAudio.tone({ f, duty: 0.5, t: i * 0.07, d: 0.09, v: 0.04 })); },
+    avatar: { name: "Poche LCD", price: 80, svg: cxPixel([
+      "..gggggggg..", "..gkkkkkkg..", "..gkLLLLkg..", "..gkLHLLkg..", "..gkLLLLkg..", "..gkkkkkkg..",
+      "..gggggggg..", "..gdggggmg..", "..dddggmgg..", "..gdgggggg..", "..ggguuggg..", "...gggggg...",
+    ], { g: "#c4c0b8", k: "#57534e", L: "#8bac0f", H: "#c5e05a", d: "#292524", m: "#b5175e", u: "#78716c" }) },
+    banner: { name: "Bannière Écran LCD", price: 100, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0f380f'/><stop offset='.55' stop-color='#306230'/><stop offset='1' stop-color='#8bac0f'/></linearGradient><pattern id='d' width='6' height='6' patternUnits='userSpaceOnUse'><circle cx='3' cy='3' r='1' fill='#0f380f' opacity='.28'/></pattern></defs>
+       <rect width='600' height='160' fill='url(#b)'/><rect width='600' height='160' fill='url(#d)'/>
+       <path d='M0 160V128h18v-10h16v-14h14v20h20v-30h14v12h18v-22h22v34h16v-18h20v28h18v-12h16v24h20v-16h14v-12h22v30h16v-18h14v32z' fill='#0f380f' opacity='.55'/>
+       <rect x='60' y='34' width='14' height='14' fill='#9bbc0f' opacity='.5'/><rect x='88' y='22' width='8' height='8' fill='#9bbc0f' opacity='.35'/>
+       <g transform='rotate(-24 480 86)'><rect x='400' y='56' width='170' height='62' rx='31' fill='#0f380f' opacity='.45'/>${cxBtn3d(442, 86, 22, "#b5175e", "#5c0a2f")}${cxBtn3d(526, 86, 22, "#b5175e", "#5c0a2f")}
+       <text x='442' y='134' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='#0f380f'>B</text><text x='526' y='134' text-anchor='middle' font-family='monospace' font-weight='700' font-size='14' fill='#0f380f'>A</text></g>
+       <g stroke='#0f380f' stroke-width='5' stroke-linecap='round' opacity='.35'><path d='M560 150l30 -30M574 156l26 -26M546 144l34 -34'/></g>`,
+      "linear-gradient(135deg,#0f380f,#8bac0f)") },
+  },
+  trig16: {
+    name: "Gâchettes 16-bit", price: 180, rank: "Épique", acc: "#8B7FD6",
+    desc: "Les gâchettes L et R des manettes 16-bit, gris lavande et clic feutré.",
+    cap: (d) => `<span class="cxb-trig">${d < 0 ? "L" : "R"}</span>`,
+    sfx(d) {
+      const n = d < 0 ? [783.99, 523.25] : [523.25, 783.99];
+      n.forEach((f, i) => { CXAudio.tone({ f, type: "sine", t: i * 0.06, d: 0.16, v: 0.06 }); CXAudio.tone({ f, type: "sine", t: i * 0.06 + 0.12, d: 0.12, v: 0.018 }); });
+      CXAudio.noise({ d: 0.02, v: 0.03, f: 1200, q: 2 });
+    },
+    avatar: { name: "Manette 16-bit", price: 90, svg: cxPixel([
+      "............", "............", "............", ".pp......pp.", ".gggg..gggg.", "ggdggggggbgg",
+      "gdddgssgygrg", "ggdggggggegg", ".gggg..gggg.", "............", "............", "............",
+    ], { p: "#a8a2d6", g: "#d6d3e0", d: "#3f3f46", s: "#9ca3af", b: "#3b82f6", y: "#22c55e", r: "#ef4444", e: "#eab308" }) },
+    banner: { name: "Bannière Mode 7", price: 110, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#1b1730'/><stop offset='.45' stop-color='#2c2552'/><stop offset='1' stop-color='#4c3f8f'/></linearGradient><linearGradient id='f' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#a8a2d6' stop-opacity='0'/><stop offset='1' stop-color='#a8a2d6' stop-opacity='.5'/></linearGradient></defs>
+       <rect width='600' height='160' fill='url(#b)'/>
+       <g stroke='url(#f)' stroke-width='1.2'>${[-600, -420, -260, -120, 0, 120, 260, 420, 600, 800].map((x) => `<path d='M300 70L${x} 160'/>`).join("")}${[76, 84, 96, 112, 134].map((y) => `<path d='M0 ${y}H600'/>`).join("")}</g>
+       <rect y='69' width='600' height='2' fill='#c7c2f0' opacity='.5'/>
+       ${cxStars(40, 7, "#e9e6ff", 66)}
+       <path d='M300 0h120q18 0 22 14l-2 4h-160l-2 -4q4 -14 22 -14z' fill='#a8a2d6' opacity='.85'/><path d='M460 0h120q18 0 22 14l-2 4h-160l-2 -4q4 -14 22 -14z' fill='#a8a2d6' opacity='.85'/>
+       <text x='360' y='13' font-family='monospace' font-weight='700' font-size='10' fill='#2c2552'>L</text><text x='520' y='13' font-family='monospace' font-weight='700' font-size='10' fill='#2c2552'>R</text>
+       ${cxBtn3d(500, 56, 15, "#3b82f6", "#1e3a8a")}${cxBtn3d(500, 120, 15, "#eab308", "#713f12")}${cxBtn3d(466, 88, 15, "#22c55e", "#14532d")}${cxBtn3d(534, 88, 15, "#ef4444", "#7f1d1d")}`,
+      "linear-gradient(180deg,#1b1730,#4c3f8f)") },
+  },
+  arcade: {
+    name: "Boutons Arcade", price: 200, rank: "Épique", acc: "#22D3EE",
+    desc: "Gros boutons de borne concaves, micro-switch qui claque sous le doigt.",
+    cap: (d) => `<span class="cxb-dome"></span>`,
+    sfx(d) {
+      CXAudio.noise({ d: 0.012, v: 0.12, f: 4200, q: 4 });
+      CXAudio.noise({ t: 0.05, d: 0.01, v: 0.06, f: 3000, q: 4 });
+      CXAudio.tone({ f: d < 0 ? 523.25 : 783.99, to: d < 0 ? 392 : 1046.5, type: "sawtooth", t: 0.01, d: 0.09, v: 0.03, lp: 3500 });
+    },
+    avatar: { name: "Stick Arcade", price: 100, svg: cxPixel([
+      "....kkkk....", "...krrrrk...", "..krwwrrrk..", "..krwrrrrk..", "..krrrrrRk..", "...kRRRRk...",
+      "....kssk....", ".....ss.....", ".....ss.....", "..kkkkkkkk..", ".kbbbbbbbbk.", ".kkkkkkkkkk.",
+    ], { k: "#0b0b0f", r: "#ef4444", R: "#991b1b", w: "#fecaca", s: "#52525b", b: "#22d3ee" }) },
+    banner: { name: "Bannière Panneau Arcade", price: 130, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0b0614'/><stop offset='1' stop-color='#220c3a'/></linearGradient><linearGradient id='n' x1='0' x2='1'><stop offset='0' stop-color='#22d3ee'/><stop offset='1' stop-color='#e879f9'/></linearGradient><linearGradient id='p' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#1d1130'/><stop offset='1' stop-color='#0c0716'/></linearGradient></defs>
+       <rect width='600' height='160' fill='url(#b)'/>${cxStars(70, 3, "#f5d0fe")}
+       <rect y='0' width='600' height='3' fill='url(#n)'/><rect y='3' width='600' height='10' fill='url(#n)' opacity='.08'/>
+       <path d='M290 40H600V160H250z' fill='url(#p)' stroke='#3b2160' stroke-width='2'/><path d='M282 56H600' stroke='url(#n)' stroke-width='2' opacity='.6'/>
+       <ellipse cx='352' cy='118' rx='26' ry='10' fill='#000' opacity='.6'/><rect x='348' y='78' width='8' height='40' fill='#52525b'/>${cxBtn3d(352, 72, 16, "#ef4444", "#7f1d1d")}
+       ${cxBtn3d(430, 84, 14, "#22d3ee", "#0e7490")}${cxBtn3d(476, 76, 14, "#e879f9", "#86198f")}${cxBtn3d(522, 76, 14, "#facc15", "#854d0e")}
+       ${cxBtn3d(424, 124, 14, "#ef4444", "#7f1d1d")}${cxBtn3d(470, 116, 14, "#4ade80", "#166534")}${cxBtn3d(516, 116, 14, "#60a5fa", "#1e40af")}
+       ${cxBtn3d(572, 60, 8, "#f8fafc", "#64748b")}`,
+      "linear-gradient(135deg,#0b0614,#220c3a)") },
+  },
+  keycap: {
+    name: "Touches Clavier", price: 150, rank: "Rare", acc: "#F59E0B",
+    desc: "Touches de vieux PC beige, flèches ← → et clic mécanique bien franc.",
+    cap: (d) => `<span class="cxb-key"><b>${d < 0 ? "←" : "→"}</b></span>`,
+    sfx(d) {
+      CXAudio.noise({ d: 0.014, v: 0.14, f: d < 0 ? 3800 : 4300, q: 3 });
+      CXAudio.tone({ f: 170, to: 120, type: "sine", d: 0.05, v: 0.09 });
+      CXAudio.noise({ t: 0.07, d: 0.012, v: 0.06, f: 2600, q: 3 });
+    },
+    avatar: { name: "Touche Rétro", price: 75, svg: cxPixel([
+      "............", ".kkkkkkkkkk.", ".kwwwwwwwwk.", ".kwccccccsk.", ".kwccccacsk.", ".kwaaaaaask.",
+      ".kwccccacsk.", ".kwccccccsk.", ".kssssssssk.", ".kffffffffk.", ".kkkkkkkkkk.", "............",
+    ], { k: "#3d362b", w: "#fbf6ea", c: "#e9dfc8", s: "#cbbd9c", f: "#a8996f", a: "#3d362b" }) },
+    banner: { name: "Bannière Terminal", price: 100, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#1f1c17'/><stop offset='1' stop-color='#3d362b'/></linearGradient></defs>
+       <rect width='600' height='160' fill='url(#b)'/>
+       <text x='34' y='46' font-family='monospace' font-size='15' font-weight='700' fill='#4ade80' opacity='.8'>C:\\&gt; CARTRIDGE.EXE</text><rect x='210' y='34' width='10' height='15' fill='#4ade80' opacity='.8'/>
+       <text x='34' y='68' font-family='monospace' font-size='11' fill='#4ade80' opacity='.35'>LOADING SAVE ... OK</text>
+       ${(() => { let k = ""; for (let r = 0; r < 3; r++) for (let c = 0; c < 7; c++) { const x = 300 + c * 40 + (r % 2) * 12, y = 20 + r * 38; if (x > 560) continue; k += `<rect x='${x}' y='${y + 5}' width='34' height='30' rx='4' fill='#8a7d5b'/><rect x='${x}' y='${y}' width='34' height='28' rx='4' fill='#e9dfc8'/><rect x='${x + 4}' y='${y + 3}' width='26' height='19' rx='3' fill='#f5efe0'/>`; } return k; })()}
+       ${[[480, 112], [520, 112], [560, 112], [520, 74]].map(([x, y], i) => `<rect x='${x}' y='${y + 5}' width='34' height='30' rx='4' fill='#92400e'/><rect x='${x}' y='${y}' width='34' height='28' rx='4' fill='#f59e0b'/><rect x='${x + 4}' y='${y + 3}' width='26' height='19' rx='3' fill='#fbbf24'/><text x='${x + 17}' y='${y + 18}' text-anchor='middle' font-family='monospace' font-weight='700' font-size='13' fill='#451a03'>${["←", "↓", "→", "↑"][i]}</text>`).join("")}`,
+      "linear-gradient(135deg,#1f1c17,#3d362b)") },
+  },
+  k7: {
+    name: "Lecteur K7", price: 190, rank: "Épique", acc: "#F43F5E",
+    desc: "Les touches piano d'un lecteur cassette : ◀◀ rembobine, ▶▶ avance.",
+    cap: (d) => `<span class="cxb-deck">${d < 0 ? "◀◀" : "▶▶"}</span>`,
+    sfx(d) {
+      CXAudio.noise({ d: 0.03, v: 0.12, f: 900, q: 1.5 });
+      CXAudio.tone({ f: 110, type: "sine", d: 0.07, v: 0.08 });
+      const c = CXAudio.ctx(); if (!c) return;
+      CXAudio.tone({ f: d < 0 ? 900 : 500, to: d < 0 ? 500 : 900, type: "sawtooth", t: 0.05, d: 0.22, v: 0.012, lp: 1400 });
+      CXAudio.noise({ t: 0.05, d: 0.22, v: 0.02, f: d < 0 ? 1800 : 2600, q: 0.7 });
+    },
+    avatar: { name: "Cassette", price: 90, svg: cxPixel([
+      "............", "............", "kkkkkkkkkkkk", "kooooooooook", "kowwwwwwwwok", "kowbwwwwbwok",
+      "kowwwwwwwwok", "kyyyyyyyyyyk", "kgggkkkkgggk", "kkkkkkkkkkkk", "............", "............",
+    ], { k: "#18181b", o: "#f43f5e", w: "#f4efe2", b: "#18181b", y: "#f59e0b", g: "#52525b" }) },
+    banner: { name: "Bannière Mixtape", price: 120, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0f0f12'/><stop offset='1' stop-color='#2a2a30'/></linearGradient></defs>
+       <rect width='600' height='160' fill='url(#b)'/>
+       <g transform='skewX(-30)' opacity='.55'>${["#f43f5e", "#fb923c", "#facc15", "#4ade80", "#38bdf8"].map((c, i) => `<rect x='${300 + i * 16}' y='0' width='12' height='160' fill='${c}'/>`).join("")}</g>
+       ${Array.from({ length: 14 }, (_, i) => { const h = [30, 46, 62, 40, 74, 88, 64, 50, 80, 96, 70, 44, 58, 36][i]; return `<rect x='${30 + i * 13}' y='${150 - h}' width='9' height='${h}' fill='${h > 80 ? "#f43f5e" : h > 60 ? "#facc15" : "#4ade80"}' opacity='.55'/>`; }).join("")}
+       <g transform='translate(372 22)'><rect x='4' y='6' width='204' height='122' rx='10' fill='#000' opacity='.5'/><rect width='204' height='122' rx='10' fill='#1d1d21' stroke='#3f3f46' stroke-width='2'/>
+       <rect x='12' y='10' width='180' height='72' rx='5' fill='#f4efe2'/><rect x='12' y='18' width='180' height='8' fill='#f43f5e'/><rect x='12' y='26' width='180' height='4' fill='#fb923c'/>
+       <path d='M24 42h80' stroke='#3f3f46' stroke-width='2'/><rect x='46' y='46' width='112' height='30' rx='15' fill='#27272a'/>
+       ${[74, 130].map((x) => `<circle cx='${x}' cy='61' r='11' fill='#f4efe2'/><circle cx='${x}' cy='61' r='5' fill='#27272a'/>${[0, 60, 120, 180, 240, 300].map((a) => `<rect x='${x - 1}' y='51' width='2' height='4' fill='#27272a' transform='rotate(${a} ${x} 61)'/>`).join("")}`).join("")}
+       <path d='M44 122l10 -24h96l10 24' fill='#27272a' stroke='#3f3f46'/>${[[10, 10], [194, 10], [10, 112], [194, 112]].map(([x, y]) => `<circle cx='${x}' cy='${y}' r='3' fill='#52525b'/>`).join("")}</g>`,
+      "linear-gradient(135deg,#0f0f12,#2a2a30)") },
+  },
+  c64: {
+    name: "Boutons C 64-bit", price: 220, rank: "Légendaire", acc: "#FACC15",
+    desc: "Les boutons jaunes en losange de la manette trident, glissando 64-bit.",
+    cap: (d) => `<span class="cxb-c"><i></i></span>`,
+    sfx(d) {
+      CXAudio.tone({ f: d < 0 ? 1046.5 : 523.25, to: d < 0 ? 523.25 : 1046.5, type: "triangle", d: 0.12, v: 0.07 });
+      CXAudio.tone({ f: d < 0 ? 784 : 1568, type: "triangle", t: 0.1, d: 0.12, v: 0.04 });
+    },
+    avatar: { name: "Losange C", price: 110, svg: cxPixel([
+      ".....yy.....", "....yyyy....", "....ykky....", ".....yy.....", ".yy......yy.", "yyyy....yyyy",
+      "ykyy....yyky", ".yy......yy.", ".....yy.....", "....yyyy....", "....ykky....", ".....yy.....",
+    ], { y: "#facc15", k: "#713f12" }) },
+    banner: { name: "Bannière Trident", price: 140, bg: cxBanner(
+      `<defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0c1024'/><stop offset='1' stop-color='#1e1b4b'/></linearGradient><pattern id='d' width='40' height='40' patternUnits='userSpaceOnUse'><path d='M20 2L38 20L20 38L2 20Z' fill='none' stroke='#facc15' stroke-opacity='.07'/></pattern></defs>
+       <rect width='600' height='160' fill='url(#b)'/><rect width='600' height='160' fill='url(#d)'/>
+       <g transform='translate(330 92)'><path d='M-24 -10L-10 -24H10L24 -10V10L10 24H-10L-24 10Z' fill='#27272a' stroke='#52525b' stroke-width='2'/><circle r='14' fill='#000' opacity='.4' transform='translate(2 4)'/><circle r='14' fill='#a1a1aa'/><circle r='9' fill='#71717a'/></g>
+       ${cxBtn3d(398, 54, 15, "#22c55e", "#14532d")}${cxBtn3d(426, 104, 20, "#3b82f6", "#1e3a8a")}${cxBtn3d(372, 22, 7, "#ef4444", "#7f1d1d")}
+       ${[[510, 46, "M0 -6l6 8h-12z"], [480, 80, "M-6 0l8 -6v12z"], [540, 80, "M6 0l-8 -6v12z"], [510, 114, "M0 6l6 -8h-12z"]].map(([x, y, tri]) => `${cxBtn3d(x, y, 15, "#facc15", "#854d0e")}<path d='${tri}' transform='translate(${x} ${y})' fill='#713f12'/>`).join("")}`,
+      "linear-gradient(135deg,#0c1024,#1e1b4b)") },
+  },
+};
+
+// Les avatars et bannières des sets rejoignent les catalogues existants
+Object.entries(CX_BUTTON_SETS).forEach(([id, set]) => {
+  if (set.avatar) { set.avatarId = "set_" + id; AVATARS_DATA[set.avatarId] = set.avatar; }
+  if (set.banner) { set.bannerId = "set_" + id; BANNERS_DATA[set.bannerId] = set.banner; }
+});
+
+// ▸ Possession / équipement
+function cxOwnedButtons() {
+  try { const v = JSON.parse(localStorage.getItem("cartridge_buttons_owned") || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function cxButtonOwned(id) { return id === "classic" || cxOwnedButtons().includes(id); }
+function cxCurrentSkin() {
+  let s = "classic";
+  try { s = localStorage.getItem("cartridge_button_skin") || "classic"; } catch (e) {}
+  return CX_BUTTON_SETS[s] && cxButtonOwned(s) ? s : "classic";
+}
+
+// ▸ cxApplyButtonSkin : habille les boutons ‹ › de l'accueil
+function cxApplyButtonSkin() {
+  const skin = cxCurrentSkin();
+  const sw = document.querySelector("#homeMainContent .month-switch");
+  if (sw) sw.dataset.cxBtn = skin;
+  [["prev", -1], ["next", 1]].forEach(([id, dir]) => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.classList.add("cxb-btn", dir < 0 ? "cxb-prev" : "cxb-next");
+    // Easter egg conservé : en Game Boy Pro, le set d'origine affiche B / A
+    if (skin === "classic" && theme === "gameboy-dark" && !document.body.dataset.unique) return;
+    b.style.fontFamily = "";
+    b.innerHTML = CX_BUTTON_SETS[skin].cap(dir);
+  });
+}
+
+// ▸ cxPageSound : bruitage de page du set équipé
+function cxPageSound(dir, skin) {
+  if (!soundEnabled) return;
+  try { (CX_BUTTON_SETS[skin || cxCurrentSkin()] || CX_BUTTON_SETS.classic).sfx(dir); } catch (e) {}
+}
+
+// ▸ cxPress : petite animation d'enfoncement (marche aussi au doigt)
+function cxPress(btn) {
+  if (!btn) return;
+  btn.classList.remove("is-press"); void btn.offsetWidth; btn.classList.add("is-press");
+  clearTimeout(btn._cxT); btn._cxT = setTimeout(() => btn.classList.remove("is-press"), 180);
+}
+
+// ▸ shiftMonth (remplace la version de la section 07) : bruitage du set,
+//   page qui tourne, puis chargement du mois
+shiftMonth = function (delta) {
+  cxPageSound(delta);
+  cxPress(document.getElementById(delta < 0 ? "prev" : "next"));
+  document.body.classList.add("trigger-crt-flash");
+  setTimeout(() => document.body.classList.remove("trigger-crt-flash"), 350);
+  const list = document.getElementById("list");
+  const date = document.querySelector("#homeMainContent .date-picker-container");
+  [list, date].forEach((n) => {
+    if (!n) return;
+    n.classList.remove("cx-turn-next", "cx-turn-prev"); void n.offsetWidth;
+    n.classList.add(delta < 0 ? "cx-turn-prev" : "cx-turn-next");
+  });
+  const [y, m] = ym.split("-").map(Number);
+  ym = new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
+  load();
+};
+
+// Flèches du clavier ← → sur l'accueil (PC)
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  const home = document.getElementById("homeMainContent");
+  if (!home || home.style.display === "none" || home.offsetParent === null) return;
+  if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || "")) return;
+  if (document.getElementById("sheet")?.classList.contains("on") || document.querySelector(".game-overlay")) return;
+  shiftMonth(e.key === "ArrowLeft" ? -1 : 1);
+});
+
+// ▸ cxBuySet : achète un set → boutons + avatar + bannière, tout est équipé
+function cxBuySet(id, rerender) {
+  const set = CX_BUTTON_SETS[id];
+  if (!set) return;
+  if (userCoins < set.price) {
+    showRetroAlert("Crédits insuffisants", `Il te manque ${set.price - userCoins} 🪙 pour le set ${esc(set.name)}.`, true);
+    return;
+  }
+  userCoins -= set.price;
+  updateCoinsUI();
+  const owned = cxOwnedButtons();
+  if (!owned.includes(id)) owned.push(id);
+  const addTo = (key, def, val) => {
+    let arr = def;
+    try { const v = JSON.parse(localStorage.getItem(key) || "null"); if (Array.isArray(v)) arr = v; } catch (e) {}
+    if (val && !arr.includes(val)) arr.push(val);
+    try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
+  };
+  try {
+    localStorage.setItem("cartridge_buttons_owned", JSON.stringify(owned));
+    localStorage.setItem("cartridge_button_skin", id);
+    addTo("cartridge_avatars_owned", ["robot", "ghost", "cat", "slime"], set.avatarId);
+    addTo("cartridge_banners_owned", ["default", "sunset", "matrix"], set.bannerId);
+    if (set.avatarId) localStorage.setItem("cartridge_avatar", set.avatarId);
+    if (set.bannerId) localStorage.setItem("cartridge_banner", set.bannerId);
+  } catch (e) {}
+  cxApplyButtonSkin();
+  updateUserBadge();
+  showToast(`Set ${esc(set.name)} débloqué : boutons, avatar et bannière équipés !`, "party");
+  if (typeof cloudSave === "function") cloudSave();
+  if (rerender) rerender();
+}
+
+function cxEquipSet(id, rerender) {
+  try { localStorage.setItem("cartridge_button_skin", id); } catch (e) {}
+  cxApplyButtonSkin();
+  cxPageSound(1, id);
+  showToast(`Boutons ${esc(CX_BUTTON_SETS[id].name)} équipés`, "check");
+  if (typeof cloudSave === "function") cloudSave();
+  if (rerender) rerender();
+}
+
+// ▸ cxSetStage : mini barre « ‹ OCT 2026 › » pour essayer un set
+function cxSetStage(id) {
+  const set = CX_BUTTON_SETS[id];
+  const stage = el("div", "cx-stage");
+  stage.dataset.cxBtn = id;
+  stage.style.setProperty("--set-acc", set.acc);
+  const mk = (dir) => {
+    const b = el("button", "cxb-btn " + (dir < 0 ? "cxb-prev" : "cxb-next"));
+    b.type = "button";
+    b.setAttribute("aria-label", dir < 0 ? "Essayer le bouton précédent" : "Essayer le bouton suivant");
+    b.innerHTML = set.cap(dir);
+    b.addEventListener("click", (e) => { e.stopPropagation(); cxPageSound(dir, id); cxPress(b); });
+    return b;
+  };
+  const label = el("span", "cx-stage-date");
+  label.textContent = utc(ym + "-01").toLocaleDateString(currentLang, { month: "short", year: "numeric", timeZone: "UTC" }).toUpperCase();
+  stage.append(mk(-1), label, mk(1));
+  return stage;
+}
+
+// ▸ cxRenderButtonSets : section « Sets de boutons » (Boutique › Style)
+function cxRenderButtonSets(box, rerender) {
+  box.append(el("div", "settings-section-title", "Sets de boutons de page"));
+  const hint = el("p", "cx-sets-hint", "Chaque set change les boutons ‹ › de l'accueil et leur bruitage, avec un avatar et une bannière assortis. Touche les boutons pour les essayer.");
+  box.append(hint);
+  const grid = el("div", "cx-set-grid");
+  const equipped = cxCurrentSkin();
+  Object.entries(CX_BUTTON_SETS).forEach(([id, set]) => {
+    const owned = cxButtonOwned(id);
+    const isOn = equipped === id;
+    const card = el("article", "cx-set cx-set--" + id + (owned ? " is-owned" : "") + (isOn ? " is-on" : ""));
+    card.style.setProperty("--set-acc", set.acc);
+    const top = el("div", "cx-set-top");
+    if (set.banner) top.style.background = set.banner.bg;
+    top.append(cxSetStage(id));
+    const rank = el("span", "cx-set-rank", set.rank);
+    top.append(rank);
+
+    const body = el("div", "cx-set-body");
+    const head = el("div", "cx-set-head");
+    head.append(el("h3", "", set.name));
+    const tag = el("span", "price-tag" + (owned ? " is-owned" : ""));
+    tag.innerHTML = owned ? `${icon("check")}${id === "classic" ? "Offert" : "À toi"}` : `${icon("coin")}${set.price}`;
+    head.append(tag);
+    body.append(head, el("p", "", set.desc));
+
+    const inc = el("div", "cx-set-inc");
+    inc.innerHTML = `<span class="cx-inc-chip">${icon("gamepad")}Boutons + son</span>` +
+      (set.avatar ? `<span class="cx-inc-chip"><span class="cx-inc-av player-avatar-pixel">${set.avatar.svg}</span>${esc(set.avatar.name)}</span>` : "") +
+      (set.banner ? `<span class="cx-inc-chip"><span class="cx-inc-bn" style="background:${set.banner.bg.replace(/"/g, "&quot;")}"></span>Bannière</span>` : "");
+    if (set.avatar || set.banner) body.append(inc);
+
+    const btn = el("button", isOn ? "cta-sec" : "cta", !owned ? `Acheter le set · ${set.price} crédits` : isOn ? "Équipé" : "Équiper");
+    if (isOn) btn.disabled = true;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!owned) cxBuySet(id, rerender); else if (!isOn) cxEquipSet(id, rerender);
+    });
+    body.append(btn);
+    card.append(top, body);
+    grid.append(card);
+  });
+  box.append(grid);
+}
+
+// Sauvegarde cloud : les sets de boutons voyagent avec le compte
+(function wrapUnlocks() {
+  const origRead = readUnlocks, origMerge = mergeUnlocks;
+  readUnlocks = function () {
+    const r = origRead();
+    r.buttons = cxOwnedButtons();
+    try { r.buttonSkin = localStorage.getItem("cartridge_button_skin") || ""; } catch (e) { r.buttonSkin = ""; }
+    return r;
+  };
+  mergeUnlocks = function (u) {
+    origMerge(u);
+    if (!u || typeof u !== "object") return;
+    try {
+      const all = [...new Set([...cxOwnedButtons(), ...(Array.isArray(u.buttons) ? u.buttons : [])])].filter((id) => CX_BUTTON_SETS[id]);
+      localStorage.setItem("cartridge_buttons_owned", JSON.stringify(all));
+      if (u.buttonSkin && CX_BUTTON_SETS[u.buttonSkin]) localStorage.setItem("cartridge_button_skin", u.buttonSkin);
+    } catch (e) {}
+    cxApplyButtonSkin();
+  };
+})();
+
+// ---------------------------------------------------------------------
+// 20.6 SCORES EN DIRECT — les bornes envoient leurs scores à l'app
+//
+//  3 façons de recevoir un score (aucune n'est obligatoire) :
+//   1. Message du jeu (le plus fiable, à ajouter dans chaque jeu) :
+//        parent.postMessage({ type: "cartridge:score", score: 12340 }, "*");
+//   2. Appel direct (jeu sur le même site) :
+//        parent.CartridgeScores.submit(12340);
+//   3. Automatique : si le jeu enregistre son record dans le stockage
+//      (clé contenant score / high / best / record), l'app le lit en direct.
+// ---------------------------------------------------------------------
+const CX_ARCADE_GAMES = [
+  { name: "Pac-Man", url: "pacman_arcade.html", fg: "#ffcc00", scr: "#000", ic: "invader" },
+  { name: "Pong", url: "pong_arcade.html", fg: "#ffffff", scr: "#000", ic: "pong" },
+  { name: "Space Invaders", url: "space_invaders.html", fg: "#FF7A45", scr: "#05060a", ic: "invader" },
+  { name: "Tetris", url: "tetris_gameboy.html", fg: "#9bbc0f", scr: "#0f380f", ic: "blocks" },
+  { name: "Snake", url: "snake_nokia.html", fg: "#9bbc0f", scr: "#0f380f", ic: "snake" },
+];
+
+const CXScores = {
+  game: null, session: null, overlay: null, hud: null, snap: null, poll: null, rerender: null,
+  keyRe: /(score|high|best|record|hiscore|top)/i,
+  ownKeys: new Set(["gameScores", "userCoins", "cartridge_scores_meta"]),
+
+  // ▸ parse : lit un nombre dans une valeur (nombre, texte, JSON…)
+  parse(v) {
+    if (v == null) return NaN;
+    if (typeof v === "number") return v;
+    const s = String(v).trim();
+    if (!s) return NaN;
+    try {
+      const j = JSON.parse(s);
+      if (typeof j === "number") return j;
+      if (j && typeof j === "object") {
+        const nums = [];
+        const walk = (o, depth) => {
+          if (depth > 3 || !o) return;
+          for (const [k, val] of Object.entries(o)) {
+            if (typeof val === "number" && (Array.isArray(o) || this.keyRe.test(k) || k === "value")) nums.push(val);
+            else if (typeof val === "object") walk(val, depth + 1);
+          }
+        };
+        walk(j, 0);
+        return nums.length ? Math.max(...nums) : NaN;
+      }
+    } catch (e) {}
+    if (!/^[\d\s.,  ]+$/.test(s)) return NaN;
+    return parseFloat(s.replace(/[\s  ,]/g, ""));
+  },
+  value(entry) {
+    if (Number.isFinite(entry.value)) return entry.value;
+    if (/[:']/.test(String(entry.score))) return NaN; // un temps (1:23) ne se classe pas
+    const n = parseFloat(String(entry.score).replace(/[^\d.]/g, ""));
+    return Number.isFinite(n) ? n : NaN;
+  },
+  fmt: (n) => Math.round(n).toLocaleString("fr-FR"),
+  same: (a, b) => String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase(),
+  bestFor(game) {
+    let best = -Infinity;
+    (gameScores || []).forEach((e) => { if (this.same(e.game, game)) { const v = this.value(e); if (v > best) best = v; } });
+    return best;
+  },
+  save() {
+    try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch (e) {}
+    if (typeof cloudSave === "function") cloudSave();
+  },
+  snapshot() {
+    const o = {};
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && this.keyRe.test(k) && !this.ownKeys.has(k)) o[k] = localStorage.getItem(k);
+      }
+    } catch (e) {}
+    return o;
+  },
+  // Compare le stockage avec la photo prise au lancement du jeu
+  diff() {
+    if (!this.snap) return;
+    const now = this.snapshot();
+    for (const [k, v] of Object.entries(now)) {
+      if (v === this.snap[k]) continue;
+      const nv = this.parse(v), ov = this.parse(this.snap[k]);
+      this.snap[k] = v;
+      if (Number.isFinite(nv) && (!Number.isFinite(ov) || nv > ov)) this.report(nv);
+    }
+  },
+
+  // ▸ begin : une partie commence (appelé par la borne plein écran)
+  begin(name, overlay) {
+    this.game = name;
+    this.overlay = overlay;
+    this.session = { id: Date.now(), best: null };
+    this.prevBest = this.bestFor(name);
+    this.snap = this.snapshot();
+    this.hud = el("div", "cx-hud");
+    this.hud.innerHTML = `<span class="cx-live-dot"></span><b>LIVE</b><span class="cx-hud-game">${esc(name)}</span><span class="cx-hud-sep"></span><span class="cx-hud-lbl">HI</span><span class="cx-hud-hi">${Number.isFinite(this.prevBest) ? this.fmt(this.prevBest) : "—"}</span><span class="cx-hud-lbl">1UP</span><span class="cx-hud-me">0</span>`;
+    overlay.append(this.hud);
+    clearInterval(this.poll);
+    this.poll = setInterval(() => this.diff(), 900);
+  },
+
+  // ▸ report : un score arrive en direct
+  report(value, game) {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n <= 0) return;
+    game = game || this.game;
+    if (!game) return;
+    if (this.session && this.same(game, this.game)) {
+      if (this.session.best != null && n <= this.session.best) return;
+      this.session.best = n;
+      const date = new Date().toLocaleDateString();
+      let entry = gameScores.find((e) => e.sid === this.session.id);
+      if (!entry) { entry = { game: this.game, score: "", date, live: true, sid: this.session.id }; gameScores.unshift(entry); }
+      entry.value = n; entry.score = this.fmt(n); entry.ts = Date.now();
+      this.save();
+      if (this.hud) {
+        const me = this.hud.querySelector(".cx-hud-me");
+        me.textContent = this.fmt(n);
+        me.classList.remove("is-bump"); void me.offsetWidth; me.classList.add("is-bump");
+        const isHi = !Number.isFinite(this.prevBest) || n > this.prevBest;
+        this.hud.classList.toggle("is-record", isHi);
+        if (isHi) this.hud.querySelector(".cx-hud-hi").textContent = this.fmt(n);
+      }
+      if (soundEnabled) CXSfx.scoreTick();
+    } else {
+      // Score reçu hors d'une partie (ex. jeu ouvert ailleurs) : on l'enregistre tel quel
+      gameScores.unshift({ game, score: this.fmt(n), value: n, date: new Date().toLocaleDateString(), live: true, ts: Date.now() });
+      this.save();
+      this.refresh();
+    }
+  },
+
+  // ▸ end : la partie se termine → record ? fanfare + crédits
+  end() {
+    this.diff();
+    clearInterval(this.poll);
+    const s = this.session, game = this.game, prev = this.prevBest;
+    this.game = null; this.session = null; this.snap = null; this.hud = null; this.overlay = null;
+    if (s && s.best != null && (!Number.isFinite(prev) || s.best > prev)) {
+      setTimeout(() => {
+        if (soundEnabled) CXSfx.hiscore();
+        addCoins(5);
+        showToast(`Nouveau record sur ${esc(game)} : ${this.fmt(s.best)} ! +5 🪙`, "trophy");
+      }, 250);
+    }
+    this.refresh();
+  },
+  refresh() {
+    if (this.rerender && this.rerender.box && this.rerender.box.isConnected) this.rerender.fn();
+  },
+};
+
+// Les jeux peuvent appeler parent.CartridgeScores.submit(score) …
+window.CartridgeScores = { submit: (score, game) => CXScores.report(score, game) };
+// … ou envoyer un message
+window.addEventListener("message", (e) => {
+  const d = e.data;
+  if (!d || typeof d !== "object") return;
+  if (!/^cartridge[:-]score$|^score$/i.test(String(d.type || ""))) return;
+  CXScores.report(d.score ?? d.value, d.game);
+});
+// … ou simplement écrire leur record dans le stockage (lu en direct)
+window.addEventListener("storage", (e) => {
+  if (!CXScores.game || !e.key || !CXScores.keyRe.test(e.key) || CXScores.ownKeys.has(e.key)) return;
+  const nv = CXScores.parse(e.newValue), ov = CXScores.parse(e.oldValue);
+  if (Number.isFinite(nv) && (!Number.isFinite(ov) || nv > ov)) CXScores.report(nv);
+});
+
+// ▸ cxRenderScores : onglet Scores de la page Arcade
+function cxRenderScores(box, rerender, games, openGame) {
+  CXScores.rerender = { box, fn: rerender };
+  games = games && games.length ? games : CX_ARCADE_GAMES;
+  const list = Array.isArray(gameScores) ? gameScores : [];
+  box.append(pageHead("Scores", "Tes records arrivent tout seuls depuis les bornes.", `<span class="cx-live-pill"><span class="cx-live-dot"></span>Relié aux bornes</span>`));
+
+  // — Tableau des records, une ligne par borne —
+  const hof = el("section", "cx-hof");
+  hof.innerHTML = `<div class="cx-hof-head"><span class="cx-hof-title">HI-SCORES</span><span class="cx-hof-blink">PRESS START</span></div>`;
+  const table = el("div", "cx-hof-table");
+  const names = [...games.map((g) => g.name)];
+  list.forEach((e) => { if (e.game && !names.some((n) => CXScores.same(n, e.game))) names.push(e.game); });
+  names.forEach((name, idx) => {
+    const g = games.find((x) => CXScores.same(x.name, name));
+    const entries = list.filter((e) => CXScores.same(e.game, name))
+      .map((e) => ({ e, v: CXScores.value(e) }))
+      .sort((a, b) => (Number.isFinite(b.v) ? b.v : -1) - (Number.isFinite(a.v) ? a.v : -1));
+    const top = entries[0];
+    const row = el(g ? "button" : "div", "cx-hof-row" + (top ? "" : " is-empty"));
+    if (g) row.type = "button";
+    const pal = CX_ARCADE_GAMES.find((x) => CXScores.same(x.name, name));
+    row.style.setProperty("--g", pal ? pal.fg : g ? g.fg : "var(--acc)");
+    const others = entries.slice(1, 3).map((x, i) => `${i + 2}<sup>e</sup> ${esc(x.e.score)}`).join(" · ");
+    row.innerHTML = `
+      <span class="cx-hof-ic">${icon(g ? g.ic : "trophy")}</span>
+      <span class="cx-hof-name"><b>${esc(name)}</b><small>${top ? (others || esc(top.e.date || "")) : g ? "Aucun record · touche pour jouer" : ""}</small></span>
+      <span class="cx-hof-score">${top ? esc(top.e.score) : "-------"}</span>
+      ${top && top.e.live ? `<span class="cx-tag-live">LIVE</span>` : ""}`;
+    if (g && openGame) row.addEventListener("click", () => { playThemeSound(theme); openGame(g.url, g.name); });
+    table.append(row);
+  });
+  hof.append(table);
+  box.append(hof);
+
+  // — Dernières parties —
+  if (list.length) {
+    box.append(el("div", "settings-section-title", "Dernières parties"));
+    const recent = el("div", "score-list cx-recent");
+    list.slice(0, 12).forEach((s, index) => {
+      const row = el("div", "score-row");
+      row.innerHTML = `
+        <span class="score-rank">${s.live ? icon("zap") : icon("notebook")}</span>
+        <div class="score-txt"><b>${esc(s.game)}</b><small>${esc(s.date || "")} · ${s.live ? "en direct" : "noté à la main"}</small></div>
+        <span class="score-val">${esc(s.score)}</span>`;
+      const del = el("button", "score-del");
+      del.type = "button";
+      del.title = "Supprimer";
+      del.setAttribute("aria-label", "Supprimer ce score");
+      del.innerHTML = icon("x");
+      del.addEventListener("click", () => {
+        playThemeSound(theme);
+        gameScores.splice(index, 1);
+        CXScores.save();
+        rerender();
+      });
+      row.append(del);
+      recent.append(row);
+    });
+    box.append(recent);
+  } else {
+    box.append(emptyState("trophy", "Aucun record pour l'instant", "Lance une borne : ton score s'affichera ici en direct."));
+  }
+
+  // — Ajout manuel (jeux hors app, consoles du salon…) —
+  const manual = el("details", "cx-manual");
+  manual.innerHTML = `<summary>${icon("notebook")}<span>Noter un score à la main</span></summary>`;
+  const form = el("form", "score-form");
+  form.innerHTML = `
+    <input type="text" class="search-box field" name="g" placeholder="Nom du jeu" autocomplete="off" list="cxGameNames">
+    <datalist id="cxGameNames">${games.map((g) => `<option value="${esc(g.name)}">`).join("")}</datalist>
+    <input type="text" class="search-box field" name="s" placeholder="Score ou temps (ex. 15 480)" autocomplete="off" inputmode="numeric">
+    <button class="cta" type="submit">Ajouter</button>`;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const gameName = form.g.value.trim(), scoreVal = form.s.value.trim();
+    if (!gameName || !scoreVal) { showRetroAlert("Champs manquants", "Remplis le nom du jeu et le score.", true); return; }
+    playThemeSound(theme);
+    gameScores.unshift({ game: gameName, score: scoreVal, date: new Date().toLocaleDateString() });
+    CXScores.save();
+    rerender();
+  });
+  manual.append(form);
+  box.append(manual);
+}
+
+// ---------------------------------------------------------------------
+// 20.7 PROFIL › APPARENCE — aperçus des fonds + choix des boutons
+// ---------------------------------------------------------------------
+function cxSettingsExtras(page, bgGrid) {
+  // Aperçu dessiné dans chaque tuile de fond
+  const ids = ["cartridges", "circuit", "retroshop", "buttons"];
+  if (bgGrid) {
+    bgGrid.classList.add("cx-bg-grid");
+    [...bgGrid.children].forEach((tile, i) => {
+      if (!ids[i]) return;
+      tile.classList.add("cx-bg-choice");
+      const prev = el("span", "cx-bg-thumb");
+      prev.style.backgroundImage = cxBgPreview(ids[i]);
+      const def = CX_BACKGROUNDS[ids[i]];
+      prev.style.backgroundSize = `${def.size[0] / 2.2}px ${def.size[1] / 2.2}px`;
+      tile.prepend(prev);
+    });
+  }
+
+  // Boutons de page
+  const g = settingsGroup("Boutons de page", "gamepad");
+  const grid = el("div", "choice-grid cx-skin-grid");
+  const cur = cxCurrentSkin();
+  Object.entries(CX_BUTTON_SETS).forEach(([id, set]) => {
+    const owned = cxButtonOwned(id);
+    const b = el("button", "choice-tile cx-skin-choice" + (owned ? "" : " is-locked"));
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(cur === id));
+    const stage = cxSetStage(id);
+    stage.classList.add("is-mini");
+    stage.querySelectorAll("button").forEach((x) => { x.tabIndex = -1; x.style.pointerEvents = "none"; });
+    stage.querySelector(".cx-stage-date").remove();
+    b.append(stage);
+    const lab = el("span", "choice-label", set.name);
+    b.append(lab);
+    b.insertAdjacentHTML("beforeend", owned ? icon("check", "choice-check") : icon("lock", "choice-lock"));
+    b.addEventListener("click", () => {
+      if (!owned) {
+        playThemeSound(theme);
+        showRetroAlert("Set verrouillé", `Débloque « ${esc(set.name)} » dans la Boutique, onglet Style, pour ${set.price} 🪙.`);
+        return;
+      }
+      try { localStorage.setItem("cartridge_button_skin", id); } catch (e) {}
+      cxApplyButtonSkin();
+      cxPageSound(1, id);
+      if (typeof cloudSave === "function") cloudSave();
+      openSettingsMainPage();
+    });
+    grid.append(b);
+  });
+  g.list.replaceWith(grid);
+  page.append(g.el);
+}
+
+// ---------------------------------------------------------------------
+// 20.8 DÉMARRAGE DE LA REFONTE
+// ---------------------------------------------------------------------
+(function cxBoot() {
+  const start = () => {
+    cxEnsureBgLayer();
+    applyBgStyle(localStorage.getItem("bgStyle") || "cartridges");
+    cxApplyButtonSkin();
+    updateUserBadge();
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+  // Les polices chargent après coup : on redessine une fois (couleurs du thème restauré)
+  window.addEventListener("load", () => setTimeout(cxRefreshDecor, 60));
+})();
+
+</script>
 </body>
 </html>
