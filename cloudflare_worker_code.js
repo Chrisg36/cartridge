@@ -1,3 +1,318 @@
+let cachedToken = null;
+let tokenExpiry = 0;
+
+// Noms courts affichés (numéro de plateforme IGDB -> nom)
+const PLATFORM_NAMES = {
+  6: "PC", 167: "PS5", 48: "PS4", 9: "PS3", 8: "PS2", 7: "PS1",
+  169: "Xbox", 49: "Xbox One", 12: "Xbox 360", 11: "Xbox (original)",
+  508: "Switch 2", 130: "Switch", 41: "Wii U", 5: "Wii", 21: "GameCube", 4: "Nintendo 64",
+  19: "SNES", 18: "NES", 33: "Game Boy", 22: "Game Boy Color", 24: "Game Boy Advance",
+  20: "Nintendo DS", 37: "Nintendo 3DS", 23: "Dreamcast", 32: "Saturn",
+  29: "Mega Drive", 64: "Master System",
+};
+
+const MONTH_PLATFORMS = [6, 167, 169, 508];
+const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+const DATE_FIXES = {
+  305160: "2026-10-06", // Gears of War: E-Day
+};
+
+const GAME_TYPES = "(0,4,8,9,10,11)";
+
+const hasDay = (h) =>
+  /(^|\D)\d{1,2}(\D|$)/.test(String(h).replace(/\d{4}/, "").replace(/Q\d/gi, ""));
+
+const iso = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
+
+async function hashPassword(password) {
+  const msgUint8 = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function getToken(env) {
+  if (!env.CLIENT_ID || !env.CLIENT_SECRET) {
+    throw new Error("CLIENT_ID ou CLIENT_SECRET manquant dans Cloudflare.");
+  }
+  if (cachedToken && Date.now() < tokenExpiry) return cachedToken;
+  const res = await fetch(
+    `https://id.twitch.tv/oauth2/token?client_id=${env.CLIENT_ID.trim()}&client_secret=${env.CLIENT_SECRET.trim()}&grant_type=client_credentials`,
+    { method: "POST" }
+  );
+  if (!res.ok) throw new Error(`Échec jeton Twitch (${res.status}) : ${await res.text()}`);
+  const data = await res.json();
+  cachedToken = data.access_token;
+  tokenExpiry = Date.now() + (data.expires_in - 600) * 1000;
+  return cachedToken;
+}
+
+async function cacheGet(key) {
+  try { return await caches.default.match(key); } catch (e) { return undefined; }
+}
+function cachePut(ctx, key, response) {
+  try { ctx.waitUntil(caches.default.put(key, response).catch(() => {})); } catch (e) {}
+}
+
+async function igdb(env, query) {
+  const token = await getToken(env);
+  const res = await fetch("https://api.igdb.com/v4/games", {
+    method: "POST",
+    headers: {
+      "Client-ID": env.CLIENT_ID.trim(),
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "text/plain",
+    },
+    body: query,
+  });
+  if (!res.ok) throw new Error(`Erreur IGDB (${res.status}) : ${await res.text()}`);
+  return res.json();
+}
+
+function platformOf(r) {
+  const p = r.platform;
+  const id = p && typeof p === "object" ? p.id : p;
+  const name = PLATFORM_NAMES[id] || (p && typeof p === "object" ? p.name : null);
+  return { id, name };
+}
+
+function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
+  const games = [];
+  for (const g of raw || []) {
+    const byPlatform = {};
+    for (const r of g.release_dates || []) {
+      if (!r.date) continue;
+      const { id, name } = platformOf(r);
+      if (!name) continue;
+      if (allowedIds && !allowedIds.includes(id)) continue;
+      if (start && (r.date < start || r.date >= end)) continue;
+      if (!byPlatform[name] || r.date < byPlatform[name].date) {
+        byPlatform[name] = { date: r.date, human: r.human || "" };
+      }
+    }
+    let releases = Object.entries(byPlatform)
+      .map(([platform, r]) => ({
+        platform,
+        date: iso(r.date),
+        human: r.human,
+        exact: hasDay(r.human),
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const fix = DATE_FIXES[g.id];
+    if (fix) {
+      if (!searchMode && fix.slice(0, 7) !== month) continue;
+      releases = releases.map((r) => ({ ...r, date: fix, exact: true }));
+    }
+    if (!releases.length) continue;
+
+    const developers = [];
+    const publishers = [];
+    if (g.involved_companies) {
+      for (const ic of g.involved_companies) {
+        if (ic.company && ic.company.name) {
+          if (ic.developer) developers.push(ic.company.name);
+          if (ic.publisher) publishers.push(ic.company.name);
+        }
+      }
+    }
+
+    games.push({
+      id: g.id,
+      name: g.name,
+      summary: g.summary || null,
+      developer: developers.join(", ") || null,
+      publisher: publishers.join(", ") || null,
+      genres: (g.genres || []).map((x) => x.name),
+      cover: g.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg` : "",
+      hypes: (g.hypes || 0) + (g.total_rating_count || 0),
+      rating: g.rating || null,
+      aggregated_rating: g.aggregated_rating || null,
+      date: releases[0].date,
+      releases,
+    });
+  }
+  return games;
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
+    const url = new URL(request.url);
+
+    // ==========================================
+    // 👤 ROUTE 1 : AUTHENTIFICATION & RÉCUPÉRATION CLOUDFLARE D1
+    // ==========================================
+    if (url.pathname === "/api/auth" && request.method === "POST") {
+      try {
+        const { username, password, recoveryQ, data } = await request.json();
+        const cleanId = (username || "").trim().toLowerCase();
+
+        if (!cleanId || !password) {
+          return Response.json({ error: "Identifiant et mot de passe requis." }, { status: 400, headers: CORS });
+        }
+
+        const hashedPassword = await hashPassword(password);
+        
+        let user;
+        try {
+          user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+        } catch (dbErr) {
+          await env.DB.prepare(`
+            CREATE TABLE IF NOT EXISTS users (
+              id TEXT PRIMARY KEY,
+              password_hash TEXT NOT NULL,
+              recovery_q TEXT,
+              data TEXT
+            )
+          `).run();
+          user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+        }
+
+        if (!user) {
+          await env.DB.prepare(
+            "INSERT INTO users (id, password_hash, recovery_q, data) VALUES (?, ?, ?, ?)"
+          ).bind(cleanId, hashedPassword, recoveryQ || "", JSON.stringify(data || {})).run();
+
+          return Response.json({ 
+            status: "created", 
+            message: "Compte créé et sécurisé sur Cloudflare !" 
+          }, { headers: CORS });
+        } else {
+          if (recoveryQ === "reset") {
+            await env.DB.prepare("UPDATE users SET password_hash = ?, data = ? WHERE id = ?")
+              .bind(hashedPassword, JSON.stringify(data || {}), cleanId)
+              .run();
+            return Response.json({ status: "reset", message: "Mot de passe mis à jour avec succès !" }, { headers: CORS });
+          }
+
+          if (user.password_hash === hashedPassword) {
+            if (data) {
+              await env.DB.prepare("UPDATE users SET data = ? WHERE id = ?").bind(JSON.stringify(data), cleanId).run();
+            }
+            return Response.json({ 
+              status: "connected", 
+              data: JSON.parse(user.data || "{}") 
+            }, { headers: CORS });
+          } else {
+            return Response.json({ 
+              status: "error", 
+              message: "Mot de passe incorrect." 
+            }, { status: 401, headers: CORS });
+          }
+        }
+      } catch (err) {
+        return Response.json({ error: err.message }, { status: 500, headers: CORS });
+      }
+    }
+
+    // ==========================================
+    // 🔄 ROUTE 2 : SYNCHRONISATION PROGRESSION D1
+    // ==========================================
+    if (url.pathname === "/api/sync" && request.method === "POST") {
+      try {
+        const { username, data } = await request.json();
+        const cleanId = (username || "").trim().toLowerCase();
+
+        await env.DB.prepare("UPDATE users SET data = ? WHERE id = ?")
+          .bind(JSON.stringify(data), cleanId)
+          .run();
+
+        return Response.json({ status: "synced" }, { headers: CORS });
+      } catch (err) {
+        return Response.json({ error: err.message }, { status: 500, headers: CORS });
+      }
+    }
+
+    // ==========================================
+    // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX (?translate=ID&lang=LANG)
+    // ==========================================
+    const translateId = url.searchParams.get("translate");
+    const targetLang = url.searchParams.get("lang") || "fr";
+
+    if (translateId) {
+      try {
+        const raw = await igdb(env, `fields summary; where id = ${translateId}; limit 1;`);
+        if (!raw || !raw.length || !raw[0].summary) {
+          return Response.json({ summary: "Aucun résumé disponible pour ce titre." }, { headers: CORS });
+        }
+        
+        const originalSummary = raw[0].summary;
+        let translatedSummary = originalSummary;
+
+        if (env.AI && targetLang === "fr") {
+          try {
+            const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+              messages: [
+                { role: "system", content: "Tu es un traducteur expert de jeux vidéo. Traduis le texte en français de manière naturelle. Réponds uniquement avec le texte traduit, sans aucune phrase d'introduction ni guillemets." },
+                { role: "user", content: originalSummary }
+              ]
+            });
+            
+            if (aiResponse) {
+              if (typeof aiResponse === "string") {
+                translatedSummary = aiResponse.trim();
+              } else if (aiResponse.response) {
+                translatedSummary = aiResponse.response.trim();
+              } else if (aiResponse.result) {
+                translatedSummary = aiResponse.result.trim();
+              }
+            }
+          } catch (aiErr) {
+            console.warn("Erreur AI :", aiErr);
+          }
+        }
+
+        return Response.json({ summary: translatedSummary }, { headers: CORS });
+      } catch (trErr) {
+        return Response.json({ summary: "Erreur lors de la traduction." }, { headers: CORS });
+      }
+    }
+
+    let month = url.searchParams.get("month");
+    const searchQuery = (url.searchParams.get("search") || "").replace(/["\;]/g, "").trim();
+    const platformParam = url.searchParams.get("platform");
+    const showAll = url.searchParams.get("all") === "1";
+
+    if (platformParam && !FILTERS[platformParam]) {
+      return Response.json({ error: "platform doit valoir : pc, ps5, xbox ou switch2" }, { status: 400, headers: CORS });
+    }
+    if (!searchQuery && !month) month = new Date().toISOString().slice(0, 7);
+    if (!searchQuery && !/^\d{4}-\d{2}$/.test(month)) {
+      return Response.json({ error: "Format attendu : ?month=YYYY-MM" }, { status: 400, headers: CORS });
+    }
+
+    const cacheKey = new Request(url.origin + "/v22" + url.search);
+    const cached = await cacheGet(cacheKey);
+    if (cached) return cached;
+
+    try {
+      let games;
+
+      if (searchQuery) {
+        const words = searchQuery.split(/\s+/).filter(Boolean).slice(0, 5);
+        const contains = words.map((w) => `name ~ *"${w}"*`).join(" & ");
+        const poolFields = "fields name, hypes, total_rating_count;";
+        const attempts = [
+          `search "${searchQuery}"; ${poolFields} where game_type = ${GAME_TYPES}; limit 500;`,
+          `${poolFields} where ${contains} & game_type = ${GAME_TYPES}; limit 500;`,
+          `search "${searchQuery}"; ${poolFields} limit 500;`,
+        ];
+        let pool = [];
+        for (const q of attempts) {
+          pool = await igdb(env, q);
+          if (pool && pool.length) break;
+        }
+        const lowerWords = words.map((w) => w.toLowerCase());
+        const poolScore = (g) => {
+          const n = (g.name || "").toLowerCase();
           return (lowerWords.every((w) => n.includes(w)) ? 1e6 : 0) + (g.hypes || 0) + (g.total_rating_count || 0);
         };
         const topIds = pool.sort((a, b) => poolScore(b) - poolScore(a)).slice(0, 40).map((g) => g.id);
