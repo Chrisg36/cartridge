@@ -183,18 +183,15 @@ async function translateSummary(idParam, langParam, env, ctx) {
   const lang = langParam === "en" || TARGET_LANGS[langParam] ? langParam : "fr";
   const okHeaders = { ...CORS, "Cache-Control": "public, max-age=2592000" };
 
-  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
-  const hit = await cacheGet(key);
-  if (hit) return hit;
-
   // 1) Déjà traduit ? On le reprend dans la base D1
+  let dbError = env.DB ? null : "binding DB manquant";
   if (env.DB && lang !== "en") {
     try {
       await ensureTrTable(env);
       const row = await env.DB.prepare("SELECT summary FROM translations WHERE game_id = ? AND lang = ?")
         .bind(id, lang).first();
       if (row) return Response.json({ id, summary: row.summary, saved: true }, { headers: okHeaders });
-    } catch (e) {}
+    } catch (e) { dbError = e.message; }
   }
 
   if (!env.AI) {
@@ -223,18 +220,15 @@ async function translateSummary(idParam, langParam, env, ctx) {
     const summary = out.join(" ");
 
     // 3) On range la traduction dans D1 pour ne plus jamais la refaire
-    if (env.DB) {
+    if (env.DB && !dbError) {
       try {
-        ctx.waitUntil(
-          env.DB.prepare("INSERT OR REPLACE INTO translations (game_id, lang, summary, created_at) VALUES (?, ?, ?, ?)")
-            .bind(id, lang, summary, Math.floor(Date.now() / 1000)).run().catch(() => {})
-        );
-      } catch (e) {}
+        await env.DB.prepare("INSERT OR REPLACE INTO translations (game_id, lang, summary, created_at) VALUES (?, ?, ?, ?)")
+          .bind(id, lang, summary, Math.floor(Date.now() / 1000)).run();
+      } catch (e) { dbError = e.message; }
     }
 
-    const response = Response.json({ id, summary }, { headers: okHeaders });
-    cachePut(ctx, key, response.clone());
-    return response;
+    const body = dbError ? { id, summary, db_error: dbError } : { id, summary, saved: false };
+    return Response.json(body, { headers: dbError ? CORS : okHeaders });
   } catch (e) {
     return Response.json({ error: e.message }, { status: 500, headers: CORS });
   }
