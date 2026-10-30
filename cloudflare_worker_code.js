@@ -163,39 +163,76 @@ function splitText(text, max = 400) {
 // Langues de traduction (code de la page -> nom attendu par le modèle)
 const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
 
+// Table D1 des traductions déjà faites (créée automatiquement la première fois)
+let trTableReady = false;
+async function ensureTrTable(env) {
+  if (trTableReady) return;
+  await env.DB.prepare(
+    "CREATE TABLE IF NOT EXISTS translations (game_id INTEGER NOT NULL, lang TEXT NOT NULL, summary TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY (game_id, lang))"
+  ).run();
+  trTableReady = true;
+}
+
 // Traduction du résumé d'un jeu (anglais -> langue choisie)
-async function translateSummary(idParam, lang, env, ctx) {
+// Ordre : cache Cloudflare -> base D1 -> traduction par l'IA (puis rangée dans D1)
+async function translateSummary(idParam, langParam, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
     return Response.json({ error: "id invalide" }, { status: 400, headers: CORS });
   }
+  const lang = langParam === "en" || TARGET_LANGS[langParam] ? langParam : "fr";
+  const okHeaders = { ...CORS, "Cache-Control": "public, max-age=2592000" };
+
+  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
+  const hit = await cacheGet(key);
+  if (hit) return hit;
+
+  // 1) Déjà traduit ? On le reprend dans la base D1
+  if (env.DB && lang !== "en") {
+    try {
+      await ensureTrTable(env);
+      const row = await env.DB.prepare("SELECT summary FROM translations WHERE game_id = ? AND lang = ?")
+        .bind(id, lang).first();
+      if (row) return Response.json({ id, summary: row.summary, saved: true }, { headers: okHeaders });
+    } catch (e) {}
+  }
+
   if (!env.AI) {
     return Response.json(
       { error: "Traduction non activée : il manque le binding AI sur le Worker" },
       { status: 500, headers: CORS }
     );
   }
-  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
-  const hit = await cacheGet(key);
-  if (hit) return hit;
   try {
     const raw = await igdb(env, `fields summary; where id = ${id};`);
     const text = raw[0] && raw[0].summary;
     if (!text) return Response.json({ id, summary: null }, { headers: CORS });
     if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS });
+
+    // 2) Sinon, on traduit morceau par morceau
     const out = [];
     for (const chunk of splitText(text)) {
       const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
         text: chunk,
         source_lang: "english",
-        target_lang: TARGET_LANGS[lang] || "french",
+        target_lang: TARGET_LANGS[lang],
       });
+      if (!r || !r.translated_text) throw new Error("Traduction vide renvoyée par l'IA");
       out.push(r.translated_text);
     }
-    const response = Response.json(
-      { id, summary: out.join(" ") },
-      { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } }
-    );
+    const summary = out.join(" ");
+
+    // 3) On range la traduction dans D1 pour ne plus jamais la refaire
+    if (env.DB) {
+      try {
+        ctx.waitUntil(
+          env.DB.prepare("INSERT OR REPLACE INTO translations (game_id, lang, summary, created_at) VALUES (?, ?, ?, ?)")
+            .bind(id, lang, summary, Math.floor(Date.now() / 1000)).run().catch(() => {})
+        );
+      } catch (e) {}
+    }
+
+    const response = Response.json({ id, summary }, { headers: okHeaders });
     cachePut(ctx, key, response.clone());
     return response;
   } catch (e) {
