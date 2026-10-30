@@ -632,6 +632,9 @@ main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding
   .rv-card p { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: var(--mut); }
   .rv-card .rv-read { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--acc); }
   .rv-note { font-size: 11px; color: var(--mut); margin-top: 8px; }
+  .rv-sites { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .rv-site { display: flex; align-items: center; justify-content: center; min-height: 42px; background: var(--cov); border-radius: var(--radius); color: var(--txt); font-weight: 700; font-size: 13px; text-decoration: none; border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); }
+  .rv-site:active { transform: scale(0.97); }
 
   .hype-pro-badge {
     display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; font-size: 0.65rem; font-weight: 800; border-radius: 10px;
@@ -3971,6 +3974,29 @@ function scoreTile(value, label, sub, url, colorScore) {
   return tile;
 }
 
+// ▸ renderTestSites : boutons « Lire le test » vers les sites français.
+// Le « \ » devant la recherche DuckDuckGo ouvre directement le premier résultat (le test du site).
+const TEST_SITES = [
+  { name: "Jeuxvideo.com", domain: "jeuxvideo.com" },
+  { name: "Gamekult", domain: "gamekult.com" },
+  { name: "Gameblog", domain: "gameblog.fr" },
+  { name: "JeuxActu", domain: "jeuxactu.com" },
+];
+function renderTestSites(gameName) {
+  const wrap = el("div", "rv-sites-wrap");
+  wrap.append(el("p", "rv-note", "📰 Lire le test sur :"));
+  const grid = el("div", "rv-sites");
+  TEST_SITES.forEach((s) => {
+    const a = el("a", "rv-site", s.name + " ↗");
+    a.href = "https://duckduckgo.com/?q=" + encodeURIComponent(`\\test ${gameName} site:${s.domain}`);
+    a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.addEventListener("click", () => playThemeSound(theme));
+    grid.append(a);
+  });
+  wrap.append(grid);
+  return wrap;
+}
+
 // ▸ renderReviews : construit la section à partir de la réponse du Worker
 function renderReviews(data, it) {
   const out = [el("p", "m", "⭐ Notes & tests")];
@@ -3989,14 +4015,15 @@ function renderReviews(data, it) {
     tiles.append(scoreTile(String(data.igdb.players), "Joueurs", `${data.igdb.playersCount} votes`, null, data.igdb.players));
   }
 
-  if (!tiles.children.length) {
-    const upcoming = it.date && it.date > new Date().toISOString().slice(0, 10);
-    out.push(el("p", "rv-note", upcoming
-      ? "Pas encore testé : les notes apparaîtront ici dès la sortie."
-      : "Pas encore de note pour ce jeu."));
+  const upcoming = it.date && it.date > new Date().toISOString().slice(0, 10);
+  if (!tiles.children.length && upcoming) {
+    out.push(el("p", "rv-note", "Pas encore testé : les notes apparaîtront ici dès la sortie."));
     return out;
   }
-  out.push(tiles);
+  if (tiles.children.length) out.push(tiles);
+  else out.push(el("p", "rv-note", "Pas encore de note pour ce jeu."));
+  // Jeu sorti : boutons vers les tests des sites français
+  if (!upcoming) out.push(renderTestSites(data.name || it.g.name));
 
   // Cartes des tests (OpenCritic) : les 4 premiers, puis bouton « Voir tous les tests »
   const reviews = (oc && oc.reviews) || [];
