@@ -42,6 +42,7 @@
      22. CORRECTIFS DE TEXTE & THÈMES GAME BOY
      23. VERSION BUREAU (PC ≥ 900 px)
      24. FINITION PRO — icônes SVG, en-tête compact, badges, fiche jeu, PC
+     25. PAGES BOUTIQUE, COLLECTION, ARCADE, PROFIL — onglets, cartes, réglages
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -2414,6 +2415,352 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
   .sheet-col-b > .rv-box > .sheet-sec-title:first-child { margin-top: 6px; }
 }
 
+/* ====================================================================
+   25. PAGES BOUTIQUE, COLLECTION, ARCADE, PROFIL
+   Même langage que l'accueil : onglets segmentés, titres courts,
+   cartes sur fond sombre, contours gris, orange réservé aux actions.
+   ==================================================================== */
+
+/* --- En-tête des pages : grand titre façon iOS, sans bandeau --- */
+.magazine-edition-banner { display: none !important; }
+.sticky-header-container .neon-logo:not(#sub-title) {
+  font-family: var(--font) !important; font-size: 28px !important; font-weight: 800 !important;
+  letter-spacing: 0.2px !important; text-transform: none !important; color: var(--txt) !important; line-height: 1.1 !important;
+}
+.sticky-header-container .neon-logo:not(#sub-title) .retro-icon { display: none !important; }
+.retro-library-bg { opacity: 0.35; }
+
+/* Anciens grands encadrés orange : neutralisés partout */
+.shop-banner { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+
+/* --- Onglets segmentés --- */
+.seg {
+  position: relative; isolation: isolate; display: grid; grid-template-columns: repeat(var(--seg-n, 2), minmax(0, 1fr));
+  padding: 4px; margin: 14px 0 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+}
+.seg::before {
+  content: ""; position: absolute; z-index: -1; top: 4px; bottom: 4px; left: 4px;
+  width: calc((100% - 8px) / var(--seg-n, 2)); transform: translateX(calc(100% * var(--seg-i, 0)));
+  background: var(--cov); border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); transition: transform 0.3s var(--ease);
+}
+.seg-btn {
+  all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0;
+  height: 38px; padding: 0 6px; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--mut); transition: color 0.2s ease;
+}
+.seg-btn span { overflow: hidden; text-overflow: ellipsis; }
+.seg-btn .ic { width: 16px; height: 16px; }
+.seg-btn[aria-selected="true"] { color: var(--txt); }
+.seg-btn[aria-selected="true"] .ic { color: var(--acc); }
+.seg-btn:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
+
+/* --- Titre de section --- */
+.pg-body { display: flex; flex-direction: column; gap: 14px; }
+.pg-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 0 2px 2px; }
+.pg-head h2 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: 0.2px; color: var(--txt); }
+.pg-head p { margin: 3px 0 0; font-size: 14px; font-weight: 500; color: var(--mut); line-height: 1.4; }
+.pg-head-aside { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--mut); white-space: nowrap; }
+.pg-head-aside b { color: var(--txt); font-weight: 800; }
+.pill-acc { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; color: var(--acc); background: color-mix(in srgb, var(--acc) 15%, transparent); }
+
+/* --- Écran vide --- */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  padding: 40px 24px; border: 1px dashed var(--line-2); border-radius: 18px; background: color-mix(in srgb, var(--card) 60%, transparent);
+}
+.empty-ic { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; color: var(--acc); background: color-mix(in srgb, var(--acc) 13%, transparent); }
+.empty-ic .ic { width: 32px; height: 32px; stroke-width: 1.6; }
+.empty-state b { font-size: 17px; font-weight: 800; color: var(--txt); }
+.empty-state p { margin: 0; font-size: 14px; font-weight: 500; color: var(--mut); max-width: 300px; line-height: 1.45; }
+.empty-btn { width: auto !important; min-height: 46px !important; padding: 0 24px !important; margin-top: 14px !important; border-radius: 14px !important; }
+
+/* ====================== BOUTIQUE ====================== */
+/* Thème à acheter : aperçu + infos */
+.shop-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.theme-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.theme-card.is-owned { border-color: rgba(34, 197, 94, 0.35); }
+.theme-preview { position: relative; aspect-ratio: 16 / 9; padding: 16px 18px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; }
+.theme-preview-dn {
+  background: radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.18), transparent 45%), repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 22px), #0a0a0a;
+}
+.tp-bar { display: flex; align-items: center; justify-content: space-between; }
+.tp-bar span { width: 38%; height: 8px; border-radius: 4px; background: #e5e5e5; }
+.tp-bar i { width: 18px; height: 18px; border-radius: 50%; background: #ef4444; }
+.tp-row { display: flex; gap: 10px; align-items: center; padding: 7px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.07); }
+.tp-row b { width: 22px; height: 28px; border-radius: 4px; background: linear-gradient(160deg, #3f3f46, #18181b); flex: none; }
+.tp-row div { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.tp-row span { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.55); width: 70%; }
+.tp-row span.short { width: 40%; background: rgba(239, 68, 68, 0.75); }
+.tp-mark { position: absolute; right: 14px; bottom: 10px; color: #ef4444; opacity: 0.9; }
+.tp-mark .ic { width: 40px; height: 40px; }
+.theme-card-body { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
+.theme-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.theme-card-head h3 { margin: 0; font-size: 18px; font-weight: 800; color: var(--txt); }
+.theme-card-body p { margin: 0 0 6px; font-size: 14px; font-weight: 500; color: var(--mut); line-height: 1.45; }
+.theme-card-body .cta, .theme-card-body .cta-sec { margin: 0 !important; border-radius: 14px !important; }
+.price-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 14px; font-weight: 800; color: var(--txt); background: var(--cov); }
+.price-tag .ic { width: 16px; height: 16px; }
+.price-tag.is-owned { color: #22C55E; background: rgba(34, 197, 94, 0.13); }
+.price-tag.is-owned .ic { color: #22C55E; }
+
+/* Boosters : défilement horizontal sur téléphone, grille sur PC */
+.booster-row {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 74%; gap: 12px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  margin: 0 -20px; padding: 2px 20px 10px; scroll-padding: 0 20px;
+}
+.booster-row::-webkit-scrollbar { display: none; }
+.booster {
+  scroll-snap-align: start; display: flex; flex-direction: column; cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+  transition: transform 0.2s var(--ease), border-color 0.2s ease;
+}
+.booster:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+.booster:active { transform: scale(0.98); }
+.booster-art {
+  display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 3;
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--c) 35%, transparent), transparent 65%), color-mix(in srgb, var(--c) 8%, var(--bg));
+}
+.booster-cart {
+  position: relative; width: 74px; height: 94px; border-radius: 9px 9px 5px 5px; display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 8px;
+  background: linear-gradient(160deg, #262a33, #0f1116); border: 2px solid var(--c); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+}
+.booster-label { width: 48px; height: 26px; border-radius: 4px; background: color-mix(in srgb, var(--c) 30%, transparent); border: 1px solid var(--c); }
+.booster-code { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--c); }
+.booster-pins { position: absolute; bottom: 6px; left: 14px; right: 14px; height: 6px; border-radius: 1px; background: repeating-linear-gradient(90deg, #E5B93B 0 3px, transparent 3px 5px); }
+.booster-info { padding: 14px 14px 4px; display: flex; flex-direction: column; gap: 2px; }
+.booster-info small { font-size: 11.5px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--c); }
+.booster-info h3 { margin: 0; font-size: 18px; font-weight: 800; color: var(--txt); }
+.booster-info p { margin: 0; font-size: 13px; font-weight: 500; color: var(--mut); }
+.booster-buy {
+  margin: 10px 14px 14px; height: 44px; border: 0; border-radius: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font); font-size: 16px; font-weight: 800; color: #0b0d12; background: var(--c);
+}
+.booster-buy .ic { width: 18px; height: 18px; }
+.booster-buy:active { transform: scale(0.97); }
+
+/* Défis : carte avec barre de progression */
+.quest-list { display: flex; flex-direction: column; gap: 10px; }
+.quest { display: flex; gap: 12px; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.quest.is-ready { border-color: color-mix(in srgb, var(--acc) 45%, transparent); }
+.quest.is-claimed { opacity: 0.7; }
+.quest-ic { width: 40px; height: 40px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--acc); background: color-mix(in srgb, var(--acc) 13%, transparent); }
+.quest-ic .ic { width: 20px; height: 20px; }
+.quest.is-claimed .quest-ic { color: #22C55E; background: rgba(34, 197, 94, 0.13); }
+.quest-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.quest-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.quest-top b { font-size: 15px; font-weight: 800; color: var(--txt); }
+.quest-main > small { font-size: 13px; font-weight: 500; color: var(--mut); }
+.quest-reward { flex: none; font-size: 12.5px; font-weight: 800; color: var(--txt); white-space: nowrap; }
+.quest-foot { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.quest-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--cov); overflow: hidden; }
+.quest-bar span { display: block; height: 100%; border-radius: 3px; background: var(--acc); transition: width 0.4s var(--ease); }
+.quest.is-claimed .quest-bar span { background: #22C55E; }
+.quest-count { font-size: 12px; font-weight: 700; color: var(--mut); min-width: 28px; text-align: right; }
+.quest-btn {
+  flex: none; display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 14px; border-radius: 999px; border: 0;
+  font-family: var(--font); font-size: 13px; font-weight: 800; color: var(--mut); background: var(--cov); cursor: default;
+}
+.quest-btn .ic { width: 15px; height: 15px; color: #22C55E; }
+.quest-btn.is-ready { color: var(--on); background: var(--acc); cursor: pointer; }
+
+/* ====================== COLLECTION ====================== */
+.shelf { display: flex; flex-direction: column; gap: 10px; }
+.shelf + .shelf { margin-top: 8px; }
+.shelf-head { display: flex; align-items: center; gap: 8px; }
+.shelf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.shelf-head b { font-size: 15px; font-weight: 800; color: var(--txt); }
+.shelf-head small { font-size: 12px; font-weight: 800; color: var(--mut); padding: 1px 8px; border-radius: 999px; background: var(--cov); }
+.shelf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.shelf-item { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.shelf-item img {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; background: var(--cov);
+  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35); transition: transform 0.2s var(--ease);
+}
+.shelf-item:hover img { transform: translateY(-3px); }
+.shelf-item span { font-size: 12px; font-weight: 700; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Musée : cartes de consoles plus sobres, avec photo */
+.constructor-section { margin-bottom: 10px !important; }
+.constructor-title {
+  font-family: var(--font) !important; font-size: 15px !important; font-weight: 800 !important; letter-spacing: 0.2px !important;
+  text-transform: none !important; color: var(--txt) !important; text-shadow: none !important; margin: 4px 2px 10px !important;
+}
+.constructor-title small { font-size: 12px; font-weight: 800; color: var(--mut); padding: 1px 8px; border-radius: 999px; background: var(--cov); }
+.vitrine-grid { gap: 12px !important; }
+.console-vitrine-card {
+  background: var(--card) !important; border: 1px solid var(--line) !important; box-shadow: none !important;
+  border-radius: 16px !important; padding: 10px 10px 12px !important; gap: 10px !important;
+}
+.console-vitrine-card::before { display: none !important; }
+.console-vitrine-card:hover { transform: translateY(-2px) !important; box-shadow: none !important; border-color: color-mix(in srgb, var(--console-color, var(--acc)) 55%, transparent) !important; }
+.console-photo-container {
+  height: 96px !important; border: 0 !important; box-shadow: none !important; border-radius: 12px !important;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--console-color, var(--acc)) 22%, transparent), transparent 70%), var(--cov) !important;
+}
+.console-photo { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45)); }
+.console-icon-badge { box-shadow: none !important; text-shadow: none !important; border-width: 1px !important; font-size: 12px !important; }
+.console-vitrine-card b { text-shadow: none !important; font-size: 14px !important; }
+.console-brand-tag { display: none; }
+
+/* ====================== ARCADE ====================== */
+.cab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cab {
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 10px; padding: 10px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; transition: transform 0.2s var(--ease), border-color 0.2s ease;
+}
+.cab:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--acc) 45%, transparent); }
+.cab:active { transform: scale(0.98); }
+.cab-screen {
+  position: relative; aspect-ratio: 4 / 3; border-radius: 11px; overflow: hidden; background: var(--scr); color: var(--fg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 0 30px rgba(0, 0, 0, 0.35);
+}
+.cab-screen::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px); pointer-events: none; }
+.cab-screen .ic { width: 30px; height: 30px; }
+.cab-screen span { font-family: 'Press Start 2P', monospace; font-size: 9.5px; letter-spacing: 0.5px; }
+.cab-info { display: flex; flex-direction: column; gap: 1px; padding: 0 2px; }
+.cab-info b { font-size: 15px; font-weight: 800; color: var(--txt); }
+.cab-info small { font-size: 12.5px; font-weight: 500; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cab-play { display: inline-flex; align-items: center; gap: 5px; margin: 0 2px 2px; font-size: 13px; font-weight: 800; color: var(--acc); }
+.cab-play .ic { width: 17px; height: 17px; }
+.game-overlay { position: fixed; inset: 0; z-index: 999999; background: #000; }
+.game-overlay iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* Scores */
+.score-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.score-form #scoreGameName { grid-column: 1 / -1; }
+.score-form .cta { width: auto !important; margin: 0 !important; padding: 0 18px !important; min-height: 44px !important; border-radius: 12px !important; box-shadow: none !important; }
+.score-form .field, #settingsPageContent .search-box {
+  height: 44px; background-image: none !important; padding-left: 14px !important; background-color: var(--bg) !important;
+}
+.score-list { display: flex; flex-direction: column; gap: 8px; }
+.score-row { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.score-rank { width: 30px; height: 30px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: var(--mut); background: var(--cov); }
+.score-row.is-top .score-rank { color: var(--on); background: var(--acc); }
+.score-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.score-txt b { font-size: 15px; font-weight: 800; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.score-txt small { font-size: 12px; color: var(--mut); font-weight: 600; }
+.score-val { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--txt); white-space: nowrap; }
+.score-del { width: 32px; height: 32px; flex: none; border: 0; border-radius: 10px; background: transparent; color: var(--mut); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.score-del:hover { color: #EF4444; background: rgba(239, 68, 68, 0.12); }
+.score-del .ic { width: 16px; height: 16px; }
+
+/* ====================== PROFIL : RÉGLAGES FAÇON IPHONE ====================== */
+.set-page { display: flex; flex-direction: column; gap: 20px; }
+.set-group { display: flex; flex-direction: column; gap: 8px; }
+.set-title {
+  display: flex; align-items: center; gap: 8px; margin: 0 4px; color: var(--mut);
+  font-size: 12.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+}
+.set-title .ic { width: 15px; height: 15px; color: var(--acc); }
+.set-list { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.set-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; min-height: 58px; }
+.set-row + .set-row { border-top: 1px solid var(--line); }
+.set-ic { width: 32px; height: 32px; flex: none; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--acc); background: color-mix(in srgb, var(--acc) 13%, transparent); }
+.set-ic .ic { width: 17px; height: 17px; }
+.set-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.set-txt b { font-size: 15px; font-weight: 700; color: var(--txt); }
+.set-txt small { font-size: 12.5px; font-weight: 500; color: var(--mut); line-height: 1.3; }
+
+/* Interrupteur on/off */
+.switch {
+  position: relative; flex: none; width: 50px; height: 30px; padding: 0; border: 0; border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--txt) 22%, transparent); transition: background 0.2s ease;
+}
+.switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: transform 0.22s var(--ease);
+}
+.switch[aria-checked="true"] { background: #22C55E; }
+.switch[aria-checked="true"]::after { transform: translateX(20px); }
+.switch:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+.set-select {
+  flex: none; max-width: 46%; appearance: none; -webkit-appearance: none; cursor: pointer; outline: none;
+  padding: 8px 30px 8px 12px; border: 0; border-radius: 10px; font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--txt);
+  background: var(--cov) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238C93A3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 10px center;
+}
+.mini-seg { flex: none; display: inline-flex; padding: 3px; gap: 2px; border-radius: 10px; background: var(--cov); }
+.mini-seg button { border: 0; background: transparent; padding: 6px 10px; border-radius: 8px; font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--mut); cursor: pointer; }
+.mini-seg button[aria-pressed="true"] { background: var(--card); color: var(--txt); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); }
+.set-action {
+  flex: none; border: 0; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+  font-family: var(--font); font-size: 14px; font-weight: 800; color: var(--acc); background: color-mix(in srgb, var(--acc) 14%, transparent);
+}
+.set-action:active { transform: scale(0.96); }
+.set-stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; padding: 14px 8px; }
+.set-stats div { display: flex; flex-direction: column; }
+.set-stats div + div { border-left: 1px solid var(--line); }
+.set-stats b { font-size: 22px; font-weight: 900; color: var(--txt); }
+.set-stats small { font-size: 12px; font-weight: 600; color: var(--mut); }
+.set-stats + .set-row { border-top: 1px solid var(--line); }
+
+/* Tuiles de choix (fond, thèmes) : contour + coche pour la sélection */
+.choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.choice-tile {
+  display: flex; align-items: center; gap: 9px; height: 46px; padding: 0 12px; min-width: 0; cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; color: var(--txt);
+  font-family: var(--font); font-size: 14px; font-weight: 700; text-align: left; transition: border-color 0.15s ease, background 0.15s ease;
+}
+.choice-tile:hover { border-color: var(--line-2); }
+.choice-dot { width: 14px; height: 14px; flex: none; border-radius: 50%; box-shadow: 0 0 0 2px color-mix(in srgb, var(--txt) 12%, transparent); }
+.choice-label { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.choice-tile .choice-check { width: 18px; height: 18px; color: var(--acc); opacity: 0; transition: opacity 0.15s ease; }
+.choice-tile[aria-pressed="true"] { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 10%, var(--card)); }
+.choice-tile[aria-pressed="true"] .choice-check { opacity: 1; }
+.choice-tile.is-locked { color: var(--mut); }
+.choice-tile .choice-lock { width: 16px; height: 16px; color: var(--mut); }
+
+/* Compte, sauvegarde, mentions : mêmes cartes */
+#settingsPageContent .settings-section { background: var(--card) !important; border: 1px solid var(--line) !important; box-shadow: none !important; border-radius: 16px !important; padding: 16px !important; margin-bottom: 0 !important; }
+#settingsPageContent .settings-section-title { color: var(--mut) !important; font-size: 12.5px !important; letter-spacing: 1.2px !important; margin-bottom: 12px !important; text-shadow: none !important; }
+.acct-status { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 12px; border-radius: 14px; background: var(--cov); }
+.acct-avatar { width: 42px; height: 42px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: var(--on); background: var(--acc); }
+.acct-status:not(.is-on) .acct-avatar { color: var(--mut); background: var(--card); }
+.acct-avatar .ic { width: 20px; height: 20px; }
+.acct-status > div { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.acct-status b { font-size: 15px; font-weight: 800; color: var(--txt); }
+.acct-status small { font-size: 12.5px; color: var(--mut); font-weight: 500; }
+.acct-status i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+#settingsPageContent label { font-size: 12.5px !important; font-weight: 700; }
+
+/* --- Barre latérale PC : profil et crédits en bas --- */
+.sidebar-account { display: none; }
+
+@media (min-width: 600px) {
+  .shelf-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cab-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .theme-card { flex-direction: row; }
+  .theme-preview { width: 46%; aspect-ratio: auto; min-height: 210px; }
+  .theme-card-body { flex: 1; justify-content: center; padding: 22px; }
+}
+
+@media (min-width: 900px) {
+  /* Profil et crédits : une seule fois, en bas de la barre latérale */
+  .sticky-header-container .header-top .nav { display: none !important; }
+  #homeMainContent .header-top { display: none !important; }
+  .sidebar-account {
+    display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);
+  }
+  .sidebar-account .user-header-badge, .sidebar-account .player-badge { width: 100%; }
+  .sidebar-account .player-badge { justify-content: flex-start !important; height: 46px !important; border-radius: 14px !important; padding: 0 14px !important; font-size: 14px !important; gap: 10px !important; }
+  .sidebar-account .sidebar-coins { width: 100%; justify-content: flex-start !important; height: 46px !important; border-radius: 14px !important; padding: 0 14px !important; font-size: 14px !important; gap: 10px !important; }
+
+  /* Grilles larges */
+  .booster-row { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin: 0; padding: 0; }
+  .shelf-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .cab-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .quest-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .seg { max-width: 520px; }
+  .set-page:not(.set-page-legal) { display: block; columns: 2; column-gap: 20px; }
+  .set-page:not(.set-page-legal) > * { break-inside: avoid; margin-bottom: 20px; }
+  .set-page .choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vitrine-grid { grid-template-columns: repeat(5, 1fr) !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2523,12 +2870,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="#FFB300" stroke="#FFE89E" stroke-width="1.2"/><path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/></svg>
-          BOUTIQUE ARCADE
+          Boutique
         </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="shopPageCoins">100</span>
+            🪙 <span id="shopPageCoins" class="coins-value">100</span>
           </div>
         </div>
       </div>
@@ -2546,12 +2893,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          VITRINE DE COLLECTION
+          Collection
         </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="vitrinePageCoins">100</span>
+            🪙 <span id="vitrinePageCoins" class="coins-value">100</span>
           </div>
         </div>
       </div>
@@ -2583,12 +2930,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><path d="M2 7.5L12 2.5L22 7.5H2Z" fill="rgba(255,122,69,0.3)" stroke="#FF7A45" stroke-width="1.4"/><path d="M4.5 9V18M9.5 9V18M14.5 9V18M19.5 9V18" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M2 18.5H22" stroke="#FF7A45" stroke-width="1.6"/></svg>
-          MUSÉE CONSOLES
+          Collection
         </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="museumPageCoins">100</span>
+            🪙 <span id="museumPageCoins" class="coins-value">100</span>
           </div>
         </div>
       </div>
@@ -2606,12 +2953,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="4" fill="#FF3B30" stroke="#FFA39E" stroke-width="1.2"/><path d="M11 9.5L10 16H14L13 9.5" fill="#C5C8D0"/><path d="M4 17L6 21H18L20 17H4Z" fill="#1C212D" stroke="#FF7A45" stroke-width="1.4"/></svg>
-          SALLE ARCADE
+          Arcade
         </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="arcadePageCoins">100</span>
+            🪙 <span id="arcadePageCoins" class="coins-value">100</span>
           </div>
         </div>
       </div>
@@ -2629,12 +2976,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
       <div class="header-top" style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
         <div class="neon-logo">
           <svg class="retro-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="var(--acc)" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="var(--acc)" stroke-width="1.8"/></svg>
-          SYSTÈME & PROFIL
+          Profil
         </div>
         <div class="nav" style="flex-shrink: 0;">
           <div class="user-header-badge" onclick="openSettingsMainPage();"></div>
           <div class="header-currency-badge" style="padding: 6px 8px; font-size: 12px;">
-            🪙 <span id="settingsPageCoins">100</span>
+            🪙 <span id="settingsPageCoins" class="coins-value">100</span>
           </div>
         </div>
       </div>
@@ -2667,7 +3014,7 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
               <circle cx="12" cy="12" r="7" stroke="#9E6100" stroke-width="1" stroke-dasharray="2 1.5"/>
               <path d="M14 8.5C13.4 8.2 12.7 8 12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C12.7 16 13.4 15.8 14 15.5" stroke="#5D3800" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
-            <span id="userCoins">100</span>
+            <span id="userCoins" class="coins-value">100</span>
         </div>
       </div>
         </div>
@@ -2772,6 +3119,12 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
     </svg>
     <span>Profil</span>
   </button>
+
+  <!-- PC : profil et crédits en bas de la barre latérale -->
+  <div class="sidebar-account">
+    <div class="user-header-badge"></div>
+    <div class="header-currency-badge sidebar-coins" title="Mes crédits">🪙 <span class="coins-value" id="sidebarCoins">100</span></div>
+  </div>
 </nav>
 
 <!-- ===================================================================
@@ -2998,6 +3351,102 @@ function unlockBackground() {
   document.body.classList.remove("bg-locked");
   document.body.style.top = "";
   window.scrollTo(0, _bgScrollY);
+}
+
+// ▸ BRIQUES D'INTERFACE des pages Boutique, Collection, Arcade et Profil
+// (mêmes onglets, mêmes titres, mêmes cartes partout → une seule app cohérente)
+
+// ▸ pageTabs : onglets segmentés façon iOS. items = [{ label, icon }], onSelect(index)
+function pageTabs(items, onSelect) {
+  const bar = el("div", "seg");
+  bar.setAttribute("role", "tablist");
+  const btns = items.map((it, i) => {
+    const b = el("button", "seg-btn");
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.innerHTML = `${it.icon ? icon(it.icon) : ""}<span>${esc(it.label)}</span>`;
+    b.addEventListener("click", () => { playThemeSound(theme); select(i); onSelect(i); });
+    bar.append(b);
+    return b;
+  });
+  function select(i) {
+    btns.forEach((b, k) => { b.setAttribute("aria-selected", String(k === i)); b.setAttribute("aria-pressed", String(k === i)); });
+    bar.style.setProperty("--seg-i", i);
+  }
+  bar.style.setProperty("--seg-n", items.length);
+  return { el: bar, select };
+}
+
+// ▸ pageHead : titre de section (titre court + phrase grise + info à droite)
+function pageHead(title, sub, aside) {
+  const h = el("div", "pg-head");
+  const txt = el("div", "pg-head-txt");
+  txt.append(el("h2", "", title));
+  if (sub) txt.append(el("p", "", sub));
+  h.append(txt);
+  if (aside) { const a = el("span", "pg-head-aside"); a.innerHTML = aside; h.append(a); }
+  return h;
+}
+
+// ▸ emptyState : écran vide (icône, phrase, bouton)
+function emptyState(iconName, title, text, btnLabel, onClick) {
+  const box = el("div", "empty-state");
+  box.innerHTML = `<div class="empty-ic">${icon(iconName)}</div>`;
+  box.append(el("b", "", title));
+  if (text) box.append(el("p", "", text));
+  if (btnLabel) {
+    const b = el("button", "cta empty-btn", btnLabel);
+    b.addEventListener("click", () => { playThemeSound(theme); onClick(); });
+    box.append(b);
+  }
+  return box;
+}
+
+// ▸ settingsGroup : bloc de réglages (titre gris + liste à lignes)
+function settingsGroup(title, iconName) {
+  const g = el("section", "set-group");
+  const h = el("h3", "set-title");
+  h.innerHTML = `${iconName ? icon(iconName) : ""}<span>${esc(title)}</span>`;
+  const list = el("div", "set-list");
+  g.append(h, list);
+  return { el: g, list };
+}
+
+// ▸ settingRow : une ligne de réglage. control = élément à droite (interrupteur, bouton…)
+function settingRow(iconName, label, sub, control) {
+  const row = el("div", "set-row");
+  const ic = el("span", "set-ic"); ic.innerHTML = icon(iconName);
+  const txt = el("div", "set-txt");
+  txt.append(el("b", "", label));
+  if (sub) txt.append(el("small", "", sub));
+  row.append(ic, txt);
+  if (control) row.append(control);
+  return row;
+}
+
+// ▸ toggleSwitch : interrupteur on/off (role="switch")
+function toggleSwitch(on, onChange) {
+  const sw = el("button", "switch");
+  sw.type = "button";
+  sw.setAttribute("role", "switch");
+  sw.setAttribute("aria-checked", String(!!on));
+  sw.addEventListener("click", () => {
+    const next = sw.getAttribute("aria-checked") !== "true";
+    sw.setAttribute("aria-checked", String(next));
+    onChange(next);
+  });
+  return sw;
+}
+
+// ▸ goToPage : ouvre une page depuis un bouton (ex. « Ouvrir un booster » -> Boutique, onglet Boosters)
+function goToPage(page, tab) {
+  if (typeof closeSheet === "function") closeSheet();
+  hideAllMainPages();
+  if (page === "shop") {
+    setActiveNav(document.getElementById("navShopArcade"));
+    document.getElementById("shopMainPage").style.display = "block";
+    renderShopMainPage(tab || 0);
+  }
 }
 
 // =====================================================================
@@ -4802,8 +5251,8 @@ function updateNavbarTranslations() {
 
 // ▸ updateCoinsUI : affiche le nombre de crédits et l'enregistre
 function updateCoinsUI() {
-  const badge = $("#userCoins");
-  if (badge) badge.textContent = userCoins;
+  // tous les compteurs de crédits (en-têtes des pages, barre latérale PC…)
+  document.querySelectorAll(".coins-value").forEach((n) => { n.textContent = userCoins; });
   try { localStorage.setItem("userCoins", userCoins); } catch (e) {}
 }
 
@@ -4920,11 +5369,11 @@ function checkDailyConnection() {
 // 12. PAGE BOUTIQUE & PACKS
 // =====================================================================
 
-// ▸ renderShopMainPage : page Boutique (thèmes, packs, défis)
-function renderShopMainPage() {
+// ▸ renderShopMainPage : page Boutique — onglets Thèmes · Boosters · Défis (tab = onglet ouvert)
+function renderShopMainPage(tab = 0) {
   const shopPage = document.getElementById("shopMainPage");
   if (!shopPage) return;
-  
+
   shopPage.style.display = "block";
   const contentArea = document.getElementById("shopPageContent");
   if (!contentArea) return;
@@ -4933,380 +5382,178 @@ function renderShopMainPage() {
   const coinSpan = document.getElementById("shopPageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  if (typeof checkDailyConnection === "function") {
-    checkDailyConnection();
-  }
+  if (typeof checkDailyConnection === "function") checkDailyConnection();
 
-  const subNav = el("div");
-  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:10px;";
+  const displayBox = el("div", "pg-body");
+  const views = [showThemes, showPacks, showChallenges];
+  const tabs = pageTabs(
+    [{ label: "Thèmes", icon: "palette" }, { label: "Boosters", icon: "ticket" }, { label: "Défis", icon: "target" }],
+    (i) => views[i]()
+  );
 
-  const btnShop = el("button", "chip", t('shopThemesTab') || "🏬 Boutique Thèmes");
-  const btnPacks = el("button", "chip", t('mysteryPacksTab') || "🎟️ Packs Mystères");
-  const btnChallenges = el("button", "chip", t('questsTab') || "🎯 Défis & Quêtes");
-
-  [btnShop, btnPacks, btnChallenges].forEach(b => {
-    b.style.flex = "1";
-    b.style.minHeight = "38px";
-    b.style.fontSize = "11px";
-  });
-
-  const displayBox = el("div");
-  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
-
-  // --- CONTENU 1 : BOUTIQUE DE THÈMES (AVEC DEATH NOTE DISPONIBLE À L'ACHAT) ---
-  function showMainShop() {
-    btnShop.setAttribute("aria-pressed", "true");
-    btnPacks.setAttribute("aria-pressed", "false");
-    btnChallenges.setAttribute("aria-pressed", "false");
-
+  // --- ONGLET 1 : THÈMES (Death Note à acheter) ---
+  function showThemes() {
     displayBox.replaceChildren();
+    displayBox.append(pageHead("Thèmes", "Débloque des ambiances exclusives avec tes crédits."));
 
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; text-align: center; padding: 20px;";
-
-    banner.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:2px;">🏬 Boutique d'Ambiance & Thèmes</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1px;">Dépensez vos pièces pour débloquer des éditions cultes</p>
-    `;
-
-    // 🍎 Carte du Thème Death Note
     const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
+    const isActive = document.body.classList.contains("theme-deathnote");
 
-    const shopThemeCard = el("div", "shop-pack-card");
-    shopThemeCard.style.cssText = `
-      background: linear-gradient(135deg, #151515 0%, #050505 100%);
-      border: 2px solid ${isThemeUnlocked ? '#22c55e' : '#ffffff'}; 
-      border-radius: 16px; padding: 20px;
-      display: flex; flex-direction: column; align-items: center; gap: 12px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.15);
-      width: 100%; max-width: 320px; margin: 0 auto;
-    `;
+    const grid = el("div", "shop-grid");
+    const card = el("article", "theme-card" + (isThemeUnlocked ? " is-owned" : ""));
 
-    shopThemeCard.innerHTML = `
-      <div style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1.5px;">
-        🍎 Édition Death Note
-      </div>
-      <p style="font-size:11px; color:var(--mut); margin:0; line-height: 1.4;">
-        Ambiance grimoire sombre, filigranes "How to Use It" et plumes de Shinigami volantes.
-      </p>
-      <div style="font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; color:${isThemeUnlocked ? '#22c55e' : '#ef4444'};">
-        ${isThemeUnlocked ? "✅ DÉBLOQUÉ" : "150 🪙"}
-      </div>
-    `;
+    // Aperçu : mini-écran de l'app aux couleurs du thème
+    const preview = el("div", "theme-preview theme-preview-dn");
+    preview.innerHTML = `
+      <div class="tp-bar"><span></span><i></i></div>
+      <div class="tp-row"><b></b><div><span></span><span class="short"></span></div></div>
+      <div class="tp-row"><b></b><div><span></span><span class="short"></span></div></div>
+      <div class="tp-row"><b></b><div><span></span><span class="short"></span></div></div>
+      <div class="tp-mark">${icon("apple")}</div>`;
 
-    const actionBtn = el("button", "cta", isThemeUnlocked ? "Activer le Thème" : "Acheter (150 Crédits)");
-    actionBtn.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; width:100%; margin-top:4px;";
+    const body = el("div", "theme-card-body");
+    const head = el("div", "theme-card-head");
+    head.append(el("h3", "", "Death Note"));
+    const tag = el("span", "price-tag" + (isThemeUnlocked ? " is-owned" : ""));
+    tag.innerHTML = isThemeUnlocked ? `${icon("check")}Débloqué` : `${icon("coin")}150`;
+    head.append(tag);
+    body.append(head, el("p", "", "Grimoire sombre, filigranes « How to Use It » et plumes de Shinigami volantes."));
 
+    const actionBtn = el("button", isThemeUnlocked && isActive ? "cta-sec" : "cta",
+      !isThemeUnlocked ? "Acheter · 150 crédits" : (isActive ? "Thème actif" : "Activer le thème"));
+    actionBtn.disabled = isThemeUnlocked && isActive;
     actionBtn.onclick = (e) => {
       e.stopPropagation();
       playThemeSound(theme);
-      
       if (!isThemeUnlocked) {
         if (userCoins < 150) {
-          showRetroAlert("Crédits insuffisants", "❌ Il vous faut 150 🪙 pour acquérir le thème Death Note !", true);
+          showRetroAlert("Crédits insuffisants", `Il te manque ${150 - userCoins} 🪙 pour débloquer le thème Death Note.`, true);
           return;
         }
         userCoins -= 150;
         updateCoinsUI();
         localStorage.setItem("unlocked_deathnote", "true");
-        showRetroAlert("Achat réussi !", "🎉 Le thème Death Note est désormais débloqué et disponible dans vos paramètres !");
-        showMainShop(); // Actualise l'affichage de la boutique
+        showToast("Thème Death Note débloqué !", "party");
+        showThemes();
       } else {
         toggleDeathNoteTheme(true);
-        showRetroAlert("Thème Actif", "📓 L'édition Death Note est activée !");
+        showToast("Thème Death Note activé", "apple");
+        showThemes();
       }
     };
-
-    shopThemeCard.append(actionBtn);
-    banner.append(shopThemeCard);
-    displayBox.append(banner);
+    body.append(actionBtn);
+    card.append(preview, body);
+    grid.append(card);
+    displayBox.append(grid);
   }
 
+  // --- ONGLET 2 : BOOSTERS ---
   function showPacks() {
-    btnShop.setAttribute("aria-pressed", "false");
-    btnPacks.setAttribute("aria-pressed", "true");
-    btnChallenges.setAttribute("aria-pressed", "false");
-
     displayBox.replaceChildren();
-    
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; text-align: center; padding: 22px;";
-
-    const headerTitle = el("div");
-    headerTitle.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:6px; text-shadow:0 0 10px var(--acc);">🎟️ Distributeur de Boosters Légendaires</h3>
-      <p style="font-size:11px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:1.5px;">Sélectionnez votre édition et révélez des jaquettes d'archives</p>
-    `;
-    banner.append(headerTitle);
-
-    const boostersGrid = el("div");
-    boostersGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; width: 100%; margin-top: 10px;";
+    displayBox.append(pageHead("Boosters", "Chaque booster révèle une jaquette pour ta vitrine.", `${icon("coin")}<b class="coins-value">${userCoins}</b>`));
 
     const packsConfig = [
-      {
-        name: "STANDARD",
-        sub: "Série Commune",
-        price: "25 🪙",
-        costNum: 25,
-        type: "Standard",
-        cat: "standard",
-        color: "#94a3b8",
-        glow: "rgba(148, 163, 184, 0.4)",
-        gradient: "linear-gradient(145deg, #1e2530 0%, #0b0f16 100%)",
-        badgeBg: "rgba(148, 163, 184, 0.2)"
-      },
-      {
-        name: "RÉTRO CLASSIC",
-        sub: "Série Rare 1985-2005",
-        price: "50 🪙",
-        costNum: 50,
-        type: "Rétro",
-        cat: "retro",
-        color: "#38bdf8",
-        glow: "rgba(56, 189, 248, 0.5)",
-        gradient: "linear-gradient(145deg, #10233f 0%, #070b14 100%)",
-        badgeBg: "rgba(56, 189, 248, 0.2)"
-      },
-      {
-        name: "SUPREME COLLECTOR",
-        sub: "Édition Holographique Ultime",
-        price: "100 🪙",
-        costNum: 100,
-        type: "Collector Rétro",
-        cat: "supreme_retro",
-        color: "#fbbf24",
-        glow: "rgba(251, 191, 36, 0.6)",
-        gradient: "linear-gradient(145deg, #332710 0%, #120c04 100%)",
-        badgeBg: "rgba(251, 191, 36, 0.25)"
-      }
+      { name: "Standard", sub: "Série commune", costNum: 25, type: "Standard", cat: "standard", color: "#94a3b8", odds: "Jeux récents" },
+      { name: "Rétro Classic", sub: "Série rare · 1985-2005", costNum: 50, type: "Rétro", cat: "retro", color: "#38bdf8", odds: "Classiques rétro" },
+      { name: "Supreme Collector", sub: "Édition holographique", costNum: 100, type: "Collector Rétro", cat: "supreme_retro", color: "#fbbf24", odds: "Cartes holographiques" },
     ];
 
-    packsConfig.forEach(cfg => {
-      const boosterCard = el("div", "booster-shop-card");
-      boosterCard.style.cssText = `
-        background: ${cfg.gradient}; border: 2px solid ${cfg.color}; border-radius: 16px;
-        padding: 18px 12px; display: flex; flex-direction: column; align-items: center;
-        justify-content: space-between; gap: 14px; cursor: pointer; position: relative; overflow: hidden;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow};
-        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-      `;
-
-      boosterCard.addEventListener("mouseenter", () => {
-        boosterCard.style.transform = "translateY(-6px) scale(1.03)";
-        boosterCard.style.boxShadow = `0 18px 40px rgba(0,0,0,0.85), 0 0 30px ${cfg.color}`;
-      });
-      boosterCard.addEventListener("mouseleave", () => {
-        boosterCard.style.transform = "translateY(0) scale(1)";
-        boosterCard.style.boxShadow = `0 12px 30px rgba(0,0,0,0.7), inset 0 0 20px ${cfg.glow}`;
-      });
-
-      const headerBox = el("div");
-      headerBox.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; z-index:2;";
-      headerBox.innerHTML = `
-        <span style="font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; color:${cfg.color}; text-transform:uppercase; letter-spacing:1px;">${cfg.sub}</span>
-        <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; background:${cfg.badgeBg}; padding:6px 10px; border-radius:8px; border:1px solid ${cfg.color}; text-transform:uppercase; letter-spacing:1.5px; width:100%; text-align:center; box-shadow: 0 0 10px ${cfg.glow};">${cfg.name}</div>
-      `;
-
-      const centerArt = el("div");
-      centerArt.style.cssText = `
-        width: 64px; height: 82px; background: rgba(0,0,0,0.6); border: 2px solid ${cfg.color};
-        border-radius: 8px 8px 4px 4px; position: relative; display: flex; flex-direction:column; align-items: center; justify-content: center;
-        box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 0 15px ${cfg.glow}; z-index:2;
-      `;
-      centerArt.innerHTML = `
-        <div style="width:40px; height:20px; background:${cfg.color}33; border:1px solid ${cfg.color}; border-radius:3px; margin-bottom:6px;"></div>
-        <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:12px; color:${cfg.color}; text-shadow:0 0 6px ${cfg.color};">CR-26</span>
-      `;
-
-      const buyBtn = el("button", "", cfg.price);
-      buyBtn.style.cssText = `
-        font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; padding:10px 14px; border-radius:10px;
-        background:${cfg.color}; color:#000; border:none; cursor:pointer; width:100%; text-transform:uppercase;
-        box-shadow: 0 0 15px ${cfg.color}; z-index:2; letter-spacing:1px;
-      `;
-      buyBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
-      });
-
-      boosterCard.append(headerBox, centerArt, buyBtn);
-      boosterCard.addEventListener("click", () => {
-        buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat);
-      });
-
-      boostersGrid.append(boosterCard);
+    const row = el("div", "booster-row");
+    packsConfig.forEach((cfg) => {
+      const card = el("article", "booster");
+      card.style.setProperty("--c", cfg.color);
+      card.innerHTML = `
+        <div class="booster-art">
+          <div class="booster-cart"><span class="booster-label"></span><span class="booster-code">CR-26</span><span class="booster-pins"></span></div>
+        </div>
+        <div class="booster-info">
+          <small>${esc(cfg.sub)}</small>
+          <h3>${esc(cfg.name)}</h3>
+          <p>${esc(cfg.odds)}</p>
+        </div>`;
+      const buyBtn = el("button", "booster-buy");
+      buyBtn.innerHTML = `${icon("coin")}<span>${cfg.costNum}</span>`;
+      buyBtn.setAttribute("aria-label", `Acheter le booster ${cfg.name} pour ${cfg.costNum} crédits`);
+      buyBtn.addEventListener("click", (e) => { e.stopPropagation(); buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat); });
+      card.append(buyBtn);
+      card.addEventListener("click", () => buyAndOpenPack(cfg.costNum, cfg.type, cfg.cat));
+      row.append(card);
     });
-
-    banner.append(boostersGrid);
-    displayBox.append(banner);
+    displayBox.append(row);
   }
 
+  // --- ONGLET 3 : DÉFIS ---
   function showChallenges() {
-    btnShop.setAttribute("aria-pressed", "false");
-    btnPacks.setAttribute("aria-pressed", "false");
-    btnChallenges.setAttribute("aria-pressed", "true");
-
     displayBox.replaceChildren();
     let cData = loadChallengesData();
-
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; padding: 18px;";
-
-    const headerBox = el("div");
-    headerBox.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); padding-bottom: 8px;";
-    headerBox.innerHTML = `
-      <div style="width: 8px; height: 8px; background: var(--acc); box-shadow: 0 0 10px var(--acc); border-radius: 50%;"></div>
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; letter-spacing:2px; color:var(--txt); text-transform:uppercase; margin:0;">SYSTÈMES DE QUÊTES & PROTOCOLES</h3>
-    `;
-    banner.append(headerBox);
+    const streak = cData.loginStreak || 1;
+    const packs = cData.weeklyProgress?.packsOpened || 0;
 
     const challengesList = [
-      {
-        id: "dailyLogin",
-        title: "SÉRIE DE CONNEXION",
-        desc: `SYNCHRONISATION ACTIVE : ${cData.loginStreak || 1} JOUR(S)`,
-        reward: "+10 🪙 / JOUR",
-        rewardAmount: 10,
-        isDone: true,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`
-      },
-      {
-        id: "dailyExploration",
-        title: "PROTOCOLE EXPLORATION",
-        desc: "CONSULTATION DE DONNÉES ARCHIVES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.curious,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
-      },
-      {
-        id: "dailyFavorite",
-        title: "INDEXATION FAVORIS",
-        desc: "MARQUAGE DE DONNÉES PRIORITAIRES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.favorite,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
-      },
-      {
-        id: "dailyConsoleFilter",
-        title: "BALAYAGE GLOBAL SECTEUR",
-        desc: "NAVIGATION MULTI-ZONES CONSOLES",
-        reward: "+10 🪙",
-        rewardAmount: 10,
-        isDone: !!cData.dailyProgress?.filterConsole,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
-      },
-      {
-        id: "weeklyPacks",
-        title: "ARCHIVAGE HEBDOMADAIRE",
-        desc: `PAKS OUVERTS : ${cData.weeklyProgress?.packsOpened || 0} / 3`,
-        reward: "+20 🪙",
-        rewardAmount: 20,
-        isDone: (cData.weeklyProgress?.packsOpened || 0) >= 3,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
-      },
-      {
-        id: "streak7Days",
-        title: "SYNCHRONISATION 7 JOURS",
-        desc: "OBJECTIF DE CONNEXION CONTINUE",
-        reward: "2 PACKS GRATUITS",
-        rewardAmount: 0,
-        isDone: (cData.loginStreak || 0) >= 7,
-        iconSvg: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`
-      }
+      { id: "dailyLogin", icon: "zap", title: "Série de connexion", desc: `Connecté ${streak} jour${streak > 1 ? "s" : ""} d'affilée`, reward: 10, rewardText: "+10 🪙 / jour", done: 1, goal: 1 },
+      { id: "dailyExploration", icon: "search", title: "Explorateur", desc: "Ouvre la fiche d'un jeu", reward: 10, done: cData.dailyProgress?.curious ? 1 : 0, goal: 1 },
+      { id: "dailyFavorite", icon: "heart", title: "Coup de cœur", desc: "Ajoute un jeu à tes favoris", reward: 10, done: cData.dailyProgress?.favorite ? 1 : 0, goal: 1 },
+      { id: "dailyConsoleFilter", icon: "globe", title: "Tour des consoles", desc: "Filtre la liste par console", reward: 10, done: cData.dailyProgress?.filterConsole ? 1 : 0, goal: 1 },
+      { id: "weeklyPacks", icon: "box", title: "Collectionneur de la semaine", desc: "Ouvre 3 boosters cette semaine", reward: 20, done: Math.min(packs, 3), goal: 3 },
+      { id: "streak7Days", icon: "trophy", title: "Fidèle 7 jours", desc: "Connecte-toi 7 jours de suite", reward: 0, rewardText: "2 boosters offerts", done: Math.min(cData.loginStreak || 0, 7), goal: 7 },
     ];
-challengesList.forEach(item => {
-      const row = el("div");
-      row.style.cssText = `
-        display: flex; flex-direction: column; gap: 10px;
-        background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-        border-radius: 10px; padding: 14px; width: 100%; box-sizing: border-box;
-      `;
 
-      // Ligne du haut : Icône + Titre + Description
-      const topGroup = el("div");
-      topGroup.style.cssText = "display: flex; align-items: flex-start; gap: 12px; width: 100%;";
+    const todo = challengesList.filter((c) => c.done >= c.goal && !(cData.claimedRewards && cData.claimedRewards[c.id])).length;
+    displayBox.append(pageHead("Défis", "Gagne des crédits en utilisant l'app chaque jour.", todo ? `<span class="pill-acc">${todo} à réclamer</span>` : ""));
 
-      const iconBox = el("div");
-      iconBox.style.cssText = "width: 32px; height: 32px; border-radius: 8px; background: color-mix(in srgb, var(--acc) 10%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;";
-      iconBox.innerHTML = item.iconSvg;
-
-      const textInfo = el("div");
-      textInfo.style.cssText = "display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;";
-      
-      const titleEl = el("span", "", item.title);
-      titleEl.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10.5px; font-weight:900; color:var(--txt); letter-spacing:1px; white-space: normal; overflow-wrap: break-word; line-height: 1.25; width: 100%;";
-
-      const descEl = el("span", "", item.desc);
-      descEl.style.cssText = "font-size:9.5px; color:var(--mut); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; white-space: normal; overflow-wrap: break-word; line-height: 1.2; width: 100%;";
-
-      textInfo.append(titleEl, descEl);
-      topGroup.append(iconBox, textInfo);
-
-      // Ligne du bas : Récompense + Bouton d'action alignés à droite
-      const bottomGroup = el("div");
-      bottomGroup.style.cssText = "display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; margin-top: 2px;";
-
-      const rewardBadge = el("span", "", item.reward);
-      rewardBadge.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:900; color:var(--acc); background:color-mix(in srgb, var(--acc) 12%, transparent); padding:4px 8px; border-radius:6px; border:1px solid color-mix(in srgb, var(--acc) 30%, transparent); white-space:nowrap;";
-
-      // Création du bouton interactif
+    const list = el("div", "quest-list");
+    challengesList.forEach((item) => {
       const isClaimed = cData.claimedRewards && cData.claimedRewards[item.id];
-      const statusBtn = document.createElement("button");
-      statusBtn.type = "button";
+      const isDone = item.done >= item.goal;
+      const row = el("article", "quest" + (isClaimed ? " is-claimed" : isDone ? " is-ready" : ""));
 
+      const ic = el("div", "quest-ic"); ic.innerHTML = icon(item.icon);
+      const main = el("div", "quest-main");
+      const top = el("div", "quest-top");
+      top.append(el("b", "", item.title));
+      const reward = el("span", "quest-reward", item.rewardText || `+${item.reward} 🪙`);
+      top.append(reward);
+      main.append(top, el("small", "", item.desc));
+
+      const bar = el("div", "quest-bar");
+      const fill = el("span"); fill.style.width = `${Math.round((item.done / item.goal) * 100)}%`;
+      bar.append(fill);
+      const foot = el("div", "quest-foot");
+      foot.append(bar, el("span", "quest-count", `${item.done}/${item.goal}`));
+
+      const statusBtn = el("button", "quest-btn");
+      statusBtn.type = "button";
       if (isClaimed) {
-        statusBtn.textContent = "VALIDÉ";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4);
-          cursor: default; white-space: nowrap;
-        `;
-      } else if (item.isDone) {
-        statusBtn.textContent = "RÉCLAMER";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px;
-          background: var(--acc); color: var(--on); border: 1px solid var(--acc);
-          cursor: pointer; white-space: nowrap; box-shadow: 0 0 8px var(--acc);
-        `;
+        statusBtn.innerHTML = `${icon("check")}Validé`;
+        statusBtn.disabled = true;
+      } else if (isDone) {
+        statusBtn.textContent = "Réclamer";
+        statusBtn.classList.add("is-ready");
         statusBtn.addEventListener("click", () => {
           if (!cData.claimedRewards) cData.claimedRewards = {};
           cData.claimedRewards[item.id] = true;
           saveChallengesData(cData);
-
-          if (item.rewardAmount > 0) {
-            addCoins(item.rewardAmount);
-            if (typeof updateCoinsUI === "function") updateCoinsUI();
-          }
-
-          if (typeof playThemeSound === "function") playThemeSound(theme);
-          showRetroAlert("🎁 RÉCOMPENSE RÉCUPÉRÉE", `Succès ! Vous avez récupéré ${item.reward} avec succès dans votre coffre.`);
+          if (item.reward > 0) { addCoins(item.reward); updateCoinsUI(); }
+          playThemeSound(theme);
+          showToast(`Récompense récupérée : ${item.rewardText || "+" + item.reward + " 🪙"}`, "gift");
           showChallenges();
         });
       } else {
-        statusBtn.textContent = item.id === "streak7Days" ? `${cData.loginStreak || 1} / 7` : "EN ATTENTE";
-        statusBtn.style.cssText = `
-          font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; padding:4px 8px; border-radius:6px;
-          background: rgba(255, 255, 255, 0.05); color: var(--mut); border: 1px solid color-mix(in srgb, var(--mut) 30%, transparent);
-          cursor: default; white-space: nowrap;
-        `;
+        statusBtn.textContent = "En cours";
+        statusBtn.disabled = true;
       }
-
-      bottomGroup.append(rewardBadge, statusBtn);
-      row.append(topGroup, bottomGroup);
-      banner.append(row);
+      foot.append(statusBtn);
+      main.append(foot);
+      row.append(ic, main);
+      list.append(row);
     });
-    displayBox.append(banner);
+    displayBox.append(list);
   }
 
-  btnShop.addEventListener("click", () => { playThemeSound(theme); showMainShop(); });
-  btnPacks.addEventListener("click", () => { playThemeSound(theme); showPacks(); });
-  btnChallenges.addEventListener("click", () => { playThemeSound(theme); showChallenges(); });
-
-  subNav.append(btnShop, btnPacks, btnChallenges);
-  contentArea.append(subNav, displayBox);
-  showMainShop(); // Ouvre par défaut sur la boutique de thèmes
+  contentArea.append(tabs.el, displayBox);
+  const start = typeof tab === "number" ? tab : ({ themes: 0, packs: 1, quests: 2 }[tab] || 0);
+  tabs.select(start);
+  views[start]();
 }
 
 // ▸ buyAndOpenPack : achète un pack avec des crédits
@@ -5511,7 +5758,7 @@ if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
 // 13. PAGE COLLECTION & MUSÉE
 // =====================================================================
 
-// ▸ renderMuseumAndVitrinePage : page Collection (vitrine + musée)
+// ▸ renderMuseumAndVitrinePage : page Collection — onglets Vitrine · Musée
 function renderMuseumAndVitrinePage() {
   const contentArea = document.getElementById("museumPageContent");
   if (!contentArea) return;
@@ -5520,211 +5767,97 @@ function renderMuseumAndVitrinePage() {
   const coinSpan = document.getElementById("museumPageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  // --- SOUS-NAVIGATION INTERNE (ONGLETS STYLE BOUTIQUE) ---
-  const subNav = el("div");
-  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
+  const displayBox = el("div", "pg-body");
+  const tabs = pageTabs(
+    [{ label: "Vitrine", icon: "library" }, { label: "Musée", icon: "museum" }],
+    (i) => (i === 0 ? showVitrineTab() : showMuseumTab())
+  );
 
-  const tabVitrine = el("button", "chip", t('vitrineTabTitle') || "🏛️ Vitrine de Collection");
-  const tabMuseum = el("button", "chip", t('museumTabTitle') || "🕹️ Musée des Consoles");
-
-  [tabVitrine, tabMuseum].forEach(b => {
-    b.style.flex = "1";
-    b.style.minHeight = "38px";
-    b.style.fontSize = "11px";
-  });
-
-  const displayBox = el("div");
-  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
-
-  // --- VUE 1 : LA VITRINE DU JOUEUR (JAQUETTES) ---
+  // --- VITRINE : les jaquettes gagnées dans les boosters ---
   function showVitrineTab() {
-    tabVitrine.setAttribute("aria-pressed", "true");
-    tabMuseum.setAttribute("aria-pressed", "false");
     displayBox.replaceChildren();
+    const n = myCollection.length;
+    displayBox.append(pageHead("Vitrine", "Les jaquettes gagnées dans tes boosters.", n ? `<b>${n}</b> jaquette${n > 1 ? "s" : ""}` : ""));
 
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-
-    const headerDiv = el("div");
-    headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">📚 Galerie des Jaquettes & Archives</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Total de la collection : <b>${myCollection.length}</b> pièce${myCollection.length > 1 ? 's' : ''}</p>
-    `;
-    banner.append(headerDiv);
-
-    if (myCollection.length === 0) {
-      const emptyMsg = el("div", "msg");
-      emptyMsg.innerHTML = "Ta vitrine est vide !<br>Récupère des packs dans la Boutique Arcade 🪙";
-      banner.append(emptyMsg);
-    } else {
-      const collectorItems = myCollection.filter(item => item.category === "supreme_retro");
-      const retroItems = myCollection.filter(item => item.category === "retro");
-      const standardItems = myCollection.filter(item => !item.category || item.category === "standard");
-
-      const categoriesConfig = [
-        { title: "✨ Éditions Supreme Collector", color: "#fbbf24", glow: "rgba(251, 191, 36, 0.3)", items: collectorItems },
-        { title: "📼 Séries Rétro Classic", color: "#38bdf8", glow: "rgba(56, 189, 248, 0.3)", items: retroItems },
-        { title: "📦 Séries Standard & Communes", color: "#94a3b8", glow: "rgba(148, 163, 184, 0.3)", items: standardItems }
-      ];
-
-      const mainContainer = el("div");
-      mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%;";
-
-      categoriesConfig.forEach(cat => {
-        if (cat.items.length === 0) return;
-
-        const sectionWrapper = el("div");
-        sectionWrapper.style.cssText = `
-          background: rgba(11, 15, 22, 0.5);
-          border: 1px solid color-mix(in srgb, ${cat.color} 30%, transparent);
-          border-radius: 14px; padding: 16px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px ${cat.glow};
-        `;
-
-        const catHeader = el("div");
-        catHeader.style.cssText = `display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid color-mix(in srgb, ${cat.color} 20%, transparent); padding-bottom:8px;`;
-        catHeader.innerHTML = `
-          <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:${cat.color}; text-transform:uppercase; letter-spacing:1.5px; text-shadow:0 0 8px ${cat.color};">${cat.title}</span>
-          <span style="font-family:'Orbitron',sans-serif; font-size:10px; font-weight:800; color:var(--mut); background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:6px; border:1px solid color-mix(in srgb, ${cat.color} 20%, transparent);">${cat.items.length} jaquette${cat.items.length > 1 ? 's' : ''}</span>
-        `;
-        sectionWrapper.append(catHeader);
-
-        const shelfContainer = el("div");
-        shelfContainer.style.cssText = "display:flex; flex-direction:column; gap:16px; width: 100%;";
-
-        const itemsPerRow = window.innerWidth >= 768 ? 5 : 3;
-        for (let i = 0; i < cat.items.length; i += itemsPerRow) {
-          const rowItems = cat.items.slice(i, i + itemsPerRow);
-
-          const woodenShelf = el("div");
-          woodenShelf.style.cssText = `
-            background: linear-gradient(180deg, #1f1915 0%, #120e0b 100%);
-            border: 1px solid #3d2f24; border-radius: 10px; padding: 14px 10px 4px; position: relative;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.9), 0 6px 16px rgba(0,0,0,0.5);
-          `;
-
-          const gamesRow = el("div");
-          gamesRow.style.cssText = `display:grid; grid-template-columns:repeat(${itemsPerRow}, 1fr); gap:10px; align-items:flex-end;`;
-
-          for (const item of rowItems) {
-            const gameBox = el("div");
-            gameBox.style.cssText = `
-              background: var(--card); border: 1.5px solid color-mix(in srgb, ${cat.color} 60%, transparent);
-              border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center;
-              box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 10px ${cat.glow}; cursor: pointer; transition: transform 0.2s ease;
-            `;
-            gameBox.addEventListener("click", () => {
-              playThemeSound(theme);
-              openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0,10) });
-            });
-
-            const img = el("img");
-            img.src = item.cover; img.loading = "lazy";
-            img.style.cssText = "width:100%; aspect-ratio:3/4; object-fit:cover; display:block;";
-
-            const spine = el("div");
-            spine.style.cssText = `
-              font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 800; text-transform: uppercase;
-              width: 100%; text-align: center; background: rgba(0,0,0,0.95); color: #fff; padding: 5px 3px;
-              white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-              border-top: 1px solid color-mix(in srgb, ${cat.color} 40%, transparent);
-            `;
-            spine.textContent = item.name;
-
-            gameBox.append(img, spine);
-            gamesRow.append(gameBox);
-          }
-
-          woodenShelf.append(gamesRow);
-
-          const plankBoard = el("div");
-          plankBoard.style.cssText = `
-            height: 10px; background: linear-gradient(180deg, #3d2f24 0%, #221a14 50%, #0d0a07 100%);
-            margin: 6px -10px -4px -10px; border-radius: 0 0 8px 8px; border-top: 1px solid #5a4434;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.8);
-          `;
-          woodenShelf.append(plankBoard);
-          shelfContainer.append(woodenShelf);
-        }
-
-        sectionWrapper.append(shelfContainer);
-        mainContainer.append(sectionWrapper);
-      });
-
-      banner.append(mainContainer);
+    if (n === 0) {
+      displayBox.append(emptyState("box", "Ta vitrine est vide",
+        "Ouvre ton premier booster pour commencer ta collection.", "Ouvrir un booster", () => goToPage("shop", 1)));
+      return;
     }
-    displayBox.append(banner);
+
+    const categoriesConfig = [
+      { title: "Supreme Collector", color: "#fbbf24", items: myCollection.filter((it) => it.category === "supreme_retro") },
+      { title: "Rétro Classic", color: "#38bdf8", items: myCollection.filter((it) => it.category === "retro") },
+      { title: "Standard", color: "#94a3b8", items: myCollection.filter((it) => !it.category || it.category === "standard") },
+    ];
+
+    categoriesConfig.forEach((cat) => {
+      if (!cat.items.length) return;
+      const sec = el("section", "shelf");
+      sec.style.setProperty("--c", cat.color);
+      const h = el("div", "shelf-head");
+      h.innerHTML = `<span class="shelf-dot"></span><b>${esc(cat.title)}</b><small>${cat.items.length}</small>`;
+      const grid = el("div", "shelf-grid");
+      cat.items.forEach((item) => {
+        const box = el("button", "shelf-item");
+        box.type = "button";
+        box.title = item.name || "";
+        const img = el("img"); img.src = item.cover; img.alt = item.name || ""; img.loading = "lazy";
+        box.append(img, el("span", "", item.name || ""));
+        box.addEventListener("click", () => {
+          playThemeSound(theme);
+          openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0, 10) });
+        });
+        grid.append(box);
+      });
+      sec.append(h, grid);
+      displayBox.append(sec);
+    });
   }
 
-  // --- VUE 2 : LE MUSÉE DES CONSOLES HISTORIQUES ---
+  // --- MUSÉE : les consoles et leur histoire ---
   function showMuseumTab() {
-    tabVitrine.setAttribute("aria-pressed", "false");
-    tabMuseum.setAttribute("aria-pressed", "true");
     displayBox.replaceChildren();
-
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
-
-    const headerDiv = el("div");
-    headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏛️ Musée Mondial des Consoles & Micros</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Clique sur n'importe quelle console pour découvrir son histoire détaillée et ses specs :</p>
-    `;
-    banner.append(headerDiv);
+    displayBox.append(pageHead("Musée", "Touche une console pour découvrir son histoire.", `<b>${WORLD_CONSOLES.length}</b> consoles`));
 
     const groups = {};
-    for (const consoleItem of WORLD_CONSOLES) {
-      if (!groups[consoleItem.brand]) groups[consoleItem.brand] = [];
-      groups[consoleItem.brand].push(consoleItem);
-    }
-
-    const mainContainer = el("div");
-    mainContainer.style.cssText = "display:flex; flex-direction:column; gap:24px; width:100%; margin-top: 10px;";
+    for (const c of WORLD_CONSOLES) (groups[c.brand] = groups[c.brand] || []).push(c);
 
     for (const [brand, consoles] of Object.entries(groups)) {
-      const section = el("div", "constructor-section");
-      const brandTitle = el("div", "constructor-title", `🎮 ${brand}`);
-      section.append(brandTitle);
+      const section = el("section", "constructor-section");
+      const title = el("div", "constructor-title");
+      title.innerHTML = `<span>${esc(brand)}</span><small>${consoles.length}</small>`;
+      section.append(title);
 
       const grid = el("div", "vitrine-grid");
       for (const consoleItem of consoles) {
         const card = el("div", "console-vitrine-card");
-        card.style.setProperty('--console-color', consoleItem.bg);
-        
+        card.style.setProperty("--console-color", consoleItem.color || consoleItem.bg || "var(--acc)");
         const brandTag = el("span", "console-brand-tag", consoleItem.brand);
         const photoBox = el("div", "console-photo-container");
         const badge = el("div", "console-icon-badge", consoleItem.code || consoleItem.name);
-        photoBox.append(badge);
-
+        if (consoleItem.image) {
+          // Photo de la console ; si elle ne charge pas, on remet l'étiquette texte
+          const photo = el("img", "console-photo");
+          photo.src = consoleItem.image; photo.alt = consoleItem.name; photo.loading = "lazy";
+          photo.onerror = () => photo.replaceWith(badge);
+          photoBox.append(photo);
+        } else {
+          photoBox.append(badge);
+        }
         const infoGroup = el("div", "console-info-group");
-        const name = el("b", "", consoleItem.name);
-        const year = el("span", "", consoleItem.year);
-        infoGroup.append(name, year);
-
+        infoGroup.append(el("b", "", consoleItem.name), el("span", "", consoleItem.year));
         card.append(brandTag, photoBox, infoGroup);
-        card.onclick = (e) => {
-          e.stopPropagation();
-          playThemeSound(theme);
-          openConsoleDetail(consoleItem);
-        };
+        card.onclick = (e) => { e.stopPropagation(); playThemeSound(theme); openConsoleDetail(consoleItem); };
         grid.append(card);
       }
       section.append(grid);
-      mainContainer.append(section);
+      displayBox.append(section);
     }
-
-    banner.append(mainContainer);
-    displayBox.append(banner);
   }
 
-  // Écouteurs pour basculer proprement d'un onglet à l'autre
-  tabVitrine.addEventListener("click", () => { playThemeSound(theme); showVitrineTab(); });
-  tabMuseum.addEventListener("click", () => { playThemeSound(theme); showMuseumTab(); });
-
-  subNav.append(tabVitrine, tabMuseum);
-  contentArea.append(subNav, displayBox);
-  
-  // Par défaut, on ouvre sur la Vitrine
+  contentArea.append(tabs.el, displayBox);
+  tabs.select(0);
   showVitrineTab();
 }
 
@@ -5754,17 +5887,11 @@ function openConsoleDetail(consoleItem) {
   const storyBox = el("div", "console-story-box");
   storyBox.innerHTML = `<h3>📜 Histoire & Contexte</h3><p>${consoleItem.desc || "Historique en cours de chargement..."}</p>`;
 
-  const backBtn = el("button", "cta", "← Retour au Musée");
-  backBtn.addEventListener("click", () => { 
-    playThemeSound(theme); 
-    renderMuseumMainPage(); 
-    closeSheet(); 
-  });
+  // (l'ancien bouton appelait renderMuseumMainPage, qui n'existe pas : il plantait)
+  const backBtn = el("button", "cta-sec", "Retour au musée");
+  backBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
 
-  const closeBtn = el("button", "close", t('close'));
-  closeBtn.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
-
-  p.append(banner, storyBox, backBtn, closeBtn);
+  p.append(banner, storyBox, backBtn);
 
   // 🎯 C'EST CETTE LIGNE QUI FAIT APPARAÎTRE LA MODALE À L'ÉCRAN
   $("#sheet").classList.add("on");
@@ -5774,11 +5901,11 @@ function openConsoleDetail(consoleItem) {
 // 14. PAGE ARCADE
 // =====================================================================
 
-// ▸ renderArcadeMainPage : page Arcade (bornes + tableau des scores)
+// ▸ renderArcadeMainPage : page Arcade — onglets Bornes · Scores
 function renderArcadeMainPage() {
   const arcadePage = document.getElementById("arcadeMainPage");
   if (!arcadePage) return;
-  
+
   arcadePage.style.display = "block";
   const contentArea = document.getElementById("arcadePageContent");
   if (!contentArea) return;
@@ -5787,285 +5914,111 @@ function renderArcadeMainPage() {
   const coinSpan = document.getElementById("arcadePageCoins");
   if (coinSpan) coinSpan.textContent = userCoins;
 
-  // --- SOUS-NAVIGATION INTERNE (ONGLETS ARCADE & SCORES) ---
-  const subNav = el("div");
-  subNav.style.cssText = "display:flex; gap:8px; margin-bottom:14px;";
+  const displayBox = el("div", "pg-body");
+  const tabs = pageTabs(
+    [{ label: "Bornes", icon: "joystick" }, { label: "Scores", icon: "trophy" }],
+    (i) => (i === 0 ? showArcadeHub() : showScoresTab())
+  );
 
-  const btnArcadeHub = el("button", "chip", "🕹️ Salle Arcade");
-  const btnScores = el("button", "chip", "🏆 Tableau des scores");
-
-  [btnArcadeHub, btnScores].forEach(b => {
-    b.style.flex = "1";
-    b.style.minHeight = "38px";
-    b.style.fontSize = "11px";
-  });
-
-  const displayBox = el("div");
-  displayBox.style.cssText = "display:flex; flex-direction:column; gap:16px;";
-
-  // --- VUE 1 : HUB ARCADE (EN CONSTRUCTION / MINI-JEUX) ---
-  
-    function openFullscreenGame(url) {
-    const overlay = el("div");
-    overlay.style.cssText = `
-      position: fixed; inset: 0; background: #000; z-index: 999999;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    `;
-
+  // Lance un mini-jeu en plein écran
+  function openFullscreenGame(url) {
+    const overlay = el("div", "game-overlay");
     const iframe = document.createElement("iframe");
     iframe.src = url;
-    iframe.style.cssText = "width: 100%; height: 100%; border: none; display: block;";
-
+    iframe.title = "Mini-jeu";
     overlay.append(iframe);
     document.body.append(overlay);
   }
-    
+
+  // --- BORNES : les mini-jeux ---
+  // scr = fond de l'écran, fg = couleur du texte de l'écran
+  const GAMES = [
+    { name: "Pac-Man", screen: "PAC-MAN", tag: "Labyrinthe · Fantômes", url: "pacman_arcade.html", scr: "#000", fg: "#ffcc00", ic: "invader" },
+    { name: "Pong", screen: "PONG", tag: "Duel contre l'IA", url: "pong_arcade.html", scr: "#000", fg: "#ffffff", ic: "pong" },
+    { name: "Space Invaders", screen: "INVADERS", tag: "Vagues infinies", url: "space_invaders.html", scr: "#05060a", fg: "#FF7A45", ic: "invader" },
+    { name: "Tetris", screen: "TETRIS", tag: "Version Game Boy", url: "tetris_gameboy.html", scr: "#9bbc0f", fg: "#0f380f", ic: "blocks" },
+    { name: "Snake", screen: "SNAKE", tag: "Version Nokia 3310", url: "snake_nokia.html", scr: "#9bbc0f", fg: "#0f380f", ic: "snake" },
+  ];
+
   function showArcadeHub() {
-    btnArcadeHub.setAttribute("aria-pressed", "true");
-    btnScores.setAttribute("aria-pressed", "false");
     displayBox.replaceChildren();
+    displayBox.append(pageHead("Bornes", "Touche une borne pour jouer en plein écran.", `<b>${GAMES.length}</b> jeux`));
 
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; align-items: center; padding: 20px;";
-    banner.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; font-size:18px; color:var(--acc); margin:0;">🕹️ BORNES D'ARCADE DISPONIBLES</h3>
-      <p style="font-size:11px; color:var(--mut); margin:0; text-transform:uppercase;">Sélectionnez une borne pour lancer le jeu en plein écran (iOS / Android / PC)</p>
-    `;
-
-    // Grille des bornes d'arcade
-    const gridCabs = el("div");
-    gridCabs.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; width: 100%; max-width: 900px; margin: 0 auto;";
-
-    // 1. Borne Space Invaders
-    const cabCard1 = el("div");
-    cabCard1.style.cssText = `
-      background: var(--card); border: 2px solid var(--acc); border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-    `;
-    cabCard1.onmouseenter = () => { cabCard1.style.transform = "translateY(-4px)"; cabCard1.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px var(--acc)"; };
-    cabCard1.onmouseleave = () => { cabCard1.style.transform = "translateY(0)"; cabCard1.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-    cabCard1.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--acc); display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: var(--acc); text-align: center; text-shadow: 0 0 10px var(--acc);">
-          👾 SPACE INVADERS<br><span style="font-size:7px; color:var(--mut);">MONOCHROME EDITION</span>
-        </div>
-      </div>
-      <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Space Invaders Rétro</b>
-        <span style="font-size: 10px; color: var(--mut);">Vagues Infinies • Bonus & Vies</span>
-      </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0;">▶ JOUER</button>
-    `;
-    cabCard1.onclick = () => { playThemeSound(theme); openFullscreenGame("space_invaders.html"); };
-
-    // 2. Borne Tetris Game Boy
-    const cabCard2 = el("div");
-    cabCard2.style.cssText = `
-      background: var(--card); border: 2px solid #8bac0f; border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-    `;
-    cabCard2.onmouseenter = () => { cabCard2.style.transform = "translateY(-4px)"; cabCard2.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #8bac0f"; };
-    cabCard2.onmouseleave = () => { cabCard2.style.transform = "translateY(0)"; cabCard2.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-    cabCard2.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #9bbc0f; border-radius: 10px; overflow: hidden; border: 1.5px solid #0f380f; display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
-          🧱 TETRIS<br><span style="font-size:7px; color:#306230;">GAME BOY EDITION</span>
-        </div>
-      </div>
-      <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Tetris Rétro</b>
-        <span style="font-size: 10px; color: var(--mut);">Règles Classiques • Niveaux & Lignes</span>
-      </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#8bac0f; color:#0f380f;">▶ JOUER</button>
-    `;
-    cabCard2.onclick = () => { playThemeSound(theme); openFullscreenGame("tetris_gameboy.html"); };
-
-    // 3. Borne Snake Nokia 3310
-    const cabCard3 = el("div");
-    cabCard3.style.cssText = `
-      background: var(--card); border: 2px solid #306230; border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-    `;
-    cabCard3.onmouseenter = () => { cabCard3.style.transform = "translateY(-4px)"; cabCard3.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #306230"; };
-    cabCard3.onmouseleave = () => { cabCard3.style.transform = "translateY(0)"; cabCard3.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-    cabCard3.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #9bbc0f; border-radius: 10px; overflow: hidden; border: 1.5px solid #0f380f; display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #0f380f; text-align: center; text-shadow: 1px 1px #8bac0f;">
-          🐍 SNAKE<br><span style="font-size:7px; color:#306230;">NOKIA 3310 EDITION</span>
-        </div>
-      </div>
-      <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Snake 3310</b>
-        <span style="font-size: 10px; color: var(--mut);">Écran LCD Vert • Son Buzzer • High Score</span>
-      </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#306230; color:#9bbc0f;">▶ JOUER</button>
-    `;
-    cabCard3.onclick = () => { playThemeSound(theme); openFullscreenGame("snake_nokia.html"); };
-
-    // 4. Borne Pong Arcade
-    const cabCard4 = el("div");
-    cabCard4.style.cssText = `
-      background: var(--card); border: 2px solid #ffffff; border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-    `;
-    cabCard4.onmouseenter = () => { cabCard4.style.transform = "translateY(-4px)"; cabCard4.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #ffffff"; };
-    cabCard4.onmouseleave = () => { cabCard4.style.transform = "translateY(0)"; cabCard4.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-    cabCard4.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid #fff; display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #fff; text-align: center; text-shadow: 0 0 10px #fff;">
-          🏓 PONG<br><span style="font-size:7px; color:var(--mut);">PRO ARCADE</span>
-        </div>
-      </div>
-      <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Pong Rétro</b>
-        <span style="font-size: 10px; color: var(--mut);">Duel Contre IA • Effets Sonores</span>
-      </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#fff; color:#000;">▶ JOUER</button>
-    `;
-    cabCard4.onclick = () => { playThemeSound(theme); openFullscreenGame("pong_arcade.html"); };
-    
-    gridCabs.append(cabCard4);
-
-    // 5. Borne Pac-Man Arcade
-    const cabCard5 = el("div");
-    cabCard5.style.cssText = `
-      background: var(--card); border: 2px solid #ffcc00; border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
-    `;
-    cabCard5.onmouseenter = () => { cabCard5.style.transform = "translateY(-4px)"; cabCard5.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #ffcc00"; };
-    cabCard5.onmouseleave = () => { cabCard5.style.transform = "translateY(0)"; cabCard5.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
-    cabCard5.innerHTML = `
-      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid #ffcc00; display: flex; align-items: center; justify-content: center;">
-        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #ffcc00; text-align: center; text-shadow: 0 0 10px #ffcc00;">
-          ᗤ PAC-MAN<br><span style="font-size:7px; color:var(--mut);">PRO ARCADE</span>
-        </div>
-      </div>
-      <div style="text-align: center; width: 100%;">
-        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Pac-Man Rétro</b>
-        <span style="font-size: 10px; color: var(--mut);">Labyrinthe • Fantômes & Super Pac-Gommes</span>
-      </div>
-      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#ffcc00; color:#000;">▶ JOUER</button>
-    `;
-    cabCard5.onclick = () => { playThemeSound(theme); openFullscreenGame("pacman_arcade.html"); };
-    gridCabs.append(cabCard5);
-
-    gridCabs.append(cabCard1, cabCard2, cabCard3);
-    banner.append(gridCabs);
-    displayBox.append(banner);
+    const grid = el("div", "cab-grid");
+    GAMES.forEach((g) => {
+      const card = el("button", "cab");
+      card.type = "button";
+      card.style.setProperty("--scr", g.scr);
+      card.style.setProperty("--fg", g.fg);
+      card.innerHTML = `
+        <div class="cab-screen">${icon(g.ic)}<span>${esc(g.screen)}</span></div>
+        <div class="cab-info"><b>${esc(g.name)}</b><small>${esc(g.tag)}</small></div>
+        <span class="cab-play">${icon("play")}Jouer</span>`;
+      card.addEventListener("click", () => { playThemeSound(theme); openFullscreenGame(g.url); });
+      grid.append(card);
+    });
+    displayBox.append(grid);
   }
 
-  // --- VUE 2 : TABLEAU DES SCORES (HALL OF FAME) ---
+  // --- SCORES : les records du joueur ---
   function showScoresTab() {
-    btnArcadeHub.setAttribute("aria-pressed", "false");
-    btnScores.setAttribute("aria-pressed", "true");
     displayBox.replaceChildren();
+    const count = Array.isArray(gameScores) ? gameScores.length : 0;
+    displayBox.append(pageHead("Scores", "Note tes meilleurs records.", count ? `<b>${count}</b> record${count > 1 ? "s" : ""}` : ""));
 
-    const banner = el("div", "shop-banner");
-    banner.style.cssText = "display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; padding: 20px;";
+    const form = el("form", "score-form");
+    form.innerHTML = `
+      <input type="text" id="scoreGameName" class="search-box field" placeholder="Nom du jeu" autocomplete="off">
+      <input type="text" id="scoreValue" class="search-box field" placeholder="Score ou temps (ex. 15 480)" autocomplete="off">
+      <button id="saveScoreBtn" class="cta" type="submit">Ajouter</button>`;
+    displayBox.append(form);
 
-    const headerDiv = el("div");
-    headerDiv.innerHTML = `
-      <h3 style="font-family:'Orbitron',sans-serif; margin-bottom:4px; color:var(--acc); font-size: 17px; letter-spacing:1px;">🏆 HALL OF FAME DE VOS JEUX</h3>
-      <p class="m" style="margin-bottom:0; font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:var(--mut);">Suivi de vos records et meilleurs scores</p>
-    `;
-    banner.append(headerDiv);
-
-    // Formulaire d'ajout de score
-    const formBox = el("div");
-    formBox.style.cssText = "background: rgba(15, 23, 42, 0.75); border: 1.5px solid color-mix(in srgb, var(--acc) 40%, transparent); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px;";
-    
-    formBox.innerHTML = `
-      <b style="font-family:'Orbitron',sans-serif; font-size:12px; color:var(--txt); letter-spacing:1px;">ENREGISTRER UN NOUVEAU RECORD</b>
-      <input type="text" id="scoreGameName" class="search-box" placeholder="Nom du jeu / Projet..." style="margin:0;">
-      <div style="display:flex; gap:8px;">
-        <input type="text" id="scoreValue" class="search-box" placeholder="Score / Temps (ex: 15480 pts)" style="margin:0; flex:1;">
-        <button id="saveScoreBtn" class="cta" style="margin:0; width:auto; padding:0 16px; font-family:'Orbitron',sans-serif; font-size:11px;">AJOUTER</button>
-      </div>
-    `;
-    banner.append(formBox);
-
-    // Liste des scores enregistrés
-    const listContainer = el("div");
-    listContainer.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 10px;";
-
-    if (!Array.isArray(gameScores) || gameScores.length === 0) {
-      const empty = el("p", "msg", "Aucun score enregistré pour l'instant. Ajoutez votre premier record !");
-      listContainer.append(empty);
+    if (!count) {
+      displayBox.append(emptyState("trophy", "Aucun record pour l'instant", "Joue à une borne puis note ton meilleur score ici."));
     } else {
+      const list = el("div", "score-list");
       gameScores.forEach((s, index) => {
-        const row = el("div");
-        row.style.cssText = `
-          background: rgba(15, 23, 42, 0.6); border: 1px solid color-mix(in srgb, var(--acc) 20%, transparent);
-          border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        `;
-
+        const row = el("div", "score-row" + (index < 3 ? " is-top" : ""));
         row.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
-            <span style="font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--acc);">#${index + 1}</span>
-            <div style="display: flex; flex-direction: column; min-width: 0;">
-              <b style="font-size:13px; font-weight:800; color:var(--txt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.game}</b>
-              <span style="font-size:9px; color:var(--mut); font-weight:700;">${s.date}</span>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:#22c55e; background:rgba(34,197,94,0.15); padding:4px 8px; border-radius:6px; border:1px solid rgba(34,197,94,0.3);">${s.score}</span>
-            <button class="btn-icon delete-score-btn" data-index="${index}" style="width:32px; height:32px; background:rgba(239,68,68,0.15); color:#ef4444; border:none; border-radius:8px; cursor:pointer;" title="Supprimer">✕</button>
-          </div>
-        `;
-
-        const delBtn = row.querySelector(".delete-score-btn");
-        delBtn.addEventListener("click", () => {
+          <span class="score-rank">${index + 1}</span>
+          <div class="score-txt"><b>${esc(s.game)}</b><small>${esc(s.date)}</small></div>
+          <span class="score-val">${esc(s.score)}</span>`;
+        const del = el("button", "score-del");
+        del.type = "button";
+        del.title = "Supprimer";
+        del.setAttribute("aria-label", "Supprimer ce record");
+        del.innerHTML = icon("x");
+        del.addEventListener("click", () => {
           playThemeSound(theme);
           gameScores.splice(index, 1);
-          try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+          try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch (e) {}
           showScoresTab();
         });
-
-        listContainer.append(row);
+        row.append(del);
+        list.append(row);
       });
+      displayBox.append(list);
     }
 
-    banner.append(listContainer);
-    displayBox.append(banner);
-
-    // Écouteur pour le bouton d'ajout
-    const saveBtn = banner.querySelector("#saveScoreBtn");
-    const gameInput = banner.querySelector("#scoreGameName");
-    const scoreInput = banner.querySelector("#scoreValue");
-
-    saveBtn.addEventListener("click", () => {
+    const gameInput = form.querySelector("#scoreGameName");
+    const scoreInput = form.querySelector("#scoreValue");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
       const gameName = gameInput.value.trim();
       const scoreVal = scoreInput.value.trim();
-
       if (!gameName || !scoreVal) {
         showRetroAlert("Champs manquants", "Remplis le nom du jeu et le score.", true);
         return;
       }
-
       playThemeSound(theme);
-      gameScores.unshift({
-        game: gameName,
-        score: scoreVal,
-        date: new Date().toLocaleDateString()
-      });
-
-      try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch(e){}
+      gameScores.unshift({ game: gameName, score: scoreVal, date: new Date().toLocaleDateString() });
+      try { localStorage.setItem("gameScores", JSON.stringify(gameScores)); } catch (e) {}
       showScoresTab();
     });
   }
 
-  btnArcadeHub.addEventListener("click", () => { playThemeSound(theme); showArcadeHub(); });
-  btnScores.addEventListener("click", () => { playThemeSound(theme); showScoresTab(); });
-
-  subNav.append(btnArcadeHub, btnScores);
-  contentArea.append(subNav, displayBox);
-  
-  // Par défaut, on ouvre sur le Hub Arcade (ou showScoresTab si tu préfères arriver direct sur les scores)
+  contentArea.append(tabs.el, displayBox);
+  tabs.select(0);
   showArcadeHub();
 }
 
@@ -6089,158 +6042,102 @@ function openSettingsMainPage(tabIndex = 0) {
   settingsPage.style.display = "block";
   contentArea.replaceChildren();
 
-  // Navigation des onglets
-  const tabNav = el("div");
-  tabNav.style.cssText = "display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;";
+  // Onglets : Apparence · Compte · Infos
+  const pageGeneral = el("div", "set-page");
+  const pageProfile = el("div", "set-page");
+  const pageLegal = el("div", "set-page set-page-legal");
+  const pages = [pageGeneral, pageProfile, pageLegal];
+  const tabs = pageTabs(
+    [{ label: "Apparence", icon: "palette" }, { label: "Compte", icon: "user" }, { label: "Infos", icon: "info" }],
+    (i) => showTab(i)
+  );
+  contentArea.append(tabs.el);
 
-  const btnTabGeneral = el("button", "chip", t('tabDisplay') || "Affichage & Look");
-  const btnTabProfile = el("button", "chip", t('tabAccount') || "Compte & Sync");
-  const btnTabLegal = el("button", "chip", t('tabLegal') || "Mentions & Droits");
+  // Petite aide : une tuile de choix (fond, thème) avec coche quand elle est active
+  const choiceTile = (label, active, color, onClick, locked) => {
+    const b = el("button", "choice-tile" + (locked ? " is-locked" : ""));
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(!!active));
+    b.innerHTML = `${color ? `<span class="choice-dot" style="background:${color}"></span>` : ""}<span class="choice-label">${esc(label)}</span>${locked ? icon("lock", "choice-lock") : icon("check", "choice-check")}`;
+    b.addEventListener("click", onClick);
+    return b;
+  };
 
-  [btnTabGeneral, btnTabProfile, btnTabLegal].forEach(b => {
-    b.style.flex = "1";
-    b.style.minHeight = "36px";
-    b.style.fontSize = "10px";
-    b.style.fontWeight = "800";
-    b.style.textTransform = "uppercase";
-  });
+  // ==========================================
+  // ONGLET 1 : APPARENCE
+  // ==========================================
 
-  tabNav.append(btnTabGeneral, btnTabProfile, btnTabLegal);
-  contentArea.append(tabNav);
-
-  const pageGeneral = el("div");
-  const pageProfile = el("div");
-  const pageLegal = el("div");
-
-  // --- SECTION ARRIÈRE-PLAN & MOTIFS ---
-  const secBg = el("div", "settings-section");
-  secBg.append(el("div", "settings-section-title", "🖼️ Arrière-plan & Motifs"));
-  const bgGrid = el("div", "themes-grid-container");
-
-  const bgOptions = [
-    { id: "cartridges", label: "Cartouches" },
-    { id: "circuit", label: "Circuit Tech" },
-    { id: "retroshop", label: "Magasin Rétro" },
-    { id: "buttons", label: "Boutons" }
-  ];
-
-  bgOptions.forEach(opt => {
-    const b = el("button", "theme-mini-btn", opt.label);
-    const activeBg = typeof currentBg !== 'undefined' ? currentBg : "cartridges";
-    b.setAttribute("aria-pressed", String(activeBg === opt.id));
-    b.onclick = () => {
-      if (typeof currentBg !== 'undefined') currentBg = opt.id;
+  // Fond d'écran
+  const gBg = settingsGroup("Fond d'écran", "image");
+  const bgGrid = el("div", "choice-grid");
+  const activeBg = typeof currentBg !== "undefined" ? currentBg : "cartridges";
+  [{ id: "cartridges", label: "Cartouches" }, { id: "circuit", label: "Circuit" }, { id: "retroshop", label: "Magasin rétro" }, { id: "buttons", label: "Boutons" }]
+    .forEach((opt) => bgGrid.append(choiceTile(opt.label, activeBg === opt.id, null, () => {
+      if (typeof currentBg !== "undefined") currentBg = opt.id;
       if (typeof applyBgStyle === "function") applyBgStyle(opt.id);
       playThemeSound(theme);
       openSettingsMainPage();
-    };
-    bgGrid.append(b);
-  });
-  secBg.append(bgGrid);
-  pageGeneral.append(secBg);
+    })));
+  gBg.list.replaceWith(bgGrid);
+  pageGeneral.append(gBg.el);
 
-  // ==========================================
-  // ONGLET 1 : GÉNÉRAL & LOOK
-  // ==========================================
-
-  // 1. Thèmes modernes (SANS Death Note)
-  const secModern = el("div", "settings-section");
-  secModern.append(el("div", "settings-section-title", "🎨 Thèmes Modernes & Ambiances"));
-  const modernGrid = el("div", "themes-grid-container");
-
-  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach(key => {
+  // Thèmes
+  const isDeathNote = document.body.classList.contains("theme-deathnote");
+  const gThemes = settingsGroup("Thèmes", "palette");
+  const themeGrid = el("div", "choice-grid");
+  ["dark", "light", "midnight", "forest", "violet", "ruby"].forEach((key) => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
-    const b = el("button", "theme-mini-btn", label);
-    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
-    b.setAttribute("aria-pressed", String(key === theme));
-    b.addEventListener("click", () => {
+    themeGrid.append(choiceTile(label, key === theme && !isDeathNote, acc, () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
       if (typeof toggleDeathNoteTheme === "function") toggleDeathNoteTheme(false);
       openSettingsMainPage();
-    });
-    modernGrid.append(b);
+    }));
   });
-
-  secModern.append(modernGrid);
-  pageGeneral.append(secModern);
-
-  // --- 🍎 2. BLOC SÉPARÉ : THÈMES UNIQUES & COLLECTOR ---
-  const secUniqueThemes = el("div", "settings-section");
-  secUniqueThemes.append(el("div", "settings-section-title", "🍎 Thèmes Uniques & Collector"));
-  
-  const uniqueGrid = el("div", "themes-grid-container");
+  // Thème collector (à débloquer dans la Boutique)
   const isThemeUnlocked = localStorage.getItem("unlocked_deathnote") === "true";
-  
-  const dnUniqueBtn = el("button", "theme-mini-btn", isThemeUnlocked ? "Death Note" : "🔒 Death Note · 150 🪙");
-  const dnUniqueDot = el("span", "dot"); 
-  dnUniqueDot.style.background = isThemeUnlocked ? "#ef4444" : "#555"; 
-  dnUniqueDot.innerHTML = "🍎";
-  dnUniqueBtn.prepend(dnUniqueDot);
-  
-  dnUniqueBtn.setAttribute("aria-pressed", String(document.body.classList.contains("theme-deathnote")));
-  
-  dnUniqueBtn.onclick = () => {
+  themeGrid.append(choiceTile("Death Note", isDeathNote, "#ef4444", () => {
+    playThemeSound(theme);
     if (!isThemeUnlocked) {
-      playThemeSound(theme);
-      showRetroAlert("Thème Verrouillé", "🔒 Vous devez acheter l'édition Death Note dans la Boutique Arcade pour 150 🪙 avant de pouvoir l'utiliser !");
+      showRetroAlert("Thème verrouillé", "Débloque le thème Death Note dans la Boutique pour 150 🪙.");
       return;
     }
     if (typeof toggleDeathNoteTheme === "function") toggleDeathNoteTheme(true);
-    playThemeSound(theme);
     openSettingsMainPage();
-  };
-  
-  uniqueGrid.append(dnUniqueBtn);
-  secUniqueThemes.append(uniqueGrid);
-  pageGeneral.append(secUniqueThemes);
+  }, !isThemeUnlocked));
+  gThemes.list.replaceWith(themeGrid);
+  pageGeneral.append(gThemes.el);
 
-  // 3. Consoles rétro & skins
-  const secRetroThemes = el("div", "settings-section");
-  secRetroThemes.append(el("div", "settings-section-title", "🕹️ Consoles Rétro & Skins"));
-  const retroGrid = el("div", "themes-grid-container");
-  
-  const retroKeys = ["gameboy", "gameboy-dark", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"];
-  retroKeys.forEach(key => {
+  // Consoles rétro
+  const gRetro = settingsGroup("Consoles rétro", "joystick");
+  const retroGrid = el("div", "choice-grid");
+  ["gameboy", "gameboy-dark", "nes", "snes", "ps1", "n64", "dreamcast", "gamecube", "arcade", "atari", "dos", "megadrive"].forEach((key) => {
     if (!THEMES[key]) return;
     const [label, , acc] = THEMES[key];
-    const b = el("button", "theme-mini-btn", label);
-    const dot = el("span", "dot"); dot.style.background = acc; b.prepend(dot);
-    b.setAttribute("aria-pressed", String(key === theme));
-    b.addEventListener("click", () => {
+    retroGrid.append(choiceTile(label, key === theme && !isDeathNote, acc, () => {
       theme = applyTheme(key);
       try { localStorage.setItem("theme", theme); } catch (e) {}
+      if (typeof toggleDeathNoteTheme === "function") toggleDeathNoteTheme(false);
       openSettingsMainPage();
-    });
-    retroGrid.append(b);
+    }));
   });
-  secRetroThemes.append(retroGrid);
-  pageGeneral.append(secRetroThemes);
+  gRetro.list.replaceWith(retroGrid);
+  pageGeneral.append(gRetro.el);
 
-  // --- 🌍 SECTION SÉLECTION DE LA LANGUE (DANS GÉNÉRAL & LOOK) ---
-  const secLangGeneral = el("div", "settings-section");
-  secLangGeneral.append(el("div", "settings-section-title", "🌍 Langue de l'interface"));
-  const langSelectGeneral = document.createElement("select");
-  langSelectGeneral.className = "settings-select-clean";
-  
-  const generalLangs = {
-    fr: "🇫🇷 Français",
-    en: "🇬🇧 English",
-    ja: "🇯🇵 日本語",
-    es: "🇪🇸 Español",
-    it: "🇮🇹 Italiano"
-  };
+  // Préférences : interrupteurs façon iPhone
+  const gPrefs = settingsGroup("Préférences", "gear");
 
-  for (const [codeLang, nameLang] of Object.entries(generalLangs)) {
+  const langSelect = document.createElement("select");
+  langSelect.className = "set-select";
+  langSelect.setAttribute("aria-label", "Langue de l'interface");
+  for (const [codeLang, nameLang] of Object.entries({ fr: "Français", en: "English", ja: "日本語", es: "Español", it: "Italiano" })) {
     const opt = document.createElement("option");
-    opt.value = codeLang;
-    opt.textContent = nameLang;
+    opt.value = codeLang; opt.textContent = nameLang;
     if (codeLang === currentLang) opt.selected = true;
-    langSelectGeneral.append(opt);
+    langSelect.append(opt);
   }
-
-  langSelectGeneral.onchange = (e) => {
+  langSelect.onchange = (e) => {
     currentLang = e.target.value;
     try { localStorage.setItem("lang", currentLang); } catch (err) {}
     playThemeSound(theme);
@@ -6248,81 +6145,61 @@ function openSettingsMainPage(tabIndex = 0) {
     openSettingsMainPage();
     render();
   };
+  gPrefs.list.append(settingRow("globe", "Langue", null, langSelect));
 
-  secLangGeneral.append(langSelectGeneral);
-  pageGeneral.append(secLangGeneral);
-
-  // 4. Confort & Audio
-  const secPrefs = el("div", "settings-section");
-  secPrefs.append(el("div", "settings-section-title", "⚙️ Confort & Audio"));
-  const prefsGrid = el("div", "settings-grid-options");
-  const soundBtn = el("button", "cta-sec", soundEnabled ? t('soundOn') : t('soundOff'));
-  soundBtn.style.margin = "0";
-  soundBtn.addEventListener("click", () => {
-    soundEnabled = !soundEnabled;
+  gPrefs.list.append(settingRow("volume", "Sons", "Petits sons rétro à chaque action", toggleSwitch(soundEnabled, (on) => {
+    soundEnabled = on;
     try { localStorage.setItem("sound", soundEnabled); } catch (e) {}
-    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
     if (soundEnabled) playThemeSound(theme);
-  });
-  const crtBtn = el("button", "cta-sec", crtEnabled ? t('crtOn') : t('crtOff'));
-  crtBtn.style.margin = "0";
-  crtBtn.addEventListener("click", () => {
-    crtEnabled = !crtEnabled;
+  })));
+
+  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") === "true";
+  gPrefs.list.append(settingRow("gamepad", "Son cartouche", "Remplace les sons des thèmes", toggleSwitch(cartridgeFxEnabled, (on) => {
+    cartridgeFxEnabled = on;
+    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
+    playThemeSound(theme);
+  })));
+
+  gPrefs.list.append(settingRow("tv", "Effet écran cathodique", "Lignes de vieille télé sur tout l'écran", toggleSwitch(crtEnabled, (on) => {
+    crtEnabled = on;
     try { localStorage.setItem("crt", crtEnabled); } catch (e) {}
     document.body.classList.toggle("crt-enabled", crtEnabled);
-    crtBtn.textContent = crtEnabled ? t('crtOn') : t('crtOff');
     playThemeSound(theme);
-  });
-  let cartridgeFxEnabled = localStorage.getItem("cartridgeFx") === "true";
-  const fxBtn = el("button", "cta-sec", cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé");
-  fxBtn.style.margin = "0";
-  fxBtn.addEventListener("click", () => {
-    cartridgeFxEnabled = !cartridgeFxEnabled;
-    try { localStorage.setItem("cartridgeFx", cartridgeFxEnabled); } catch (e) {}
-    fxBtn.textContent = cartridgeFxEnabled ? "🔊 FX Cartouche : Actif" : "🔇 FX Cartouche : Désactivé";
-    playThemeSound(theme);
-  });
-  prefsGrid.append(soundBtn, crtBtn, fxBtn);
-  secPrefs.append(prefsGrid);
-  pageGeneral.append(secPrefs);
-
-  // 5. Immersion & Style visuel
-  const secCustom = el("div", "settings-section");
-  secCustom.append(el("div", "settings-section-title", "✨ Immersion & Style Visuel"));
-  const customGrid = el("div", "settings-grid-options");
-  
-  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
-  const layoutBtn = el("button", "cta-sec", `🎨 Style : ${layoutStyle.toUpperCase()}`);
-  layoutBtn.style.margin = "0";
-  layoutBtn.addEventListener("click", () => {
-    layoutStyle = layoutStyle === "clean" ? "pixel art" : "clean";
-    try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
-    layoutBtn.textContent = `🎨 Style : ${layoutStyle.toUpperCase()}`;
-    document.body.setAttribute("data-layout-style", layoutStyle);
-    playThemeSound(theme);
-  });
-  document.body.setAttribute("data-layout-style", layoutStyle);
+  })));
 
   let holoEffectEnabled = localStorage.getItem("holoEffect") === "true";
-  const holoBtn = el("button", "cta-sec", holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off");
-  holoBtn.style.margin = "0";
-  holoBtn.addEventListener("click", () => {
-    holoEffectEnabled = !holoEffectEnabled;
+  gPrefs.list.append(settingRow("sparkles", "Effet holographique", "Reflets irisés sur les cartes collector", toggleSwitch(holoEffectEnabled, (on) => {
+    holoEffectEnabled = on;
     try { localStorage.setItem("holoEffect", holoEffectEnabled); } catch (e) {}
-    holoBtn.textContent = holoEffectEnabled ? "✨ Effet Holo (Cartes) : Actif" : "✨ Effet Holo (Cartes) : Off";
     document.body.setAttribute("data-holo-effect", holoEffectEnabled);
     playThemeSound(theme);
-  });
+  })));
   document.body.setAttribute("data-holo-effect", holoEffectEnabled);
 
-  customGrid.append(layoutBtn, holoBtn);
-  secCustom.append(customGrid);
-  pageGeneral.append(secCustom);
+  // Style des cartes : choix à deux options
+  let layoutStyle = localStorage.getItem("layoutStyle") || "clean";
+  const styleSeg = el("div", "mini-seg");
+  [["clean", "Épuré"], ["pixel art", "Pixel art"]].forEach(([val, label]) => {
+    const b = el("button", "", label);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(layoutStyle === val));
+    b.addEventListener("click", () => {
+      layoutStyle = val;
+      try { localStorage.setItem("layoutStyle", layoutStyle); } catch (e) {}
+      document.body.setAttribute("data-layout-style", layoutStyle);
+      styleSeg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      playThemeSound(theme);
+    });
+    styleSeg.append(b);
+  });
+  gPrefs.list.append(settingRow("palette", "Style des cartes", null, styleSeg));
+  document.body.setAttribute("data-layout-style", layoutStyle);
+  pageGeneral.append(gPrefs.el);
 
-  // 6. Capsule Temporelle
-  const secTime = el("div", "settings-section");
-  secTime.append(el("div", "settings-section-title", "⏳ Capsule Temporelle (Flashback)"));
-  const randomTimeBtn = el("button", "cta", "🎲 Lancer un Flashback Aléatoire");
+  // Capsule temporelle
+  const gTime = settingsGroup("Capsule temporelle", "hourglass");
+  const randomTimeBtn = el("button", "set-action", "Lancer");
+  randomTimeBtn.type = "button";
   randomTimeBtn.addEventListener("click", () => {
     playThemeSound(theme);
     const cultYears = [1985, 1988, 1991, 1992, 1994, 1996, 1997, 1998, 2001, 2004];
@@ -6332,38 +6209,35 @@ function openSettingsMainPage(tabIndex = 0) {
     setActiveNav(document.getElementById("navHome"));
     load();
   });
-  secTime.append(randomTimeBtn);
-  pageGeneral.append(secTime);
+  gTime.list.append(settingRow("dice", "Flashback aléatoire", "Remonte à un mois culte de 1985 à 2004", randomTimeBtn));
+  pageGeneral.append(gTime.el);
 
   // ==========================================
-  // ONGLET 2 : PROFIL & DONNÉES
+  // ONGLET 2 : COMPTE & DONNÉES
   // ==========================================
   buildAccountSection(pageProfile);
 
-  const secData = el("div", "settings-section");
-  secData.append(el("div", "settings-section-title", "🗃️ Sauvegarde & Données Cartouche"));
+  const gData = settingsGroup("Sauvegarde locale", "save");
   const coinsCount = typeof userCoins !== "undefined" ? userCoins : 0;
   const collectionCount = typeof myCollection !== "undefined" ? myCollection.length : 0;
-  const statsText = el("p", "m", `📊 Stats : ${collectionCount} jaquette(s) stockée(s) | Crédits : ${coinsCount} 🪙`);
-  statsText.style.marginBottom = "10px";
-  
-  const dataBtnGroup = el("div");
-  dataBtnGroup.style.cssText = "display:flex; gap:8px;";
-  const exportBtn = el("button", "cta-sec", "💾 Exporter .SAV");
-  exportBtn.style.margin = "0";
+  const stats = el("div", "set-stats");
+  stats.innerHTML = `<div><b>${collectionCount}</b><small>jaquette${collectionCount > 1 ? "s" : ""}</small></div><div><b>${coinsCount}</b><small>crédits</small></div><div><b>${(typeof favorites !== "undefined" && favorites.length) || 0}</b><small>favoris</small></div>`;
+  gData.list.append(stats);
+  const exportBtn = el("button", "set-action", "Exporter");
+  exportBtn.type = "button";
   exportBtn.addEventListener("click", () => { playThemeSound(theme); if (typeof exportCartridgeSave === "function") exportCartridgeSave(); });
-  const importBtn = el("button", "cta-sec", "📂 Importer .SAV");
-  importBtn.style.margin = "0";
+  const importBtn = el("button", "set-action", "Importer");
+  importBtn.type = "button";
   importBtn.addEventListener("click", () => { playThemeSound(theme); if (typeof importCartridgeSave === "function") importCartridgeSave(); });
-  dataBtnGroup.append(exportBtn, importBtn);
-  secData.append(statsText, dataBtnGroup);
-  pageProfile.append(secData);
+  gData.list.append(settingRow("save", "Exporter ma sauvegarde", "Fichier .sav à garder de côté", exportBtn));
+  gData.list.append(settingRow("folder", "Importer une sauvegarde", "Depuis un fichier .sav", importBtn));
+  pageProfile.append(gData.el);
 
-// ==========================================
-  // ONGLET 3 : LÉGAL & DROITS
+  // ==========================================
+  // ONGLET 3 : INFOS & MENTIONS LÉGALES
   // ==========================================
   const secLegal = el("div", "settings-section");
-  secLegal.append(el("div", "settings-section-title", "⚖️ Informations Légales, Confidentialité & Propriété"));
+  secLegal.append(el("div", "settings-section-title", "Mentions légales & confidentialité"));
   secLegal.innerHTML += `
     <div style="font-size:12px; line-height:1.65; color:var(--mut); display:flex; flex-direction:column; gap:14px;">
       
@@ -6436,20 +6310,11 @@ function openSettingsMainPage(tabIndex = 0) {
   contentArea.append(pageGeneral, pageProfile, pageLegal);
 
   function showTab(index) {
-    playThemeSound(theme);
-    btnTabGeneral.setAttribute("aria-pressed", String(index === 0));
-    btnTabProfile.setAttribute("aria-pressed", String(index === 1));
-    btnTabLegal.setAttribute("aria-pressed", String(index === 2));
-
-    pageGeneral.style.display = index === 0 ? "block" : "none";
-    pageProfile.style.display = index === 1 ? "block" : "none";
-    pageLegal.style.display = index === 2 ? "block" : "none";
+    pages.forEach((pg, k) => { pg.style.display = k === index ? "" : "none"; });
   }
-
-  btnTabGeneral.onclick = () => showTab(0);
-  btnTabProfile.onclick = () => showTab(1);
-  btnTabLegal.onclick = () => showTab(2);
+  tabs.select(tabIndex);
   showTab(tabIndex);
+  setActiveNav(document.getElementById("navSettings"));
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -6624,18 +6489,17 @@ function startCloudAutoSave() {
 // ▸ buildAccountSection : bloc « Espace Joueur » de l'onglet Compte (connexion, création, déconnexion)
 function buildAccountSection(container) {
   const sec = el("div", "settings-section");
-  sec.append(el("div", "settings-section-title", "👤 Espace Joueur & Sécurité"));
+  sec.append(el("div", "settings-section-title", "Compte joueur"));
   const user = getCloudUser();
   const connected = isLoggedIn();
   const color = connected ? "#22c55e" : "#ef4444";
 
   // Bandeau d'état (connecté / hors ligne)
-  const status = el("div");
-  status.style.cssText = "background: rgba(0,0,0,0.3); border: 1px solid " + (connected ? "#22c55e" : "var(--acc)") + "; border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;";
+  const status = el("div", "acct-status" + (connected ? " is-on" : ""));
   status.innerHTML =
-    '<div style="width: 10px; height: 10px; border-radius: 50%; background: ' + color + "; box-shadow: 0 0 8px " + color + ';"></div>' +
-    "<span style=\"font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:var(--txt);\">" +
-    (connected ? "CONNECTÉ : " + esc(user) : "STATUT : HORS LIGNE") + "</span>";
+    `<span class="acct-avatar">${connected ? esc(user.charAt(0).toUpperCase()) : icon("user")}</span>` +
+    `<div><b>${connected ? esc(user) : "Pas connecté"}</b><small>${connected ? "Sauvegarde cloud active" : "Connecte-toi pour sauvegarder ta progression"}</small></div>` +
+    `<i style="background:${color}"></i>`;
   sec.append(status);
 
   if (connected) {
@@ -7161,6 +7025,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 // Sécurité supplémentaire si le DOM est déjà chargé
 updateUserBadge();
+updateCoinsUI(); // remplit tous les compteurs de crédits dès le départ
 
 // --- Préférences visuelles (effet holo, structure) ---
 // Activation par défaut de l'effet holographique
