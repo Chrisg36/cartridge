@@ -43,6 +43,7 @@
      23. VERSION BUREAU (PC ≥ 900 px)
      24. FINITION PRO — icônes SVG, en-tête compact, badges, fiche jeu, PC
      25. PAGES BOUTIQUE, COLLECTION, ARCADE, PROFIL — onglets, cartes, réglages
+     26. OUVERTURE DES BOOSTERS & MINI-JEUX EN PLEIN ÉCRAN
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -2761,6 +2762,92 @@ input[type="month"]#dateSelect::-webkit-calendar-picker-indicator { opacity: 0.4
   .vitrine-grid { grid-template-columns: repeat(5, 1fr) !important; }
 }
 
+/* ====================================================================
+   26. OUVERTURE DES BOOSTERS & MINI-JEUX EN PLEIN ÉCRAN
+   ==================================================================== */
+.pack-v2 {
+  background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c) 22%, transparent), transparent 60%), #07080c !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 20px) 20px calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+}
+.pack-x {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px; z-index: 3;
+  width: 40px; height: 40px; border: 0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: #fff; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.pack-x .ic { width: 20px; height: 20px; stroke-width: 2.3; }
+
+/* Étape 1 : la cartouche qui tremble */
+.pack-stage { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+.pack-big {
+  position: relative; overflow: hidden; width: 168px; height: 214px; border-radius: 18px 18px 10px 10px;
+  display: flex; flex-direction: column; align-items: center; padding-top: 26px; gap: 14px;
+  background: linear-gradient(160deg, #2a2e38, #0e1015); border: 3px solid var(--c);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 60px color-mix(in srgb, var(--c) 35%, transparent);
+}
+.pack-big-label { width: 112px; height: 62px; border-radius: 8px; background: color-mix(in srgb, var(--c) 28%, transparent); border: 1.5px solid var(--c); }
+.pack-big-code { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--c); }
+.pack-big-name { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: 0.4px; }
+.pack-big-pins { position: absolute; bottom: 10px; left: 28px; right: 28px; height: 10px; background: repeating-linear-gradient(90deg, #E5B93B 0 4px, transparent 4px 7px); }
+.pack-status { margin: 0; font-size: 15px; font-weight: 700; color: rgba(255, 255, 255, 0.75); }
+
+.pack-flash { position: fixed; inset: 0; z-index: 999999; background: #fff; pointer-events: none; animation: flashBurst 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+
+/* Étape 3 : la carte révélée */
+.pack-reveal { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px; animation: fadeInList 0.4s ease-out; }
+.pack-head { text-align: center; margin-bottom: 22px; }
+.pack-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 800; color: var(--c); background: color-mix(in srgb, var(--c) 16%, transparent);
+}
+.pack-chip .ic { width: 15px; height: 15px; }
+.pack-head h2 { margin: 12px 0 4px; font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 0.2px; }
+.pack-head p { margin: 0; font-size: 14.5px; font-weight: 500; color: rgba(255, 255, 255, 0.6); }
+
+.pack-v2 .fullscreen-card-flip-container { width: 230px; height: 322px; margin: 0 auto 26px; }
+.pack-v2 .fs-card-front, .pack-v2 .fs-card-back {
+  border-radius: 18px !important; border: 2px solid color-mix(in srgb, var(--c) 70%, transparent) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 50px color-mix(in srgb, var(--c) 30%, transparent) !important;
+}
+.pack-v2 .fs-card-front {
+  gap: 12px; background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 10px, transparent 10px 20px), linear-gradient(160deg, #23262f, #0d0f14) !important;
+}
+.pack-card-logo { width: 74px; height: 74px; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #0b0d12; background: var(--c); }
+.pack-card-logo .ic { width: 40px; height: 40px; stroke-width: 1.8; }
+.pack-card-brand { font-size: 14px; font-weight: 900; letter-spacing: 4px; color: #fff; }
+.pack-card-hint { font-size: 12.5px; font-weight: 600; color: rgba(255, 255, 255, 0.55); animation: packHint 1.6s ease-in-out infinite; }
+@keyframes packHint { 50% { opacity: 0.35; } }
+.pack-v2 .fs-card-back img { width: 100%; flex: 1; min-height: 0; object-fit: cover; display: block; }
+.fs-card-title { padding: 12px 12px 14px; font-size: 15px; font-weight: 800; color: #fff; background: #0b0d12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pack-actions { display: flex; gap: 10px; width: 100%; opacity: 0.35; pointer-events: none; transition: opacity 0.3s ease; }
+.pack-reveal.is-revealed .pack-actions { opacity: 1; pointer-events: auto; }
+.pack-actions .cta, .pack-actions .cta-sec { flex: 1; margin: 0 !important; min-height: 50px !important; border-radius: 14px !important; }
+.pack-actions .cta-sec { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
+
+/* Mini-jeu plein écran : bouton Quitter toujours visible */
+.game-quit {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 12px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px 0 10px; border: 0; border-radius: 999px; cursor: pointer;
+  font-family: var(--font); font-size: 14px; font-weight: 800; color: #fff;
+  background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.game-quit .ic { width: 17px; height: 17px; stroke-width: 2.3; }
+.game-quit:hover { background: rgba(0, 0, 0, 0.75); }
+
+/* Vitrine : cadre de la jaquette (pour l'effet holographique) */
+.shelf-item .shelf-cover { display: block; position: relative; overflow: hidden; border-radius: 10px; white-space: normal; }
+.shelf-item .shelf-cover img { display: block; }
+
+/* Style « Pixel art » (Profil) : aussi sur les nouvelles cartes */
+body[data-layout-style="pixel art"] .booster,
+body[data-layout-style="pixel art"] .quest,
+body[data-layout-style="pixel art"] .cab,
+body[data-layout-style="pixel art"] .theme-card,
+body[data-layout-style="pixel art"] .console-vitrine-card,
+body[data-layout-style="pixel art"] .set-list,
+body[data-layout-style="pixel art"] .seg {
+  border-radius: 2px !important; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8) !important;
+}
+
 </style>
 </head>
 <body>
@@ -5312,13 +5399,22 @@ function loadChallengesData() {
   try {
     let parsed = JSON.parse(data);
     // Réinitialisation journalière automatique
+    parsed.claimedRewards = parsed.claimedRewards || {};
+    parsed.weeklyProgress = parsed.weeklyProgress || {};
     if (parsed.lastResetDate !== today) {
       parsed.dailyProgress = { curious: false, favorite: false, filterConsole: false };
-      parsed.claimedRewards.dailyLogin = false;
-      parsed.claimedRewards.daily1 = false;
-      parsed.claimedRewards.daily2 = false;
-      parsed.claimedRewards.daily3 = false;
+      // les défis du jour se réclament de nouveau (avant, seuls d'anciens noms étaient remis à zéro)
+      ["dailyLogin", "dailyExploration", "dailyFavorite", "dailyConsoleFilter", "daily1", "daily2", "daily3"]
+        .forEach((k) => { parsed.claimedRewards[k] = false; });
       parsed.lastResetDate = today;
+    }
+    // Remise à zéro chaque lundi pour le défi « 3 boosters cette semaine »
+    const monday = new Date(); monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    const weekKey = monday.toISOString().slice(0, 10);
+    if (parsed.weekKey !== weekKey) {
+      parsed.weeklyProgress.packsOpened = 0;
+      parsed.claimedRewards.weeklyPacks = false;
+      parsed.weekKey = weekKey;
     }
     return parsed;
   } catch (e) {
@@ -5460,7 +5556,7 @@ function renderShopMainPage(tab = 0) {
 
     const row = el("div", "booster-row");
     packsConfig.forEach((cfg) => {
-      const card = el("article", "booster");
+      const card = el("article", "booster" + (cfg.cat === "supreme_retro" ? " card-holo-effect" : ""));
       card.style.setProperty("--c", cfg.color);
       card.innerHTML = `
         <div class="booster-art">
@@ -5573,185 +5669,160 @@ function buyAndOpenPack(cost, typeName, category) {
   }
 }
 
-// ▸ triggerRandomPackDraw : animation d'ouverture d'un pack + tirage d'un jeu
+// ▸ triggerRandomPackDraw : ouverture d'un booster (suspense → flash → carte à retourner)
 async function triggerRandomPackDraw(type, category = "standard") {
-  // 🛡️ SÉCURITÉ : Si le type ou la catégorie contient rétro/collector, on force la bonne étiquette
+  // Si le type contient rétro / collector, on force la bonne catégorie
   const typeLower = (type + "").toLowerCase();
-  if (typeLower.includes("rétro") || typeLower.includes("retro")) {
-    category = "retro";
-  } else if (typeLower.includes("collector") || typeLower.includes("supreme")) {
-    category = "supreme_retro";
-  }
-  const fsOverlay = el("div", "pack-fullscreen-overlay");
-  
-  // Étape 1 : Vibration et suspense du booster
-  const loadingWrapper = el("div");
-  loadingWrapper.style.cssText = "text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px; z-index:2;";
+  if (typeLower.includes("collector") || typeLower.includes("supreme")) category = "supreme_retro";
+  else if (typeLower.includes("rétro") || typeLower.includes("retro")) category = "retro";
 
-  const boosterVisual = el("div", "fullscreen-booster-card pack-animating");
-  boosterVisual.innerHTML = `
-    <div class="booster-foil-overlay"></div>
-    <div class="booster-logo-badge">SYSTÈME // SÉCURISÉ</div>
-    <div class="booster-art-center" style="width:90px; height:90px;">
-      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:16px; color:var(--acc); text-shadow:0 0 10px var(--acc);">CR-26</span>
+  const PACK_STYLE = {
+    standard: { name: "Standard", color: "#94a3b8", rarity: "Commune" },
+    retro: { name: "Rétro Classic", color: "#38bdf8", rarity: "Rare" },
+    supreme_retro: { name: "Supreme Collector", color: "#fbbf24", rarity: "Holographique" },
+  };
+  const style = PACK_STYLE[category] || PACK_STYLE.standard;
+
+  const fsOverlay = el("div", "pack-fullscreen-overlay pack-v2");
+  fsOverlay.style.setProperty("--c", style.color);
+  fsOverlay.setAttribute("role", "dialog");
+  fsOverlay.setAttribute("aria-label", "Ouverture du booster");
+
+  // Croix pour quitter à tout moment
+  const closeX = el("button", "pack-x");
+  closeX.type = "button";
+  closeX.setAttribute("aria-label", "Fermer");
+  closeX.innerHTML = icon("x");
+  closeX.addEventListener("click", () => { playThemeSound(theme); fsOverlay.remove(); refreshShop(); });
+
+  // --- Étape 1 : le booster tremble pendant le tirage ---
+  const stage = el("div", "pack-stage");
+  stage.innerHTML = `
+    <div class="pack-big pack-animating">
+      <div class="booster-foil-overlay"></div>
+      <span class="pack-big-label"></span>
+      <span class="pack-big-code">CR-26</span>
+      <span class="pack-big-name">${esc(style.name)}</span>
+      <span class="pack-big-pins"></span>
     </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:var(--acc); letter-spacing:3px; text-transform:uppercase;">
-      PACK ${type}
-    </div>
-  `;
-
-  const loadText = el("p", "", "DÉCRYPTAGE DU FLUX DE DONNÉES EN COURS...");
-  loadText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; color:var(--mut); text-transform:uppercase;";
-
-  loadingWrapper.append(boosterVisual, loadText);
-  fsOverlay.append(loadingWrapper);
+    <p class="pack-status is-loading">Ouverture du booster…</p>`;
+  fsOverlay.append(closeX, stage);
   document.body.append(fsOverlay);
 
+  // Tirage d'un jeu (même logique qu'avant : une année selon le booster, puis un jeu au hasard)
   let randomGame;
   try {
-    if (typeof API !== 'undefined') {
+    if (typeof API !== "undefined") {
       let targetYear;
-      if (category === "retro") {
-        targetYear = Math.floor(Math.random() * (2005 - 1985)) + 1985;
-      } else if (category === "supreme_retro") {
-        targetYear = Math.floor(Math.random() * (1998 - 1980)) + 1980;
-      } else {
-        targetYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
-      }
-
-      const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+      if (category === "retro") targetYear = Math.floor(Math.random() * (2005 - 1985)) + 1985;
+      else if (category === "supreme_retro") targetYear = Math.floor(Math.random() * (1998 - 1980)) + 1980;
+      else targetYear = Math.floor(Math.random() * (2026 - 2010)) + 2010;
+      const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
       const res = await fetch(`${API}/?month=${targetYear}-${randomMonth}`);
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        randomGame = data[Math.floor(Math.random() * data.length)];
-      }
+      if (Array.isArray(data) && data.length > 0) randomGame = data[Math.floor(Math.random() * data.length)];
     }
   } catch (err) {
     console.warn("Erreur réseau API, passage au cache local.", err);
   }
-
   if (!randomGame) {
     const allLoadedGames = [];
-    Object.values(cache).forEach(monthList => {
-      if (Array.isArray(monthList)) allLoadedGames.push(...monthList);
-    });
-    if (allLoadedGames.length > 0) {
-      randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
-    }
+    Object.values(cache).forEach((monthList) => { if (Array.isArray(monthList)) allLoadedGames.push(...monthList); });
+    if (allLoadedGames.length > 0) randomGame = allLoadedGames[Math.floor(Math.random() * allLoadedGames.length)];
   }
-
   if (!randomGame) {
-    randomGame = {
-      id: Math.floor(Math.random() * 100000),
-      name: "Jeu Rétro Légendaire",
-      cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png"
-    };
+    randomGame = { id: Math.floor(Math.random() * 100000), name: "Jeu rétro légendaire", cover: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1symbol.png" };
   }
 
-if (!myCollection.some(item => Number(item.id) === Number(randomGame.id))) {
-    // 🎯 SÉCURITÉ FINALE : On force la bonne catégorie selon le pack ouvert, peu importe l'année du jeu
-    const typeCheck = (type + "").toLowerCase();
-    if (typeCheck.includes("supreme") || typeCheck.includes("collector")) {
-      randomGame.category = "supreme_retro";
-    } else if (typeCheck.includes("rétro") || typeCheck.includes("retro")) {
-      randomGame.category = "retro";
-    } else {
-      randomGame.category = category;
-    }
-    
+  // Ajout à la vitrine (sauf si on l'a déjà : c'est un doublon)
+  const isNew = !myCollection.some((item) => Number(item.id) === Number(randomGame.id));
+  if (isNew) {
+    randomGame.category = category;
     myCollection.push(randomGame);
-    try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch(e) {}
+    try { localStorage.setItem("myCollection", JSON.stringify(myCollection)); } catch (e) {}
   }
 
-  // Temps de suspense avant l'explosion
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // Défi « Collectionneur de la semaine » : un booster de plus (avant, ce compteur n'avançait jamais)
+  try {
+    const cd = loadChallengesData();
+    cd.weeklyProgress = cd.weeklyProgress || {};
+    cd.weeklyProgress.packsOpened = (cd.weeklyProgress.packsOpened || 0) + 1;
+    saveChallengesData(cd);
+  } catch (e) {}
 
-  // --- ÉTAPE 2 : EFFET D'EXPLOSION DE LUMIÈRE (FLASH) ---
-  const flashEffect = el("div");
-  flashEffect.style.cssText = `
-    position: fixed; inset: 0; background: #ffffff; z-index: 999999;
-    animation: flashBurst 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; pointer-events: none;
-  `;
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+  if (!fsOverlay.isConnected) return; // le joueur a fermé pendant le suspense
+
+  // --- Étape 2 : flash de lumière ---
+  const flashEffect = el("div", "pack-flash");
   document.body.append(flashEffect);
   setTimeout(() => flashEffect.remove(), 600);
 
-  // Étape 3 : Affichage de la carte holographique révélée
-  fsOverlay.replaceChildren();
-
-  const revealWrapper = el("div");
-  revealWrapper.style.cssText = "text-align: center; display:flex; flex-direction:column; align-items:center; width:100%; max-width:400px; animation: fadeInList 0.4s ease-out; z-index:2;";
-
-  const topTitle = el("h2", "", `RÉVÉLATION COLLECTOR`);
-  topTitle.style.cssText = "font-family:'Orbitron',sans-serif; color:var(--txt); font-size:15px; font-weight:900; letter-spacing:3px; margin-bottom:6px; text-transform:uppercase; text-shadow:0 0 10px var(--acc);";
-
-  const rarityTag = el("div", "", category.includes("retro") ? "✨ ARCHIVE HOLOGRAPHIQUE LÉGENDAIRE" : "💎 INDEX STANDARD");
-  rarityTag.style.cssText = "font-family:'Orbitron',sans-serif; font-size:9px; font-weight:800; letter-spacing:2px; color:var(--acc); text-transform:uppercase; margin-bottom:18px; background:color-mix(in srgb, var(--acc) 20%, transparent); padding:6px 12px; border-radius:8px; border:1px solid color-mix(in srgb, var(--acc) 50%, transparent); box-shadow:0 0 12px color-mix(in srgb, var(--acc) 30%, transparent);";
+  // --- Étape 3 : la carte à retourner ---
+  const reveal = el("div", "pack-reveal");
+  const head = el("div", "pack-head");
+  head.innerHTML = `
+    <span class="pack-chip">${icon(category === "supreme_retro" ? "sparkles" : category === "retro" ? "cassette" : "box")}${esc(style.name)} · ${esc(style.rarity)}</span>
+    <h2>${isNew ? "Nouvelle jaquette !" : "Doublon"}</h2>
+    <p>${isNew ? "Elle rejoint ta vitrine." : "Tu as déjà ce jeu dans ta vitrine."}</p>`;
 
   const flipContainer = el("div", "fullscreen-card-flip-container");
   const flipper = el("div", "fullscreen-card-flipper");
+  flipper.setAttribute("role", "button");
+  flipper.setAttribute("tabindex", "0");
+  flipper.setAttribute("aria-label", "Retourner la carte");
 
   const cardFront = el("div", "fs-card-front");
   cardFront.innerHTML = `
-    <div style="width:72px; height:72px; border-radius:16px; background:var(--acc); display:flex; align-items:center; justify-content:center; box-shadow:0 0 25px var(--acc); margin-bottom:14px;">
-      <span style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:24px; color:var(--on);">CR</span>
-    </div>
-    <div style="font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; color:var(--txt); letter-spacing:2px; text-transform:uppercase;">CLIQUER POUR DÉCODER</div>
-  `;
+    <div class="pack-card-logo">${icon("gamepad")}</div>
+    <span class="pack-card-brand">CARTRIDGE</span>
+    <span class="pack-card-hint">Touche pour retourner</span>`;
 
-  const cardBack = el("div", "fs-card-back");
+  const cardBack = el("div", "fs-card-back" + (category === "supreme_retro" ? " card-holo-effect" : ""));
   const img = el("img");
   img.src = randomGame.cover || "https://images.igdb.com/igdb/image/upload/t_cover_big/nocover.png";
-  img.style.cssText = "width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;";
-
-  const cardTitle = el("div", "", randomGame.name);
-  cardTitle.style.cssText = "background: rgba(0,0,0,0.95); color: #fff; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:800; text-transform: uppercase; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing:1px;";
-
-  cardBack.append(img, cardTitle);
+  img.alt = randomGame.name || "";
+  cardBack.append(img, el("div", "fs-card-title", randomGame.name || ""));
   flipper.append(cardFront, cardBack);
   flipContainer.append(flipper);
 
+  const openFiche = () => {
+    playThemeSound(theme);
+    fsOverlay.remove();
+    refreshShop();
+    openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0, 10) });
+  };
+
+  const actions = el("div", "pack-actions");
+  const detailBtn = el("button", "cta-sec", "Voir la fiche");
+  detailBtn.addEventListener("click", openFiche);
+  const backBtn = el("button", "cta", "Continuer");
+  backBtn.addEventListener("click", () => { playThemeSound(theme); fsOverlay.remove(); refreshShop(); });
+  actions.append(detailBtn, backBtn);
+
   let isRevealed = false;
-  flipper.addEventListener("click", () => {
+  const flip = () => {
     if (!isRevealed) {
       isRevealed = true;
       playThemeSound(theme);
       flipper.classList.add("flipped");
+      reveal.classList.add("is-revealed");
     } else {
-      playThemeSound(theme);
-      fsOverlay.remove();
-      openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
+      openFiche();
     }
-  });
+  };
+  flipper.addEventListener("click", flip);
+  flipper.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
 
-  const instructionText = el("p", "", "Touchez le boîtier pour lancer le décodage visuel");
-  instructionText.style.cssText = "font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700; color:var(--mut); letter-spacing:1px; text-transform:uppercase; margin: 16px 0 20px;";
+  reveal.append(head, flipContainer, actions);
+  stage.replaceWith(reveal);
 
-  const btnGroup = el("div");
-  btnGroup.style.cssText = "display: flex; gap: 10px; width: 100%;";
-
-  const detailBtn = el("button", "cta-sec", "INSPECTION FICHE");
-  detailBtn.style.flex = "1";
-  detailBtn.style.fontFamily = "'Orbitron', sans-serif";
-  detailBtn.style.fontSize = "11px";
-  detailBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    fsOverlay.remove();
-    openSheet({ g: randomGame, rel: randomGame.releases || [{ platform: "Collection" }], date: randomGame.date || new Date().toISOString().slice(0,10) });
-  });
-
-  const backBtn = el("button", "cta", "FERMER & RETOUR");
-  backBtn.style.flex = "1";
-  backBtn.style.fontFamily = "'Orbitron', sans-serif";
-  backBtn.style.fontSize = "11px";
-  backBtn.addEventListener("click", () => {
-    playThemeSound(theme);
-    fsOverlay.remove();
-    openShopMainPage();
-  });
-
-  btnGroup.append(detailBtn, backBtn);
-  revealWrapper.append(topTitle, rarityTag, flipContainer, instructionText, btnGroup);
-  fsOverlay.append(revealWrapper);
+  // Après l'ouverture : la Boutique se met à jour (crédits, défi « 3 boosters »)
+  // (l'ancien bouton appelait openShopMainPage, qui n'existe pas)
+  function refreshShop() {
+    const shop = document.getElementById("shopMainPage");
+    if (shop && shop.style.display !== "none") renderShopMainPage(1);
+  }
 }
 
 // =====================================================================
@@ -5803,7 +5874,10 @@ function renderMuseumAndVitrinePage() {
         box.type = "button";
         box.title = item.name || "";
         const img = el("img"); img.src = item.cover; img.alt = item.name || ""; img.loading = "lazy";
-        box.append(img, el("span", "", item.name || ""));
+        // Les jaquettes Supreme Collector brillent (si l'effet holographique est activé dans le Profil)
+        const coverBox = el("span", "shelf-cover" + (item.category === "supreme_retro" ? " card-holo-effect" : ""));
+        coverBox.append(img);
+        box.append(coverBox, el("span", "", item.name || ""));
         box.addEventListener("click", () => {
           playThemeSound(theme);
           openSheet({ g: item, rel: item.releases || [{ platform: "Collection" }], date: item.date || new Date().toISOString().slice(0, 10) });
@@ -5921,13 +5995,28 @@ function renderArcadeMainPage() {
   );
 
   // Lance un mini-jeu en plein écran
-  function openFullscreenGame(url) {
+  function openFullscreenGame(url, name) {
     const overlay = el("div", "game-overlay");
     const iframe = document.createElement("iframe");
     iframe.src = url;
-    iframe.title = "Mini-jeu";
-    overlay.append(iframe);
+    iframe.title = name || "Mini-jeu";
+    // Bouton pour revenir à l'app (avant, il n'y en avait aucun)
+    const quit = el("button", "game-quit");
+    quit.type = "button";
+    quit.innerHTML = `${icon("x")}<span>Quitter</span>`;
+    const close = () => {
+      playThemeSound(theme);
+      overlay.remove();
+      document.removeEventListener("keydown", onKey);
+      unlockBackground();
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    quit.addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    overlay.append(iframe, quit);
     document.body.append(overlay);
+    lockBackground(); // la page derrière ne bouge pas pendant la partie
+    iframe.focus();
   }
 
   // --- BORNES : les mini-jeux ---
@@ -5954,7 +6043,7 @@ function renderArcadeMainPage() {
         <div class="cab-screen">${icon(g.ic)}<span>${esc(g.screen)}</span></div>
         <div class="cab-info"><b>${esc(g.name)}</b><small>${esc(g.tag)}</small></div>
         <span class="cab-play">${icon("play")}Jouer</span>`;
-      card.addEventListener("click", () => { playThemeSound(theme); openFullscreenGame(g.url); });
+      card.addEventListener("click", () => { playThemeSound(theme); openFullscreenGame(g.url, g.name); });
       grid.append(card);
     });
     displayBox.append(grid);
