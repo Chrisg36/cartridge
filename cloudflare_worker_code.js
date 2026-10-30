@@ -279,6 +279,205 @@ async function translateSummary(idParam, langParam, env, ctx) {
 
 
 // =====================================================================
+//  NOTES & TESTS : ?reviews=ID_IGDB
+//  Sources : IGDB (note presse + note joueurs), avis Steam (gratuit, sans clé),
+//  OpenCritic (seulement si le secret RAPIDAPI_KEY existe : offre gratuite 200 req/jour).
+//  Tout est rangé dans la table D1 « reviews » et revérifié tout seul selon la date de sortie.
+// =====================================================================
+const DAY = 86400;
+const STEAM_LABELS = {
+  9: "Extrêmement positives", 8: "Très positives", 7: "Positives", 6: "Plutôt positives",
+  5: "Moyennes", 4: "Plutôt négatives", 3: "Négatives", 2: "Très négatives", 1: "Extrêmement négatives",
+};
+const OC_HOST = "opencritic-api.p.rapidapi.com";
+const OC_DAILY_MAX = 180; // marge sous les 200 requêtes/jour gratuites
+const OC_SEARCH_MAX = 20; // marge sous les 25 recherches/jour gratuites
+
+let rvTablesReady = false;
+async function ensureRvTables(env) {
+  if (rvTablesReady) return;
+  await env.DB.batch([
+    // oc_id : null = jamais cherché, 0 = pas trouvé sur OpenCritic, sinon son numéro
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS reviews (game_id INTEGER PRIMARY KEY, data TEXT NOT NULL, oc_id INTEGER, checked_at INTEGER NOT NULL, next_check INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS api_quota (key TEXT PRIMARY KEY, n INTEGER NOT NULL)"),
+  ]);
+  rvTablesReady = true;
+}
+
+// Compte un appel du jour ; renvoie faux si le plafond du jour est atteint
+async function takeQuota(env, kind, max) {
+  const today = new Date().toISOString().slice(0, 10);
+  const row = await env.DB.prepare(
+    "INSERT INTO api_quota (key, n) VALUES (?, 1) ON CONFLICT(key) DO UPDATE SET n = n + 1 RETURNING n"
+  ).bind(kind + ":" + today).first();
+  if (row && row.n === 1) {
+    // premier appel du jour : on efface les compteurs des jours passés
+    await env.DB.prepare("DELETE FROM api_quota WHERE key NOT LIKE ?").bind("%:" + today).run();
+  }
+  return !!row && row.n <= max;
+}
+
+// Quand revérifier ? Selon l'âge du jeu (négatif = pas encore sorti)
+function nextCheckDelay(releaseTs, hasScore) {
+  if (!releaseTs) return 7 * DAY;
+  const age = nowSec() - releaseTs;
+  if (age < -14 * DAY) return Math.max(DAY, Math.min(7 * DAY, -age - 14 * DAY)); // bien avant la sortie
+  if (age < 45 * DAY) return hasScore ? DAY : DAY / 2; // les tests tombent : chaque jour
+  if (age < 180 * DAY) return 7 * DAY;
+  return 30 * DAY; // vieux jeu : la note ne bouge plus
+}
+
+// Numéro Steam du jeu, trouvé dans les liens IGDB
+function findSteamId(g) {
+  for (const e of g.external_games || []) {
+    const isSteam = e.external_game_source === 1 || e.category === 1 || /steampowered\.com/.test(e.url || "");
+    if (isSteam && /^\d+$/.test(String(e.uid || ""))) return Number(e.uid);
+  }
+  for (const w of g.websites || []) {
+    const m = /store\.steampowered\.com\/app\/(\d+)/.exec(w.url || "");
+    if (m) return Number(m[1]);
+  }
+  return null;
+}
+
+async function steamSummary(appid) {
+  const r = await fetch(
+    `https://store.steampowered.com/appreviews/${appid}?json=1&language=all&purchase_type=all&num_per_page=1`,
+    { headers: { "User-Agent": "Cartridge/1.0" } }
+  );
+  if (!r.ok) throw new Error("Steam " + r.status);
+  const q = (await r.json()).query_summary;
+  if (!q || !q.total_reviews) return null;
+  return {
+    appid,
+    label: STEAM_LABELS[q.review_score] || q.review_score_desc || null,
+    percent: Math.round((q.total_positive * 100) / q.total_reviews),
+    total: q.total_reviews,
+    url: `https://store.steampowered.com/app/${appid}/`,
+  };
+}
+
+async function ocFetch(env, path) {
+  if (!(await takeQuota(env, "oc", OC_DAILY_MAX))) throw new Error("quota");
+  const r = await fetch(`https://${OC_HOST}${path}`, {
+    headers: { "X-RapidAPI-Key": env.RAPIDAPI_KEY.trim(), "X-RapidAPI-Host": OC_HOST },
+  });
+  if (!r.ok) throw new Error("OpenCritic " + r.status);
+  return r.json();
+}
+
+const normName = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+// Cherche le jeu sur OpenCritic (une seule fois : le numéro est gardé dans D1)
+async function ocFindId(env, name) {
+  if (!(await takeQuota(env, "ocsearch", OC_SEARCH_MAX))) throw new Error("quota");
+  const list = (await ocFetch(env, `/game/search?criteria=${encodeURIComponent(name)}`)) || [];
+  const exact = list.find((x) => normName(x.name) === normName(name));
+  if (exact) return exact.id;
+  return list[0] && typeof list[0].dist === "number" && list[0].dist <= 0.15 ? list[0].id : 0;
+}
+
+async function ocDetails(env, ocId) {
+  const game = await ocFetch(env, `/game/${ocId}`);
+  const raw = (await ocFetch(env, `/reviews/game/${ocId}`)) || [];
+  const reviews = raw
+    .map((r) => {
+      const outlet = r.Outlet || r.outlet || {};
+      const np = typeof r.npScore === "number" && r.npScore >= 0 ? Math.round(r.npScore) : null;
+      return {
+        outlet: outlet.name || "Site",
+        score: np, // note ramenée sur 100
+        snippet: String(r.snippet || "").replace(/\s+/g, " ").trim().slice(0, 280),
+        url: r.externalUrl || null,
+        lang: String(r.language || "").toLowerCase().slice(0, 2),
+        date: r.publishedDate ? String(r.publishedDate).slice(0, 10) : null,
+      };
+    })
+    .filter((r) => r.url)
+    // les tests en français d'abord, puis ceux qui ont une note
+    .sort((a, b) => (b.lang === "fr") - (a.lang === "fr") || (b.score != null) - (a.score != null))
+    .slice(0, 10);
+  const score = typeof game.topCriticScore === "number" && game.topCriticScore >= 0 ? Math.round(game.topCriticScore) : null;
+  return {
+    score,
+    tier: game.tier || null,
+    count: game.numReviews || 0,
+    percent: typeof game.percentRecommended === "number" && game.percentRecommended >= 0 ? Math.round(game.percentRecommended) : null,
+    url: game.url || `https://opencritic.com/game/${ocId}/-`,
+    reviews,
+  };
+}
+
+async function getReviews(idParam, env) {
+  const id = Number(idParam);
+  if (!Number.isInteger(id) || id <= 0) return jsonRes({ error: "id invalide" }, 400);
+  if (!env.DB) return jsonRes({ error: "binding DB manquant" }, 500);
+
+  try {
+    await ensureRvTables(env);
+    const row = await env.DB.prepare("SELECT data, oc_id, next_check FROM reviews WHERE game_id = ?").bind(id).first();
+    if (row && row.next_check > nowSec()) {
+      return Response.json(JSON.parse(row.data), { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
+    }
+    const old = row ? JSON.parse(row.data) : {};
+    let ocId = row ? row.oc_id : null;
+
+    // 1) IGDB : notes + liens (pour trouver le jeu sur Steam)
+    const [g] = await igdb(env, `
+      fields name, first_release_date, aggregated_rating, aggregated_rating_count, rating, rating_count,
+             external_games.*, websites.url;
+      where id = ${id};
+    `);
+    if (!g) return jsonRes({ error: "jeu introuvable" }, 404);
+    const releaseTs = g.first_release_date || null;
+    const released = releaseTs && releaseTs - nowSec() < 14 * DAY; // sorti, ou tests imminents
+
+    const data = {
+      id,
+      name: g.name,
+      igdb: {
+        critics: g.aggregated_rating ? Math.round(g.aggregated_rating) : null,
+        criticsCount: g.aggregated_rating_count || 0,
+        players: g.rating ? Math.round(g.rating) : null,
+        playersCount: g.rating_count || 0,
+      },
+      steam: old.steam || null,
+      opencritic: old.opencritic || null,
+      updated: new Date().toISOString().slice(0, 10),
+    };
+    let retrySoon = false;
+
+    // 2) Avis des joueurs Steam
+    if (released) {
+      const appid = findSteamId(g);
+      if (appid) {
+        try { data.steam = await steamSummary(appid); } catch (e) { retrySoon = true; }
+      }
+    }
+
+    // 3) OpenCritic (optionnel)
+    if (released && env.RAPIDAPI_KEY) {
+      try {
+        const recent = releaseTs && nowSec() - releaseTs < 60 * DAY;
+        if (ocId == null || (ocId === 0 && recent)) ocId = await ocFindId(env, g.name);
+        if (ocId) data.opencritic = await ocDetails(env, ocId);
+      } catch (e) { retrySoon = true; } // quota du jour atteint ou panne : on garde l'ancien résultat
+    }
+
+    const hasScore = !!(data.igdb.critics || (data.opencritic && data.opencritic.score) || data.steam);
+    const delay = retrySoon ? 6 * 3600 : nextCheckDelay(releaseTs, hasScore);
+    await env.DB.prepare(
+      "INSERT OR REPLACE INTO reviews (game_id, data, oc_id, checked_at, next_check) VALUES (?, ?, ?, ?, ?)"
+    ).bind(id, JSON.stringify(data), ocId, nowSec(), nowSec() + delay).run();
+
+    return Response.json(data, { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
+  } catch (e) {
+    return jsonRes({ error: e.message }, 500);
+  }
+}
+
+
+// =====================================================================
 //  COMPTES JOUEURS (base D1, binding « DB ») : /api/auth, /api/save, /api/recover
 // =====================================================================
 const USERNAME_RE = /^[A-Za-z0-9_-]{3,20}$/;
@@ -500,6 +699,10 @@ export default {
 
     if (url.searchParams.has("translate")) {
       return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
+    }
+
+    if (url.searchParams.has("reviews")) {
+      return getReviews(url.searchParams.get("reviews"), env);
     }
 
     let month = url.searchParams.get("month");
