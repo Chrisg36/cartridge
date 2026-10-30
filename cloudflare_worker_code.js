@@ -344,13 +344,38 @@ function findSteamId(g) {
   return null;
 }
 
+// Lit une réponse Steam en JSON ; si Steam renvoie une page web, message clair au lieu d'un plantage
+async function steamJson(res, label) {
+  if (!res.ok) throw new Error(`${label} ${res.status}`);
+  const text = await res.text();
+  if (/^\s*</.test(text)) throw new Error(`${label} a renvoyé une page web au lieu de données`);
+  return JSON.parse(text);
+}
+
 async function steamSummary(appid) {
-  const r = await fetch(
-    `https://store.steampowered.com/appreviews/${appid}?json=1&language=all&purchase_type=all&num_per_page=1`,
-    { headers: { "User-Agent": "Cartridge/1.0" } }
-  );
-  if (!r.ok) throw new Error("Steam " + r.status);
-  const q = (await r.json()).query_summary;
+  let q, firstError;
+  // 1) Adresse officielle actuelle (sans clé) : IUserReviewsService/GetAppReviews
+  try {
+    const input = { appid, languages: ["all"], purchase_type: 1, num_per_page: 1, display_language: "french" };
+    const res = await fetch(
+      "https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?input_json=" + encodeURIComponent(JSON.stringify(input)),
+      { headers: { "User-Agent": "Cartridge/1.0", Accept: "application/json" } }
+    );
+    const j = await steamJson(res, "Steam API");
+    q = (j.response || j).query_summary;
+  } catch (e) { firstError = e; }
+  // 2) Secours : l'ancienne adresse (dépréciée par Valve)
+  if (!q) {
+    try {
+      const res = await fetch(
+        `https://store.steampowered.com/appreviews/${appid}?json=1&language=all&purchase_type=all&num_per_page=1`,
+        { headers: { "User-Agent": "Cartridge/1.0", Accept: "application/json" } }
+      );
+      q = (await steamJson(res, "Steam store")).query_summary;
+    } catch (e) {
+      throw new Error((firstError ? firstError.message + " / " : "") + e.message);
+    }
+  }
   if (!q || !q.total_reviews) return null;
   return {
     appid,
