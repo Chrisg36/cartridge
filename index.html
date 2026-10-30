@@ -6077,7 +6077,7 @@ function renderArcadeMainPage() {
 
   // --- VUE 1 : HUB ARCADE (EN CONSTRUCTION / MINI-JEUX) ---
   
-  function openFullscreenGame(url) {
+    function openFullscreenGame(url) {
     const overlay = el("div");
     overlay.style.cssText = `
       position: fixed; inset: 0; background: #000; z-index: 999999;
@@ -6088,20 +6088,7 @@ function renderArcadeMainPage() {
     iframe.src = url;
     iframe.style.cssText = "width: 100%; height: 100%; border: none; display: block;";
 
-    const closeBtn = el("button", "", "✕ FERMER LE JEU");
-    closeBtn.style.cssText = `
-      position: fixed; top: calc(env(safe-area-inset-top, 10px) + 12px); right: 16px; z-index: 1000000;
-      background: var(--card); color: var(--txt); border: 2px solid var(--txt);
-      padding: 8px 14px; font-family: 'Press Start 2P', monospace; font-size: 9px;
-      cursor: pointer; border-radius: 6px; box-shadow: 0 0 15px rgba(0,0,0,0.8);
-    `;
-
-    closeBtn.onclick = () => {
-      playThemeSound(theme);
-      overlay.remove();
-    };
-
-    overlay.append(iframe, closeBtn);
+    overlay.append(iframe);
     document.body.append(overlay);
   }
     
