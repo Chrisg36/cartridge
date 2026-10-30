@@ -11,7 +11,6 @@ const PLATFORM_NAMES = {
   29: "Mega Drive", 64: "Master System",
 };
 
-// Plateformes affichées dans la liste mensuelle
 const MONTH_PLATFORMS = [6, 167, 169, 508];
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
 
@@ -21,21 +20,17 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// Corrections manuelles : numéro IGDB du jeu -> vraie date de sortie (AAAA-MM-JJ)
 const DATE_FIXES = {
   305160: "2026-10-06", // Gears of War: E-Day
 };
 
-// Types de jeux gardés : 0 jeu, 4 extension autonome, 8 remake, 9 remaster, 10 édition étendue, 11 portage
 const GAME_TYPES = "(0,4,8,9,10,11)";
 
-// Vrai si le texte de date d'IGDB contient un jour (« Oct 06, 2026 »), faux sinon (« Oct 2026 »)
 const hasDay = (h) =>
   /(^|\D)\d{1,2}(\D|$)/.test(String(h).replace(/\d{4}/, "").replace(/Q\d/gi, ""));
 
 const iso = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
 
-// 🔒 Fonction utilitaire de hachage sécurisé (SHA-256 natif Cloudflare Workers)
 async function hashPassword(password) {
   const msgUint8 = new TextEncoder().encode(password);
   const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
@@ -147,75 +142,13 @@ function buildGames(raw, { allowedIds, start, end, month, searchMode }) {
   return games;
 }
 
-function splitText(text, max = 400) {
-  const sentences = text.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/);
-  const chunks = [];
-  let cur = "";
-  for (let s of sentences) {
-    while (s.length > max) {
-      if (cur) { chunks.push(cur); cur = ""; }
-      chunks.push(s.slice(0, max));
-      s = s.slice(max);
-    }
-    if ((cur + " " + s).trim().length > max) {
-      chunks.push(cur);
-      cur = s;
-    } else {
-      cur = (cur + " " + s).trim();
-    }
-  }
-  if (cur) chunks.push(cur);
-  return chunks;
-}
-
-const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
-
-async function translateSummary(idParam, lang, env, ctx) {
-  const id = Number(idParam);
-  if (!Number.isInteger(id) || id <= 0) {
-    return Response.json({ error: "id invalide" }, { status: 400, headers: CORS });
-  }
-  if (!env.AI) {
-    return Response.json(
-      { error: "Traduction non activée : il manque le binding AI sur le Worker" },
-      { status: 500, headers: CORS }
-    );
-  }
-  const key = new Request(`https://sorties-jeux.cache/tr/${id}/${lang}`);
-  const hit = await cacheGet(key);
-  if (hit) return hit;
-  try {
-    const raw = await igdb(env, `fields summary; where id = ${id};`);
-    const text = raw[0] && raw[0].summary;
-    if (!text) return Response.json({ id, summary: null }, { headers: CORS });
-    if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS });
-    const out = [];
-    for (const chunk of splitText(text)) {
-      const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
-        text: chunk,
-        source_lang: "english",
-        target_lang: TARGET_LANGS[lang] || "french",
-      });
-      out.push(r.translated_text);
-    }
-    const response = Response.json(
-      { id, summary: out.join(" ") },
-      { headers: { ...CORS, "Cache-Control": "public, max-age=2592000" } }
-    );
-    cachePut(ctx, key, response.clone());
-    return response;
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: 500, headers: CORS });
-  }
-}
-
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
     // ==========================================
-    // 👤 ROUTE 1 : AUTHENTIFICATION CLOUDFLARE D1 (SÉCURISÉE HASH SHA-256)
+    // 👤 ROUTE 1 : AUTHENTIFICATION & RÉCUPÉRATION CLOUDFLARE D1
     // ==========================================
     if (url.pathname === "/api/auth" && request.method === "POST") {
       try {
@@ -227,10 +160,23 @@ export default {
         }
 
         const hashedPassword = await hashPassword(password);
-        const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+        
+        let user;
+        try {
+          user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+        } catch (dbErr) {
+          await env.DB.prepare(`
+            CREATE TABLE IF NOT EXISTS users (
+              id TEXT PRIMARY KEY,
+              password_hash TEXT NOT NULL,
+              recovery_q TEXT,
+              data TEXT
+            )
+          `).run();
+          user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(cleanId).first();
+        }
 
         if (!user) {
-          // Inscription
           await env.DB.prepare(
             "INSERT INTO users (id, password_hash, recovery_q, data) VALUES (?, ?, ?, ?)"
           ).bind(cleanId, hashedPassword, recoveryQ || "", JSON.stringify(data || {})).run();
@@ -240,8 +186,17 @@ export default {
             message: "Compte créé et sécurisé sur Cloudflare !" 
           }, { headers: CORS });
         } else {
-          // Connexion
+          if (recoveryQ === "reset") {
+            await env.DB.prepare("UPDATE users SET password_hash = ?, data = ? WHERE id = ?")
+              .bind(hashedPassword, JSON.stringify(data || {}), cleanId)
+              .run();
+            return Response.json({ status: "reset", message: "Mot de passe mis à jour avec succès !" }, { headers: CORS });
+          }
+
           if (user.password_hash === hashedPassword) {
+            if (data) {
+              await env.DB.prepare("UPDATE users SET data = ? WHERE id = ?").bind(JSON.stringify(data), cleanId).run();
+            }
             return Response.json({ 
               status: "connected", 
               data: JSON.parse(user.data || "{}") 
@@ -249,7 +204,7 @@ export default {
           } else {
             return Response.json({ 
               status: "error", 
-              message: "Mot de passe incorrect pour ce joueur." 
+              message: "Mot de passe incorrect." 
             }, { status: 401, headers: CORS });
           }
         }
@@ -276,11 +231,39 @@ export default {
       }
     }
 
-    if (url.pathname.startsWith("/translate/")) {
-      const parts = url.pathname.split("/");
-      const id = parts[2];
-      const lang = parts[3] || "fr";
-      return translateSummary(id, lang, env, ctx);
+    // ==========================================
+    // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX (?translate=ID&lang=LANG)
+    // ==========================================
+    const translateId = url.searchParams.get("translate");
+    const targetLang = url.searchParams.get("lang") || "fr";
+
+    if (translateId) {
+      try {
+        const raw = await igdb(env, `fields summary; where id = ${translateId}; limit 1;`);
+        if (!raw || !raw.length || !raw[0].summary) {
+          return Response.json({ summary: "Aucun résumé disponible pour ce titre." }, { headers: CORS });
+        }
+        
+        const originalSummary = raw[0].summary;
+        let translatedSummary = originalSummary;
+
+        if (env.AI && targetLang === "fr") {
+          try {
+            const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+              prompt: `Traduis ce résumé de jeu vidéo en français de manière naturelle et fluide. Ne donne que la traduction directe, sans introduction ni commentaire :\n\n${originalSummary}`
+            });
+            if (aiResponse && aiResponse.response) {
+              translatedSummary = aiResponse.response.trim();
+            }
+          } catch (aiErr) {
+            console.warn("Erreur Workers AI, fallback texte d'origine :", aiErr);
+          }
+        }
+
+        return Response.json({ summary: translatedSummary }, { headers: CORS });
+      } catch (trErr) {
+        return Response.json({ error: trErr.message }, { status: 500, headers: CORS });
+      }
     }
 
     let month = url.searchParams.get("month");
