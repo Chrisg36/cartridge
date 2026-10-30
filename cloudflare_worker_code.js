@@ -967,6 +967,149 @@ async function handleApi(path, request, env) {
   }
 }
 
+// =====================================================================
+// ESPORT (PandaScore, plan gratuit « Fixtures ») — route ?esport=running|upcoming|past&game=all|lol|cs2|valorant|dota2|rl
+//   Secret à ajouter dans Cloudflare : PANDASCORE_TOKEN (Settings → Variables and Secrets)
+//   Les réponses sont gardées en cache (1 min pour le direct, 10 min sinon) :
+//   on reste très loin de la limite de 1000 requêtes par heure.
+// =====================================================================
+const ESPORT_GAMES = { all: "", lol: "lol", cs2: "csgo", valorant: "valorant", dota2: "dota2", rl: "rl" };
+const ESPORT_TTL = { running: 60, upcoming: 600, past: 600 };
+
+async function getEsport(url, env, ctx) {
+  if (!env.PANDASCORE_TOKEN) return jsonRes({ error: "pas de clé PANDASCORE_TOKEN" }, 503);
+  const kind = ESPORT_TTL[url.searchParams.get("esport")] ? url.searchParams.get("esport") : "upcoming";
+  const gameParam = url.searchParams.get("game") || "all";
+  const game = Object.prototype.hasOwnProperty.call(ESPORT_GAMES, gameParam) ? gameParam : "all";
+
+  const cacheKey = new Request(`${url.origin}/esport-v1/${kind}/${game}`);
+  const cached = await cacheGet(cacheKey);
+  if (cached) return cached;
+
+  const path = (ESPORT_GAMES[game] ? `/${ESPORT_GAMES[game]}` : "") + `/matches/${kind}`;
+  const qs = new URLSearchParams({ per_page: "60", sort: kind === "past" ? "-begin_at" : "begin_at" });
+  let list;
+  try {
+    const res = await fetch(`https://api.pandascore.co${path}?${qs}`, {
+      headers: { Authorization: `Bearer ${env.PANDASCORE_TOKEN.trim()}`, Accept: "application/json" },
+    });
+    if (!res.ok) return jsonRes({ error: `PandaScore a répondu ${res.status}` }, 502);
+    list = await res.json();
+  } catch (e) {
+    return jsonRes({ error: "PandaScore injoignable" }, 502);
+  }
+  if (!Array.isArray(list)) list = [];
+
+  // On ne renvoie que ce dont l'app a besoin (réponse ~10 fois plus légère)
+  const matches = list.map((m) => {
+    const results = Array.isArray(m.results) ? m.results : [];
+    const streams = Array.isArray(m.streams_list) ? m.streams_list : [];
+    const stream = streams.find((x) => x.language === "fr") || streams.find((x) => x.main) || streams[0];
+    return {
+      id: m.id,
+      status: m.status, // not_started · running · finished · canceled · postponed
+      begin: m.begin_at || m.scheduled_at || null,
+      bo: m.number_of_games || null,
+      game: m.videogame ? m.videogame.name : "",
+      gameSlug: m.videogame ? m.videogame.slug : "",
+      league: m.league ? m.league.name : "",
+      leagueImg: m.league ? m.league.image_url : null,
+      serie: m.serie ? (m.serie.full_name || m.serie.name || "") : "",
+      stage: m.tournament ? m.tournament.name : "",
+      winner: m.winner_id || null,
+      stream: stream ? stream.raw_url : null,
+      teams: (Array.isArray(m.opponents) ? m.opponents : []).slice(0, 2).map((o) => {
+        const t = o.opponent || {};
+        const r = results.find((x) => x.team_id === t.id || x.player_id === t.id);
+        return { id: t.id, name: t.name || "?", acr: t.acronym || "", img: t.image_url || null, score: r ? r.score : null };
+      }),
+    };
+  });
+
+  const response = Response.json(matches, {
+    headers: { ...CORS, "Cache-Control": `public, max-age=${ESPORT_TTL[kind]}` },
+  });
+  cachePut(ctx, cacheKey, response.clone());
+  return response;
+}
+
+// =====================================================================
+// ANIME & MANGA (AniList, gratuit, sans clé) — route ?anime=schedule|manga
+//   schedule : épisodes qui sortent sur 7 jours (heure de diffusion au Japon)
+//   manga    : mangas en cours les plus suivis en ce moment
+//   Cache 30 min : AniList limite à ~30 requêtes/minute sans compte.
+// =====================================================================
+const ANILIST_URL = "https://graphql.anilist.co";
+
+async function anilist(query, variables) {
+  const res = await fetch(ANILIST_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ query, variables }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data || data.errors) throw new Error((data && data.errors && data.errors[0] && data.errors[0].message) || `AniList ${res.status}`);
+  return data.data;
+}
+
+const AL_MEDIA_FIELDS = `id title { romaji english } coverImage { large color } siteUrl isAdult format popularity episodes chapters genres countryOfOrigin status
+  externalLinks { site url type }`;
+
+function alShort(m) {
+  const streams = (m.externalLinks || []).filter((l) => l.type === "STREAMING" && l.url);
+  const fr = streams.find((l) => /crunchyroll|adn|animation digital|netflix|disney|prime|wakanim/i.test(l.site));
+  return {
+    id: m.id,
+    title: (m.title && (m.title.english || m.title.romaji)) || "?",
+    cover: m.coverImage ? m.coverImage.large : null,
+    color: m.coverImage ? m.coverImage.color : null,
+    url: m.siteUrl,
+    format: m.format,
+    episodes: m.episodes || null,
+    chapters: m.chapters || null,
+    genres: (m.genres || []).slice(0, 3),
+    stream: (fr || streams[0]) ? { site: (fr || streams[0]).site, url: (fr || streams[0]).url } : null,
+  };
+}
+
+async function getAnime(url, ctx) {
+  const kind = url.searchParams.get("anime") === "manga" ? "manga" : "schedule";
+  const hour = Math.floor(Date.now() / 3600e3);
+  const cacheKey = new Request(`${url.origin}/anime-v1/${kind}/${kind === "schedule" ? Math.floor(hour / 1) : Math.floor(hour / 6)}`);
+  const cached = await cacheGet(cacheKey);
+  if (cached) return cached;
+
+  let out = [];
+  try {
+    if (kind === "schedule") {
+      const start = hour * 3600 - 6 * 3600, end = start + 7 * 86400 + 6 * 3600;
+      const q = `query ($s: Int, $e: Int, $p: Int) { Page(page: $p, perPage: 50) { pageInfo { hasNextPage }
+        airingSchedules(airingAt_greater: $s, airingAt_lesser: $e, sort: TIME) { episode airingAt media { ${AL_MEDIA_FIELDS} } } } }`;
+      for (let p = 1; p <= 4; p++) {
+        const d = await anilist(q, { s: start, e: end, p });
+        const list = (d.Page && d.Page.airingSchedules) || [];
+        list.forEach((a) => {
+          const m = a.media;
+          // séries japonaises connues, tout public (on écarte les très confidentielles)
+          if (!m || m.isAdult || m.countryOfOrigin !== "JP" || (m.popularity || 0) < 3000) return;
+          if (!["TV", "TV_SHORT", "ONA"].includes(m.format)) return;
+          out.push({ ...alShort(m), episode: a.episode, at: a.airingAt, popularity: m.popularity });
+        });
+        if (!d.Page.pageInfo.hasNextPage) break;
+      }
+    } else {
+      const q = `query { Page(page: 1, perPage: 30) { media(type: MANGA, status: RELEASING, isAdult: false, sort: TRENDING_DESC) { ${AL_MEDIA_FIELDS} } } }`;
+      const d = await anilist(q, {});
+      out = ((d.Page && d.Page.media) || []).map(alShort);
+    }
+  } catch (e) {
+    return jsonRes({ error: "AniList injoignable : " + e.message }, 502);
+  }
+  const response = Response.json(out, { headers: { ...CORS, "Cache-Control": "public, max-age=1800" } });
+  cachePut(ctx, cacheKey, response.clone());
+  return response;
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
@@ -980,6 +1123,14 @@ export default {
 
     if (url.searchParams.has("pack")) {
       return drawPack(url, env, ctx);
+    }
+
+    if (url.searchParams.has("anime")) {
+      return getAnime(url, ctx);
+    }
+
+    if (url.searchParams.has("esport")) {
+      return getEsport(url, env, ctx);
     }
 
     if (url.searchParams.has("reviews")) {
