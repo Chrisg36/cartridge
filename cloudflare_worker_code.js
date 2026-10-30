@@ -449,7 +449,7 @@ async function getReviews(idParam, env, refresh) {
     const old = row ? JSON.parse(row.data) : {};
     // Résultat encore frais ET fait par la version actuelle du code ? On le renvoie tel quel.
     if (row && row.next_check > nowSec() && old.v === RV_VERSION && !refresh) {
-      return Response.json(old, { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
+      return Response.json(old, { headers: { ...CORS, "Cache-Control": "public, max-age=60" } });
     }
     let ocId = row ? row.oc_id : null;
 
@@ -516,7 +516,7 @@ async function getReviews(idParam, env, refresh) {
       "INSERT OR REPLACE INTO reviews (game_id, data, oc_id, checked_at, next_check) VALUES (?, ?, ?, ?, ?)"
     ).bind(id, JSON.stringify(data), ocId, nowSec(), nowSec() + delay).run();
 
-    return Response.json(data, { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
+    return Response.json(data, { headers: { ...CORS, "Cache-Control": "public, max-age=60" } });
   } catch (e) {
     return jsonRes({ error: e.message }, 500);
   }
