@@ -6202,6 +6202,31 @@ function renderArcadeMainPage() {
     
     gridCabs.append(cabCard4);
 
+    // 5. Borne Pac-Man Arcade
+    const cabCard5 = el("div");
+    cabCard5.style.cssText = `
+      background: var(--card); border: 2px solid #ffcc00; border-radius: 14px;
+      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    `;
+    cabCard5.onmouseenter = () => { cabCard5.style.transform = "translateY(-4px)"; cabCard5.style.boxShadow = "0 15px 35px rgba(0,0,0,0.8), 0 0 20px #ffcc00"; };
+    cabCard5.onmouseleave = () => { cabCard5.style.transform = "translateY(0)"; cabCard5.style.boxShadow = "0 10px 30px rgba(0,0,0,0.6)"; };
+    cabCard5.innerHTML = `
+      <div style="width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid #ffcc00; display: flex; align-items: center; justify-content: center;">
+        <div style="font-family:'Press Start 2P', monospace; font-size: 12px; color: #ffcc00; text-align: center; text-shadow: 0 0 10px #ffcc00;">
+          ᗤ PAC-MAN<br><span style="font-size:7px; color:var(--mut);">PRO ARCADE</span>
+        </div>
+      </div>
+      <div style="text-align: center; width: 100%;">
+        <b style="font-family:'Orbitron',sans-serif; font-size: 13px; color: var(--txt); display: block; margin-bottom: 4px;">Pac-Man Rétro</b>
+        <span style="font-size: 10px; color: var(--mut);">Labyrinthe • Fantômes & Super Pac-Gommes</span>
+      </div>
+      <button class="cta" style="width: 100%; font-family:'Orbitron',sans-serif; font-size: 11px; font-weight:900; margin:0; background:#ffcc00; color:#000;">▶ JOUER</button>
+    `;
+    cabCard5.onclick = () => { playThemeSound(theme); openFullscreenGame("pacman_arcade.html"); };
+    gridCabs.append(cabCard5);
+
+
     gridCabs.append(cabCard1, cabCard2, cabCard3);
     banner.append(gridCabs);
     displayBox.append(banner);
