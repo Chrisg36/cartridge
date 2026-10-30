@@ -4608,7 +4608,10 @@ async function openSheet(it) {
   const p = $("#panel");
   p.className = "panel";
   
-  const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
+  const img = el("img", "big"); 
+  img.src = it.g.cover; 
+  img.alt = "";
+  
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
   
@@ -4619,25 +4622,13 @@ async function openSheet(it) {
   favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
   favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
   
-  // ... le reste de ta fonction continue ici ...
   const GENRE_FR = {
-    "Action": "Action",
-    "Adventure": "Aventure",
-    "Role-playing (RPG)": "RPG",
-    "Shooter": "FPS / Tir",
-    "Racing": "Course",
-    "Horror": "Horreur",
-    "Strategy": "Stratégie",
-    "Simulation": "Simulation",
-    "Sports": "Sport",
-    "Fighting": "Combat",
-    "Platform": "Plateforme",
-    "Indie": "Indépendant",
-    "Puzzle": "Réflexion",
-    "Music": "Musique",
-    "Arcade": "Arcade",
-    "Visual Novel": "Visual Novel",
-    "Card & Board Game": "Jeu de cartes"
+    "Action": "Action", "Adventure": "Aventure", "Role-playing (RPG)": "RPG",
+    "Shooter": "FPS / Tir", "Racing": "Course", "Horror": "Horreur",
+    "Strategy": "Stratégie", "Simulation": "Simulation", "Sports": "Sport",
+    "Fighting": "Combat", "Platform": "Plateforme", "Indie": "Indépendant",
+    "Puzzle": "Réflexion", "Music": "Musique", "Arcade": "Arcade",
+    "Visual Novel": "Visual Novel", "Card & Board Game": "Jeu de cartes"
   };
 
   let genresRaw = it.g.genres || it.g.genre || it.g.category;
@@ -4663,46 +4654,46 @@ async function openSheet(it) {
   companyInfo.style.marginTop = "6px";
 
   const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
-  const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
+  const d = el("p", "m", dates); 
+  d.style.whiteSpace = "pre-line";
 
   p.replaceChildren(img, el("h2", "", it.g.name), categoryBadge, companyInfo, d, cta, favCta);
 
   const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
   const trailerBtn = el("a", "cta-sec");
-  trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
-  trailerBtn.style.marginTop = "8px"; trailerBtn.innerHTML = t('trailerBtn');
+  trailerBtn.href = ytSearchUrl; 
+  trailerBtn.target = "_blank"; 
+  trailerBtn.rel = "noopener noreferrer";
+  trailerBtn.style.marginTop = "8px"; 
+  trailerBtn.innerHTML = t('trailerBtn');
   trailerBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(trailerBtn);
 
   const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
   const hltbBtn = el("a", "cta-sec");
-  hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
-  hltbBtn.style.marginTop = "8px"; hltbBtn.innerHTML = t('hltbBtn');
+  hltbBtn.href = hltbUrl; 
+  hltbBtn.target = "_blank"; 
+  hltbBtn.rel = "noopener noreferrer";
+  hltbBtn.style.marginTop = "8px"; 
+  hltbBtn.innerHTML = t('hltbBtn');
   hltbBtn.addEventListener("click", () => playThemeSound(theme));
   p.append(hltbBtn);
 
-if (it.g.summary) {
+  if (it.g.summary) {
     const label = el("p", "m", t('summaryLabel')); 
     label.style.marginTop = "16px";
     
-    // On affiche un message d'attente stylé
-    const summaryEl = el("p", "", "⏳ Traduction du résumé en cours par l'IA..."); 
+    const summaryEl = el("p", "", "⏳ Traduction en cours..."); 
     summaryEl.style.opacity = "0.7";
     p.append(label, summaryEl);
     
-    // On ouvre la modale immédiatement pour voir l'effet de chargement
     $("#sheet").classList.add("on");
 
     try {
       const res = await fetch(`${API}/?translate=${it.g.id}&lang=fr`);
       const data = await res.json();
-      
       summaryEl.style.opacity = "1"; 
-      if (data && data.summary) {
-        summaryEl.textContent = data.summary; // 👈 Remplace par le texte traduit en français
-      } else {
-        summaryEl.textContent = it.g.summary;
-      }
+      summaryEl.textContent = (data && data.summary) ? data.summary : it.g.summary;
     } catch (e) {
       summaryEl.style.opacity = "1"; 
       summaryEl.textContent = it.g.summary;
@@ -4711,7 +4702,7 @@ if (it.g.summary) {
     $("#sheet").classList.add("on");
   }
   p.append(close);
-
+}
 function closeSheet() { $("#sheet").classList.remove("on"); }
 $("#sheet").classList.remove("on");
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
