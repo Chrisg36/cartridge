@@ -234,7 +234,7 @@ export default {
 // ==========================================
     // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX VIA WORKERS AI (?translate=ID&lang=LANG)
     // ==========================================
-    const translateId = url.searchParams.get("translate");
+const translateId = url.searchParams.get("translate");
     const targetLang = url.searchParams.get("lang") || "fr";
 
     if (translateId) {
@@ -247,13 +247,14 @@ export default {
         const originalSummary = raw[0].summary;
         let translatedSummary = originalSummary;
 
+        // Utilisation de l'IA native de Cloudflare
         if (targetLang === "fr" && env.AI) {
           try {
             const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
               messages: [
                 {
                   role: "system",
-                  content: "Tu es un traducteur professionnel de jeux vidéo. Traduis le résumé suivant en français de manière fluide, naturelle et percutante, en respectant le vocabulaire du jeu vidéo. Ne renvoie QUE le texte traduit, sans aucun commentaire ni mise en forme superflue."
+                  content: "Tu es un traducteur professionnel de jeux vidéo. Traduis le résumé suivant en français de manière fluide et naturelle. Ne renvoie QUE le texte traduit, sans aucun commentaire."
                 },
                 {
                   role: "user",
@@ -261,7 +262,6 @@ export default {
                 }
               ]
             });
-            
             if (aiResponse && aiResponse.response) {
               translatedSummary = aiResponse.response.trim();
             }
