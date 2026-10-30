@@ -408,7 +408,7 @@ async function ocDetails(env, ocId) {
   };
 }
 
-async function getReviews(idParam, env) {
+async function getReviews(idParam, env, refresh) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) return jsonRes({ error: "id invalide" }, 400);
   if (!env.DB) return jsonRes({ error: "binding DB manquant" }, 500);
@@ -416,7 +416,8 @@ async function getReviews(idParam, env) {
   try {
     await ensureRvTables(env);
     const row = await env.DB.prepare("SELECT data, oc_id, next_check FROM reviews WHERE game_id = ?").bind(id).first();
-    if (row && row.next_check > nowSec()) {
+    // &refresh=1 : force une nouvelle vérification (les plafonds OpenCritic restent appliqués)
+    if (row && row.next_check > nowSec() && !refresh) {
       return Response.json(JSON.parse(row.data), { headers: { ...CORS, "Cache-Control": "public, max-age=3600" } });
     }
     const old = row ? JSON.parse(row.data) : {};
@@ -446,12 +447,24 @@ async function getReviews(idParam, env) {
       updated: new Date().toISOString().slice(0, 10),
     };
     let retrySoon = false;
+    // Diagnostic (non affiché dans l'app) : visible en ouvrant /?reviews=ID dans le navigateur
+    const debug = { released: !!released, steamId: null, steam: "non vérifié", opencritic: env.RAPIDAPI_KEY ? "non vérifié" : "pas de clé RAPIDAPI_KEY" };
 
     // 2) Avis des joueurs Steam
     if (released) {
       const appid = findSteamId(g);
-      if (appid) {
-        try { data.steam = await steamSummary(appid); } catch (e) { retrySoon = true; }
+      debug.steamId = appid;
+      if (!appid) {
+        debug.steam = "numéro Steam introuvable dans IGDB";
+        debug.igdbLinks = [
+          ...(g.external_games || []).map((e) => `${e.external_game_source ?? e.category ?? "?"}:${e.uid || ""} ${e.url || ""}`.trim()),
+          ...(g.websites || []).map((w) => w.url),
+        ].slice(0, 15);
+      } else {
+        try {
+          data.steam = await steamSummary(appid);
+          debug.steam = data.steam ? "ok" : "aucun avis Steam pour l'instant";
+        } catch (e) { retrySoon = true; debug.steam = "erreur : " + e.message; }
       }
     }
 
@@ -461,8 +474,10 @@ async function getReviews(idParam, env) {
         const recent = releaseTs && nowSec() - releaseTs < 60 * DAY;
         if (ocId == null || (ocId === 0 && recent)) ocId = await ocFindId(env, g.name);
         if (ocId) data.opencritic = await ocDetails(env, ocId);
-      } catch (e) { retrySoon = true; } // quota du jour atteint ou panne : on garde l'ancien résultat
+        debug.opencritic = ocId ? "ok (jeu n°" + ocId + ")" : "jeu introuvable sur OpenCritic";
+      } catch (e) { retrySoon = true; debug.opencritic = "erreur : " + e.message; } // quota atteint ou panne : on garde l'ancien résultat
     }
+    data.debug = debug;
 
     const hasScore = !!(data.igdb.critics || (data.opencritic && data.opencritic.score) || data.steam);
     const delay = retrySoon ? 6 * 3600 : nextCheckDelay(releaseTs, hasScore);
@@ -702,7 +717,7 @@ export default {
     }
 
     if (url.searchParams.has("reviews")) {
-      return getReviews(url.searchParams.get("reviews"), env);
+      return getReviews(url.searchParams.get("reviews"), env, url.searchParams.get("refresh") === "1");
     }
 
     let month = url.searchParams.get("month");
