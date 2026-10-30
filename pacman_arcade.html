@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pac-Man - Édition Pro Arcade</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-app: #05070a;
+    --acc: #ffcc00;
+    --txt: #ffcc00;
+    --mut: #777777;
+    --canvas-bg: #000000;
+  }
+
+  body.filter-green { --acc: #9bbc0f; --txt: #9bbc0f; --mut: #306230; --canvas-bg: #070d07; }
+  body.filter-cyan { --acc: #00ffff; --txt: #00ffff; --mut: #008888; --canvas-bg: #001a1a; }
+  body.filter-neon { --acc: #ff00ff; --txt: #ff00ff; --mut: #880088; --canvas-bg: #110011; }
+  body.filter-mono { --acc: #ffffff; --txt: #ffffff; --mut: #666666; --canvas-bg: #000000; }
+
+  * { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+  }
+  html, body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    touch-action: manipulation;
+  }
+
+  button, canvas, select {
+    touch-action: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-app);
+    color: var(--txt);
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    padding: env(safe-area-inset-top, 6px) 6px env(safe-area-inset-bottom, 6px) 6px;
+  }
+
+  /* Bouton Fermer bien placé en haut à droite */
+  .top-bar-actions {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 6px) + 8px);
+    right: 12px;
+    z-index: 100000;
+  }
+
+  .top-action-btn {
+    background: rgba(21, 27, 38, 0.95);
+    color: var(--txt);
+    border: 1.5px solid var(--acc);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .top-action-btn:active { background: var(--txt); color: #000; }
+
+  .game-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--txt);
+    flex-shrink: 0;
+    max-width: 480px;
+  }
+
+  .screen-container {
+    flex: 1;
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    position: relative;
+    min-height: 0;
+  }
+
+  .screen-lens {
+    background-color: var(--canvas-bg);
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.95), 0 0 30px color-mix(in srgb, var(--acc) 25%, transparent);
+    border: 3px solid var(--mut);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-height: 520px;
+    height: 100%;
+    position: relative;
+  }
+
+  canvas {
+    display: block;
+    background-color: var(--canvas-bg);
+    border: 2px solid var(--mut);
+    width: 100% !important;
+    height: 100% !important;
+    flex: 1;
+    image-rendering: pixelated;
+    min-height: 0;
+  }
+
+  /* Contrôles tactiles D-Pad épurés sans texte superflux */
+  .controls-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 75px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 8px;
+  }
+
+  .arcade-btn {
+    background: linear-gradient(145deg, #232c3d, #151b26);
+    border: 1.5px solid color-mix(in srgb, var(--acc) 50%, transparent);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .arcade-btn:active {
+    background: var(--acc);
+    color: #05070a;
+    transform: translateY(2px);
+  }
+
+  .btn-up { grid-column: 2; grid-row: 1; }
+  .btn-left { grid-column: 1; grid-row: 2; }
+  .btn-right { grid-column: 3; grid-row: 2; }
+  .btn-down { grid-column: 2; grid-row: 3; }
+
+  /* Écrans de superposition (Menu & Game Over) */
+  .screen-overlay {
+    position: absolute;
+    inset: 10px;
+    background-color: var(--canvas-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .screen-overlay.hidden { display: none; }
+
+  .screen-overlay h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--txt);
+    margin-bottom: 12px;
+    text-shadow: 2px 2px var(--mut);
+  }
+
+  .screen-overlay p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7.5px;
+    color: var(--mut);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .menu-group {
+    width: 100%;
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .menu-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6.5px;
+    color: var(--mut);
+  }
+
+  .settings-select {
+    width: 100%;
+    background: var(--mut);
+    color: var(--canvas-bg);
+    border: 1px solid var(--acc);
+    padding: 6px 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .menu-btn {
+    background-color: var(--mut);
+    color: var(--canvas-bg);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 4px var(--acc);
+  }
+
+  .menu-btn:active { transform: translateY(2px); }
+
+  @media (pointer: fine) {
+    .controls-container { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar-actions">
+  <button class="top-action-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
+</div>
+
+<div class="game-header">
+  <span id="hudScore">SCORE: 0000</span>
+  <span id="hudLives">♥♥♥</span>
+</div>
+
+<div class="screen-container">
+  <div class="screen-lens">
+    <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <canvas id="pacCanvas" width="384" height="416"></canvas>
+
+      <!-- Menu Principal Options -->
+      <div id="menuScreen" class="screen-overlay">
+        <h1>PAC-MAN</h1>
+        <p>EDITION PRO ARCADE</p>
+
+        <div class="menu-group">
+          <label>FILTRE COULEUR :</label>
+          <select id="colorFilterSelect" class="settings-select">
+            <option value="mono" selected>Classique Or</option>
+            <option value="green">Vert Phosphore</option>
+            <option value="cyan">Cyber Cyan</option>
+            <option value="neon">Néon Magenta</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label>AUDIO FX :</label>
+          <select id="audioSelect" class="settings-select">
+            <option value="on" selected>Activé</option>
+            <option value="off">Coupé</option>
+          </select>
+        </div>
+
+        <button class="menu-btn" id="startBtn">JOUER</button>
+      </div>
+
+      <!-- Game Over -->
+      <div id="gameOverScreen" class="screen-overlay hidden">
+        <h1>GAME OVER</h1>
+        <p id="finalScoreText">SCORE : 0</p>
+        <button class="menu-btn" id="restartBtn">REJOUER</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-container">
+  <div class="dpad">
+    <button class="arcade-btn btn-up" id="btnUp">▲</button>
+    <button class="arcade-btn btn-left" id="btnLeft">◀</button>
+    <button class="arcade-btn btn-right" id="btnRight">▶</button>
+    <button class="arcade-btn btn-down" id="btnDown">▼</button>
+  </div>
+</div>
+
+<script>
+// --- AUDIO SYNTHÉTISEUR 8-BITS ---
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+let soundActive = localStorage.getItem("pac_audio") !== "off";
+const audioSelect = document.getElementById("audioSelect");
+if (audioSelect) {
+  audioSelect.value = soundActive ? "on" : "off";
+  audioSelect.onchange = (e) => {
+    soundActive = e.target.value === "on";
+    localStorage.setItem("pac_audio", e.target.value);
+  };
+}
+
+function playPacSound(type) {
+  if (!soundActive) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'square';
+
+    if (type === 'waka') {
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.05);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now); osc.stop(now + 0.05);
+    } else if (type === 'eatghost') {
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(900, now + 0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'powerpill') {
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.linearRampToValueAtTime(200, now + 0.3);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'death') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.linearRampToValueAtTime(80, now + 0.6);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.6);
+      osc.start(now); osc.stop(now + 0.6);
+    }
+  } catch (e) {}
+}
+
+let currentFilter = localStorage.getItem("pac_filter") || "mono";
+const filterSelect = document.getElementById("colorFilterSelect");
+if (filterSelect) {
+  filterSelect.value = currentFilter;
+  document.body.className = `filter-${currentFilter}`;
+  filterSelect.onchange = (e) => {
+    currentFilter = e.target.value;
+    document.body.className = `filter-${currentFilter}`;
+    localStorage.setItem("pac_filter", currentFilter);
+  };
+}
+
+const canvas = document.getElementById("pacCanvas");
+const ctx = canvas.getContext("2d");
+
+// Labyrinthe original optimisé (1 = Mur, 2 = Pac-Gomme, 3 = Super Pac-Gomme, 0 = Vide)
+const MAP = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,3,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,3,1],
+  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+  [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+  [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
+  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+  [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
+  [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+  [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
+  [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+  [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+  [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+  [1,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,1],
+  [1,3,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,3,1],
+  [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+  [1,2,2,1,2,2,2,2,2,0,2,2,2,2,2,1,2,2,1],
+  [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
+  [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+  [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+const TILE_SIZE = 19.8;
+let score = 0;
+let lives = 3;
+let gameStarted = false;
+let gameOver = false;
+let frightenedTimer = 0;
+let wakaCounter = 0;
+
+let pacman = { x: 9, y: 16, dx: 0, dy: 0, nextDx: 0, nextDy: 0, speed: 0.08, mouthAngle: 0.2 };
+let ghosts = [
+  { x: 9, y: 9, dx: 0, dy: -1, color: "#ff0000", type: "chase" }, // Blinky
+  { x: 9, y: 10, dx: -1, dy: 0, color: "#ffb8ff", type: "ambush" }, // Pinky
+  { x: 8, y: 10, dx: 1, dy: 0, color: "#00ffff", type: "random" }, // Inky
+  { x: 10, y: 10, dx: 0, dy: 1, color: "#ffb851", type: "coward" } // Clyde
+];
+
+function resetPositions() {
+  pacman.x = 9; pacman.y = 16; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
+  ghosts = [
+    { x: 9, y: 9, dx: 0, dy: -1, color: "#ff0000", type: "chase" },
+    { x: 9, y: 10, dx: -1, dy: 0, color: "#ffb8ff", type: "ambush" },
+    { x: 8, y: 10, dx: 1, dy: 0, color: "#00ffff", type: "random" },
+    { x: 10, y: 10, dx: 0, dy: 1, color: "#ffb851", type: "coward" }
+  ];
+}
+
+function initGame() {
+  score = 0;
+  lives = 3;
+  // Recréer la map de pac-gommes
+  for (let r = 0; r < MAP.length; r++) {
+    for (let c = 0; c < MAP[r].length; c++) {
+      if (MAP[r][c] === 0 && r === 10 && (c === 0 || c === 18)) continue;
+      // Remet les pac-gommes standard et super si c'était vide
+      if (MAP[r][c] === 0 && (r > 0 && r < 20)) {
+        // Simple réinitialisation logique si besoin
+      }
+    }
+  }
+  resetPositions();
+  gameStarted = true;
+  gameOver = false;
+  document.getElementById("menuScreen").classList.add("hidden");
+  document.getElementById("gameOverScreen").classList.add("hidden");
+  requestAnimationFrame(gameLoop);
+}
+
+function update() {
+  if (!gameStarted || gameOver) return;
+
+  if (frightenedTimer > 0) frightenedTimer--;
+
+  // Gestion des mouvements fluides de Pac-Man
+  if (pacman.nextDx !== 0 || pacman.nextDy !== 0) {
+    let nextGridX = Math.round(pacman.x + pacman.nextDx * pacman.speed);
+    let nextGridY = Math.round(pacman.y + pacman.nextDy * pacman.speed);
+    if (nextGridX >= 0 && nextGridX < 19 && nextGridY >= 0 && nextGridY < 21) {
+      if (MAP[nextGridY][nextGridX] !== 1) {
+        pacman.dx = pacman.nextDx;
+        pacman.dy = pacman.nextDy;
+      }
+    }
+  }
+
+  let targetX = pacman.x + pacman.dx * pacman.speed;
+  let targetY = pacman.y + pacman.dy * pacman.speed;
+
+  // Téléportation tunnels latéraux
+  if (targetX < -0.5) targetX = 18.5;
+  else if (targetX > 18.5) targetX = -0.5;
+
+  let checkX = Math.round(targetX);
+  let checkY = Math.round(targetY);
+
+  if (checkX >= 0 && checkX < 19 && checkY >= 0 && checkY < 21 && MAP[checkY][checkX] !== 1) {
+    pacman.x = targetX;
+    pacman.y = targetY;
+  } else {
+    pacman.dx = 0; pacman.dy = 0;
+  }
+
+  // Manger pac-gomme
+  let gridX = Math.round(pacman.x);
+  let gridY = Math.round(pacman.y);
+  if (gridX >= 0 && gridX < 19 && gridY >= 0 && gridY < 21) {
+    if (MAP[gridY][gridX] === 2) {
+      MAP[gridY][gridX] = 0;
+      score += 10;
+      wakaCounter++;
+      if (wakaCounter % 2 === 0) playPacSound('waka');
+    } else if (MAP[gridY][gridX] === 3) {
+      MAP[gridY][gridX] = 0;
+      score += 50;
+      frightenedTimer = 450;
+      playPacSound('powerpill');
+    }
+  }
+
+  // Mise à jour fantômes
+  ghosts.forEach(g => {
+    let gTargetX = g.x + g.dx * (pacman.speed * 0.85);
+    let gTargetY = g.y + g.dy * (pacman.speed * 0.85);
+
+    let gCheckX = Math.round(gTargetX);
+    let gCheckY = Math.round(gTargetY);
+
+    if (gCheckX >= 0 && gCheckX < 19 && gCheckY >= 0 && gCheckY < 21 && MAP[gCheckY][gCheckX] !== 1) {
+      g.x = gTargetX;
+      g.y = gTargetY;
+    } else {
+      // Changer de direction aléatoirement aux intersections
+      let dirs = [{dx:0, dy:-1}, {dx:0, dy:1}, {dx:-1, dy:0}, {dx:1, dy:0}];
+      let validDirs = dirs.filter(d => {
+        let nx = Math.round(g.x + d.dx);
+        let ny = Math.round(g.y + d.dy);
+        return nx >= 0 && nx < 19 && ny >= 0 && ny < 21 && MAP[ny][nx] !== 1 && !(d.dx === -g.dx && d.dy === -g.dy);
+      });
+      if (validDirs.length === 0) validDirs = [{dx:-g.dx, dy:-g.dy}];
+      let chosen = validDirs[Math.floor(Math.random() * validDirs.length)];
+      g.dx = chosen.dx;
+      g.dy = chosen.dy;
+    }
+
+    // Collision Pac-Man / Fantôme
+    let dist = Math.hypot(pacman.x - g.x, pacman.y - g.y);
+    if (dist < 0.6) {
+      if (frightenedTimer > 0) {
+        score += 200;
+        playPacSound('eatghost');
+        g.x = 9; g.y = 10;
+      } else {
+        lives--;
+        playPacSound('death');
+        if (lives <= 0) {
+          gameOver = true;
+          gameStarted = false;
+          document.getElementById("finalScoreText").textContent = `SCORE FINAL : ${score}`;
+          document.getElementById("gameOverScreen").classList.remove("hidden");
+        } else {
+          resetPositions();
+        }
+      }
+    }
+  });
+
+  document.getElementById("hudScore").textContent = `SCORE: ${String(score).padStart(4, '0')}`;
+  document.getElementById("hudLives").textContent = '♥'.repeat(Math.max(0, lives));
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const accColor = getComputedStyle(document.body).getPropertyValue('--acc').trim();
+  const mutColor = getComputedStyle(document.body).getPropertyValue('--mut').trim();
+
+  // Dessin de la carte
+  for (let r = 0; r < MAP.length; r++) {
+    for (let c = 0; c < MAP[r].length; c++) {
+      if (MAP[r][c] === 1) {
+        ctx.fillStyle = mutColor;
+        ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1);
+      } else if (MAP[r][c] === 2) {
+        ctx.fillStyle = accColor;
+        ctx.beginPath();
+        ctx.arc(c * TILE_SIZE + TILE_SIZE/2, r * TILE_SIZE + TILE_SIZE/2, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (MAP[r][c] === 3) {
+        if (Math.floor(Date.now() / 200) % 2 === 0) {
+          ctx.fillStyle = accColor;
+          ctx.beginPath();
+          ctx.arc(c * TILE_SIZE + TILE_SIZE/2, r * TILE_SIZE + TILE_SIZE/2, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  // Dessin Pac-Man
+  ctx.fillStyle = accColor;
+  ctx.beginPath();
+  let angle = 0;
+  if (pacman.dx === 1) angle = 0;
+  else if (pacman.dx === -1) angle = Math.PI;
+  else if (pacman.dy === 1) angle = Math.PI / 2;
+  else if (pacman.dy === -1) angle = Math.PI * 1.5;
+
+  let mouth = Math.abs(Math.sin(Date.now() / 80)) * 0.4 + 0.1;
+  ctx.arc(
+    pacman.x * TILE_SIZE + TILE_SIZE/2,
+    pacman.y * TILE_SIZE + TILE_SIZE/2,
+    TILE_SIZE / 2 - 2,
+    angle + mouth,
+    angle + Math.PI * 2 - mouth
+  );
+  ctx.lineTo(pacman.x * TILE_SIZE + TILE_SIZE/2, pacman.y * TILE_SIZE + TILE_SIZE/2);
+  ctx.fill();
+
+  // Dessin Fantômes
+  ghosts.forEach(g => {
+    ctx.fillStyle = frightenedTimer > 0 ? (Math.floor(frightenedTimer / 20) % 2 === 0 ? "#ffffff" : "#2121ff") : g.color;
+    ctx.beginPath();
+    let gx = g.x * TILE_SIZE + TILE_SIZE/2;
+    let gy = g.y * TILE_SIZE + TILE_SIZE/2;
+    ctx.arc(gx, gy - 2, TILE_SIZE / 2 - 2, Math.PI, 0, false);
+    ctx.lineTo(gx + TILE_SIZE/2 - 2, gy + TILE_SIZE/2);
+    ctx.lineTo(gx - TILE_SIZE/2 + 2, gy + TILE_SIZE/2);
+    ctx.closePath();
+    ctx.fill();
+  });
+}
+
+function gameLoop() {
+  update();
+  draw();
+  if (gameStarted) requestAnimationFrame(gameLoop);
+}
+
+// Contrôles Clavier (Flèches + ZQSD)
+window.addEventListener("keydown", e => {
+  if (!gameStarted || gameOver) return;
+  if (e.code === "ArrowUp" || e.code === "KeyZ" || e.code === "KeyW") { pacman.nextDx = 0; pacman.nextDy = -1; e.preventDefault(); }
+  else if (e.code === "ArrowDown" || e.code === "KeyS") { pacman.nextDx = 0; pacman.nextDy = 1; e.preventDefault(); }
+  else if (e.code === "ArrowLeft" || e.code === "KeyQ" || e.code === "KeyA") { pacman.nextDx = -1; pacman.nextDy = 0; e.preventDefault(); }
+  else if (e.code === "ArrowRight" || e.code === "KeyD") { pacman.nextDx = 1; pacman.nextDy = 0; e.preventDefault(); }
+});
+
+// Contrôles Tactiles (D-Pad)
+const btnUp = document.getElementById("btnUp");
+const btnDown = document.getElementById("btnDown");
+const btnLeft = document.getElementById("btnLeft");
+const btnRight = document.getElementById("btnRight");
+
+btnUp.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = -1; });
+btnDown.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = 1; });
+btnLeft.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = -1; pacman.nextDy = 0; });
+btnRight.addEventListener("pointerdown", (e) => { e.preventDefault(); pacman.nextDx = 1; pacman.nextDy = 0; });
+
+document.getElementById("startBtn").onclick = () => { playPacSound('powerpill'); initGame(); };
+document.getElementById("restartBtn").onclick = () => { playPacSound('powerpill'); initGame(); };
+</script>
+</body>
+</html>
