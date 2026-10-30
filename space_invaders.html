@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Space Invaders - Pro Arcade Edition</title>
+<title>Space Invaders - Classique Original</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -31,6 +31,24 @@
     padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 10px) 10px;
   }
 
+  /* Bouton Fermer le jeu bien placé en haut à droite */
+  .close-game-btn {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 10px) + 10px);
+    right: 16px;
+    z-index: 1000000;
+    background: #1b1e26;
+    color: #fff;
+    border: 1.5px solid var(--acc);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  }
+  .close-game-btn:active { background: var(--acc); color: #000; }
+
   .game-header {
     width: 100%;
     display: flex;
@@ -40,7 +58,7 @@
     background: rgba(21, 27, 38, 0.9);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
+    font-size: 9px;
     color: var(--acc);
     flex-shrink: 0;
   }
@@ -48,7 +66,7 @@
   .screen-container {
     flex: 1;
     width: 100%;
-    max-width: 550px;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -69,9 +87,9 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 440px;
+    max-width: 420px;
     height: 100%;
-    max-height: 520px;
+    max-height: 500px;
     position: relative;
   }
 
@@ -80,7 +98,7 @@
     display: flex;
     justify-content: space-between;
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 8px;
     color: #fff;
     margin-bottom: 8px;
     font-weight: bold;
@@ -98,10 +116,10 @@
     min-height: 0;
   }
 
-  /* Commandes tactiles fluides et agrandies pour mobile */
+  /* Contrôles tactiles fluides en bas */
   .controls-container {
     width: 100%;
-    max-width: 440px;
+    max-width: 420px;
     padding: 10px 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -123,8 +141,8 @@
     font-family: 'Rajdhani', sans-serif;
     font-size: 24px;
     font-weight: 900;
-    width: 85px;
-    height: 65px;
+    width: 80px;
+    height: 60px;
     cursor: pointer;
     box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
@@ -146,8 +164,8 @@
     color: #fff;
     font-family: 'Press Start 2P', monospace;
     font-size: 11px;
-    width: 130px;
-    height: 65px;
+    width: 120px;
+    height: 60px;
     cursor: pointer;
     box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     display: flex;
@@ -161,7 +179,7 @@
     filter: brightness(1.2);
   }
 
-  /* Écrans de superposition (Menu & Game Over) */
+  /* Écrans de superposition (Menu & Game Over) style 16-bit classique */
   .screen-overlay {
     position: absolute;
     inset: 14px;
@@ -184,44 +202,15 @@
     font-size: 18px;
     color: var(--acc);
     margin-bottom: 12px;
-    text-shadow: 2px 2px #551100;
+    text-shadow: 2px 2px #331100;
   }
 
   .screen-overlay p {
     font-family: 'Press Start 2P', monospace;
     font-size: 7.5px;
     color: #a3a9b8;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     line-height: 1.6;
-  }
-
-  .menu-group {
-    width: 100%;
-    max-width: 260px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 14px;
-    text-align: left;
-  }
-
-  .menu-group label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: #8a99ad;
-  }
-
-  .settings-select {
-    width: 100%;
-    background: #11151c;
-    color: #fff;
-    border: 1.5px solid var(--acc);
-    padding: 8px 10px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7.5px;
-    border-radius: 6px;
-    outline: none;
-    cursor: pointer;
   }
 
   .menu-btn {
@@ -246,6 +235,8 @@
 </head>
 <body>
 
+<button class="close-game-btn" onclick="if(window.parent && window.parent.document.querySelector('div[style*=\'z-index: 999999\']')) { window.parent.document.querySelector('div[style*=\'z-index: 999999\']').remove(); } else { window.close(); }">✕ FERMER</button>
+
 <div class="game-header">
   <span>👾 SPACE INVADERS</span>
   <span>CLAVIER : ← → ESPACE</span>
@@ -261,38 +252,10 @@
     <div style="position: relative; width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0;">
       <canvas id="invadersCanvas" width="240" height="320"></canvas>
 
-      <!-- Menu Principal Options Pro -->
+      <!-- Menu Classique Original 16-bit -->
       <div id="menuScreen" class="screen-overlay">
         <h1>SPACE INVADERS</h1>
-        <p>EDITION PRO ARCADE</p>
-        
-        <div class="menu-group">
-          <label>FILTRE COULEUR :</label>
-          <select id="colorFilterSelect" class="settings-select">
-            <option value="monochrome">Monochrome Blanc (Base)</option>
-            <option value="green">Vert Phosphore (Game Boy)</option>
-            <option value="cyan">Cyber Cyan</option>
-            <option value="color">Arcade Multicolore</option>
-          </select>
-        </div>
-
-        <div class="menu-group">
-          <label>DIFFICULTÉ :</label>
-          <select id="difficultySelect" class="settings-select">
-            <option value="easy">Facile (Vitesse lente)</option>
-            <option value="normal" selected>Normal</option>
-            <option value="hard">Expert (Rapide & Intense)</option>
-          </select>
-        </div>
-
-        <div class="menu-group">
-          <label>AUDIO FX :</label>
-          <select id="audioSelect" class="settings-select">
-            <option value="on" selected>Activé</option>
-            <option value="off">Coupé</option>
-          </select>
-        </div>
-
+        <p>EDITION CLASSIQUE<br><br>Détruisez la flotte extraterrestre sans pitié !</p>
         <button class="menu-btn" id="startBtn">JOUER</button>
       </div>
 
@@ -321,18 +284,7 @@ function initAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-let soundActive = localStorage.getItem("si_audio") !== "off";
-const audioSelect = document.getElementById("audioSelect");
-if (audioSelect) {
-  audioSelect.value = soundActive ? "on" : "off";
-  audioSelect.onchange = (e) => {
-    soundActive = e.target.value === "on";
-    localStorage.setItem("si_audio", e.target.value);
-  };
-}
-
 function playSound(type) {
-  if (!soundActive) return;
   try {
     initAudio();
     if (!audioCtx) return;
@@ -373,27 +325,6 @@ let score = 0;
 let lives = 3;
 let gameStarted = false;
 let gameOver = false;
-
-// Options & Filtres
-let currentFilter = localStorage.getItem("si_filter") || "monochrome";
-const filterSelect = document.getElementById("colorFilterSelect");
-if (filterSelect) {
-  filterSelect.value = currentFilter;
-  filterSelect.onchange = (e) => {
-    currentFilter = e.target.value;
-    localStorage.setItem("si_filter", currentFilter);
-  };
-}
-
-let currentDiff = localStorage.getItem("si_diff") || "normal";
-const diffSelect = document.getElementById("difficultySelect");
-if (diffSelect) {
-  diffSelect.value = currentDiff;
-  diffSelect.onchange = (e) => {
-    currentDiff = e.target.value;
-    localStorage.setItem("si_diff", currentDiff);
-  };
-}
 
 let player = { x: 105, y: 285, width: 24, height: 12, speed: 4 };
 let bullets = [];
@@ -479,13 +410,11 @@ function gameLoop() {
     aliens.forEach(a => { a.y += 8; });
   }
 
-  // Fréquence de tir des aliens selon la difficulté
-  let fireRate = currentDiff === "easy" ? 0.015 : (currentDiff === "hard" ? 0.06 : 0.03);
-  if (Math.random() < fireRate) {
+  if (Math.random() < 0.03) {
     const activeAliens = aliens.filter(a => a.alive);
     if (activeAliens.length > 0) {
       const shooter = activeAliens[Math.floor(Math.random() * activeAliens.length)];
-      alienBullets.push({ x: shooter.x + shooter.width / 2 - 2, y: shooter.y + shooter.height, width: 4, height: 8, speed: currentDiff === "hard" ? 4.5 : 3 });
+      alienBullets.push({ x: shooter.x + shooter.width / 2 - 2, y: shooter.y + shooter.height, width: 4, height: 8, speed: 3 });
     }
   }
 
@@ -510,7 +439,7 @@ function gameLoop() {
         score += 100;
         playSound('hit');
         updateHUD();
-        alienSpeed += (currentDiff === "hard" ? 0.08 : 0.05);
+        alienSpeed += 0.05;
 
         if (aliens.every(al => !al.alive)) {
           initAliens();
@@ -524,35 +453,22 @@ function gameLoop() {
     if (a.alive && a.y >= player.y - 10) endGame();
   });
 
-  // --- COULEURS SELON LE FILTRE CHOISI ---
-  let playerColor = "#ffffff", bulletColor = "#ffffff", alienBulletColor = "#ffffff", alienColor = "#ffffff";
-  if (currentFilter === "green") {
-    playerColor = "#9bbc0f"; bulletColor = "#8bac0f"; alienBulletColor = "#306230"; alienColor = "#9bbc0f";
-  } else if (currentFilter === "cyan") {
-    playerColor = "#00FFFF"; bulletColor = "#00FFFF"; alienBulletColor = "#008888"; alienColor = "#00FFFF";
-  } else if (currentFilter === "color") {
-    playerColor = "#FF7A45"; bulletColor = "#00FF00"; alienBulletColor = "#FF0000"; alienColor = "#00FFFF";
-  }
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Joueur
-  ctx.fillStyle = playerColor;
+  // Style classique 16-bit d'origine (blanc et épuré)
+  ctx.fillStyle = "#FFFFFF";
   ctx.fillRect(player.x, player.y + 4, player.width, player.height - 4);
   ctx.fillRect(player.x + player.width / 2 - 2, player.y, 4, 4);
 
-  // Tirs joueur
-  ctx.fillStyle = bulletColor;
+  ctx.fillStyle = "#00FF00";
   bullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
 
-  // Tirs ennemis
-  ctx.fillStyle = alienBulletColor;
+  ctx.fillStyle = "#FF0000";
   alienBullets.forEach(ab => ctx.fillRect(ab.x, ab.y, ab.width, ab.height));
 
-  // Aliens
+  ctx.fillStyle = "#FFFFFF";
   aliens.forEach(a => {
     if (!a.alive) return;
-    ctx.fillStyle = alienColor;
     ctx.fillRect(a.x, a.y, a.width, a.height);
     ctx.fillStyle = "#000";
     ctx.fillRect(a.x + 3, a.y + 3, 2, 2);
@@ -566,8 +482,8 @@ function startGame() {
   gameStarted = true;
   gameOver = false;
   score = 0;
-  lives = currentDiff === "easy" ? 5 : (currentDiff === "hard" ? 2 : 3);
-  alienSpeed = currentDiff === "easy" ? 0.35 : (currentDiff === "hard" ? 0.75 : 0.5);
+  lives = 3;
+  alienSpeed = 0.5;
   bullets = [];
   alienBullets = [];
   initAliens();
