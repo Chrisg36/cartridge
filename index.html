@@ -624,14 +624,50 @@ main { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding
   .rv-scores { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .rv-score { flex: 1 1 90px; min-width: 90px; background: var(--cov); border-radius: var(--radius); padding: 10px 8px; text-align: center; text-decoration: none; color: var(--txt); }
   .rv-score b { display: block; font-size: 24px; font-weight: 900; line-height: 1.1; }
-  .rv-score small { display: block; font-size: 11px; color: var(--mut); margin-top: 3px; }
+  .rv-score small { display: block; font-size: 12.5px; color: var(--mut); margin-top: 3px; }
   .rv-score.score-high b { color: #10B981; } .rv-score.score-mid b { color: #F59E0B; } .rv-score.score-low b { color: #EF4444; }
   .rv-score.score-high, .rv-score.score-mid, .rv-score.score-low { background: var(--cov); }
   .rv-card { display: block; background: var(--cov); border-radius: var(--radius); padding: 10px 12px; margin-top: 8px; text-decoration: none; color: var(--txt); }
   .rv-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; }
-  .rv-card p { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: var(--mut); }
+  .rv-card p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.4; color: var(--mut); }
   .rv-card .rv-read { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--acc); }
-  .rv-note { font-size: 11px; color: var(--mut); margin-top: 8px; }
+  .rv-note { font-size: 12.5px; color: var(--mut); margin-top: 8px; }
+
+  /* Fiche jeu : titre + badge, ligne de boutons rapides */
+  .sheet-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+  .sheet-title-row h2 { margin: 0 !important; }
+  .sheet-title-badge { flex-shrink: 0; }
+  .sheet-title-badge .score-badge { font-size: 13px; padding: 5px 10px; border-radius: 12px; }
+  .sheet-quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .sheet-quick-btn { min-height: 46px; padding: 4px 6px; border: 0; border-radius: var(--radius); background: var(--cov); color: var(--txt); font-family: inherit; font-weight: 700; font-size: 12.5px; line-height: 1.2; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: filter 0.2s; }
+  .sheet-quick-btn:hover { filter: brightness(1.1); }
+  .sheet-quick-btn:active { transform: scale(0.96); }
+  .sheet-quick-btn.is-on { box-shadow: inset 0 0 0 1.5px var(--acc); }
+
+  /* Fiche jeu : motif de fond adouci derrière le texte (meilleure lecture) */
+  #panel.panel.sheet-game {
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--bg) 88%, transparent), color-mix(in srgb, var(--bg) 88%, transparent)),
+      var(--pattern);
+  }
+  /* La jauge rétro pilote la fiche : on cache la barre native (sinon deux barres sur PC) */
+  .panel { scrollbar-width: none; }
+  .panel::-webkit-scrollbar { display: none; }
+
+  /* PC : fiche jeu en 2 colonnes (jaquette à gauche, infos à droite) */
+  @media (min-width: 900px) {
+    /* la fiche se centre à droite de la barre latérale (280 px), sans passer dessous */
+    #sheet { padding-left: 280px; box-sizing: border-box; }
+    #panel.panel.sheet-game {
+      max-width: min(980px, calc(100vw - 320px)); display: grid; grid-template-columns: 300px minmax(0, 1fr);
+      column-gap: 28px; align-items: start; align-content: start;
+    }
+    #panel.sheet-game > * { grid-column: 2; }
+    #panel.sheet-game > .big {
+      grid-column: 1; grid-row: 1 / span 40; position: sticky; top: 0;
+      aspect-ratio: 3 / 4; max-height: none; height: auto;
+    }
+  }
   .rv-sites { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
   .rv-site { display: flex; align-items: center; justify-content: center; min-height: 42px; background: var(--cov); border-radius: var(--radius); color: var(--txt); font-weight: 700; font-size: 13px; text-decoration: none; border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); }
   .rv-site:active { transform: scale(0.97); }
@@ -2532,6 +2568,10 @@ const TRANSLATIONS = {
     favRemove: "❤️ Retirer des favoris",
     trailerBtn: "🎥 Voir la bande-annonce sur YouTube",
     hltbBtn: "⏱️ Voir la durée de vie (HowLongToBeat)",
+    favShort: "🤍 Favori",
+    favShortOn: "❤️ Favori",
+    trailerShort: "🎥 Bande-annonce",
+    hltbShort: "⏱️ Durée de vie",
     summaryLabel: "Résumé",
     summaryLoading: "Traduction du résumé en cours par l’IA… ⏳",
     today: "Aujourd'hui",
@@ -3810,13 +3850,34 @@ function renderTimeBadge(dateStr) {
   return '';
 }
 
-// ▸ renderScoreBadge : badge de note (META)
+// ▸ renderScoreBadge : badge de note — « META » pour la presse, « JOUEURS » si seule la note des joueurs existe
 function renderScoreBadge(game) {
+  const isPress = !!game.aggregated_rating;
   const scoreRaw = game.aggregated_rating || game.rating;
   if (!scoreRaw) return '';
   const score = Math.round(scoreRaw);
   let scoreClass = score < 50 ? "score-low" : (score < 75 ? "score-mid" : "score-high");
-  return `<span class="score-badge ${scoreClass}">META ★ ${score}</span>`;
+  return `<span class="score-badge ${scoreClass}">${isPress ? "META" : "JOUEURS"} ★ ${score}</span>`;
+}
+
+// ▸ shortList : « A, B, C, D » -> « A, B +2 » (évite les listes de studios sur 3 lignes)
+function shortList(text, max = 2) {
+  const parts = String(text).split(",").map((s) => s.trim()).filter(Boolean);
+  return parts.length > max ? `${parts.slice(0, max).join(", ")} +${parts.length - max}` : parts.join(", ");
+}
+
+// ▸ groupReleaseDates : regroupe les plateformes qui sortent le même jour
+// « PC : 3 sept. / PS5 : 3 sept. » -> « PC · PS5 : 3 septembre 2026 »
+function groupReleaseDates(releases) {
+  const byDate = new Map();
+  (releases || []).forEach((r) => {
+    if (!byDate.has(r.date)) byDate.set(r.date, []);
+    if (!byDate.get(r.date).includes(r.platform)) byDate.get(r.date).push(r.platform);
+  });
+  return [...byDate.entries()]
+    .sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+    .map(([date, plats]) => `${plats.join(" · ")} : ${fmtFull(date)}`)
+    .join("\n");
 }
 
 // =====================================================================
@@ -3836,17 +3897,21 @@ async function openSheet(it) {
   if (p.dataset.gameId !== String(it.g.id)) p.scrollTop = 0;
   p.dataset.gameId = String(it.g.id);
 
+  p.classList.add("sheet-game"); // mise en page propre à la fiche jeu (2 colonnes sur PC)
+
   const img = el("img", "big"); img.src = it.g.cover; img.alt = "";
   const close = el("button", "close", t('close')); 
   close.addEventListener("click", () => { playThemeSound(theme); closeSheet(); });
+
+  // Titre + badge de note juste à côté (on voit tout de suite si le jeu est bon)
+  const titleRow = el("div", "sheet-title-row");
+  titleRow.append(el("h2", "", it.g.name));
+  const badgeHtml = renderScoreBadge(it.g);
+  if (badgeHtml) { const b = el("span", "sheet-title-badge"); b.innerHTML = badgeHtml; titleRow.append(b); }
   
   const cta = el("button", "cta", t('calendarBtn'));
   cta.addEventListener("click", () => { playThemeSound(theme); addToCalendar(it); });
 
-  const favCta = el("button", "cta-sec");
-  favCta.innerHTML = isFavorite(it.g.id) ? t('favRemove') : t('favAdd');
-  favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
-  
   const GENRE_FR = {
     "Action": "Action",
     "Adventure": "Aventure",
@@ -3883,34 +3948,37 @@ async function openSheet(it) {
   categoryBadge.style.color = "var(--acc)";
   categoryBadge.style.marginTop = "4px";
 
-  const devText = it.g.developer ? `💻 Développeur : ${it.g.developer}` : "";
-  const pubText = it.g.publisher ? `🏢 Éditeur : ${it.g.publisher}` : "";
+  // Studios : 2 noms maximum, puis « +3 » (la liste complète s'affiche au survol / appui long)
+  const devText = it.g.developer ? `💻 Développeur : ${shortList(it.g.developer)}` : "";
+  const pubText = it.g.publisher ? `🏢 Éditeur : ${shortList(it.g.publisher)}` : "";
   const companyInfo = el("p", "m", [devText, pubText].filter(Boolean).join("\n"));
+  companyInfo.title = [it.g.developer, it.g.publisher].filter(Boolean).join("\n");
   companyInfo.style.whiteSpace = "pre-line";
   companyInfo.style.marginTop = "6px";
 
-  const dates = it.g.releases.map((r) => `${r.platform} : ${fmtFull(r.date)}`).join("\n");
-  const d = el("p", "m", dates); d.style.whiteSpace = "pre-line";
+  // Dates : les plateformes qui sortent le même jour sont regroupées sur une ligne
+  const d = el("p", "m", groupReleaseDates(it.g.releases)); d.style.whiteSpace = "pre-line";
 
-  p.replaceChildren(img, el("h2", "", it.g.name), categoryBadge, companyInfo, d, cta, favCta);
-
-  const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`;
-  const trailerBtn = el("a", "cta-sec");
-  trailerBtn.href = ytSearchUrl; trailerBtn.target = "_blank"; trailerBtn.rel = "noopener noreferrer";
-  trailerBtn.style.marginTop = "8px"; trailerBtn.innerHTML = t('trailerBtn');
-  trailerBtn.addEventListener("click", () => playThemeSound(theme));
-  p.append(trailerBtn);
-
-  const hltbUrl = `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`;
-  const hltbBtn = el("a", "cta-sec");
-  hltbBtn.href = hltbUrl; hltbBtn.target = "_blank"; hltbBtn.rel = "noopener noreferrer";
-  hltbBtn.style.marginTop = "8px"; hltbBtn.innerHTML = t('hltbBtn');
-  hltbBtn.addEventListener("click", () => playThemeSound(theme));
-  p.append(hltbBtn);
+  // Boutons secondaires sur une seule ligne : Favori · Bande-annonce · Durée de vie
+  const quick = el("div", "sheet-quick");
+  const favCta = el("button", "sheet-quick-btn" + (isFavorite(it.g.id) ? " is-on" : ""), isFavorite(it.g.id) ? t('favShortOn') : t('favShort'));
+  favCta.addEventListener("click", () => { toggleFavorite(it.g.id); openSheet(it); });
+  const quickLink = (label, url) => {
+    const a = el("a", "sheet-quick-btn", label);
+    a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.addEventListener("click", () => playThemeSound(theme));
+    return a;
+  };
+  quick.append(
+    favCta,
+    quickLink(t('trailerShort'), `https://www.youtube.com/results?search_query=${encodeURIComponent(it.g.name + ' trailer official')}`),
+    quickLink(t('hltbShort'), `https://howlongtobeat.com/?q=${encodeURIComponent(it.g.name)}`)
+  );
 
   // Notes & tests : chargés en parallèle, sans bloquer le reste de la fiche
   const reviewsBox = el("div", "rv-box");
-  p.append(reviewsBox);
+
+  p.replaceChildren(img, titleRow, categoryBadge, companyInfo, d, cta, quick, reviewsBox);
   loadReviews(it, reviewsBox);
 
   if (it.g.summary) {
