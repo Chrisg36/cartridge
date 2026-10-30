@@ -231,10 +231,10 @@ export default {
       }
     }
 
+// ==========================================
+    // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX VIA WORKERS AI (?translate=ID&lang=LANG)
     // ==========================================
-    // 🌐 ROUTE 3 : TRADUCTION DES RÉSUMÉS DE JEUX (?translate=ID&lang=LANG)
-    // ==========================================
-const translateId = url.searchParams.get("translate");
+    const translateId = url.searchParams.get("translate");
     const targetLang = url.searchParams.get("lang") || "fr";
 
     if (translateId) {
@@ -247,16 +247,26 @@ const translateId = url.searchParams.get("translate");
         const originalSummary = raw[0].summary;
         let translatedSummary = originalSummary;
 
-        if (targetLang === "fr") {
+        if (targetLang === "fr" && env.AI) {
           try {
-            // Utilisation d'une API de traduction web gratuite et ultra-rapide
-            const transRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalSummary)}&langpair=en|fr`);
-            const transData = await transRes.json();
-            if (transData && transData.responseData && transData.responseData.translatedText) {
-              translatedSummary = transData.responseData.translatedText;
+            const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+              messages: [
+                {
+                  role: "system",
+                  content: "Tu es un traducteur professionnel de jeux vidéo. Traduis le résumé suivant en français de manière fluide, naturelle et percutante, en respectant le vocabulaire du jeu vidéo. Ne renvoie QUE le texte traduit, sans aucun commentaire ni mise en forme superflue."
+                },
+                {
+                  role: "user",
+                  content: originalSummary
+                }
+              ]
+            });
+            
+            if (aiResponse && aiResponse.response) {
+              translatedSummary = aiResponse.response.trim();
             }
-          } catch (trApiErr) {
-            console.warn("Erreur API Traduction :", trApiErr);
+          } catch (aiErr) {
+            console.warn("Erreur Workers AI :", aiErr);
           }
         }
 
