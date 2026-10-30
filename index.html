@@ -46,6 +46,8 @@
      26. OUVERTURE DES BOOSTERS & MINI-JEUX EN PLEIN ÉCRAN
      28. REFONTE PRO — fonds dessinés, thèmes adoucis, boutons de page, sets, scores en direct
      30. BOUTIQUE : THÈMES CONSOLES RÉTRO & BOOSTER OFFERT (tout en bas)
+     31. ESPORT — onglet de la page Arcade (tout en bas)
+     32. FORTNITE (liens) & ANIME / MANGA (tout en bas)
    ===================================================================== */
 /* ====================================================================
    01. BASE & COULEURS DES THÈMES — variables --bg, --acc… de chaque thème
@@ -5583,6 +5585,105 @@ body[data-layout-style="pixel art"] :is(.cxa-cab, .cxa-card, .cxa-ach, .cxa-hero
 .booster.is-free { border-color: color-mix(in srgb, #22c55e 60%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, #22c55e 40%, transparent), 0 8px 22px -10px #22c55e; }
 .booster.is-free .booster-buy { background: #22c55e; color: #052e16; }
 .booster.is-free .booster-info small { color: #22c55e; }
+
+/* =====================================================================
+   31. ESPORT — onglet de la page Arcade (doit rester tout en bas)
+   ===================================================================== */
+.es-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 4px 0 10px; padding-bottom: 2px; }
+.es-chips::-webkit-scrollbar { display: none; }
+.es-chip { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--mut); font: 700 13.5px var(--font); cursor: pointer; }
+.es-chip.on { background: var(--acc); border-color: var(--acc); color: var(--on); }
+.es-kinds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); margin-bottom: 14px; }
+.es-kind { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; border: 0; border-radius: 10px; background: transparent; color: var(--mut); font: 700 13.5px var(--font); cursor: pointer; }
+.es-kind.on { background: color-mix(in srgb, var(--acc) 18%, var(--cov)); color: var(--txt); }
+.es-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, .6); animation: esPulse 1.6s infinite; }
+@keyframes esPulse { 70% { box-shadow: 0 0 0 7px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+.es-list { display: flex; flex-direction: column; gap: 10px; }
+.es-day { margin: 8px 2px 0; font-size: 12.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--acc); }
+.es-day:first-child { margin-top: 0; }
+.es-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.es-card.is-live { border-color: rgba(239, 68, 68, .55); box-shadow: 0 0 0 1px rgba(239, 68, 68, .25); }
+.es-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.es-league { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.es-league img { width: 20px; height: 20px; object-fit: contain; flex: none; }
+.es-league b { font-size: 13px; font-weight: 800; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.es-league em { flex: none; font-style: normal; font-size: 11px; font-weight: 700; color: var(--mut); padding: 2px 6px; border-radius: 6px; background: var(--cov); }
+.es-status { flex: none; font-size: 12.5px; font-weight: 800; color: var(--mut); font-variant-numeric: tabular-nums; }
+.es-status.live { color: #fff; background: #ef4444; padding: 2px 8px; border-radius: 6px; font-size: 11px; letter-spacing: .6px; }
+
+.es-teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.es-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.es-team.right { flex-direction: row-reverse; text-align: right; }
+.es-team b { font-size: 14.5px; font-weight: 800; color: var(--txt); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2; }
+.es-team.lose b { color: var(--mut); font-weight: 600; }
+.es-team.win b { color: var(--acc); }
+.es-logo { position: relative; flex: none; width: 36px; height: 36px; border-radius: 10px; background: var(--cov); display: grid; place-items: center; overflow: hidden; }
+.es-logo img { position: absolute; inset: 3px; width: 30px; height: 30px; object-fit: contain; background: var(--cov); }
+.es-logo i { font-style: normal; font-size: 11px; font-weight: 800; color: var(--mut); }
+.es-mid { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 58px; }
+.es-mid strong { font-family: 'Press Start 2P', monospace; font-size: 15px; color: var(--txt); display: flex; gap: 6px; align-items: center; }
+.es-mid strong i { font-style: normal; color: var(--mut); }
+.es-mid strong.vs { font-size: 11px; color: var(--mut); }
+.es-mid small { font-size: 11px; font-weight: 700; color: var(--mut); }
+.es-card.is-live .es-mid strong { color: #ef4444; }
+
+.es-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.es-foot small { font-size: 12px; color: var(--mut); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.es-watch { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 10px; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--acc); font-size: 12.5px; font-weight: 800; text-decoration: none; }
+.es-watch .ic, .es-watch svg { width: 16px; height: 16px; }
+.es-src { margin: 6px 0 0; text-align: center; font-size: 11.5px; color: var(--mut); }
+
+.es-loading { display: flex; justify-content: center; gap: 8px; padding: 40px 0; }
+.es-loading span { width: 10px; height: 10px; background: var(--acc); animation: esBlink 1s infinite; }
+.es-loading span:nth-child(2) { animation-delay: .15s; } .es-loading span:nth-child(3) { animation-delay: .3s; }
+@keyframes esBlink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@media (min-width: 900px) { .es-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } .es-day, .es-src, .es-list > .empty-state { grid-column: 1 / -1; } }
+
+/* =====================================================================
+   32. FORTNITE (liens) & ANIME / MANGA — onglets de la page Arcade (tout en bas)
+   ===================================================================== */
+.es-fn { display: flex; flex-direction: column; gap: 10px; }
+.es-fn-head { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 30%, var(--card)), var(--card)); border: 1px solid var(--line); }
+.es-fn-logo { flex: none; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, #a855f7, #3b82f6); color: #fff; font-family: 'Press Start 2P', monospace; font-size: 12px; }
+.es-fn-head b { display: block; font-size: 16px; color: var(--txt); }
+.es-fn-head small { font-size: 12.5px; color: var(--mut); line-height: 1.35; }
+.es-fn-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); text-decoration: none; }
+.es-fn-ic { flex: none; width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--acc); }
+.es-fn-ic svg, .es-fn-ic .ic { width: 20px; height: 20px; }
+.es-fn-link > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.es-fn-link b { font-size: 14.5px; color: var(--txt); }
+.es-fn-link small { font-size: 12px; color: var(--mut); }
+.es-fn-link i { font-style: normal; font-size: 22px; color: var(--mut); }
+
+.an-kinds { grid-template-columns: repeat(2, 1fr); }
+.an-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 12px; }
+.an-day { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 0 6px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--mut); cursor: pointer; font-family: var(--font); }
+.an-day small { font-size: 10.5px; font-weight: 700; text-transform: capitalize; }
+.an-day b { font-size: 16px; color: var(--txt); }
+.an-day i { font-style: normal; font-size: 10px; font-weight: 800; }
+.an-day.on { background: var(--acc); border-color: var(--acc); color: var(--on); }
+.an-day.on b { color: var(--on); }
+
+.an-list { display: flex; flex-direction: column; gap: 10px; }
+.an-card { display: flex; gap: 12px; padding: 10px; border-radius: 16px; background: linear-gradient(110deg, color-mix(in srgb, var(--an-c, var(--acc)) 14%, var(--card)), var(--card) 55%); border: 1px solid var(--line); }
+.an-cover { flex: none; width: 64px; aspect-ratio: 2 / 3; border-radius: 10px; overflow: hidden; background: var(--cov); }
+.an-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.an-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.an-time { font-size: 12px; font-weight: 800; color: var(--acc); font-variant-numeric: tabular-nums; }
+.an-time.aired { color: #22c55e; }
+.an-info b { font-size: 14.5px; font-weight: 800; color: var(--txt); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.an-info small { font-size: 12px; color: var(--mut); }
+.an-watch { margin-top: 4px; }
+
+.an-manga { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 900px) { .an-manga { grid-template-columns: repeat(6, minmax(0, 1fr)); } .an-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.an-m { display: flex; flex-direction: column; gap: 4px; text-decoration: none; min-width: 0; }
+.an-m-cov { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: var(--cov); }
+.an-m-cov img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.an-m-cov em { position: absolute; top: 6px; left: 6px; font-style: normal; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(0,0,0,.65); color: #fff; }
+.an-m b { font-size: 13px; color: var(--txt); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.an-m small { font-size: 11px; color: var(--mut); }
 </style>
 </head>
 <body>
@@ -12449,8 +12550,11 @@ function renderArcadeMainPage(tab = 0) {
   CXRewards.checkAchievements(false);
 
   const displayBox = el("div", "pg-body");
-  const views = [showHall, showScores];
-  const tabs = pageTabs([{ label: "Salle", icon: "joystick" }, { label: "Scores", icon: "trophy" }], (i) => { CXArcade.lastTab = i; views[i](); });
+  // 3e onglet : matchs et résultats esport (section 23)
+  const showEsport = () => cxRenderEsport(displayBox);
+  const showAnime = () => cxRenderAnime(displayBox); // 4e onglet : sorties anime & mangas du moment (section 24)
+  const views = [showHall, showScores, showEsport, showAnime];
+  const tabs = pageTabs([{ label: "Salle", icon: "joystick" }, { label: "Scores", icon: "trophy" }, { label: "Esport", icon: "tv" }, { label: "Anime", icon: "sparkles" }], (i) => { CXArcade.lastTab = i; views[i](); });
   const openGame = (url, name) => CXArcade.open(url, name);
 
   function showHall() {
@@ -12564,7 +12668,7 @@ function renderArcadeMainPage(tab = 0) {
   }
 
   contentArea.append(tabs.el, displayBox);
-  const start = tab === 1 ? 1 : 0;
+  const start = [0, 1, 2, 3].includes(tab) ? tab : 0;
   CXArcade.lastTab = start;
   tabs.select(start);
   views[start]();
@@ -12781,6 +12885,312 @@ function cxRestoreFreePack() { try { localStorage.removeItem(CX_FREE_PACK_KEY); 
   window.addEventListener("pointerdown", arm, { passive: true });
   window.addEventListener("keydown", arm);
 })();
+
+// =====================================================================
+// 23. ESPORT — matchs en direct, à venir et résultats (onglet de la page Arcade)
+//   Données : PandaScore via le Worker (?esport=running|upcoming|past&game=…).
+//   Le Worker garde la clé secrète et met les réponses en cache.
+// =====================================================================
+const CX_ESPORT_GAMES = [
+  { id: "all", label: "Tous" },
+  { id: "fortnite", label: "Fortnite" }, // pas de données automatiques fiables : liens officiels (cxEsportFortnite)
+  { id: "rl", label: "Rocket League" },
+  { id: "lol", label: "LoL" },
+  { id: "cs2", label: "CS2" },
+  { id: "valorant", label: "Valorant" },
+  { id: "dota2", label: "Dota 2" },
+];
+const CX_ESPORT_KINDS = [
+  { id: "running", label: "En direct" },
+  { id: "upcoming", label: "À venir" },
+  { id: "past", label: "Résultats" },
+];
+const CXEsport = {
+  game: (() => { try { return localStorage.getItem("cx_esport_game") || "all"; } catch (e) { return "all"; } })(),
+  kind: "upcoming",
+  cache: {}, // { "upcoming/lol": { t, data } } — évite de recharger à chaque changement d'onglet
+  req: 0,
+};
+
+// ▸ cxEsportFetch : liste des matchs (cache de 60 s dans l'app, en plus de celui du Worker)
+async function cxEsportFetch(kind, game) {
+  const key = kind + "/" + game;
+  const hit = CXEsport.cache[key];
+  if (hit && Date.now() - hit.t < 60000) return hit.data;
+  if (typeof API === "undefined" || !API) throw new Error("Pas de Worker configuré");
+  const res = await fetch(`${API}/?esport=${kind}&game=${game}`, { cache: "no-store" });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !Array.isArray(data)) {
+    const err = new Error((data && data.error) || `Erreur ${res.status}`);
+    err.noKey = !!(data && /PANDASCORE_TOKEN/.test(data.error || ""));
+    throw err;
+  }
+  CXEsport.cache[key] = { t: Date.now(), data };
+  return data;
+}
+
+// ▸ cxRenderEsport : contenu de l'onglet Esport
+function cxRenderEsport(box) {
+  box.replaceChildren();
+  box.append(pageHead("Esport", "Les matchs pros : en direct, à venir et derniers résultats."));
+
+  // Filtres : jeu (puces) + type (onglets)
+  const chips = el("div", "es-chips");
+  CX_ESPORT_GAMES.forEach((g) => {
+    const b = el("button", "es-chip" + (CXEsport.game === g.id ? " on" : ""), g.label);
+    b.type = "button";
+    b.addEventListener("click", () => {
+      if (CXEsport.game === g.id) return;
+      playThemeSound(theme);
+      CXEsport.game = g.id;
+      try { localStorage.setItem("cx_esport_game", g.id); } catch (e) {}
+      cxRenderEsport(box);
+    });
+    chips.append(b);
+  });
+  const kinds = el("div", "es-kinds");
+  CX_ESPORT_KINDS.forEach((k) => {
+    const b = el("button", "es-kind" + (CXEsport.kind === k.id ? " on" : ""));
+    b.type = "button";
+    b.innerHTML = (k.id === "running" ? '<i class="es-dot"></i>' : "") + esc(k.label);
+    b.addEventListener("click", () => {
+      if (CXEsport.kind === k.id) return;
+      playThemeSound(theme);
+      CXEsport.kind = k.id;
+      cxRenderEsport(box);
+    });
+    kinds.append(b);
+  });
+  if (CXEsport.game === "fortnite") { box.append(chips, cxEsportFortnite()); return; }
+  box.append(chips, kinds);
+
+  const list = el("div", "es-list");
+  list.innerHTML = '<div class="es-loading"><span></span><span></span><span></span></div>';
+  box.append(list);
+
+  const reqId = ++CXEsport.req;
+  const { kind, game } = CXEsport;
+  cxEsportFetch(kind, game).then((data) => {
+    if (reqId !== CXEsport.req || !list.isConnected) return; // le joueur a changé de filtre entre-temps
+    list.replaceChildren();
+    if (!data.length) {
+      const msg = { running: ["Aucun match en direct", "Jette un œil aux matchs à venir."], upcoming: ["Aucun match prévu", "Reviens un peu plus tard."], past: ["Aucun résultat récent", ""] }[kind];
+      list.append(emptyState("tv", msg[0], msg[1]));
+      return;
+    }
+    cxEsportList(list, data, kind);
+  }).catch((err) => {
+    if (reqId !== CXEsport.req || !list.isConnected) return;
+    list.replaceChildren(err.noKey
+      ? emptyState("tv", "Esport bientôt disponible", "La clé PandaScore n'est pas encore installée sur le Worker.")
+      : emptyState("tv", "Matchs indisponibles", "Impossible de joindre le serveur pour l'instant.", "Réessayer", () => { delete CXEsport.cache[kind + "/" + game]; cxRenderEsport(box); }));
+  });
+}
+
+// ▸ cxEsportList : matchs regroupés par jour (« Aujourd'hui », « Demain », « samedi 7 novembre »…)
+function cxEsportList(list, data, kind) {
+  const dayKey = (iso) => { const d = new Date(iso); return isNaN(d) ? "?" : localDay(d); };
+  const today = localDay(), tomorrow = localDay(new Date(Date.now() + 864e5)), yesterday = localDay(new Date(Date.now() - 864e5));
+  const dayLabel = (k, iso) => {
+    if (k === today) return "Aujourd'hui";
+    if (k === tomorrow) return "Demain";
+    if (k === yesterday) return "Hier";
+    const d = new Date(iso);
+    return isNaN(d) ? "Date à confirmer" : d.toLocaleDateString(currentLang, { weekday: "long", day: "numeric", month: "long" });
+  };
+  let last = null;
+  data.forEach((m) => {
+    const k = m.begin ? dayKey(m.begin) : "?";
+    if (kind !== "running" && k !== last) {
+      list.append(el("div", "es-day", dayLabel(k, m.begin)));
+      last = k;
+    }
+    list.append(cxEsportCard(m, kind));
+  });
+  list.append(el("p", "es-src", "Données : PandaScore"));
+}
+
+// ▸ cxEsportCard : une carte de match
+function cxEsportCard(m, kind) {
+  const card = el("article", "es-card" + (m.status === "running" ? " is-live" : ""));
+  const time = m.begin ? new Date(m.begin).toLocaleTimeString(currentLang, { hour: "2-digit", minute: "2-digit" }) : "--:--";
+  const statusTxt = { running: "EN DIRECT", finished: "Terminé", canceled: "Annulé", postponed: "Reporté" }[m.status] || time;
+
+  const top = el("div", "es-top");
+  const lg = el("span", "es-league");
+  lg.innerHTML = (m.leagueImg ? `<img src="${esc(m.leagueImg)}" alt="" loading="lazy" onerror="this.remove()">` : "") +
+    `<b>${esc(m.league || m.game || "Match")}</b>` + (m.game && CXEsport.game === "all" ? `<em>${esc(m.game)}</em>` : "");
+  top.append(lg, el("span", "es-status" + (m.status === "running" ? " live" : ""), statusTxt));
+  card.append(top);
+
+  const showScore = m.status === "running" || m.status === "finished";
+  const teams = m.teams.length ? m.teams : [{ name: "À déterminer" }, { name: "À déterminer" }];
+  while (teams.length < 2) teams.push({ name: "À déterminer" });
+  const row = el("div", "es-teams");
+  teams.forEach((t, i) => {
+    const win = m.winner && t.id === m.winner, lose = m.winner && t.id && t.id !== m.winner;
+    const side = el("div", "es-team" + (i ? " right" : "") + (win ? " win" : "") + (lose ? " lose" : ""));
+    // initiales en dessous, logo par-dessus (s'il ne charge pas, il disparaît et laisse les initiales)
+    const logo = `<i>${esc((t.acr || t.name || "?").slice(0, 3))}</i>` + (t.img ? `<img src="${esc(t.img)}" alt="" loading="lazy" onerror="this.remove()">` : "");
+    side.innerHTML = `<span class="es-logo">${logo}</span><b>${esc(t.name)}</b>`;
+    row.append(side);
+    if (i === 0) {
+      const mid = el("div", "es-mid");
+      mid.innerHTML = showScore
+        ? `<strong>${t.score ?? 0}<i>-</i>${teams[1].score ?? 0}</strong>`
+        : `<strong class="vs">VS</strong>`;
+      if (m.bo) mid.append(el("small", "", `BO${m.bo}`));
+      row.append(mid);
+    }
+  });
+  card.append(row);
+
+  const meta = [m.serie, m.stage].filter(Boolean).join(" · ");
+  if (meta || (m.stream && m.status !== "finished")) {
+    const foot = el("div", "es-foot");
+    foot.append(el("small", "", meta));
+    if (m.stream && m.status !== "finished" && m.status !== "canceled") {
+      const a = el("a", "es-watch");
+      a.href = m.stream; a.target = "_blank"; a.rel = "noopener";
+      a.innerHTML = `${icon("play")}<span>${m.status === "running" ? "Regarder" : "Chaîne"}</span>`;
+      foot.append(a);
+    }
+    card.append(foot);
+  }
+  return card;
+}
+
+// ▸ cxEsportFortnite : Fortnite n'a pas de source de données gratuite et fiable (format battle royale,
+//   classements propres à Epic). On renvoie donc vers les pages officielles, toujours à jour.
+function cxEsportFortnite() {
+  const wrap = el("div", "es-fn");
+  wrap.innerHTML = `
+    <div class="es-fn-head">
+      <span class="es-fn-logo">FN</span>
+      <div><b>Fortnite compétitif</b><small>FNCS, Cash Cups, coupes classées… Le calendrier officiel d'Epic est la source la plus fiable.</small></div>
+    </div>`;
+  const links = [
+    { icon: "calendar", title: "Calendrier officiel", sub: "Toutes les compétitions à venir (choisis la région Europe)", url: "https://www.fortnite.com/competitive" },
+    { icon: "trophy", title: "Classements en direct", sub: "Résultats et classements des tournois (Fortnite Tracker)", url: "https://fortnitetracker.com/events" },
+    { icon: "play", title: "Regarder la FNCS", sub: "La chaîne Twitch officielle de Fortnite", url: "https://www.twitch.tv/fortnite" },
+  ];
+  links.forEach((l) => {
+    const a = el("a", "es-fn-link");
+    a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = `<span class="es-fn-ic">${icon(l.icon)}</span><span><b>${esc(l.title)}</b><small>${esc(l.sub)}</small></span><i>›</i>`;
+    wrap.append(a);
+  });
+  return wrap;
+}
+
+// =====================================================================
+// 24. ANIME & MANGA — onglet « Anime » de la page Arcade
+//   Données : AniList (gratuit, sans clé) via le Worker (?anime=schedule|manga).
+//   Épisodes : heure de diffusion au Japon (en simulcast, souvent dispo le jour même en VOSTFR).
+// =====================================================================
+const CXAnime = { kind: "schedule", day: "", cache: {}, req: 0 };
+
+async function cxAnimeFetch(kind) {
+  const hit = CXAnime.cache[kind];
+  if (hit && Date.now() - hit.t < 10 * 60000) return hit.data;
+  if (typeof API === "undefined" || !API) throw new Error("Pas de Worker configuré");
+  const res = await fetch(`${API}/?anime=${kind}`, { cache: "no-store" });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !Array.isArray(data)) throw new Error((data && data.error) || `Erreur ${res.status}`);
+  CXAnime.cache[kind] = { t: Date.now(), data };
+  return data;
+}
+
+function cxRenderAnime(box) {
+  box.replaceChildren();
+  box.append(pageHead("Anime & manga", "Les nouveaux épisodes de la semaine et les mangas du moment."));
+
+  const kinds = el("div", "es-kinds an-kinds");
+  [{ id: "schedule", label: "Épisodes" }, { id: "manga", label: "Mangas du moment" }].forEach((k) => {
+    const b = el("button", "es-kind" + (CXAnime.kind === k.id ? " on" : ""), k.label);
+    b.type = "button";
+    b.addEventListener("click", () => { if (CXAnime.kind === k.id) return; playThemeSound(theme); CXAnime.kind = k.id; cxRenderAnime(box); });
+    kinds.append(b);
+  });
+  box.append(kinds);
+
+  const zone = el("div", "an-zone");
+  zone.innerHTML = '<div class="es-loading"><span></span><span></span><span></span></div>';
+  box.append(zone);
+
+  const reqId = ++CXAnime.req, kind = CXAnime.kind;
+  cxAnimeFetch(kind).then((data) => {
+    if (reqId !== CXAnime.req || !zone.isConnected) return;
+    zone.replaceChildren();
+    if (!data.length) { zone.append(emptyState("sparkles", "Rien pour l'instant", "Reviens un peu plus tard.")); return; }
+    if (kind === "manga") cxAnimeMangas(zone, data);
+    else cxAnimeSchedule(zone, data, box);
+  }).catch(() => {
+    if (reqId !== CXAnime.req || !zone.isConnected) return;
+    zone.replaceChildren(emptyState("sparkles", "Liste indisponible", "Impossible de joindre le serveur pour l'instant.", "Réessayer", () => { delete CXAnime.cache[kind]; cxRenderAnime(box); }));
+  });
+}
+
+// ▸ Épisodes : une puce par jour (7 jours), puis la liste du jour choisi, triée par heure
+function cxAnimeSchedule(zone, data, box) {
+  const byDay = {};
+  data.forEach((a) => { const k = localDay(new Date(a.at * 1000)); (byDay[k] = byDay[k] || []).push(a); });
+  const days = [];
+  for (let i = 0; i < 7; i++) days.push(localDay(new Date(Date.now() + i * 864e5)));
+  if (!days.includes(CXAnime.day)) CXAnime.day = days[0];
+
+  const strip = el("div", "an-days");
+  days.forEach((k, i) => {
+    const d = new Date(k + "T12:00:00");
+    const b = el("button", "an-day" + (k === CXAnime.day ? " on" : ""));
+    b.type = "button";
+    b.innerHTML = `<small>${i === 0 ? "Auj." : esc(d.toLocaleDateString(currentLang, { weekday: "short" }).replace(".", ""))}</small><b>${d.getDate()}</b><i>${(byDay[k] || []).length}</i>`;
+    b.addEventListener("click", () => { playThemeSound(theme); CXAnime.day = k; cxRenderAnime(box); });
+    strip.append(b);
+  });
+  zone.append(strip);
+
+  const list = (byDay[CXAnime.day] || []).slice().sort((a, b) => a.at - b.at);
+  if (!list.length) { zone.append(emptyState("sparkles", "Aucun épisode ce jour-là", "")); return; }
+  const grid = el("div", "an-list");
+  list.forEach((a) => {
+    const card = el("article", "an-card");
+    if (a.color) card.style.setProperty("--an-c", a.color);
+    const time = new Date(a.at * 1000).toLocaleTimeString(currentLang, { hour: "2-digit", minute: "2-digit" });
+    const aired = a.at * 1000 < Date.now();
+    card.innerHTML = `
+      <div class="an-cover">${a.cover ? `<img src="${esc(a.cover)}" alt="" loading="lazy">` : ""}</div>
+      <div class="an-info">
+        <span class="an-time${aired ? " aired" : ""}">${aired ? "Sorti · " : ""}${esc(time)}</span>
+        <b>${esc(a.title)}</b>
+        <small>Épisode ${a.episode}${a.episodes ? ` / ${a.episodes}` : ""}${a.genres.length ? " · " + esc(a.genres.join(", ")) : ""}</small>
+      </div>`;
+    const info = card.querySelector(".an-info");
+    if (a.stream) {
+      const link = el("a", "es-watch an-watch");
+      link.href = a.stream.url; link.target = "_blank"; link.rel = "noopener";
+      link.innerHTML = `${icon("play")}<span>${esc(a.stream.site)}</span>`;
+      info.append(link);
+    }
+    grid.append(card);
+  });
+  zone.append(grid, el("p", "es-src", "Heures de diffusion au Japon, converties à ton heure · Données : AniList"));
+}
+
+// ▸ Mangas du moment : grille de couvertures
+function cxAnimeMangas(zone, data) {
+  const grid = el("div", "an-manga");
+  data.forEach((m, i) => {
+    const a = el("a", "an-m");
+    a.href = m.url; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = `
+      <span class="an-m-cov">${m.cover ? `<img src="${esc(m.cover)}" alt="" loading="lazy">` : ""}<em>#${i + 1}</em></span>
+      <b>${esc(m.title)}</b>
+      <small>${m.genres.length ? esc(m.genres.slice(0, 2).join(", ")) : "Manga"}</small>`;
+    grid.append(a);
+  });
+  zone.append(grid, el("p", "es-src", "Mangas en cours les plus suivis cette semaine · Données : AniList"));
+}
 </script>
 </body>
 </html>
