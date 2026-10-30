@@ -160,21 +160,67 @@ function splitText(text, max = 400) {
   return chunks;
 }
 
-// Langues de traduction (code de la page -> nom attendu par le modèle)
+// Langues de traduction (code de la page -> nom attendu par les modèles)
 const TARGET_LANGS = { fr: "french", ja: "japanese", de: "german", es: "spanish", zh: "chinese", pt: "portuguese", ko: "korean", it: "italian" };
 
-// Table D1 des traductions déjà faites (créée automatiquement la première fois)
+// Modèle principal : un vrai modèle de langage, qui comprend le contexte des jeux vidéo
+const TRANSLATE_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+// Modèle de secours (l'ancien traducteur mot à mot) si le principal ne répond pas
+const FALLBACK_MODEL = "@cf/meta/m2m100-1.2b";
+
+// Table D1 des traductions déjà faites (créée automatiquement la première fois).
+// « translations_v2 » : nouvelle table, pour que tous les résumés soient retraduits avec le nouveau modèle.
 let trTableReady = false;
 async function ensureTrTable(env) {
   if (trTableReady) return;
   await env.DB.prepare(
-    "CREATE TABLE IF NOT EXISTS translations (game_id INTEGER NOT NULL, lang TEXT NOT NULL, summary TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY (game_id, lang))"
+    "CREATE TABLE IF NOT EXISTS translations_v2 (game_id INTEGER NOT NULL, lang TEXT NOT NULL, summary TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY (game_id, lang))"
   ).run();
   trTableReady = true;
 }
 
+// Traduction avec le modèle principal (consignes de traducteur spécialisé jeux vidéo)
+async function translateWithLLM(env, text, lang) {
+  const language = TARGET_LANGS[lang].charAt(0).toUpperCase() + TARGET_LANGS[lang].slice(1);
+  const r = await env.AI.run(TRANSLATE_MODEL, {
+    messages: [
+      {
+        role: "system",
+        content:
+          `You are a professional video game localizer. Translate the user's English game summary into natural, fluent ${language}, ` +
+          `as written by the ${language}-language gaming press. Rules: keep proper nouns unchanged (game titles, characters, places, ` +
+          `studios, items); use the standard video game terms that ${language}-speaking players actually use (for example keep ` +
+          `"cel-shading", "roguelike", "metroidvania", "open world" style terms in English when that is the usual practice); ` +
+          `keep line breaks; do not add, remove or explain anything. Output only the translation, with no quotes and no preamble.`,
+      },
+      { role: "user", content: text },
+    ],
+    max_tokens: 2048,
+    temperature: 0.2,
+  });
+  let out = (r && (r.response ?? (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || "";
+  out = String(out).trim()
+    .replace(/^(voici (la|une) traduction[^:\n]*:|traduction\s*:|translation\s*:)\s*/i, "")
+    .replace(/^["«“]\s*([\s\S]*?)\s*["»”]$/, "$1")
+    .trim();
+  // Garde-fou : une réponse vide, ou de longueur aberrante, n'est pas une traduction
+  if (out.length < text.length * 0.4 || out.length > text.length * 3) throw new Error("Traduction suspecte");
+  return out;
+}
+
+// Traduction avec le modèle de secours (morceau par morceau)
+async function translateWithFallback(env, text, lang) {
+  const out = [];
+  for (const chunk of splitText(text)) {
+    const r = await env.AI.run(FALLBACK_MODEL, { text: chunk, source_lang: "english", target_lang: TARGET_LANGS[lang] });
+    if (!r || !r.translated_text) throw new Error("Traduction vide renvoyée par l'IA");
+    out.push(r.translated_text);
+  }
+  return out.join(" ");
+}
+
 // Traduction du résumé d'un jeu (anglais -> langue choisie)
-// Ordre : cache Cloudflare -> base D1 -> traduction par l'IA (puis rangée dans D1)
+// Ordre : base D1 -> modèle principal (rangé dans D1) -> modèle de secours (non rangé, retenté plus tard)
 async function translateSummary(idParam, langParam, env, ctx) {
   const id = Number(idParam);
   if (!Number.isInteger(id) || id <= 0) {
@@ -188,7 +234,7 @@ async function translateSummary(idParam, langParam, env, ctx) {
   if (env.DB && lang !== "en") {
     try {
       await ensureTrTable(env);
-      const row = await env.DB.prepare("SELECT summary FROM translations WHERE game_id = ? AND lang = ?")
+      const row = await env.DB.prepare("SELECT summary FROM translations_v2 WHERE game_id = ? AND lang = ?")
         .bind(id, lang).first();
       if (row) return Response.json({ id, summary: row.summary, saved: true }, { headers: okHeaders });
     } catch (e) { dbError = e.message; }
@@ -206,29 +252,26 @@ async function translateSummary(idParam, langParam, env, ctx) {
     if (!text) return Response.json({ id, summary: null }, { headers: CORS });
     if (lang === "en") return Response.json({ id, summary: text }, { headers: CORS });
 
-    // 2) Sinon, on traduit morceau par morceau
-    const out = [];
-    for (const chunk of splitText(text)) {
-      const r = await env.AI.run("@cf/meta/m2m100-1.2b", {
-        text: chunk,
-        source_lang: "english",
-        target_lang: TARGET_LANGS[lang],
-      });
-      if (!r || !r.translated_text) throw new Error("Traduction vide renvoyée par l'IA");
-      out.push(r.translated_text);
+    // 2) Traduction par le modèle principal ; en cas d'échec, modèle de secours
+    let summary, model = "llm";
+    try {
+      summary = await translateWithLLM(env, text, lang);
+    } catch (e) {
+      summary = await translateWithFallback(env, text, lang);
+      model = "secours";
     }
-    const summary = out.join(" ");
 
-    // 3) On range la traduction dans D1 pour ne plus jamais la refaire
-    if (env.DB && !dbError) {
+    // 3) On range la traduction dans D1 (seulement celle du modèle principal)
+    if (env.DB && !dbError && model === "llm") {
       try {
-        await env.DB.prepare("INSERT OR REPLACE INTO translations (game_id, lang, summary, created_at) VALUES (?, ?, ?, ?)")
+        await env.DB.prepare("INSERT OR REPLACE INTO translations_v2 (game_id, lang, summary, created_at) VALUES (?, ?, ?, ?)")
           .bind(id, lang, summary, Math.floor(Date.now() / 1000)).run();
       } catch (e) { dbError = e.message; }
     }
 
-    const body = dbError ? { id, summary, db_error: dbError } : { id, summary, saved: false };
-    return Response.json(body, { headers: dbError ? CORS : okHeaders });
+    const body = { id, summary, saved: false, model };
+    if (dbError) body.db_error = dbError;
+    return Response.json(body, { headers: dbError || model !== "llm" ? CORS : okHeaders });
   } catch (e) {
     return Response.json({ error: e.message }, { status: 500, headers: CORS });
   }
@@ -373,7 +416,7 @@ async function handleAuth(request, env) {
       return jsonRes({ error: "Ce pseudo vient d'être pris. Réessaie." }, 409);
     }
     await noteFailure(env, signupLimit); // compte une création pour cette connexion internet
-    return jsonRes({ status: "created", token: await newSession(env, id) });
+    return jsonRes({ status: "created", token: await newSession(env, id), username });
   }
 
   // ----- Connexion -----
@@ -385,7 +428,7 @@ async function handleAuth(request, env) {
   await clearFailures(env, limits[0].key);
   let saved = {};
   try { saved = JSON.parse(user.data || "{}"); } catch (e) {}
-  return jsonRes({ status: "connected", token: await newSession(env, user.id), data: saved });
+  return jsonRes({ status: "connected", token: await newSession(env, user.id), username: user.display_name, data: saved });
 }
 
 async function handleSave(request, env) {
