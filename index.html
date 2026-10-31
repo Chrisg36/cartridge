@@ -6251,6 +6251,136 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
   /* Téléphone : flou de la fiche plus léger pour tous les thèmes */
   .sheet-hero::before { filter: blur(14px) saturate(1.2) !important; inset: -20px !important; }
 }
+
+/* =====================================================================
+   33. MESSAGERIE & SECRETS FACILES — doit rester tout en bas du CSS
+   ===================================================================== */
+/* --- Secrets faciles --- */
+.cx-eggs-wrap { display: flex; flex-direction: column; gap: 12px; }
+.cx-eggs-easy { border-color: color-mix(in srgb, #7fe7ff 40%, transparent) !important; }
+.cx-eggs-easy .cx-eggs-bar i { background: repeating-linear-gradient(90deg, #7fe7ff 0 8px, #3ab8ff 8px 16px); }
+.cx-eggs-intro { margin: 2px 0 0; font-size: 12px; font-weight: 700; color: var(--mut); }
+.cx-egg[data-egg="point"]:not(.is-got) .cx-egg-ic { cursor: pointer; color: #7fe7ff; }
+.cx-egg-poke .cx-egg-ic { animation: cxEggPoke .35s ease; }
+@keyframes cxEggPoke { 40% { transform: scale(1.35) rotate(-12deg); } 70% { transform: scale(.9) rotate(8deg); } }
+.cx-egg-badge + .cx-egg-badge { margin-left: 2px; }
+
+/* --- Bouton bulle dans les en-têtes --- */
+.cx-msg-btn { position: relative; flex-shrink: 0; display: grid; place-items: center; width: 34px; height: 34px; margin-right: 2px; padding: 0; border-radius: 50%; border: 1px solid var(--line, rgba(255,255,255,.12)); background: var(--card); color: var(--txt); cursor: pointer; transition: transform .15s; }
+.cx-msg-btn:active { transform: scale(.9); }
+.cx-msg-btn .ic { width: 18px; height: 18px; }
+.cx-msg-dot { position: absolute; top: -4px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: #ff3b5c; color: #fff; font: 800 10px/17px var(--font, sans-serif); font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--bg); animation: cxMsgPop .3s ease; }
+.cx-msg-dot[hidden] { display: none; }
+@keyframes cxMsgPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } }
+.sidebar-account .cx-msg-btn { width: 38px; height: 38px; }
+
+/* --- Fenêtre --- */
+.cartridge-modal-overlay.cx-msg-ov { padding: 0; align-items: stretch; justify-content: center; z-index: 9990; background: rgba(0, 0, 0, .55); }
+.cx-msg-app { position: relative; display: flex; width: 100%; height: 100%; height: 100dvh; background: var(--bg); color: var(--txt); font-family: var(--font, sans-serif); overflow: hidden; }
+@media (min-width: 760px) {
+  .cartridge-modal-overlay.cx-msg-ov { padding: 4vh 16px; align-items: center; }
+  .cx-msg-app { max-width: 980px; height: min(760px, 92vh); border-radius: 20px; border: 1px solid var(--line, rgba(255,255,255,.12)); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+}
+.cx-msg-side { display: flex; flex-direction: column; width: 100%; min-width: 0; background: var(--bg); }
+.cx-msg-chat { display: none; flex-direction: column; flex: 1; min-width: 0; background: color-mix(in srgb, var(--card) 55%, var(--bg)); }
+.cx-msg-app.is-chat .cx-msg-side { display: none; }
+.cx-msg-app.is-chat .cx-msg-chat { display: flex; }
+@media (min-width: 760px) {
+  .cx-msg-side { width: 330px; flex-shrink: 0; border-right: 1px solid var(--line, rgba(255,255,255,.1)); }
+  .cx-msg-app .cx-msg-chat { display: flex; }
+  .cx-msg-app.is-chat .cx-msg-side { display: flex; }
+  .cx-msg-back, .cx-msg-side .cx-msg-x { display: none !important; }
+}
+@media (max-width: 759px) { .cx-msg-x2 { display: none !important; } }
+
+.cx-msg-head { display: flex; align-items: center; gap: 8px; min-height: 58px; padding: 10px 12px; padding-top: max(10px, env(safe-area-inset-top)); border-bottom: 1px solid var(--line, rgba(255,255,255,.1)); background: var(--card); }
+@media (min-width: 760px) { .cx-msg-head { padding-top: 10px; } }
+.cx-msg-title { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 19px; }
+.cx-msg-title .ic { width: 22px; height: 22px; color: var(--acc); }
+.cx-msg-ib { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--txt); cursor: pointer; flex-shrink: 0; }
+.cx-msg-ib:hover { background: rgba(255,255,255,.07); }
+.cx-msg-ib .ic { width: 20px; height: 20px; }
+.cx-msg-ib[hidden] { display: none; }
+.cx-msg-block.is-on { color: #ff5c7a; }
+.cx-msg-new { display: flex; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line, rgba(255,255,255,.1)); }
+.cx-msg-new[hidden] { display: none; }
+.cx-msg-new input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: var(--card); color: var(--txt); font: 700 15px var(--font, sans-serif); }
+.cx-msg-new .cta { min-height: 40px; padding: 0 14px; font-size: 13px; }
+.cx-msg-net { display: none; padding: 6px 12px; background: #ff3b5c; color: #fff; font-size: 12px; font-weight: 800; text-align: center; }
+.cx-msg-ov.is-offline .cx-msg-net { display: block; }
+
+.cx-msg-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 6px; }
+.cx-conv { display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px; border: 0; border-radius: 14px; background: transparent; color: var(--txt); text-align: left; cursor: pointer; font-family: inherit; }
+.cx-conv:hover { background: rgba(255,255,255,.04); }
+.cx-conv.is-active { background: color-mix(in srgb, var(--acc) 14%, transparent); }
+.cx-conv-av { position: relative; flex-shrink: 0; }
+.cx-conv-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cx-conv-txt b { font-size: 15.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-conv-txt small { font-size: 13px; font-weight: 600; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-conv.is-unread .cx-conv-txt small { color: var(--txt); font-weight: 800; }
+.cx-conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.cx-conv-meta time { font-size: 11.5px; color: var(--mut); font-weight: 700; }
+.cx-conv-n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--acc); color: var(--on, #111); font: 800 11px/20px var(--font, sans-serif); font-style: normal; text-align: center; }
+.cx-on { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: #35d07f; box-shadow: 0 0 0 2.5px var(--bg); }
+.cx-on-txt { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: #35d07f; vertical-align: 1px; }
+.cx-msg-tip { margin: 10px 8px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); font-size: 12.5px; line-height: 1.4; font-weight: 600; color: var(--mut); }
+
+.cx-av { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: hsl(var(--h, 20) 65% 45%); color: #fff; font: 800 18px var(--font, sans-serif); overflow: hidden; }
+.cx-av.is-px { background: var(--cov, #2a2f3b); padding: 7px; }
+.cx-av.is-px svg { width: 100%; height: 100%; display: block; }
+.cx-av.is-room { background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 45%, #6a3cff)); }
+.cx-av.is-room .ic { width: 22px; height: 22px; color: #fff; }
+.cx-msg-peer { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.cx-msg-peer .cx-av { width: 38px; height: 38px; font-size: 16px; }
+.cx-msg-peer > span:last-child { min-width: 0; display: flex; flex-direction: column; }
+.cx-msg-peer b { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-msg-peer small { font-size: 12px; font-weight: 700; color: var(--mut); }
+
+.cx-msg-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: auto; padding: 40px 20px; text-align: center; color: var(--mut); }
+.cx-msg-empty .ic { width: 34px; height: 34px; opacity: .6; }
+.cx-msg-empty b { color: var(--txt); font-size: 17px; }
+.cx-msg-empty p { margin: 0; max-width: 300px; font-size: 14px; line-height: 1.45; font-weight: 600; }
+.cx-msg-empty .cta { margin-top: 6px; }
+.cx-msg-empty .ic-loader { animation: cxMsgSpin 1s linear infinite; }
+@keyframes cxMsgSpin { to { transform: rotate(360deg); } }
+
+/* --- Fil de discussion --- */
+.cx-msg-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.cx-msg-thread { display: flex; flex-direction: column; gap: 3px; min-height: 100%; padding: 12px 12px 16px; }
+.cx-msg-more { align-self: center; margin: 4px 0 8px; font-size: 11.5px; font-weight: 700; color: var(--mut); }
+.cx-msg-day { display: flex; justify-content: center; margin: 12px 0 6px; }
+.cx-msg-day span { padding: 3px 10px; border-radius: 10px; background: rgba(0,0,0,.25); font-size: 11.5px; font-weight: 800; color: var(--mut); text-transform: capitalize; }
+.cx-bub-row { display: flex; align-items: flex-end; gap: 7px; max-width: 100%; margin-top: 6px; }
+.cx-bub-row.cont { margin-top: 0; }
+.cx-bub-row.mine { justify-content: flex-end; }
+.cx-bub-av { width: 30px; flex-shrink: 0; cursor: pointer; }
+.cx-bub-av .cx-av { width: 30px; height: 30px; font-size: 13px; }
+.cx-bub-av .cx-av.is-px { padding: 4px; }
+.cx-bub { position: relative; max-width: min(78%, 520px); padding: 7px 11px 5px; border-radius: 18px; background: var(--card); border: 1px solid var(--line, rgba(255,255,255,.08)); box-shadow: 0 1px 1px rgba(0,0,0,.15); -webkit-user-select: text; user-select: text; }
+.cx-bub-row.theirs .cx-bub { border-bottom-left-radius: 6px; }
+.cx-bub-row.theirs.cont .cx-bub { border-top-left-radius: 6px; }
+.cx-bub-row.mine .cx-bub { background: var(--acc); color: var(--on, #111); border-color: transparent; border-bottom-right-radius: 6px; }
+.cx-bub-row.mine.cont .cx-bub { border-top-right-radius: 6px; }
+.cx-bub-name { display: block; margin-bottom: 1px; font-size: 12.5px; font-weight: 800; color: var(--acc); cursor: pointer; }
+.cx-bub p { margin: 0; font-size: 15.5px; line-height: 1.35; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cx-bub p em { opacity: .6; font-style: italic; }
+.cx-bub time { display: block; margin-top: 1px; font-size: 10.5px; font-weight: 700; opacity: .6; text-align: right; }
+.cx-bub-row.is-pending .cx-bub { opacity: .65; }
+.cx-bub-row.is-failed .cx-bub { background: #5a1b26 !important; color: #fff !important; cursor: pointer; }
+.cx-bub-err, .cx-bub-wait { display: block; font-size: 10.5px; font-weight: 800; text-align: right; }
+.cx-bub-err { color: #ffb3c0; }
+
+/* --- Zone d'écriture --- */
+.cx-msg-compose { position: relative; display: flex; align-items: flex-end; gap: 8px; padding: 8px 10px; padding-bottom: max(8px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line, rgba(255,255,255,.1)); background: var(--card); }
+.cx-msg-compose textarea { flex: 1; min-width: 0; min-height: 42px; max-height: 120px; padding: 10px 14px; border-radius: 21px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: var(--bg); color: var(--txt); font: 600 16px/1.3 var(--font, sans-serif); resize: none; outline: none; }
+.cx-msg-compose textarea:focus { border-color: var(--acc); }
+.cx-msg-compose.is-blocked { opacity: .6; }
+.cx-msg-send { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--acc); color: var(--on, #111); cursor: pointer; transition: transform .12s; }
+.cx-msg-send:active { transform: scale(.88); }
+.cx-msg-send .ic { width: 19px; height: 19px; margin-left: -2px; }
+.cx-msg-count { position: absolute; right: 64px; top: -18px; font-size: 11px; font-weight: 800; color: var(--mut); }
+.cx-msg-count[hidden] { display: none; }
+
 </style>
 </head>
 <body>
@@ -13579,7 +13709,7 @@ function renderArcadeMainPage(tab = 0) {
 
   function showScores() {
     displayBox.replaceChildren();
-    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake", astra: "star", tyrielsoren: "trophy", soirdete: "cassette", solitaire: "copy" }[g.id] })), openGame);
+    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake", astra: "star", tyrielsoren: "trophy", soirdete: "cassette", solitaire: "copy", mahjong: "blocks", yaelle: "star" }[g.id] })), openGame);
   }
 
   contentArea.append(tabs.el, displayBox);
@@ -14179,9 +14309,10 @@ function cxAnimeMangas(zone, data) {
 }
 
 // =====================================================================
-// 25. CHASSE AUX SECRETS — 10 easter eggs cachés dans l'app et les bornes
-//   Chaque secret : +10 🪙. Les 10 trouvés : +350 🪙 + badge unique
-//   « Chasseur de secrets » affiché à côté du pseudo.
+// 25. CHASSE AUX SECRETS — 2 séries d'easter eggs cachés dans l'app et les bornes
+//   Série 1 « Secrets de pro » (10) : +10 🪙 chacun, les 10 → +350 🪙 + badge « Chasseur de secrets »
+//   Série 2 « Secrets faciles » (10) : pensée pour les jeunes joueurs (aucune référence à connaître),
+//            +10 🪙 chacun, les 10 → +350 🪙 + badge « Petit détective »
 //   Les bornes peuvent signaler un secret : parent.postMessage({ type: "cartridge:egg", id }, "*")
 // =====================================================================
 const CX_EGGS = [
@@ -14196,7 +14327,24 @@ const CX_EGGS = [
   { id: "soirdete", name: "Gardien des Érables", hint: "Dans Un Soir d'Été, trouve la fin la plus secrète." },
   { id: "solitaire", name: "Les cartes chatouilleuses", hint: "Dans le Solitaire, la petite icône de la fenêtre est chatouilleuse." },
 ];
+// Série 2 : des indices clairs, faisables par un enfant qui ne connaît pas l'histoire du jeu vidéo
+const CX_EGGS2 = [
+  { id: "point", name: "Le point curieux", hint: "Tape 3 fois de suite sur ce point d'interrogation." },
+  { id: "bonjour", name: "Poli comme tout", hint: "Écris « bonjour » dans la barre de recherche de l'accueil." },
+  { id: "mercredi", name: "Le jour des enfants", hint: "Ouvre Cartridge un mercredi." },
+  { id: "favoris3", name: "Trois cœurs", hint: "Mets 3 jeux en favoris (le petit cœur sur un jeu)." },
+  { id: "voyage", name: "Voyageur du temps", hint: "Change de mois 12 fois avec les flèches ‹ › de l'accueil." },
+  { id: "tour", name: "Le tour éclair", hint: "Visite les 5 pages du menu en moins de 15 secondes." },
+  { id: "bas", name: "Tout en bas", hint: "Descends tout en bas de la liste des sorties du mois." },
+  { id: "mahjong", name: "Maître des tuiles", hint: "Termine une partie de Mahjong dans la salle d'arcade." },
+  { id: "plume", name: "La plume dorée", hint: "Dans Yaelle, une plume dorée est cachée au niveau 1-1. Passe par le bord de l'écran !" },
+  { id: "message", name: "Premier mot", hint: "Envoie ton premier message dans la Messagerie (la bulle en haut)." },
+];
 const CX_EGG_REWARD = 350, CX_EGG_STEP = 10;
+const CX_EGG_SERIES = {
+  1: { list: CX_EGGS, badgeKey: "badge", badgeName: "Chasseur de secrets", title: "Secrets de pro", icon: "search" },
+  2: { list: CX_EGGS2, badgeKey: "badge2", badgeName: "Petit détective", title: "Secrets faciles", icon: "sparkles" },
+};
 
 const CXEggs = {
   key: "cartridge_eggs",
@@ -14210,35 +14358,44 @@ const CXEggs = {
     try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) {}
     if (typeof cloudSave === "function") cloudSave();
   },
-  count() { const f = this.load().found; return CX_EGGS.filter((e) => f[e.id]).length; },
+  seriesOf(id) { return CX_EGGS2.some((e) => e.id === id) ? 2 : CX_EGGS.some((e) => e.id === id) ? 1 : 0; },
+  count(series = 1) { const f = this.load().found; return CX_EGG_SERIES[series].list.filter((e) => f[e.id]).length; },
   has(id) { return !!this.load().found[id]; },
-  hasBadge() { return !!this.load().badge; },
+  hasBadge(series = 1) { return !!this.load()[CX_EGG_SERIES[series].badgeKey]; },
   find(id) {
-    const egg = CX_EGGS.find((e) => e.id === id); if (!egg) return;
+    const series = this.seriesOf(id); if (!series) return;
+    const S = CX_EGG_SERIES[series], egg = S.list.find((e) => e.id === id);
     const d = this.load(); if (d.found[id]) return;
     d.found[id] = cxToday(); this.save(d);
-    const n = this.count();
+    const n = this.count(series);
     addCoins(CX_EGG_STEP);
+    if (typeof updateCoinsUI === "function") updateCoinsUI();
     if (typeof soundEnabled === "undefined" || soundEnabled) { try { CXSfx.unlock(); } catch (e) {} }
-    showToast(`🥚 Secret trouvé : ${esc(egg.name)} (${n}/${CX_EGGS.length}) +${CX_EGG_STEP} 🪙`, "sparkles");
+    showToast(`🥚 Secret trouvé : ${esc(egg.name)} (${n}/${S.list.length}) +${CX_EGG_STEP} 🪙`, "sparkles");
     this.burst();
-    if (n >= CX_EGGS.length && !d.badge) setTimeout(() => this.grand(), 1500);
-    document.querySelectorAll(".cx-egg-invader").forEach((b) => { if (id === "invader") b.remove(); });
+    if (n >= S.list.length && !d[S.badgeKey]) setTimeout(() => this.grand(series), 1500);
+    if (id === "invader") document.querySelectorAll(".cx-egg-invader").forEach((b) => b.remove());
+    // la carte des secrets se met à jour si elle est affichée
+    document.querySelectorAll(".cx-eggs-wrap").forEach((w) => { const p = w.parentNode; if (p) { const nw = el("div", "cx-eggs-wrap"); cxFillEggs(nw); w.replaceWith(nw); } });
   },
-  grand() {
-    const d = this.load(); if (d.badge) return;
-    d.badge = cxToday(); this.save(d);
+  grand(series = 1) {
+    const S = CX_EGG_SERIES[series];
+    const d = this.load(); if (d[S.badgeKey]) return;
+    d[S.badgeKey] = cxToday(); this.save(d);
     addCoins(CX_EGG_REWARD);
+    if (typeof updateCoinsUI === "function") updateCoinsUI();
     try { if (typeof soundEnabled === "undefined" || soundEnabled) CXSfx.hiscore(); } catch (e) {}
-    showRetroAlert("🏆 TOUS LES SECRETS !", `<div style="text-align:center">${this.badgeSVG(64)}</div><br>Tu as trouvé les ${CX_EGGS.length} easter eggs de Cartridge !<br><br><b>+${CX_EGG_REWARD} 🪙</b> et le badge unique <b>« Chasseur de secrets »</b>, affiché à côté de ton pseudo.`);
+    const svg = series === 2 ? this.badge2SVG(64) : this.badgeSVG(64);
+    showRetroAlert(series === 2 ? "🏆 BRAVO DÉTECTIVE !" : "🏆 TOUS LES SECRETS !", `<div style="text-align:center">${svg}</div><br>Tu as trouvé les ${S.list.length} « ${S.title} » de Cartridge !<br><br><b>+${CX_EGG_REWARD} 🪙</b> et le badge unique <b>« ${S.badgeName} »</b>, affiché à côté de ton pseudo.`);
     if (typeof updateUserBadge === "function") updateUserBadge();
   },
-  // Merge des secrets venant du compte (on garde tout ce qui a été trouvé)
+  // Fusion des secrets venant du compte (on garde tout ce qui a été trouvé)
   merge(server) {
     if (!server || typeof server !== "object") return;
     const d = this.load();
     Object.assign(d.found, server.found || {});
     if (server.badge && !d.badge) d.badge = server.badge;
+    if (server.badge2 && !d.badge2) d.badge2 = server.badge2;
     try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) {}
   },
   pix(rows, pal, size) {
@@ -14251,6 +14408,10 @@ const CXEggs = {
   },
   badgeSVG(size = 18) {
     return this.pix(["....kkkk....", "...kyyyyk...", "..kyyywwyk..", ".kyyyyywyyk.", ".kyyyyyyyyk.", "kyyyrrrryyyk", "kyyrwyywryyk", "kyyyrrrryyyk", "kyybyybyybyk", ".kyyyyyyyyk.", "..kooooook..", "...kkkkkk..."], { k: "#3a2400", y: "#ffd21f", w: "#fffbe0", r: "#ff3b5c", b: "#2f7fff", o: "#d18a00" }, size);
+  },
+  // Badge « Petit détective » : une loupe dorée
+  badge2SVG(size = 18) {
+    return this.pix(["...kkkkk....", "..kcccwck...", ".kccwwccck..", ".kcwcccccck.", ".kcccccccck.", ".kcccccccck.", "..kcccccck..", "...kkkkkyk..", ".......kyyk.", "........kyyk", ".........kyk", "..........k."], { k: "#2a1640", c: "#7fe7ff", w: "#ffffff", y: "#ffd21f" }, size);
   },
   burst() {
     const box = el("div", "cx-egg-burst");
@@ -14267,20 +14428,30 @@ const CXEggs = {
   },
 };
 
-// Carte « Chasse aux secrets » (onglet Défis de la Boutique)
-function cxRenderEggs(box) {
-  const d = CXEggs.load(), n = CXEggs.count();
-  box.append(el("div", "settings-section-title", `Chasse aux secrets · ${n}/${CX_EGGS.length}`));
-  const card = el("section", "cxa-card cx-eggs");
+// Cartes « Chasse aux secrets » (onglet Défis de la Boutique) : série facile d'abord, puis la série de pro
+function cxEggSeriesCard(series) {
+  const S = CX_EGG_SERIES[series], d = CXEggs.load(), n = CXEggs.count(series), got2 = !!d[S.badgeKey];
+  const card = el("section", "cxa-card cx-eggs" + (series === 2 ? " cx-eggs-easy" : ""));
+  const badge = series === 2 ? CXEggs.badge2SVG(42) : CXEggs.badgeSVG(42);
   card.innerHTML = `
-    <div class="cxa-card-head">${icon("search")}<b>${CX_EGGS.length} easter eggs cachés dans Cartridge</b><span class="cxa-chip">${n}/${CX_EGGS.length}</span></div>
-    <div class="cx-eggs-bar"><i style="width:${(n / CX_EGGS.length) * 100}%"></i></div>
-    <div class="cx-eggs-grid">${CX_EGGS.map((e, i) => {
+    <div class="cxa-card-head">${icon(S.icon)}<b>${S.title} · ${S.list.length} secrets</b><span class="cxa-chip">${n}/${S.list.length}</span></div>
+    ${series === 2 ? `<p class="cx-eggs-intro">Pas besoin de connaître les vieux jeux : les indices disent exactement quoi faire !</p>` : ""}
+    <div class="cx-eggs-bar"><i style="width:${(n / S.list.length) * 100}%"></i></div>
+    <div class="cx-eggs-grid">${S.list.map((e, i) => {
       const got = !!d.found[e.id];
-      return `<div class="cx-egg${got ? " is-got" : ""}"><span class="cx-egg-ic">${got ? CXEggs.eggSVG(20) : "?"}</span><span class="cx-egg-txt"><b>${got ? esc(e.name) : `Secret n°${i + 1}`}</b><small>${got ? "Trouvé !" : esc(e.hint)}</small></span></div>`;
+      return `<div class="cx-egg${got ? " is-got" : ""}" data-egg="${e.id}"><span class="cx-egg-ic">${got ? CXEggs.eggSVG(20) : "?"}</span><span class="cx-egg-txt"><b>${got ? esc(e.name) : `Secret n°${i + 1}`}</b><small>${got ? "Trouvé !" : esc(e.hint)}</small></span></div>`;
     }).join("")}</div>
-    <div class="cx-eggs-reward${d.badge ? " is-got" : ""}">${CXEggs.badgeSVG(42)}<span><b>${d.badge ? "Badge « Chasseur de secrets » obtenu !" : "Récompense unique"}</b><small>${d.badge ? `+${CX_EGG_REWARD} 🪙 reçues · badge affiché à côté de ton pseudo` : `Trouve les ${CX_EGGS.length} secrets : +${CX_EGG_REWARD} 🪙 et le badge « Chasseur de secrets ». Chaque secret rapporte déjà +${CX_EGG_STEP} 🪙.`}</small></span></div>`;
-  box.append(card);
+    <div class="cx-eggs-reward${got2 ? " is-got" : ""}">${badge}<span><b>${got2 ? `Badge « ${S.badgeName} » obtenu !` : "Récompense unique"}</b><small>${got2 ? `+${CX_EGG_REWARD} pièces reçues · badge affiché à côté de ton pseudo` : `Trouve les ${S.list.length} : +${CX_EGG_REWARD} pièces et le badge « ${S.badgeName} ». Chaque secret rapporte déjà +${CX_EGG_STEP} pièces.`}</small></span></div>`;
+  return card;
+}
+function cxFillEggs(wrap) {
+  const total = CX_EGGS.length + CX_EGGS2.length, n = CXEggs.count(1) + CXEggs.count(2);
+  wrap.append(el("div", "settings-section-title", `Chasse aux secrets · ${n}/${total}`), cxEggSeriesCard(2), cxEggSeriesCard(1));
+}
+function cxRenderEggs(box) {
+  const wrap = el("div", "cx-eggs-wrap");
+  cxFillEggs(wrap);
+  box.append(wrap);
 }
 
 (function cxEggHooks() {
@@ -14292,12 +14463,25 @@ function cxRenderEggs(box) {
     if (taps[key].length >= n) { taps[key] = []; return true; }
     return false;
   };
+  const NAV_IDS = ["navHome", "navShopArcade", "navMuseum", "navArcadeRoom", "navSettings"];
+  const navSeen = {};
   document.addEventListener("click", (e) => {
     const t = e.target; if (!t || !t.closest) return;
     if (t.closest("#sub-title")) { if (tapN("logo", 7, 4000)) CXEggs.find("logo"); }
     if (t.closest(".cxa-hero-mq")) { if (tapN("mq", 5, 3500)) CXEggs.find("marquee"); }
-    const nav = t.closest(".nav-item"); if (nav) { if (tapN("nav-" + (nav.id || nav.textContent.trim()), 5, 3500)) CXEggs.find("nav"); }
+    const nav = t.closest(".nav-item");
+    if (nav) {
+      if (tapN("nav-" + (nav.id || nav.textContent.trim()), 5, 3500)) CXEggs.find("nav");
+      // série 2 : les 5 pages du menu en moins de 15 s
+      if (NAV_IDS.includes(nav.id)) {
+        const now = Date.now(); navSeen[nav.id] = now;
+        if (NAV_IDS.every((id) => navSeen[id] && now - navSeen[id] < 15000)) CXEggs.find("tour");
+      }
+    }
     if (t.closest(".cx-egg-invader")) CXEggs.find("invader");
+    // série 2 : le point d'interrogation du 1er secret facile
+    const egg = t.closest('.cx-egg[data-egg="point"]:not(.is-got)');
+    if (egg) { egg.classList.remove("cx-egg-poke"); void egg.offsetWidth; egg.classList.add("cx-egg-poke"); if (tapN("point", 3, 3000)) CXEggs.find("point"); }
   }, true);
   // appui long sur les pièces
   let lp = null;
@@ -14311,9 +14495,32 @@ function cxRenderEggs(box) {
     if (k === KON[ki]) ki++; else ki = k === KON[0] ? (ki === 2 ? 2 : 1) : 0;
     if (ki === KON.length) { ki = 0; CXEggs.find("konami"); }
   });
-  document.addEventListener("input", (e) => { if (e.target && e.target.id === "search" && /konami/i.test(e.target.value || "")) CXEggs.find("konami"); });
-  // le calendrier en décembre 1994
-  setInterval(() => { try { if (typeof ym !== "undefined" && ym === "1994-12") CXEggs.find("y1994"); } catch (e) {} }, 1200);
+  document.addEventListener("input", (e) => {
+    if (!e.target || e.target.id !== "search") return;
+    const v = String(e.target.value || "");
+    if (/konami/i.test(v)) CXEggs.find("konami");
+    if (/bonjour|bonjours|bjr\b/i.test(v)) CXEggs.find("bonjour");
+  });
+  // surveillances douces (calendrier, favoris, jour de la semaine, bas de liste)
+  let lastYm = null, ymChanges = 0;
+  setInterval(() => {
+    try {
+      if (typeof ym !== "undefined") {
+        if (ym === "1994-12") CXEggs.find("y1994");
+        if (lastYm !== null && ym !== lastYm) { ymChanges++; if (ymChanges >= 12) CXEggs.find("voyage"); }
+        lastYm = ym;
+      }
+      if (typeof favorites !== "undefined" && Array.isArray(favorites) && favorites.length >= 3) CXEggs.find("favoris3");
+      if (new Date().getDay() === 3 && !CXEggs.has("mercredi")) CXEggs.find("mercredi");
+    } catch (e) {}
+  }, 1200);
+  window.addEventListener("scroll", () => {
+    if (CXEggs.has("bas")) return;
+    const home = document.getElementById("homeMainContent"), list = document.getElementById("list");
+    if (!home || home.style.display === "none" || !list || list.children.length < 4) return;
+    const doc = document.documentElement;
+    if (window.innerHeight + (window.scrollY || doc.scrollTop) >= doc.scrollHeight - 30 && doc.scrollHeight > window.innerHeight * 1.5) CXEggs.find("bas");
+  }, { passive: true });
   // 3 thèmes en moins de 20 s (on ignore les changements automatiques du démarrage)
   setTimeout(() => {
     if (typeof applyTheme !== "function") return;
@@ -14345,12 +14552,13 @@ function cxRenderEggs(box) {
     };
   }
 
-  // ---- Le badge à côté du pseudo ----
+  // ---- Les badges à côté du pseudo ----
   const paintBadge = () => {
-    if (!CXEggs.hasBadge()) return;
+    const b1 = CXEggs.hasBadge(1), b2 = CXEggs.hasBadge(2);
+    if (!b1 && !b2) return;
     document.querySelectorAll(".player-badge").forEach((p) => {
-      if (p.querySelector(".cx-egg-badge")) return;
-      const s = el("span", "cx-egg-badge"); s.title = "Chasseur de secrets"; s.innerHTML = CXEggs.badgeSVG(16); p.append(s);
+      if (b1 && !p.querySelector(".cx-egg-badge.b1")) { const s = el("span", "cx-egg-badge b1"); s.title = "Chasseur de secrets"; s.innerHTML = CXEggs.badgeSVG(16); p.append(s); }
+      if (b2 && !p.querySelector(".cx-egg-badge.b2")) { const s = el("span", "cx-egg-badge b2"); s.title = "Petit détective"; s.innerHTML = CXEggs.badge2SVG(16); p.append(s); }
     });
   };
   if (typeof updateUserBadge === "function") {
@@ -14359,7 +14567,7 @@ function cxRenderEggs(box) {
   }
   setTimeout(paintBadge, 800); setInterval(paintBadge, 3000);
 
-  // ---- La carte des secrets dans l'onglet Défis ----
+  // ---- Les cartes des secrets dans l'onglet Défis ----
   if (typeof cxRenderRewardsExtras === "function") {
     const origX = cxRenderRewardsExtras;
     cxRenderRewardsExtras = function (box) { const r = origX.apply(this, arguments); try { cxRenderEggs(box); } catch (e) {} return r; };
@@ -14371,6 +14579,486 @@ function cxRenderEggs(box) {
     collectSaveData = function () { const d = oc(); d.eggs = CXEggs.load(); return d; };
     applyServerData = function (d) { if (d && d.eggs) CXEggs.merge(d.eggs); return oa(d); };
   }
+})();
+
+// =====================================================================
+// 26. MESSAGERIE — salon commun + messages privés entre joueurs connectés
+//   Reliée au Worker (routes /api/msg/*, voir le code du Worker).
+//   « Temps réel » : quand la messagerie est ouverte, l'app demande les nouveaux
+//   messages toutes les 2 secondes (toutes les 15 s quand elle est fermée, pour
+//   la pastille rouge ; pause complète quand l'app est en arrière-plan).
+//   La bulle de discussion est ajoutée dans chaque en-tête (à côté du pseudo).
+// =====================================================================
+Object.assign(ICONS, {
+  chat: '<path d="M21 11.5a8.4 8.4 0 0 1-12.2 7.5L3.5 20.5l1.5-5A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 11.5h.01M12.5 11.5h.01M16.5 11.5h.01"/>',
+  send: '<path d="M21.5 2.5L10.8 13.2M21.5 2.5l-6.8 19-3.9-8.3-8.3-3.9z"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20.5a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20.5a6.5 6.5 0 0 0-3.2-5.6"/>',
+  back: '<path d="M15 18l-6-6 6-6"/>',
+  ban: '<circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+});
+
+const CXMsg = {
+  me: null, last: 0, synced: false, convs: [], byId: {}, msgs: {}, more: {}, active: null, ov: null, blocked: [], online: 0,
+  timer: null, convAt: 0, hereAt: 0, busy: false, readTimer: null, net: true,
+
+  ready() { return cloudReady() && isLoggedIn(); },
+  api(action, body) { return cloudPost("/api/msg/" + action, body || {}, getCloudToken()); },
+  myAvatar() { try { return localStorage.getItem("cartridge_avatar") || ""; } catch (e) { return ""; } },
+
+  // ---------- Boucle de synchronisation ----------
+  schedule(ms) { clearTimeout(this.timer); this.timer = setTimeout(() => this.tick(), ms); },
+  interval() { if (document.hidden) return 45000; return this.ov ? 2000 : 15000; },
+  async tick() {
+    if (!this.ready()) { if (this.me) this.reset(); this.schedule(10000); return; }
+    if (this.busy) { this.schedule(800); return; }
+    this.busy = true;
+    try {
+      const here = !document.hidden && Date.now() - this.hereAt > 30000;
+      const r = await this.api("sync", { since: this.synced ? this.last : -1, here: here ? 1 : 0 });
+      if (r.status === 401) { this.reset(); this.renderAll(); }
+      else if (r.ok) {
+        if (here) this.hereAt = Date.now();
+        this.me = r.json.me;
+        if (!this.synced) { this.last = r.json.last || 0; this.synced = true; await this.loadConvs(); }
+        else {
+          this.onMessages(r.json.messages || []);
+          this.last = Math.max(this.last, r.json.last || 0);
+          if (this.ov && Date.now() - this.convAt > 20000) await this.loadConvs();
+        }
+        this.setNet(true);
+      } else this.setNet(false);
+    } catch (e) { this.setNet(false); }
+    this.busy = false;
+    this.schedule(this.interval());
+  },
+  reset() {
+    this.me = null; this.last = 0; this.synced = false; this.convs = []; this.byId = {}; this.msgs = {}; this.more = {}; this.active = null; this.blocked = [];
+    this.updateBadge();
+  },
+  setNet(ok) {
+    if (this.net === ok) return;
+    this.net = ok;
+    this.ov && this.ov.classList.toggle("is-offline", !ok);
+  },
+
+  async loadConvs() {
+    try {
+      const r = await this.api("convs");
+      if (!r.ok) return;
+      this.convAt = Date.now();
+      this.me = r.json.me; this.online = r.json.online || 0; this.blocked = r.json.blocked || [];
+      // on garde le compteur « non lu » local de la conversation affichée
+      this.convs = (r.json.convs || []).map((c) => (this.ov && this.active === c.id ? Object.assign(c, { unread: 0 }) : c));
+      this.byId = {}; this.convs.forEach((c) => (this.byId[c.id] = c));
+      this.updateBadge(); this.renderList(); this.renderPeer();
+    } catch (e) {}
+  },
+
+  onMessages(list) {
+    if (!list.length) return;
+    let needConvs = false, notify = null;
+    const viewing = (id) => this.ov && this.active === id && !document.hidden;
+    for (const m of list) {
+      const arr = this.msgs[m.conv];
+      if (arr) {
+        if (!arr.some((x) => x.id === m.id)) {
+          // remplace la bulle « en cours d'envoi » si c'est notre propre message
+          const tmp = m.uid === (this.me && this.me.id) ? arr.findIndex((x) => x.pending && x.body === m.body) : -1;
+          if (tmp >= 0) arr.splice(tmp, 1, m); else arr.push(m);
+        }
+      }
+      const c = this.byId[m.conv];
+      if (!c) { needConvs = true; continue; }
+      c.last = { body: String(m.body).slice(0, 80), mine: m.uid === this.me.id }; c.last_at = m.at;
+      if (m.uid !== this.me.id && !viewing(m.conv)) {
+        c.unread = (c.unread || 0) + 1;
+        if (c.kind === "dm" || !this.ov) notify = { m, c };
+      }
+    }
+    this.convs.sort((a, b) => (a.id === 1 ? -1 : b.id === 1 ? 1 : b.last_at - a.last_at));
+    if (needConvs) this.loadConvs();
+    this.updateBadge(); this.renderList();
+    if (this.ov && this.active && list.some((m) => m.conv === this.active)) { this.renderThread(true); this.markRead(); }
+    if (notify && notify.c.kind === "dm") {
+      const { m } = notify;
+      showToast(`<b>${esc(m.name)}</b> : ${esc(String(m.body || "").slice(0, 60))}`, "chat");
+      try { if (soundEnabled) CXSfx.select(); } catch (e) {}
+      try { navigator.vibrate && navigator.vibrate(30); } catch (e) {}
+    }
+  },
+
+  totalUnread() { return this.convs.reduce((n, c) => n + (c.unread || 0), 0); },
+  updateBadge() {
+    const n = this.totalUnread();
+    document.querySelectorAll(".cx-msg-dot").forEach((d) => { d.textContent = n > 99 ? "99+" : String(n); d.hidden = !n; });
+  },
+  markRead() {
+    clearTimeout(this.readTimer);
+    this.readTimer = setTimeout(() => {
+      const id = this.active, arr = this.msgs[id] || [];
+      const last = arr.filter((m) => typeof m.id === "number").pop();
+      if (!last || document.hidden) return;
+      if (this.byId[id]) this.byId[id].unread = 0;
+      this.updateBadge(); this.renderList();
+      this.api("read", { conv: id, upto: last.id }).catch(() => {});
+    }, 400);
+  },
+
+  // ---------- Envoi ----------
+  async send(text, retryOf) {
+    const conv = this.active; if (!conv || !this.me) return;
+    const arr = (this.msgs[conv] = this.msgs[conv] || []);
+    let tmp = retryOf;
+    if (tmp) { tmp.failed = ""; tmp.pending = true; }
+    else { tmp = { id: "t" + Date.now() + Math.random(), conv, uid: this.me.id, name: this.me.name, av: this.myAvatar(), body: text, at: Math.floor(Date.now() / 1000), pending: true }; arr.push(tmp); }
+    this.renderThread(true, true);
+    try {
+      const r = await this.api("send", { conv, body: tmp.body });
+      if (r.ok && r.json.message) {
+        const m = Object.assign(r.json.message, { av: this.myAvatar() });
+        const i = arr.indexOf(tmp);
+        if (arr.some((x) => x.id === m.id)) { if (i >= 0) arr.splice(i, 1); }
+        else if (i >= 0) arr.splice(i, 1, m);
+        const c = this.byId[conv]; if (c) { c.last = { body: m.body.slice(0, 80), mine: true }; c.last_at = m.at; }
+        try { CXEggs.find("message"); } catch (e) {}
+        try { if (soundEnabled) CXSfx.tick(); } catch (e) {}
+      } else { tmp.pending = false; tmp.failed = (r.json && r.json.error) || "Non envoyé"; }
+    } catch (e) { tmp.pending = false; tmp.failed = "Pas de connexion"; }
+    this.renderThread(true); this.renderList();
+  },
+
+  async startDm(name) {
+    name = String(name || "").trim();
+    if (!USERNAME_RULE.test(name)) { showToast("Pseudo invalide (3 à 20 lettres, chiffres, _ ou -)", "xCircle"); return; }
+    try {
+      const r = await this.api("open", { to: name });
+      if (!r.ok) { showToast(esc(r.json.error || "Impossible d'ouvrir la conversation"), "xCircle"); return; }
+      await this.loadConvs();
+      this.openConv(r.json.conv);
+    } catch (e) { showToast("Pas de connexion", "xCircle"); }
+  },
+
+  async toggleBlock() {
+    const c = this.byId[this.active]; if (!c || c.kind !== "dm") return;
+    const on = !this.blocked.includes(c.other_id);
+    if (on && !confirm(`Bloquer ${c.other} ?\nTu ne verras plus ses messages et il ne pourra plus t'écrire.`)) return;
+    const r = await this.api("block", { user: c.other_id, on: on ? 1 : 0 }).catch(() => null);
+    if (!r || !r.ok) { showToast("Action impossible pour le moment", "xCircle"); return; }
+    showToast(on ? `${esc(c.other)} est bloqué` : `${esc(c.other)} est débloqué`, on ? "ban" : "check");
+    delete this.msgs[c.id];
+    await this.loadConvs();
+    this.openConv(c.id);
+  },
+
+  async deleteMsg(m) {
+    if (!confirm("Effacer ce message ?")) return;
+    const r = await this.api("delete", { id: m.id }).catch(() => null);
+    if (r && r.ok) { m.body = ""; this.renderThread(false); }
+    else showToast("Impossible d'effacer ce message", "xCircle");
+  },
+
+  async loadHistory(conv, older) {
+    const arr = this.msgs[conv] || [];
+    const first = older ? arr.find((m) => typeof m.id === "number") : null;
+    const r = await this.api("history", { conv, before: first ? first.id : 0 });
+    if (!r.ok) throw new Error(r.json.error || "Erreur");
+    const got = r.json.messages || [];
+    if (older) this.msgs[conv] = got.concat(arr.filter((m) => !got.some((g) => g.id === m.id)));
+    else {
+      // garde les messages déjà reçus en direct pendant le chargement
+      const live = (this.msgs[conv] || []).filter((m) => !got.some((g) => g.id === m.id) && (typeof m.id !== "number" || m.id > (got.length ? got[got.length - 1].id : 0)));
+      this.msgs[conv] = got.concat(live);
+    }
+    this.more[conv] = !!r.json.more;
+  },
+
+  // ---------- Interface ----------
+  open(convId) {
+    if (!this.ov) this.build();
+    this.renderAll();
+    if (convId) this.openConv(convId);
+    this.schedule(50);
+  },
+  close() {
+    if (!this.ov) return;
+    this.ov.remove();
+  },
+  // appelé quand la fenêtre disparaît (croix, Échap, bouton retour d'Android…)
+  closed() {
+    this.ov = null; this.active = null;
+    unlockBackground();
+    document.removeEventListener("keydown", this.onKey);
+    this.schedule(this.interval());
+  },
+
+  build() {
+    const ov = (this.ov = el("div", "cartridge-modal-overlay cx-msg-ov"));
+    ov.innerHTML = `
+      <div class="cx-msg-app" role="dialog" aria-label="Messagerie">
+        <aside class="cx-msg-side">
+          <header class="cx-msg-head">
+            <span class="cx-msg-title">${icon("chat")}<b>Messagerie</b></span>
+            <button type="button" class="cx-msg-ib cx-msg-newbtn" title="Nouveau message">${icon("plus")}</button>
+            <button type="button" class="cx-msg-ib cx-msg-x" title="Fermer">${icon("x")}</button>
+          </header>
+          <form class="cx-msg-new" hidden>
+            <input type="text" maxlength="20" placeholder="Pseudo exact du joueur" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <button type="submit" class="cta">Écrire</button>
+          </form>
+          <div class="cx-msg-net">Connexion perdue… nouvel essai en cours</div>
+          <div class="cx-msg-list"></div>
+        </aside>
+        <section class="cx-msg-chat">
+          <header class="cx-msg-head">
+            <button type="button" class="cx-msg-ib cx-msg-back" title="Retour">${icon("back")}</button>
+            <span class="cx-msg-peer"></span>
+            <button type="button" class="cx-msg-ib cx-msg-block" title="Bloquer / débloquer" hidden>${icon("ban")}</button>
+            <button type="button" class="cx-msg-ib cx-msg-x cx-msg-x2" title="Fermer">${icon("x")}</button>
+          </header>
+          <div class="cx-msg-scroll"><div class="cx-msg-thread"></div></div>
+          <form class="cx-msg-compose">
+            <textarea rows="1" maxlength="${500}" placeholder="Écris un message…" enterkeyhint="send"></textarea>
+            <button type="submit" class="cx-msg-send" title="Envoyer">${icon("send")}</button>
+            <small class="cx-msg-count" hidden></small>
+          </form>
+        </section>
+      </div>`;
+    const $o = (s) => ov.querySelector(s);
+    ov.addEventListener("click", (e) => { if (e.target === ov) this.close(); });
+    ov.querySelectorAll(".cx-msg-x").forEach((b) => b.addEventListener("click", () => this.close()));
+    $o(".cx-msg-back").addEventListener("click", () => { this.active = null; ov.querySelector(".cx-msg-app").classList.remove("is-chat"); this.renderList(); });
+    $o(".cx-msg-block").addEventListener("click", () => this.toggleBlock());
+    const newForm = $o(".cx-msg-new");
+    $o(".cx-msg-newbtn").addEventListener("click", () => { newForm.hidden = !newForm.hidden; if (!newForm.hidden) newForm.querySelector("input").focus(); });
+    newForm.addEventListener("submit", (e) => { e.preventDefault(); const v = newForm.querySelector("input").value; this.startDm(v); newForm.querySelector("input").value = ""; newForm.hidden = true; });
+    // composition : Entrée envoie sur ordinateur, Maj+Entrée = nouvelle ligne
+    const ta = $o(".cx-msg-compose textarea"), count = $o(".cx-msg-count");
+    const grow = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 120) + "px"; const n = ta.value.length; count.hidden = n < 400; count.textContent = `${n}/500`; };
+    ta.addEventListener("input", grow);
+    const touch = matchMedia("(pointer: coarse)").matches;
+    ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !touch) { e.preventDefault(); $o(".cx-msg-compose").requestSubmit(); } });
+    $o(".cx-msg-compose").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const v = ta.value.trim(); if (!v) return;
+      ta.value = ""; grow(); this.send(v);
+      if (!touch) ta.focus();
+    });
+    // anciens messages en remontant tout en haut
+    const sc = $o(".cx-msg-scroll");
+    sc.addEventListener("scroll", async () => {
+      const id = this.active;
+      if (sc.scrollTop > 40 || !id || !this.more[id] || this.loadingOld) return;
+      this.loadingOld = true;
+      const h = sc.scrollHeight;
+      try { await this.loadHistory(id, true); this.renderThread(false); sc.scrollTop = sc.scrollHeight - h; } catch (e) {}
+      this.loadingOld = false;
+    }, { passive: true });
+    // actions sur les bulles : réessayer, écrire en privé, effacer
+    const thread = $o(".cx-msg-thread");
+    thread.addEventListener("click", (e) => {
+      const row = e.target.closest(".cx-bub-row"); if (!row) return;
+      const m = this.findMsg(row.dataset.id); if (!m) return;
+      if (m.failed) { this.send(null, m); return; }
+      if (e.target.closest(".cx-bub-av, .cx-bub-name") && m.uid !== this.me.id && this.active === 1) {
+        if (confirm(`Écrire en privé à ${m.name} ?`)) this.startDm(m.name);
+      }
+    });
+    let lp = null;
+    const canDel = (m) => m && typeof m.id === "number" && m.body && (m.uid === this.me.id || (this.me && this.me.admin));
+    thread.addEventListener("contextmenu", (e) => { const row = e.target.closest(".cx-bub-row"); const m = row && this.findMsg(row.dataset.id); if (canDel(m)) { e.preventDefault(); this.deleteMsg(m); } });
+    thread.addEventListener("pointerdown", (e) => { const row = e.target.closest(".cx-bub-row"); const m = row && this.findMsg(row.dataset.id); if (canDel(m) && e.pointerType === "touch") { clearTimeout(lp); lp = setTimeout(() => this.deleteMsg(m), 650); } });
+    ["pointerup", "pointercancel", "pointermove"].forEach((ev) => thread.addEventListener(ev, () => clearTimeout(lp)));
+    this.onKey = (e) => { if (e.key === "Escape") this.close(); };
+    document.addEventListener("keydown", this.onKey);
+    document.body.append(ov);
+    lockBackground();
+    // si la fenêtre est retirée par autre chose (retour Android), on nettoie
+    const mo = new MutationObserver(() => { if (this.ov === ov && !ov.isConnected) { mo.disconnect(); this.closed(); } });
+    mo.observe(document.body, { childList: true });
+  },
+
+  findMsg(id) { return (this.msgs[this.active] || []).find((m) => String(m.id) === String(id)); },
+
+  avatarHTML(name, av) {
+    if (av && typeof AVATARS_DATA === "object" && AVATARS_DATA[av]) return `<span class="cx-av is-px">${AVATARS_DATA[av].svg}</span>`;
+    let h = 0; for (const ch of String(name || "?")) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return `<span class="cx-av" style="--h:${h % 360}">${esc(String(name || "?").charAt(0).toUpperCase())}</span>`;
+  },
+  timeLabel(at) {
+    const d = new Date(at * 1000), now = new Date();
+    if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "Hier";
+    return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  },
+  dayLabel(at) {
+    const d = new Date(at * 1000), now = new Date();
+    if (d.toDateString() === now.toDateString()) return "Aujourd'hui";
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "Hier";
+    return d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  },
+
+  renderAll() { this.renderList(); this.renderPeer(); this.renderThread(false); },
+
+  renderList() {
+    if (!this.ov) return;
+    const box = this.ov.querySelector(".cx-msg-list");
+    this.ov.querySelector(".cx-msg-newbtn").hidden = !this.ready();
+    if (!this.ready()) {
+      box.innerHTML = `<div class="cx-msg-empty">${icon("lock")}<b>Messagerie des joueurs</b><p>Connecte-toi à ton compte Cartridge pour écrire à tes proches et aux autres joueurs, en privé ou dans le salon.</p><button type="button" class="cta cx-msg-login">Aller au Profil</button></div>`;
+      box.querySelector(".cx-msg-login").addEventListener("click", () => { this.close(); if (typeof openSettingsMainPage === "function") openSettingsMainPage(); });
+      return;
+    }
+    if (!this.me) { box.innerHTML = `<div class="cx-msg-empty">${icon("loader")}<p>Connexion à la messagerie…</p></div>`; return; }
+    box.replaceChildren();
+    this.convs.forEach((c) => {
+      const room = c.kind === "room";
+      const b = el("button", "cx-conv" + (c.id === this.active ? " is-active" : "") + (c.unread ? " is-unread" : ""));
+      b.type = "button";
+      const prev = c.last ? (c.last.body ? (c.last.mine ? "Toi : " : "") + c.last.body : "Message effacé") : room ? "Dis bonjour à tout le monde !" : "Nouvelle conversation";
+      const blocked = !room && this.blocked.includes(c.other_id);
+      b.innerHTML = `
+        <span class="cx-conv-av">${room ? `<span class="cx-av is-room">${icon("users")}</span>` : this.avatarHTML(c.other, c.other_av)}${!room && c.online ? '<i class="cx-on"></i>' : ""}</span>
+        <span class="cx-conv-txt"><b>${room ? "Salon Cartridge" : esc(c.other || "?")}${blocked ? " · bloqué" : ""}</b><small>${room ? `${this.online} en ligne · ` : ""}${esc(prev)}</small></span>
+        <span class="cx-conv-meta">${c.last_at && c.last ? `<time>${this.timeLabel(c.last_at)}</time>` : ""}${c.unread ? `<i class="cx-conv-n">${c.unread > 99 ? "99+" : c.unread}</i>` : ""}</span>`;
+      b.addEventListener("click", () => this.openConv(c.id));
+      box.append(b);
+    });
+    if (this.convs.length <= 1) box.append(el("p", "cx-msg-tip", "Pour écrire en privé, appuie sur + et tape le pseudo exact de la personne (ou touche son nom dans le salon)."));
+  },
+
+  renderPeer() {
+    if (!this.ov) return;
+    const c = this.byId[this.active], peer = this.ov.querySelector(".cx-msg-peer"), blk = this.ov.querySelector(".cx-msg-block");
+    if (!c) { peer.innerHTML = ""; blk.hidden = true; return; }
+    const room = c.kind === "room", blocked = !room && this.blocked.includes(c.other_id);
+    peer.innerHTML = room
+      ? `<span class="cx-av is-room">${icon("users")}</span><span><b>Salon Cartridge</b><small>${this.online} joueur${this.online > 1 ? "s" : ""} en ligne · visible par tous</small></span>`
+      : `${this.avatarHTML(c.other, c.other_av)}<span><b>${esc(c.other)}</b><small>${blocked ? "Bloqué" : c.online ? '<i class="cx-on-txt"></i>En ligne' : "Conversation privée"}</small></span>`;
+    blk.hidden = room;
+    blk.classList.toggle("is-on", blocked);
+    this.ov.querySelector(".cx-msg-compose").classList.toggle("is-blocked", blocked);
+    this.ov.querySelector(".cx-msg-compose textarea").disabled = blocked;
+    this.ov.querySelector(".cx-msg-compose textarea").placeholder = blocked ? "Débloque ce joueur pour lui écrire" : room ? "Écris à tout le monde…" : `Écris à ${c.other}…`;
+  },
+
+  async openConv(id) {
+    if (!this.ov) return this.open(id);
+    this.active = id;
+    this.ov.querySelector(".cx-msg-app").classList.add("is-chat");
+    this.renderList(); this.renderPeer();
+    const thread = this.ov.querySelector(".cx-msg-thread");
+    if (!this.msgs[id]) {
+      thread.innerHTML = `<div class="cx-msg-empty">${icon("loader")}<p>Chargement…</p></div>`;
+      try { await this.loadHistory(id, false); } catch (e) { thread.innerHTML = `<div class="cx-msg-empty"><p>Impossible de charger la conversation.</p></div>`; return; }
+      if (this.active !== id) return;
+    }
+    if (this.byId[id]) this.byId[id].unread = 0;
+    this.updateBadge(); this.renderList();
+    this.renderThread(false, true);
+    this.markRead();
+    if (!matchMedia("(pointer: coarse)").matches) this.ov.querySelector(".cx-msg-compose textarea").focus();
+  },
+
+  renderThread(keepBottom, forceBottom) {
+    if (!this.ov) return;
+    const sc = this.ov.querySelector(".cx-msg-scroll"), thread = this.ov.querySelector(".cx-msg-thread");
+    const id = this.active, arr = this.msgs[id];
+    if (!id || !arr) { if (!id) thread.innerHTML = `<div class="cx-msg-empty">${icon("chat")}<p>Choisis une conversation</p></div>`; return; }
+    const nearBottom = sc.scrollHeight - sc.scrollTop - sc.clientHeight < 120;
+    const room = id === 1;
+    let html = this.more[id] ? `<div class="cx-msg-more">↑ Remonte pour voir les anciens messages</div>` : "";
+    if (!arr.length) html += `<div class="cx-msg-empty">${icon("chat")}<p>${room ? "Le salon est calme… écris le premier message !" : "Aucun message pour l'instant. Dis bonjour 👋"}</p></div>`;
+    let prev = null, prevDay = "";
+    for (const m of arr) {
+      const day = new Date(m.at * 1000).toDateString();
+      if (day !== prevDay) { html += `<div class="cx-msg-day"><span>${this.dayLabel(m.at)}</span></div>`; prevDay = day; prev = null; }
+      const mine = this.me && m.uid === this.me.id;
+      const cont = prev && prev.uid === m.uid && m.at - prev.at < 300;
+      const body = m.body ? esc(m.body) : `<em>Message effacé</em>`;
+      const state = m.failed ? `<span class="cx-bub-err">${esc(m.failed)} · touche pour réessayer</span>` : m.pending ? `<span class="cx-bub-wait">envoi…</span>` : "";
+      html += `<div class="cx-bub-row ${mine ? "mine" : "theirs"}${cont ? " cont" : ""}${m.pending ? " is-pending" : ""}${m.failed ? " is-failed" : ""}" data-id="${esc(m.id)}">
+        ${!mine && room ? `<span class="cx-bub-av">${cont ? "" : this.avatarHTML(m.name, m.av)}</span>` : ""}
+        <div class="cx-bub">${!mine && room && !cont ? `<b class="cx-bub-name">${esc(m.name)}</b>` : ""}<p>${body}</p><time>${new Date(m.at * 1000).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</time>${state}</div>
+      </div>`;
+      prev = m;
+    }
+    thread.innerHTML = html;
+    if (forceBottom || (keepBottom && nearBottom)) sc.scrollTop = sc.scrollHeight;
+  },
+};
+
+// Bulle « Messagerie » dans chaque en-tête (à gauche du pseudo) + barre latérale sur PC
+function cxPaintMsgButtons() {
+  document.querySelectorAll(".header-top .nav, .sidebar-account").forEach((nav) => {
+    if (nav.querySelector(".cx-msg-btn")) return;
+    const b = el("button", "cx-msg-btn");
+    b.type = "button"; b.title = "Messagerie"; b.setAttribute("aria-label", "Messagerie");
+    b.innerHTML = `${icon("chat")}<i class="cx-msg-dot" hidden>0</i>`;
+    b.addEventListener("click", (e) => { e.stopPropagation(); try { playThemeSound(theme); } catch (er) {} CXMsg.open(); });
+    nav.prepend(b);
+  });
+  CXMsg.updateBadge();
+}
+
+(function cxMsgStart() {
+  cxPaintMsgButtons();
+  setInterval(cxPaintMsgButtons, 4000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) CXMsg.schedule(300); });
+  window.addEventListener("online", () => CXMsg.schedule(300));
+  // connexion / déconnexion du compte : on repart de zéro
+  if (typeof cloudAuth === "function") {
+    const oa = cloudAuth;
+    cloudAuth = async function () { const r = await oa.apply(this, arguments); CXMsg.reset(); CXMsg.schedule(200); return r; };
+  }
+  if (typeof cloudLogout === "function") {
+    const ol = cloudLogout;
+    cloudLogout = function () { const r = ol.apply(this, arguments); CXMsg.reset(); if (CXMsg.ov) CXMsg.renderAll(); return r; };
+  }
+  CXMsg.schedule(2500);
+})();
+
+// =====================================================================
+// 27. NOUVELLES BORNES — Mahjong Cartridge & Yaelle (ajoutées à la fin de la salle)
+//   Fichiers à mettre à côté d'index.html : Mahjong.html et Yaelle.html
+// =====================================================================
+(function cxNewCabinets() {
+  CX_PX.mahjong = { c: ["#f4ecd2", "#d63a3a"], m: ["1111111111", "1100000011", "1102222011", "1102002011", "1102222011", "1100200011", "1102222011", "1100000011", "1111111111"] };
+  CX_PX.yaelle = { c: ["#ff9ccf", "#fff3c4"], m: ["0000110000000", "1100111100011", "1110122101111", "0111122111110", "0011111111100", "0001222221000", "0000222220000", "0000220220000"] };
+  CX_GAMES.push(
+    { id: "mahjong", name: "Mahjong", url: "Mahjong.html", tag: "Tuiles aux sprites de nos jeux", color: "#e8c46a", scr: "#0d3b2c", div: 120 },
+    { id: "yaelle", name: "Yaelle", url: "Yaelle.html", tag: "Action 32-bit · 3 mondes + boss", color: "#ff8fc8", scr: "#1b1142", div: 400 },
+  );
+  CX_ARCADE_GAMES.push(
+    { name: "Mahjong", url: "Mahjong.html", fg: "#e8c46a", scr: "#0d3b2c", ic: "blocks" },
+    { name: "Yaelle", url: "Yaelle.html", fg: "#ff8fc8", scr: "#1b1142", ic: "star" },
+  );
+  CX_MISSIONS.push(
+    { id: "mj_win", game: "mahjong", text: "Termine une partie de Mahjong", reward: 30, test: (s) => !!s.won },
+    { id: "mj_30", game: "mahjong", text: "Retire 30 paires au Mahjong", reward: 20, test: (s) => (s.pairs || 0) >= 30 },
+    { id: "mj_fast", game: "mahjong", text: "Gagne au Mahjong en moins de 8 minutes", reward: 45, test: (s) => !!s.won && (s.time || 9999) < 480 },
+    { id: "ya_11", game: "yaelle", text: "Termine le niveau 1-1 de Yaelle", reward: 25, test: (s) => (s.stage || 0) >= 2 },
+    { id: "ya_3k", game: "yaelle", text: "Fais 3 000 pts dans Yaelle", reward: 20, test: (s) => s.score >= 3000 },
+    { id: "ya_boss1", game: "yaelle", text: "Bats Magmor, le gardien des Abysses (Yaelle)", reward: 45, test: (s) => (s.stage || 0) >= 5 },
+  );
+  CX_ACHIEVEMENTS.push(
+    { id: "mj1", icon: "blocks", title: "Maître des tuiles", desc: "Gagne une partie de Mahjong", reward: 25, test: (R) => ((R.stats.wins || {}).mahjong || 0) >= 1 },
+    { id: "mj10", icon: "blocks", title: "Grand maître du Mahjong", desc: "Gagne 10 parties de Mahjong", reward: 60, test: (R) => ((R.stats.wins || {}).mahjong || 0) >= 10 },
+    { id: "yawin", icon: "star", title: "La Plume des Cieux", desc: "Bats Nyx avec Yaelle", reward: 80, test: (R) => ((R.stats.wins || {}).yaelle || 0) >= 1 },
+  );
+  // les victoires (Solitaire, Mahjong, Yaelle…) reviennent aussi du compte
+  const om = CXRewards.merge.bind(CXRewards);
+  CXRewards.merge = function (server) {
+    om(server);
+    const w = server && server.stats && server.stats.wins;
+    if (w && typeof w === "object") {
+      const R = this.load();
+      for (const [k, v] of Object.entries(w)) if (Number.isFinite(+v)) R.stats.wins[k] = Math.max(R.stats.wins[k] || 0, +v);
+      this.save(R, false);
+    }
+  };
 })();
 
 </script>
