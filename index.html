@@ -5100,12 +5100,12 @@ body.theme-tyrielsoren .bottom-nav .nav-item:active::after { opacity: .4; transf
   color: rgba(255, 243, 226, .55); text-shadow: 0 0 10px rgba(247, 168, 192, .45);
 }
 .ts-hanko {
-  position: absolute; right: 6px; bottom: calc(84px + env(safe-area-inset-bottom)); padding: 5px 3px; writing-mode: vertical-rl;
+  position: absolute; right: 4px; top: 200px; padding: 5px 3px; writing-mode: vertical-rl;
   font-family: 'Kaisei Decol', serif; font-weight: 700; font-size: 13px; line-height: 1; color: #fff1e6;
   background: #c8372d; border-radius: 4px; box-shadow: inset 0 0 0 1.5px rgba(255, 240, 230, .55), 0 2px 8px rgba(0, 0, 0, .3);
   transform: rotate(4deg); opacity: .9;
 }
-@media (min-width: 900px) { .ts-tate { left: 14px; font-size: 14px; } .ts-hanko { right: 18px; bottom: 24px; font-size: 16px; } }
+@media (min-width: 900px) { .ts-tate { left: 14px; font-size: 14px; } .ts-hanko { right: 18px; top: 220px; font-size: 16px; } }
 
 /* Pétales de sakura qui tombent en tourbillonnant */
 .ts-petal { position: absolute; top: -30px; left: var(--x); width: var(--s); height: calc(var(--s) * .7); animation: tsFall var(--d) linear forwards; will-change: transform; }
@@ -5118,6 +5118,64 @@ body.theme-tyrielsoren .bottom-nav .nav-item:active::after { opacity: .4; transf
   body.theme-arcadecabinet .sticky-header-container::after, body.theme-arcadecabinet .day::before, body.theme-tyrielsoren .day::before { animation: none !important; }
 }
 
+
+/* =====================================================================
+   TYRIEL & SOREN — les deux frères de chaque côté de l'écran
+   ===================================================================== */
+.ts-duo {
+  position: fixed; left: 0; right: 0; bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 56;
+  display: flex; justify-content: space-between; align-items: flex-end; padding: 0 2px;
+  pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2, .9, .25, 1);
+}
+.ts-duo.is-away { opacity: .12; transform: translateY(18px); }
+.ts-hero { position: relative; display: flex; flex-direction: column; align-items: center; width: 74px; animation: tsHeroIn 1s cubic-bezier(.2, .9, .25, 1.2) both; }
+.ts-hero--soren { animation-delay: .25s; }
+.ts-hero svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 4px 8px rgba(10, 14, 32, .5)); }
+.ts-hero--soren svg { transform: scaleX(-1); }
+@keyframes tsHeroIn { from { opacity: 0; transform: translateY(30px) scale(.9); } to { opacity: 1; transform: none; } }
+
+/* Respiration, écharpe au vent, lumières qui pulsent, clignement des yeux */
+.ts-hero .ts-body { transform-box: fill-box; transform-origin: 50% 100%; animation: tsBreathe 3.4s ease-in-out infinite; }
+.ts-hero--soren .ts-body { animation-duration: 2.8s; }
+.ts-hero .ts-scarf { transform-box: fill-box; transform-origin: 100% 0; animation: tsScarf 2.6s ease-in-out infinite; }
+.ts-hero .ts-lamp { transform-box: fill-box; transform-origin: 0 100%; animation: tsLamp 3s ease-in-out infinite; }
+.ts-hero .ts-glow { transform-box: fill-box; transform-origin: center; animation: tsHalo 2.4s ease-in-out infinite; }
+.ts-hero .ts-eyes { transform-box: fill-box; transform-origin: center; animation: tsBlink 5.2s infinite; }
+.ts-hero--soren .ts-eyes { animation-duration: 4.3s; animation-delay: 1.4s; }
+@keyframes tsBreathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.018); } }
+@keyframes tsScarf { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(9deg); } }
+@keyframes tsLamp { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(4deg); } }
+@keyframes tsHalo { 0%, 100% { opacity: .65; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
+@keyframes tsBlink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+
+/* Plaque du prénom : sceau rouge avec le kanji + prénom + katakana */
+.ts-name {
+  display: flex; align-items: center; gap: 5px; margin-top: -2px; padding: 3px 7px 3px 3px; border-radius: 999px;
+  background: linear-gradient(160deg, #fff6ea, #f2dccb); box-shadow: 0 4px 12px -4px rgba(10, 14, 32, .6), inset 0 0 0 1px rgba(160, 110, 80, .25);
+  white-space: nowrap;
+}
+.ts-kanji {
+  display: grid; place-items: center; width: 22px; height: 22px; border-radius: 5px; flex: none;
+  background: #c8372d; color: #fff1e6; font-family: 'Kaisei Decol', 'Noto Serif JP', serif; font-weight: 700; font-size: 14px; line-height: 1;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 240, 230, .55);
+}
+.ts-nm { display: flex; flex-direction: column; line-height: 1.05; }
+.ts-nm b { font-family: 'Zen Maru Gothic', sans-serif; font-weight: 900; font-size: 11px; color: #3a2430; letter-spacing: .3px; }
+.ts-nm small { font-family: 'Kaisei Decol', 'Zen Maru Gothic', serif; font-size: 7px; color: #b0566e; letter-spacing: .5px; }
+.ts-hero--tyriel .ts-kanji { background: #3c6fba; }
+.ts-hero--soren .ts-kanji { background: #4f8a4c; }
+
+@media (min-width: 900px) {
+  .ts-duo { left: 280px; bottom: 0; padding: 0 18px 10px; }
+  .ts-hero { width: 150px; }
+  .ts-name { padding: 5px 12px 5px 5px; gap: 8px; }
+  .ts-kanji { width: 34px; height: 34px; font-size: 22px; border-radius: 7px; }
+  .ts-nm b { font-size: 16px; }
+  .ts-nm small { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ts-hero, .ts-hero .ts-body, .ts-hero .ts-scarf, .ts-hero .ts-lamp, .ts-hero .ts-glow, .ts-hero .ts-eyes { animation: none !important; }
+}
 /* ====================================================================
    28. REFONTE PRO — fonds dessinés, thèmes classiques adoucis, boutons
        de page (sets), cartes de sets en Boutique, scores en direct
@@ -7678,6 +7736,7 @@ function applyUniqueTheme(id) {
 let reduce = false;
   try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
   if (id === "shinigamiquill") { if (typeof toggleShinigamiTheme === "function") toggleShinigamiTheme(true, reduce); }
+  if (id === "tyrielsoren") tsMountDuo(); // les deux frères restent visibles même sans animations
   if (reduce) return;
   if (id === "neontokyo") initCyberLeaves();
   else if (id === "goldgrimoire") initMagicDust();
@@ -7821,7 +7880,7 @@ function tsSpawnPetal(front, gust) {
 
 function initTyrielSorenParticles() {
   try {
-    stopTyrielSorenParticles();
+    stopTyrielSorenParticles(true);
     if (!document.body.classList.contains("theme-tyrielsoren")) return;
 
     // Calque arrière (derrière les cartes) : brume, lucioles, écriture verticale, sceau
@@ -7846,7 +7905,7 @@ function initTyrielSorenParticles() {
 
     for (let i = 0; i < 7; i++) setTimeout(() => tsSpawnPetal(front, false), i * 260);
     tsPetalTimer = setInterval(() => {
-      if (!document.body.classList.contains("theme-tyrielsoren")) return stopTyrielSorenParticles();
+      if (!document.body.classList.contains("theme-tyrielsoren")) return stopTyrielSorenParticles(true);
       if (document.hidden) return;
       tsSpawnPetal(front, false);
     }, 650);
@@ -7863,7 +7922,8 @@ function initTyrielSorenParticles() {
   }
 }
 
-function stopTyrielSorenParticles() {
+function stopTyrielSorenParticles(keepDuo) {
+  if (!keepDuo && typeof tsUnmountDuo === "function") tsUnmountDuo();
   clearInterval(tsPetalTimer); tsPetalTimer = null;
   clearTimeout(tsGustTimer); tsGustTimer = null;
   tsLayers.forEach((el) => el.remove());
@@ -7933,6 +7993,125 @@ function stopArcadeCabinetParticles() {
   document.querySelectorAll(".arc-coin-layer, .arc-hud, .arcade-coin-particle, .arcade-cabinet-bg-frame, .arcade-side-decor").forEach((el) => el.remove());
 }
 
+
+// =====================================================================
+// TYRIEL & SOREN — les deux frères, un de chaque côté de l'écran
+// Tyriel (兄, le grand frère) à gauche avec son bâton de l'Aube,
+// Soren (弟, le petit frère) à droite avec sa lanterne. Ils se regardent.
+// Ils s'effacent pendant qu'on fait défiler, puis reviennent.
+// =====================================================================
+const TS_TYRIEL_SVG = `
+<svg viewBox="0 0 120 220" aria-hidden="true">
+  <defs>
+    <radialGradient id="tsOrb"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd28a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tsCoat" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#78aeea"/><stop offset="1" stop-color="#3c6fba"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="211" rx="32" ry="5" fill="#0b1020" opacity=".35"/>
+  <g class="ts-body">
+    <g class="ts-staff">
+      <rect x="93" y="40" width="4.5" height="168" rx="2" fill="#7a5532"/>
+      <circle class="ts-glow" cx="95" cy="34" r="24" fill="url(#tsOrb)"/>
+      <path d="M86 44 Q95 26 104 44" fill="none" stroke="#7a5532" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="95" cy="34" r="7" fill="#fff4cf"/>
+    </g>
+    <path d="M45 150 L41 203 L55 203 L59 162 L63 203 L77 203 L73 150 Z" fill="#283150"/>
+    <ellipse cx="48" cy="205" rx="9.5" ry="4" fill="#5a3a26"/><ellipse cx="70" cy="205" rx="9.5" ry="4" fill="#5a3a26"/>
+    <path d="M40 104 Q28 124 33 142" stroke="#4c82cc" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <circle cx="33" cy="144" r="5.5" fill="#f3d2b8"/>
+    <path d="M38 92 Q59 84 80 92 L86 164 Q59 172 32 164 Z" fill="url(#tsCoat)"/>
+    <path d="M59 100 L55 164" stroke="#2c5a9a" stroke-width="2" opacity=".55"/>
+    <path d="M38 150 Q59 158 84 150 L86 164 Q59 172 32 164 Z" fill="#2f5d9e" opacity=".45"/>
+    <path d="M50 90 L59 110 L68 90 Z" fill="#fff6ec"/>
+    <rect x="35" y="128" width="49" height="7" rx="3" fill="#8a5a36"/>
+    <path d="M78 98 Q91 110 94 120" stroke="#5a92dc" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <circle cx="95" cy="122" r="6" fill="#f3d2b8"/>
+    <path class="ts-scarf" d="M44 98 Q30 108 22 128 Q34 122 40 116 Q37 126 29 138 Q47 124 53 100 Z" fill="#c94f30"/>
+    <path d="M43 88 Q59 97 76 88 L76 97 Q59 105 43 97 Z" fill="#e0623f"/>
+    <rect x="55" y="78" width="9" height="12" fill="#e6bea2"/>
+    <ellipse cx="41" cy="64" rx="3.6" ry="5" fill="#e6bea2"/>
+    <circle cx="59" cy="60" r="22" fill="#f6d7bf"/>
+    <path d="M36 62 Q33 33 59 33 Q85 33 82 58 Q77 49 70 47 Q72 56 66 58 Q64 49 58 45 Q54 56 46 56 Q48 50 46 48 Q40 54 36 62 Z" fill="#2b2230"/>
+    <path d="M53 35 Q57 23 66 33 Q60 30 53 35 Z" fill="#2b2230"/>
+    <path d="M37 58 Q34 73 41 78 Q40 67 43 60 Z" fill="#2b2230"/>
+    <g class="ts-eyes"><ellipse cx="63" cy="62" rx="2.6" ry="3.5" fill="#2b2230"/><ellipse cx="75" cy="62" rx="2.6" ry="3.5" fill="#2b2230"/><circle cx="64" cy="60.8" r="1" fill="#fff"/><circle cx="76" cy="60.8" r="1" fill="#fff"/></g>
+    <path d="M59 55 L66 54 M72 54 L78 55.5" stroke="#2b2230" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="58" cy="69" rx="4" ry="2" fill="#f2a0a0" opacity=".55"/><ellipse cx="78" cy="69" rx="2.8" ry="1.8" fill="#f2a0a0" opacity=".55"/>
+    <path d="M68 71 Q71 73.5 74 71" stroke="#8a4a3a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>`;
+
+const TS_SOREN_SVG = `
+<svg viewBox="0 0 120 220" aria-hidden="true">
+  <defs>
+    <radialGradient id="tsLamp"><stop offset="0" stop-color="#fff2c4"/><stop offset=".45" stop-color="#ffb35c" stop-opacity=".75"/><stop offset="1" stop-color="#ff8a3c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tsTunic" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8cc47c"/><stop offset="1" stop-color="#4f8a4c"/></linearGradient>
+  </defs>
+  <ellipse cx="58" cy="211" rx="27" ry="5" fill="#0b1020" opacity=".35"/>
+  <g class="ts-body" transform="translate(8 46) scale(.8)">
+    <path d="M44 150 L42 200 L56 200 L59 165 L62 200 L76 200 L74 150 Z" fill="#efe2c8"/>
+    <ellipse cx="49" cy="203" rx="10" ry="4.5" fill="#6b4329"/><ellipse cx="69" cy="203" rx="10" ry="4.5" fill="#6b4329"/>
+    <path d="M41 104 Q30 122 36 140" stroke="#6aa65e" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="36" cy="142" r="6" fill="#f3d2b8"/>
+    <path d="M38 94 Q59 86 80 94 L86 158 Q59 166 32 158 Z" fill="url(#tsTunic)"/>
+    <path d="M42 96 L82 140" stroke="#a0703f" stroke-width="5" stroke-linecap="round"/>
+    <rect x="72" y="134" width="20" height="18" rx="4" fill="#a0703f"/><rect x="72" y="134" width="20" height="6" rx="3" fill="#8a5c30"/>
+    <path d="M50 92 L59 106 L68 92 Z" fill="#fff6ec"/>
+    <g class="ts-lamp">
+      <path d="M95 116 L112 92" stroke="#7a5532" stroke-width="3.4" stroke-linecap="round"/>
+      <line x1="112" y1="92" x2="112" y2="104" stroke="#3a2a1f" stroke-width="1.6"/>
+      <circle class="ts-glow" cx="112" cy="120" r="30" fill="url(#tsLamp)"/>
+      <rect x="104" y="102" width="16" height="4" rx="1.5" fill="#3a2a1f"/>
+      <ellipse cx="112" cy="119" rx="11" ry="14" fill="#ffb35c"/>
+      <ellipse cx="112" cy="119" rx="6" ry="14" fill="#ffd27a"/>
+      <path d="M101 113 H123 M101 120 H123 M101 127 H123" stroke="#e08a3c" stroke-width="1" opacity=".7"/>
+      <rect x="105" y="132" width="14" height="4" rx="1.5" fill="#3a2a1f"/>
+      <path d="M112 136 V144" stroke="#c94f30" stroke-width="2"/>
+    </g>
+    <path d="M78 100 Q90 110 95 116" stroke="#7bb56e" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="96" cy="117" r="6.2" fill="#f3d2b8"/>
+    <rect x="55" y="80" width="9" height="12" fill="#e6bea2"/>
+    <ellipse cx="38" cy="64" rx="3.8" ry="5.4" fill="#e6bea2"/>
+    <circle cx="59" cy="60" r="24" fill="#f6d7bf"/>
+    <path d="M34 64 Q30 30 60 31 Q88 32 84 62 Q80 52 74 50 Q76 58 69 58 Q67 49 61 46 Q58 57 49 56 Q50 50 47 49 Q41 56 34 64 Z" fill="#6b4a32"/>
+    <path d="M58 32 Q54 18 66 20 Q60 24 62 32 Z" fill="#6b4a32"/>
+    <path d="M70 38 Q80 30 82 40 Q77 37 73 41 Z" fill="#7fbf6a"/>
+    <path d="M35 60 Q31 74 38 80 Q37 69 40 62 Z" fill="#6b4a32"/>
+    <g class="ts-eyes"><ellipse cx="64" cy="63" rx="3.2" ry="4.2" fill="#3a2a1f"/><ellipse cx="77" cy="63" rx="3.2" ry="4.2" fill="#3a2a1f"/><circle cx="65.2" cy="61.4" r="1.3" fill="#fff"/><circle cx="78.2" cy="61.4" r="1.3" fill="#fff"/></g>
+    <path d="M60 55.5 L67 55 M74 55 L80 56.5" stroke="#5a3a26" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="58" cy="71" rx="4.5" ry="2.3" fill="#f2a0a0" opacity=".6"/><ellipse cx="80" cy="71" rx="3" ry="2" fill="#f2a0a0" opacity=".6"/>
+    <path d="M69 73 Q72.5 76.5 76 73" stroke="#8a4a3a" stroke-width="1.6" fill="#c46a5a" stroke-linecap="round"/>
+  </g>
+</svg>`;
+
+let tsDuoTimer = null;
+function tsOnScroll() {
+  const duo = document.querySelector(".ts-duo");
+  if (!duo) return;
+  duo.classList.add("is-away");
+  clearTimeout(tsDuoTimer);
+  tsDuoTimer = setTimeout(() => duo.classList.remove("is-away"), 900);
+}
+function tsMountDuo() {
+  tsUnmountDuo();
+  if (!document.body.classList.contains("theme-tyrielsoren")) return;
+  const duo = document.createElement("div");
+  duo.className = "ts-duo";
+  duo.setAttribute("aria-hidden", "true");
+  duo.innerHTML = `
+    <div class="ts-hero ts-hero--tyriel">${TS_TYRIEL_SVG}
+      <div class="ts-name"><span class="ts-kanji">兄</span><span class="ts-nm"><b>Tyriel</b><small>ティリエル</small></span></div>
+    </div>
+    <div class="ts-hero ts-hero--soren">${TS_SOREN_SVG}
+      <div class="ts-name"><span class="ts-kanji">弟</span><span class="ts-nm"><b>Soren</b><small>ソレン</small></span></div>
+    </div>`;
+  document.body.appendChild(duo);
+  window.addEventListener("scroll", tsOnScroll, { passive: true, capture: true });
+}
+function tsUnmountDuo() {
+  clearTimeout(tsDuoTimer);
+  window.removeEventListener("scroll", tsOnScroll, { capture: true });
+  document.querySelectorAll(".ts-duo").forEach((el) => el.remove());
+}
 
 // ▸ initNoelParticles : génère une douce tempête de neige scintillante
 let noelInterval = null;
