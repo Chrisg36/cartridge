@@ -90,6 +90,50 @@
 <link rel="icon" type="image/png" href="icon-512.png" sizes="512x512">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
+<script>
+/* =====================================================================
+   VOLUME GÉNÉRAL — chaque son de l'appli (bruitages + K7) passe par un
+   « bouton de volume » commun. On enveloppe AudioContext pour que
+   ctx.destination pointe vers ce bouton au lieu des haut-parleurs.
+   ===================================================================== */
+(function () {
+  var Orig = window.AudioContext || window.webkitAudioContext;
+  window.cxMasterVolume = 0.8;
+  try { var sv = parseFloat(localStorage.getItem("masterVol")); if (!isNaN(sv)) window.cxMasterVolume = Math.min(1, Math.max(0, sv)); } catch (e) {}
+  var refs = [];
+  window.cxSetMasterVolume = function (v) {
+    window.cxMasterVolume = v;
+    refs = refs.filter(function (r) {
+      var g = r.deref ? r.deref() : r;
+      if (!g || g.context.state === "closed") return false;
+      try { g.gain.setTargetAtTime(v, g.context.currentTime, 0.02); } catch (e) { g.gain.value = v; }
+      return true;
+    });
+    if (typeof CXK7 !== "undefined" && CXK7.applyVolume) CXK7.applyVolume();
+  };
+  if (!Orig) return;
+  var proto = Orig.prototype, desc = null;
+  while (proto && !desc) { desc = Object.getOwnPropertyDescriptor(proto, "destination"); proto = Object.getPrototypeOf(proto); }
+  if (!desc || !desc.get || typeof WeakRef === "undefined") return; // vieux navigateur : on laisse tel quel
+  try {
+    var Wrapped = class extends Orig {
+      constructor(o) {
+        super(o);
+        try {
+          var g = Orig.prototype.createGain.call(this);
+          g.gain.value = window.cxMasterVolume;
+          g.connect(desc.get.call(this));
+          this.__cxMaster = g;
+          refs.push(new WeakRef(g)); // WeakRef : on ne bloque pas le nettoyage mémoire (limite iOS)
+        } catch (e) {}
+      }
+      get destination() { return this.__cxMaster || desc.get.call(this); }
+    };
+    window.AudioContext = Wrapped;
+    if (window.webkitAudioContext) window.webkitAudioContext = Wrapped;
+  } catch (e) {}
+})();
+</script>
 <script src="config.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Cartridge</title>
@@ -6483,34 +6527,13 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
    ni d'en-tête géant, et la barre reste collée au-dessus du clavier.
    ===================================================================== */
 @media (max-width: 759px) {
-  /* Fenêtre flottante aux bords arrondis, en retrait de l'encoche et de la barre d'accueil */
-  .cartridge-modal-overlay.cx-msg-ov {
-    position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); animation: none; box-sizing: border-box;
-    padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 10px);
-    align-items: stretch;
-    background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 65%), color-mix(in srgb, var(--bg) 70%, #000);
-  }
-  .cx-msg-ov.is-kb { padding-bottom: 6px; } /* clavier ouvert : la fenêtre descend jusqu'au clavier */
-  /* La page derrière (en-têtes flous, barre du bas, particules…) est cachée tant que la
-     messagerie est ouverte : sur iPhone, les calques en backdrop-filter pouvaient « passer
-     au travers » et flouter le haut de la conversation. */
-  body.cx-msg-open > *:not(.cx-msg-ov):not(.cx-msg-banner):not(.cart-toast) { visibility: hidden !important; }
-  body.cx-msg-open .sticky-header-container, body.cx-msg-open .bottom-nav { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .cx-msg-ov, .cx-msg-ov * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .cx-msg-ov .cx-msg-head *, .cx-msg-ov .cx-msg-peer .cx-av { filter: none !important; opacity: 1; }
-  .cx-msg-ov .cx-msg-app { isolation: isolate; transform: translateZ(0); }
-  .cx-msg-app {
-    height: 100% !important; border-radius: 22px; overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03) inset;
-    animation: cxMsgPop .22s cubic-bezier(.2,.9,.3,1.15);
-  }
-  @keyframes cxMsgPop { from { transform: translateY(14px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+  .cartridge-modal-overlay.cx-msg-ov { position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); background: var(--bg); animation: none; }
+  .cx-msg-app { height: 100% !important; }
 
   /* En-tête compact : barre de statut + 50 px, pas plus */
   .cx-msg-ov .cx-msg-head {
-    min-height: 0 !important; height: 54px; gap: 4px;
-    padding: 0 6px 0 2px !important;
+    min-height: 0; height: calc(50px + env(safe-area-inset-top, 0px)); gap: 4px;
+    padding: env(safe-area-inset-top, 0px) 6px 0 2px;
     background: color-mix(in srgb, var(--bg) 88%, var(--card));
     border-bottom: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
     box-shadow: 0 6px 18px rgba(0,0,0,.18); position: relative; z-index: 2; flex-shrink: 0;
@@ -6548,10 +6571,11 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
   /* Barre d'écriture flottante */
   .cx-msg-ov .cx-msg-compose {
     align-items: center; gap: 8px; flex-shrink: 0;
-    padding: 8px 10px 10px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
     background: color-mix(in srgb, var(--bg) 88%, var(--card));
     border-top: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
   }
+  .cx-msg-ov.is-kb .cx-msg-compose { padding-bottom: 8px; } /* clavier ouvert : pas de marge barre d'accueil */
   .cx-msg-ov .cx-msg-compose textarea { min-height: 40px; padding: 9px 15px; border-radius: 20px; font-size: 16px;
     background: color-mix(in srgb, var(--card) 70%, var(--bg)); border-color: color-mix(in srgb, var(--txt) 12%, transparent); }
   .cx-msg-ov .cx-msg-send { width: 40px; height: 40px; box-shadow: 0 4px 14px color-mix(in srgb, var(--acc) 45%, transparent); }
@@ -11422,6 +11446,33 @@ function openSettingsMainPage(tabIndex = 0) {
   document.body.setAttribute("data-layout-style", layoutStyle);
   pageGeneral.append(gPrefs.el);
 
+  // Musique · K7 (walkman rétro + volume général)
+  if (typeof CXK7 !== "undefined") {
+    const gK7 = settingsGroup("Musique · K7", "cassette");
+    gK7.list.append(settingRow("cassette", "Walkman K7", "La cassette rétro qui joue la bande-son", toggleSwitch(CXK7.isEnabled(), (on) => {
+      CXK7.setEnabled(on);
+      playThemeSound(theme);
+    })));
+    const volWrap = el("div", "k7-set-vol");
+    const volRange = document.createElement("input");
+    volRange.type = "range"; volRange.min = "0"; volRange.max = "100"; volRange.step = "1";
+    volRange.className = "k7-range k7-volbar";
+    volRange.setAttribute("aria-label", "Volume général");
+    volRange.addEventListener("input", () => CXK7.setVolume(volRange.value / 100));
+    volRange.addEventListener("change", () => playThemeSound(theme)); // petit son pour tester le niveau
+    volWrap.append(volRange, document.createElement("output"));
+    gK7.list.append(settingRow("volume", "Volume général", "Musique et bruitages", volWrap));
+    gK7.list.append(settingRow("dice", "Lecture aléatoire", "Mélange les morceaux de la cassette", toggleSwitch(CXK7.isShuffle(), (on) => CXK7.setShuffle(on))));
+    const openBtn = el("button", "k7-set-btn", "Ouvrir");
+    openBtn.type = "button";
+    openBtn.addEventListener("click", () => { if (!CXK7.isEnabled()) { showToast("Active d'abord le Walkman K7", "info"); return; } CXK7.open(); });
+    gK7.list.append(settingRow("play", "Lecteur K7", "Choisir un morceau, avancer, reculer", openBtn));
+    const vol0 = Math.round(CXK7.getVolume() * 100);
+    volRange.value = vol0; volRange.style.setProperty("--p", vol0 + "%");
+    volWrap.lastChild.textContent = vol0 + "%";
+    pageGeneral.append(gK7.el);
+  }
+
   // Capsule temporelle
   const gTime = settingsGroup("Capsule temporelle", "hourglass");
   const randomTimeBtn = el("button", "set-action", "Lancer");
@@ -15731,7 +15782,6 @@ const CXMsg = {
   // appelé quand la fenêtre disparaît (croix, Échap, bouton retour d'Android…)
   closed() {
     if (this.vvOff) { this.vvOff(); this.vvOff = null; }
-    document.body.classList.remove("cx-msg-open");
     this.ov = null; this.active = null;
     unlockBackground();
     document.removeEventListener("keydown", this.onKey);
@@ -15824,7 +15874,6 @@ const CXMsg = {
     document.addEventListener("keydown", this.onKey);
     document.body.append(ov);
     lockBackground();
-    document.body.classList.add("cx-msg-open");
     // Téléphone : la fenêtre prend la hauteur VISIBLE réelle (iOS se trompe avec 100dvh
     // en mode app plein écran) et se recale au-dessus du clavier quand il s'ouvre.
     const vv = window.visualViewport;
@@ -16785,6 +16834,615 @@ const CXMsgFab = {
 };
 CXMsgFab.init();
 
+</script>
+<!-- =====================================================================
+     WALKMAN K7 — lecteur cassette rétro japonais
+     · Mini-lecteur flottant au-dessus de la barre du bas (mobile)
+     · Se réduit en petite cassette flottante (bouton chevron)
+     · Toucher la cassette = grand lecteur (minuteur, liste, volume)
+     · Les MP3 sont dans le dossier « musique/ » à côté de index.html
+     ===================================================================== -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+.k7-mini, .k7-deck { --k7-ink: #1d1d24; --k7-red: #e63946; --k7-cream: #f2e8d2; font-family: var(--font, system-ui); }
+.k7-mini[hidden], .k7-deck[hidden] { display: none !important; }
+
+/* ---------- Défilement du titre (dans la cassette et le mini-lecteur) ---------- */
+.k7-marquee { overflow: hidden; white-space: nowrap; position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.k7-mq { display: inline-block; white-space: nowrap; animation: k7scroll var(--k7-dur, 14s) linear infinite; will-change: transform; }
+@keyframes k7scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ---------- Bobines qui tournent ---------- */
+.k7-hub { transform-box: fill-box; transform-origin: center; animation: k7spin 2.2s linear infinite; animation-play-state: paused; }
+.k7-hub.k7-hubR { animation-duration: 2.2s; }
+.k7-playing .k7-hub { animation-play-state: running; }
+@keyframes k7spin { to { transform: rotate(360deg); } }
+.k7-tape { transition: r .6s linear; }
+
+/* ---------- Mini-lecteur (barre flottante) ---------- */
+.k7-mini {
+  position: fixed; z-index: 85; left: 10px; right: 10px;
+  bottom: calc(65px + env(safe-area-inset-bottom) + 8px);
+  height: 62px; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 8px;
+  border-radius: 18px; color: var(--txt, #fff);
+  background: color-mix(in srgb, var(--bg, #0b0c10) 86%, transparent);
+  backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid color-mix(in srgb, var(--acc, #ff7a45) 35%, transparent);
+  box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  transition: transform .35s cubic-bezier(.2,.9,.3,1.2), opacity .25s;
+  animation: k7in .4s cubic-bezier(.2,.9,.3,1.2);
+}
+@keyframes k7in { from { transform: translateY(30px); opacity: 0; } }
+.k7-mini-tape { flex: none; width: 74px; height: 47px; padding: 0; border: 0; background: none; cursor: pointer;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.5)); }
+.k7-mini-tape svg { width: 100%; height: 100%; display: block; }
+.k7-mini-info { flex: 1; min-width: 0; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+.k7-mini-info .k7-marquee { font-family: "DotGothic16", var(--font), monospace; font-size: 14px; line-height: 18px; }
+.k7-mini-sub { display: flex; align-items: center; gap: 7px; font: 600 10.5px/1 "Share Tech Mono", ui-monospace, monospace; color: var(--mut, #9aa); }
+.k7-bar { flex: 1; height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--txt, #fff) 15%, transparent); overflow: hidden; }
+.k7-bar i { display: block; height: 100%; width: 0; background: var(--acc, #ff7a45); border-radius: inherit; transition: width .25s linear; }
+.k7-btn { flex: none; width: 40px; height: 40px; border: 0; border-radius: 12px; padding: 0; cursor: pointer; display: grid; place-items: center;
+  color: var(--txt, #fff); background: color-mix(in srgb, var(--txt, #fff) 8%, transparent); transition: transform .12s, background .2s; }
+.k7-btn:active { transform: scale(.9); }
+.k7-btn svg { width: 19px; height: 19px; }
+.k7-btn.k7-play { background: var(--acc, #ff7a45); color: #111; }
+.k7-btn.k7-fold { width: 26px; background: none; color: var(--mut, #9aa); }
+.k7-btn.k7-fold svg { width: 16px; height: 16px; }
+
+/* Réduit : juste une petite cassette flottante à droite */
+.k7-mini.is-bubble { left: auto; right: 12px; width: 84px; height: 56px; padding: 4px 5px; border-radius: 12px; gap: 0; }
+.k7-mini.is-bubble > :not(.k7-mini-tape) { display: none; }
+.k7-mini.is-bubble .k7-mini-tape { width: 74px; height: 47px; }
+.k7-mini.is-bubble::after { content: ""; position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 8px #22c55e; opacity: 0; transition: opacity .2s; }
+.k7-mini.is-bubble.k7-playing::after { opacity: 1; animation: k7blink 1.4s ease-in-out infinite; }
+@keyframes k7blink { 50% { opacity: .35; } }
+
+/* Laisse la place au mini-lecteur en bas des pages (mobile) */
+body.k7-bar-on { padding-bottom: calc(75px + 72px + env(safe-area-inset-bottom)) !important; }
+/* La bulle « Messagerie » remonte au-dessus du mini-lecteur ; la cassette réduite va à gauche */
+@media (max-width: 899px) {
+  body.k7-bar-on .cx-msg-fab { bottom: calc(65px + env(safe-area-inset-bottom, 0px) + 84px) !important; }
+  body.k7-bar-on .cx-fab-tip { bottom: calc(65px + env(safe-area-inset-bottom, 0px) + 92px) !important; }
+  .k7-mini.is-bubble { right: auto; left: 12px; }
+  .k7-mini.is-bubble::after { right: auto; left: -3px; }
+}
+
+@media (min-width: 900px) {
+  .k7-mini { left: auto; right: 22px; bottom: 22px; width: 400px; }
+  .k7-mini.is-bubble { right: 22px; bottom: 22px; }
+  body.k7-bar-on { padding-bottom: 90px !important; }
+}
+
+/* ---------- Grand lecteur (panneau) ---------- */
+.k7-deck { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: flex-end; justify-content: center; }
+.k7-deck-bg { position: absolute; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: k7fade .25s; }
+@keyframes k7fade { from { opacity: 0; } }
+.k7-deck-panel {
+  position: relative; width: 100%; max-width: 520px; max-height: 94vh; max-height: 94dvh; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 18px calc(22px + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0; color: var(--txt, #fff);
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--acc, #ff7a45) 16%, transparent), transparent 70%),
+    var(--card, #15161c);
+  border: 1px solid var(--line, rgba(255,255,255,.08)); border-bottom: 0;
+  box-shadow: 0 -20px 60px rgba(0,0,0,.5);
+  animation: k7up .38s cubic-bezier(.2,.9,.3,1.05);
+}
+@keyframes k7up { from { transform: translateY(100%); } }
+.k7-grab { width: 44px; height: 5px; border-radius: 5px; margin: 4px auto 10px; background: color-mix(in srgb, var(--txt, #fff) 25%, transparent); }
+.k7-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; touch-action: none; }
+.k7-head small { display: block; font: 700 10px/1.2 "Press Start 2P", monospace; letter-spacing: 1px; color: var(--acc, #ff7a45); margin-bottom: 6px; }
+.k7-head b { font-size: 18px; font-weight: 800; }
+.k7-head .k7-btn { background: color-mix(in srgb, var(--txt, #fff) 8%, transparent); color: var(--txt, #fff); }
+
+.k7-big { position: relative; width: 100%; max-width: 420px; margin: 0 auto; aspect-ratio: 320 / 204;
+  filter: drop-shadow(0 18px 26px rgba(0,0,0,.55)); }
+.k7-big svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.k7-big .k7-strip { position: absolute; left: 14%; width: 76%; top: 21.5%; height: 13%; display: flex; align-items: center; }
+.k7-big .k7-strip .k7-marquee { width: 100%; font-family: "DotGothic16", monospace; color: var(--k7-ink); font-size: clamp(12px, 4.2vw, 18px); line-height: 1.2; }
+
+.k7-now { text-align: center; margin: 18px 0 6px; }
+.k7-now b { display: block; font-size: 18px; font-weight: 800; line-height: 1.25; }
+.k7-now span { display: block; margin-top: 4px; font-size: 14px; color: var(--mut, #9aa); }
+.k7-now em { font-style: normal; font: 700 9px/1 "Press Start 2P", monospace; color: var(--acc, #ff7a45); letter-spacing: 1px; display: block; margin-bottom: 8px; }
+
+/* Minuteur + curseur */
+.k7-seek { display: flex; align-items: center; gap: 10px; margin: 14px 0 8px; font: 600 12.5px/1 "Share Tech Mono", ui-monospace, monospace; color: var(--mut, #9aa); }
+.k7-seek span { min-width: 38px; text-align: center; }
+.k7-range { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; height: 26px; background: transparent; margin: 0; cursor: pointer; --p: 0%; touch-action: none; }
+.k7-range::-webkit-slider-runnable-track { height: 6px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--acc, #ff7a45) var(--p), color-mix(in srgb, var(--txt, #fff) 16%, transparent) var(--p)); }
+.k7-range::-moz-range-track { height: 6px; border-radius: 6px; background: color-mix(in srgb, var(--txt, #fff) 16%, transparent); }
+.k7-range::-moz-range-progress { height: 6px; border-radius: 6px; background: var(--acc, #ff7a45); }
+.k7-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.k7-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+
+.k7-ctrls { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 6px 0 14px; }
+.k7-ctrls .k7-btn { width: 48px; height: 48px; border-radius: 16px; }
+.k7-ctrls .k7-btn svg { width: 22px; height: 22px; }
+.k7-ctrls .k7-play { width: 70px; height: 70px; border-radius: 50%; box-shadow: 0 6px 20px color-mix(in srgb, var(--acc, #ff7a45) 45%, transparent); }
+.k7-ctrls .k7-play svg { width: 30px; height: 30px; }
+.k7-ctrls .k7-toggle { background: none; color: var(--mut, #9aa); }
+.k7-ctrls .k7-toggle[aria-pressed="true"] { color: var(--acc, #ff7a45); background: color-mix(in srgb, var(--acc, #ff7a45) 14%, transparent); }
+
+.k7-vol { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: color-mix(in srgb, var(--txt, #fff) 5%, transparent); color: var(--mut, #9aa); }
+.k7-vol svg { width: 18px; height: 18px; flex: none; }
+.k7-vol output { min-width: 38px; text-align: right; font: 600 12.5px/1 "Share Tech Mono", monospace; }
+
+.k7-list-title { margin: 18px 4px 8px; font: 700 9px/1 "Press Start 2P", monospace; letter-spacing: 1px; color: var(--mut, #9aa); }
+.k7-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.k7-list button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 10px; border: 0; border-radius: 12px; background: none; color: var(--txt, #fff); text-align: left; cursor: pointer; font-family: inherit; }
+.k7-list button:active { background: color-mix(in srgb, var(--txt, #fff) 8%, transparent); }
+.k7-list .k7-n { flex: none; width: 30px; font: 600 12px/1 "Share Tech Mono", monospace; color: var(--mut, #9aa); text-align: center; }
+.k7-list .k7-t { flex: 1; min-width: 0; }
+.k7-list .k7-t b { display: block; font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.k7-list .k7-t small { display: block; font-size: 12px; color: var(--mut, #9aa); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.k7-list .k7-d { flex: none; font: 600 12px/1 "Share Tech Mono", monospace; color: var(--mut, #9aa); }
+.k7-list .is-cur button { background: color-mix(in srgb, var(--acc, #ff7a45) 14%, transparent); }
+.k7-list .is-cur .k7-n, .k7-list .is-cur b { color: var(--acc, #ff7a45); }
+.k7-eq { display: none; gap: 2px; align-items: flex-end; height: 14px; justify-content: center; }
+.k7-eq i { width: 3px; background: var(--acc, #ff7a45); border-radius: 1px; animation: k7eq .9s ease-in-out infinite; }
+.k7-eq i:nth-child(2) { animation-delay: -.3s; } .k7-eq i:nth-child(3) { animation-delay: -.6s; }
+@keyframes k7eq { 0%,100% { height: 4px; } 50% { height: 14px; } }
+.k7-deck.k7-playing .is-cur .k7-eq { display: flex; } .k7-deck.k7-playing .is-cur .k7-num { display: none; }
+
+@media (min-width: 900px) {
+  .k7-deck { align-items: center; padding-left: 280px; }
+  .k7-deck-panel { border-radius: 26px; border-bottom: 1px solid var(--line, rgba(255,255,255,.08)); max-height: 90vh; animation: k7pop .3s cubic-bezier(.2,.9,.3,1.1); }
+  .k7-grab { display: none; }
+}
+@keyframes k7pop { from { transform: scale(.94); opacity: 0; } }
+
+/* Réglage du volume dans la page Profil */
+.k7-set-vol { flex: none; display: flex; align-items: center; gap: 8px; width: 46%; max-width: 190px; }
+.k7-set-vol output { min-width: 36px; text-align: right; font: 700 12.5px/1 "Share Tech Mono", monospace; color: var(--mut, #9aa); }
+.k7-set-btn { flex: none; border: 0; border-radius: 10px; padding: 9px 14px; font: 700 13px/1 var(--font, system-ui); cursor: pointer; background: var(--acc, #ff7a45); color: #111; }
+
+@media (prefers-reduced-motion: reduce) {
+  .k7-mq { animation-duration: 40s; }
+  .k7-hub { animation-duration: 6s !important; }
+}
+</style>
+
+<div id="k7Mini" class="k7-mini" hidden></div>
+<div id="k7Deck" class="k7-deck" hidden></div>
+
+<script>
+const CXK7 = (() => {
+  // ▸ Dossier des musiques (relatif à index.html)
+  const BASE = "musique/";
+  // ▸ Liste des morceaux : fichier, titre FR, titre japonais, durée (secondes)
+  const TRACKS = [
+    { f: "00-cartridge.mp3",              t: "Cartridge",                           j: "カートリッジ · Main Theme",             d: 182 },
+    { f: "01-kamogawa-no-kiri.mp3",       t: "Brume sur la Rivière Kamo",           j: "鴨川の霧 · Kamo-gawa no Kiri",          d: 151 },
+    { f: "02-shuden.mp3",                 t: "Dernier Train de Minuit",             j: "終電 · Shūden",                         d: 157 },
+    { f: "03-akachochin-no-roji.mp3",     t: "Allée des Lanternes Rouges",          j: "赤提灯の路地 · Akachōchin no Roji",     d: 150 },
+    { f: "04-dogenzaka-no-ame.mp3",       t: "Pluie de Néons à Dogenzaka",          j: "道玄坂の雨 · Dōgenzaka no Ame",         d: 177 },
+    { f: "05-memory-cassette.mp3",        t: "Mémoire d'une Borne 16-Bits",         j: "メモリー・カセット · Memory Cassette",  d: 152 },
+    { f: "06-ginkaku-no-asa.mp3",         t: "Matin Zen au Pavillon d'Argent",      j: "銀閣の朝 · Ginkaku no Asa",             d: 173 },
+    { f: "07-wangan-midnight.mp3",        t: "Autoroute Shuto : Ligne Wangan",      j: "湾岸ミッドナイト · Wangan Midnight",    d: 164 },
+    { f: "08-shokunin-no-te.mp3",         t: "L'Atelier de l'Artisan",              j: "職人の手 · Shokunin no Te",             d: 172 },
+    { f: "09-tokyo-tower-no-zanko.mp3",   t: "Tour de Tokyo dans le Rétroviseur",   j: "東京タワーの残光 · Tōkyō Tawā no Zankō", d: 158 },
+    { f: "10-shinya-no-konbini.mp3",      t: "Konbini à 4 Heures du Matin",         j: "深夜のコンビニ · Shinya no Konbini",    d: 157 },
+    { f: "11-pontocho-no-ishidatami.mp3", t: "Reflets sur les Pavés de Pontochō",   j: "先斗町の石畳 · Pontochō no Ishidatami", d: 157 },
+    { f: "12-odaiba-no-kuchu-teien.mp3",  t: "Les Jardins Suspendus d'Odaiba",      j: "お台場の空中庭園 · Odaiba no Kūchū Teien", d: 175 },
+    { f: "13-sugi-no-tera-no-raimei.mp3", t: "Temple de Cèdres sous l'Orage",       j: "杉の寺の雷鳴 · Sugi no Tera no Raimei", d: 173 },
+    { f: "14-monochrome-no-yume.mp3",     t: "Nostalgie sur Game Boy",              j: "モノクロの夢 · Monochrome no Yume",     d: 146 },
+    { f: "15-tento-no-shunkan.mp3",       t: "Allumage des Enseignes à Shibuya",    j: "点灯の瞬間 · Tentō no Shunkan",         d: 175 },
+    { f: "16-bonus-cartridge.mp3",        t: "Cartridge (Bonus)",                   j: "ボーナス・トラック · Bonus Track",      d: 150 },
+  ];
+  const SIDE_B_FROM = 9; // pistes 9+ = face B
+
+  // ---------- Mémoire (localStorage) ----------
+  const get = (k, def) => { try { const v = localStorage.getItem(k); return v == null ? def : v; } catch (e) { return def; } };
+  const set = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+  let enabled = get("k7Enabled", "true") !== "false";
+  let folded = get("k7Folded", "false") === "true";
+  let shuffle = get("k7Shuffle", "false") === "true";
+  let repeatOne = get("k7Repeat", "false") === "true";
+  let idx = Math.min(TRACKS.length - 1, Math.max(0, parseInt(get("k7Idx", "0"), 10) || 0));
+  let resumeAt = parseFloat(get("k7Time", "0")) || 0;
+
+  // ---------- Lecteur audio ----------
+  const audio = new Audio();
+  audio.preload = "none";
+  audio.setAttribute("playsinline", "");
+  let loadedIdx = -1, seeking = false, lastSave = 0, errorShown = false;
+  // iOS ignore audio.volume : on passe alors par Web Audio pour régler le son
+  const canSetVolume = (() => { try { const a = new Audio(); a.volume = 0.5; return Math.abs(a.volume - 0.5) < 0.01; } catch (e) { return false; } })();
+  let actx = null, musicGain = null;
+
+  function ensureWebAudio() {
+    if (canSetVolume || actx) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      actx = new AC();
+      const src = actx.createMediaElementSource(audio);
+      musicGain = actx.createGain();
+      src.connect(musicGain); musicGain.connect(actx.destination);
+    } catch (e) { actx = null; }
+    applyVolume();
+  }
+  function applyVolume() {
+    const v = typeof window.cxMasterVolume === "number" ? window.cxMasterVolume : 0.8;
+    if (canSetVolume) audio.volume = v;
+    // Si le « volume général » est déjà branché sur ce contexte, la piste reste à 1
+    else if (musicGain) musicGain.gain.value = actx && actx.__cxMaster ? 1 : v;
+  }
+
+  // ---------- Petites icônes ----------
+  const IC = {
+    play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4" width="4.5" height="16" rx="1.3"/><rect x="14" y="4" width="4.5" height="16" rx="1.3"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 5.2v13.6a1 1 0 0 0 1.55.83L15 13.2V18a1 1 0 0 0 2 0V6a1 1 0 0 0-2 0v4.8L5.55 4.37A1 1 0 0 0 4 5.2z"/><rect x="17.5" y="5" width="2.5" height="14" rx="1"/></svg>',
+    prev: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 5.2v13.6a1 1 0 0 1-1.55.83L9 13.2V18a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v4.8l9.45-6.43A1 1 0 0 1 20 5.2z"/><rect x="4" y="5" width="2.5" height="14" rx="1"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    shuffle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>',
+    repeat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/><text x="12" y="14.5" font-size="7" font-weight="900" text-anchor="middle" fill="currentColor" stroke="none">1</text></svg>',
+    vol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>',
+  };
+
+  // ---------- Dessin de la cassette (SVG) ----------
+  let uid = 0;
+  function cassetteSVG() {
+    const p = "k7c" + (++uid);
+    const stripes = ["#e63946", "#f4a261", "#e9c46a", "#2a9d8f"].map((c, i) => {
+      const x = 222 + i * 17;
+      return `<polygon points="${x},14 ${x + 13},14 ${x + 3},38 ${x - 10},38" fill="${c}"/>`;
+    }).join("");
+    const teeth = [0, 60, 120, 180, 240, 300].map((a) => `<rect x="-1.6" y="-11" width="3.2" height="5" rx="1" fill="#0e0e12" transform="rotate(${a})"/>`).join("");
+    const hub = (cx, cls) => `<g transform="translate(${cx} 100)"><g class="k7-hub ${cls}"><circle r="11.5" fill="#efe9dc"/><circle r="11.5" fill="none" stroke="#bdb5a3" stroke-width="1"/>${teeth}<circle r="3" fill="#bdb5a3"/></g></g>`;
+    const screw = (x, y) => `<g transform="translate(${x} ${y})"><circle r="4.6" fill="#5b5b66" stroke="#141418" stroke-width="1"/><path d="M-2.6 0h5.2M0 -2.6v5.2" stroke="#202026" stroke-width="1.2"/></g>`;
+    return `<svg viewBox="0 0 320 204" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="${p}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a46"/><stop offset="1" stop-color="#17171d"/></linearGradient>
+        <linearGradient id="${p}l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6eedb"/><stop offset="1" stop-color="#e8dcc0"/></linearGradient>
+        <clipPath id="${p}w"><rect x="96" y="78" width="128" height="44" rx="7"/></clipPath>
+        <clipPath id="${p}c"><rect x="18" y="14" width="284" height="130" rx="6"/></clipPath>
+      </defs>
+      <rect x="2" y="2" width="316" height="200" rx="14" fill="url(#${p}s)" stroke="#08080b" stroke-width="2"/>
+      <rect x="6.5" y="6.5" width="307" height="191" rx="11" fill="none" stroke="rgba(255,255,255,.07)"/>
+      ${screw(11, 11)}${screw(309, 11)}${screw(11, 193)}${screw(309, 193)}
+      <g clip-path="url(#${p}c)">
+        <rect x="18" y="14" width="284" height="130" fill="url(#${p}l)"/>
+        <rect x="18" y="14" width="284" height="24" fill="#1d1d24"/>
+        ${stripes}
+        <rect x="18" y="138" width="284" height="6" fill="#e63946"/>
+      </g>
+      <text x="30" y="31" font-family="'Press Start 2P', monospace" font-size="10" fill="#fff" letter-spacing="1">CARTRIDGE</text>
+      <text x="140" y="31" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#f4a261">カートリッジ</text>
+      <circle cx="31" cy="57" r="9.5" fill="#e63946"/>
+      <text class="k7-side" x="31" y="61.3" font-family="system-ui, sans-serif" font-size="12.5" font-weight="900" fill="#fff" text-anchor="middle">A</text>
+      <line x1="46" y1="71" x2="292" y2="71" stroke="#c9bda4" stroke-width="1"/>
+      <text x="56" y="98" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#6b6355" text-anchor="middle" letter-spacing=".5">STEREO</text>
+      <text x="56" y="108" font-family="system-ui, sans-serif" font-size="7" font-weight="700" fill="#e63946" text-anchor="middle">ステレオ</text>
+      <text x="264" y="98" font-family="system-ui, sans-serif" font-size="7" font-weight="800" fill="#6b6355" text-anchor="middle" letter-spacing=".5">Hi-Fi</text>
+      <text x="264" y="108" font-family="system-ui, sans-serif" font-size="7" font-weight="700" fill="#e63946" text-anchor="middle">ハイファイ</text>
+      <rect x="90" y="74" width="140" height="52" rx="9" fill="#2a2a32"/>
+      <rect x="96" y="78" width="128" height="44" rx="7" fill="#0d0d11"/>
+      <g clip-path="url(#${p}w)">
+        <circle class="k7-tape k7-tapeL" cx="128" cy="100" r="34" fill="#4a3326"/>
+        <circle class="k7-tape k7-tapeR" cx="192" cy="100" r="15" fill="#4a3326"/>
+        <circle cx="128" cy="100" r="34" fill="none" stroke="rgba(255,255,255,.05)" class="k7-tape k7-tapeL"/>
+        ${hub(128, "k7-hubL")}${hub(192, "k7-hubR")}
+        <rect x="96" y="78" width="128" height="13" fill="#fff" opacity=".07"/>
+      </g>
+      <text x="30" y="134" font-family="system-ui, sans-serif" font-size="10" font-weight="900" fill="#1d1d24">C-60</text>
+      <text x="160" y="134" font-family="system-ui, sans-serif" font-size="6.6" font-weight="800" fill="#6b6355" text-anchor="middle" letter-spacing=".8">TYPE II · HIGH POSITION · ハイポジ</text>
+      <text class="k7-side2" x="290" y="134" font-family="system-ui, sans-serif" font-size="9" font-weight="900" fill="#e63946" text-anchor="end">SIDE A</text>
+      <path d="M62 202 L78 156 L242 156 L258 202 Z" fill="#202027" stroke="#0b0b0e" stroke-width="1.5"/>
+      <circle cx="110" cy="182" r="6.5" fill="#09090c"/><circle cx="210" cy="182" r="6.5" fill="#09090c"/>
+      <rect x="151" y="170" width="18" height="11" rx="2" fill="#09090c"/>
+      <rect x="86" y="186" width="7" height="7" rx="1" fill="#09090c"/><rect x="227" y="186" width="7" height="7" rx="1" fill="#09090c"/>
+    </svg>`;
+  }
+
+  // ---------- Outils ----------
+  const $ = (root, s) => root.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+  const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+  const num = (i) => String(i).padStart(2, "0");
+  const sideOf = (i) => (i >= SIDE_B_FROM ? "B" : "A");
+  const clunk = () => { try { if (typeof soundEnabled === "undefined" || soundEnabled) { CXAudio.noise({ d: 0.03, v: 0.09, f: 1400, q: 1.2 }); CXAudio.noise({ t: 0.05, d: 0.04, v: 0.06, f: 700, q: 1 }); } } catch (e) {} };
+
+  // ---------- Construction de l'interface ----------
+  const mini = document.getElementById("k7Mini");
+  const deck = document.getElementById("k7Deck");
+
+  mini.innerHTML = `
+    <button class="k7-mini-tape" type="button" aria-label="Ouvrir la K7">${cassetteSVG()}</button>
+    <div class="k7-mini-info" role="button" tabindex="0" aria-label="Ouvrir le lecteur">
+      <div class="k7-marquee"><span class="k7-mq"></span></div>
+      <div class="k7-mini-sub"><span class="k7-cur">0:00</span><div class="k7-bar"><i></i></div><span class="k7-dur">0:00</span></div>
+    </div>
+    <button class="k7-btn k7-play" type="button" aria-label="Lecture">${IC.play}</button>
+    <button class="k7-btn k7-next" type="button" aria-label="Morceau suivant">${IC.next}</button>
+    <button class="k7-btn k7-fold" type="button" aria-label="Réduire le lecteur">${IC.down}</button>`;
+
+  function buildDeck() {
+    deck.innerHTML = `
+      <div class="k7-deck-bg"></div>
+      <div class="k7-deck-panel" role="dialog" aria-modal="true" aria-label="Lecteur cassette">
+        <div class="k7-grab"></div>
+        <div class="k7-head">
+          <div><small>WALKMAN · ウォークマン</small><b>Bande-son Cartridge</b></div>
+          <button class="k7-btn k7-close" type="button" aria-label="Fermer">${IC.close}</button>
+        </div>
+        <div class="k7-big">${cassetteSVG()}<div class="k7-strip"><div class="k7-marquee"><span class="k7-mq"></span></div></div></div>
+        <div class="k7-now"><em class="k7-pos"></em><b class="k7-title"></b><span class="k7-jp"></span></div>
+        <div class="k7-seek"><span class="k7-cur">0:00</span><input class="k7-range k7-seekbar" type="range" min="0" max="1000" value="0" step="1" aria-label="Position dans le morceau"><span class="k7-dur">0:00</span></div>
+        <div class="k7-ctrls">
+          <button class="k7-btn k7-toggle k7-shuffle" type="button" aria-label="Lecture aléatoire" aria-pressed="false">${IC.shuffle}</button>
+          <button class="k7-btn k7-prev" type="button" aria-label="Morceau précédent">${IC.prev}</button>
+          <button class="k7-btn k7-play" type="button" aria-label="Lecture">${IC.play}</button>
+          <button class="k7-btn k7-next" type="button" aria-label="Morceau suivant">${IC.next}</button>
+          <button class="k7-btn k7-toggle k7-repeat" type="button" aria-label="Répéter le morceau" aria-pressed="false">${IC.repeat}</button>
+        </div>
+        <div class="k7-vol">${IC.vol}<input class="k7-range k7-volbar" type="range" min="0" max="100" step="1" aria-label="Volume général"><output>80%</output></div>
+        <div class="k7-list-title">PISTES · トラック</div>
+        <ol class="k7-list">${TRACKS.map((tr, i) => `
+          <li data-i="${i}"><button type="button">
+            <span class="k7-n"><span class="k7-num">${sideOf(i)}${num(i)}</span><span class="k7-eq"><i></i><i></i><i></i></span></span>
+            <span class="k7-t"><b>${tr.t}</b><small>${tr.j}</small></span>
+            <span class="k7-d">${fmt(tr.d)}</span>
+          </button></li>`).join("")}
+        </ol>
+      </div>`;
+
+    $(deck, ".k7-deck-bg").addEventListener("click", closeDeck);
+    $(deck, ".k7-close").addEventListener("click", closeDeck);
+    $(deck, ".k7-prev").addEventListener("click", prev);
+    deck.querySelectorAll(".k7-play").forEach((b) => b.addEventListener("click", toggle));
+    deck.querySelectorAll(".k7-next").forEach((b) => b.addEventListener("click", () => next(true)));
+    $(deck, ".k7-shuffle").addEventListener("click", () => { setShuffle(!shuffle); });
+    $(deck, ".k7-repeat").addEventListener("click", () => { repeatOne = !repeatOne; set("k7Repeat", repeatOne); syncToggles(); });
+    $(deck, ".k7-list").addEventListener("click", (e) => {
+      const li = e.target.closest("li[data-i]"); if (!li) return;
+      const i = +li.dataset.i;
+      if (i === idx && loadedIdx === idx) { toggle(); return; }
+      load(i, 0); play();
+    });
+
+    // Curseur du minuteur : on peut glisser pour avancer / reculer
+    const seek = $(deck, ".k7-seekbar");
+    const seekPreview = () => {
+      const dur = duration();
+      seek.style.setProperty("--p", (seek.value / 10) + "%");
+      deck.querySelectorAll(".k7-cur").forEach((n) => (n.textContent = fmt(dur * seek.value / 1000)));
+    };
+    seek.addEventListener("pointerdown", () => (seeking = true));
+    seek.addEventListener("touchstart", () => (seeking = true), { passive: true });
+    seek.addEventListener("input", () => { seeking = true; seekPreview(); });
+    seek.addEventListener("change", () => {
+      const t = duration() * seek.value / 1000;
+      if (loadedIdx !== idx) { resumeAt = t; } else { try { audio.currentTime = t; } catch (e) {} }
+      seeking = false; updateTime();
+    });
+
+    // Volume général (même réglage que dans Profil)
+    const vol = $(deck, ".k7-volbar");
+    vol.addEventListener("input", () => setVolume(vol.value / 100));
+
+    // Glisser vers le bas pour fermer (mobile)
+    const panel = $(deck, ".k7-deck-panel");
+    let y0 = null, dy = 0;
+    const head = [$(deck, ".k7-grab"), $(deck, ".k7-head")];
+    head.forEach((h) => {
+      h.addEventListener("touchstart", (e) => { if (panel.scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; panel.style.transition = "none"; }, { passive: true });
+      h.addEventListener("touchmove", (e) => { if (y0 == null) return; dy = Math.max(0, e.touches[0].clientY - y0); panel.style.transform = `translateY(${dy}px)`; }, { passive: true });
+      h.addEventListener("touchend", () => {
+        if (y0 == null) return; y0 = null;
+        panel.style.transition = "transform .25s ease"; panel.style.transform = "";
+        if (dy > 90) closeDeck();
+      });
+    });
+  }
+  buildDeck();
+
+  // ---------- Actions ----------
+  function duration() { return (loadedIdx === idx && isFinite(audio.duration) && audio.duration > 0) ? audio.duration : TRACKS[idx].d; }
+
+  function load(i, startAt) {
+    idx = (i + TRACKS.length) % TRACKS.length;
+    set("k7Idx", idx);
+    resumeAt = startAt || 0;
+    set("k7Time", resumeAt);
+    loadedIdx = -1;
+    audio.pause();
+    audio.removeAttribute("src");
+    renderTrack();
+  }
+
+  function ensureLoaded() {
+    if (loadedIdx === idx) return;
+    loadedIdx = idx;
+    audio.src = BASE + TRACKS[idx].f;
+    audio.preload = "auto";
+    const at = resumeAt;
+    if (at > 1) {
+      const go = () => { try { audio.currentTime = at; } catch (e) {} };
+      audio.addEventListener("loadedmetadata", go, { once: true });
+    }
+    try { audio.load(); } catch (e) {}
+  }
+
+  function play() {
+    if (!enabled) return;
+    ensureWebAudio();
+    if (actx && actx.state !== "running") { try { actx.resume(); } catch (e) {} }
+    ensureLoaded();
+    applyVolume();
+    const p = audio.play();
+    if (p && p.catch) p.catch((err) => { if (err && err.name !== "AbortError") setPlayingUI(false); });
+  }
+  function pause() { audio.pause(); }
+  function toggle() { clunk(); if (audio.paused || loadedIdx !== idx) play(); else pause(); }
+
+  function next(manual) {
+    let n;
+    if (shuffle && TRACKS.length > 1) { do { n = Math.floor(Math.random() * TRACKS.length); } while (n === idx); }
+    else n = idx + 1;
+    const wasPlaying = !audio.paused || !manual;
+    load(n, 0);
+    if (wasPlaying || manual) play();
+  }
+  function prev() {
+    // Comme une vraie platine : si on est à plus de 3 s, on revient au début du morceau
+    if (loadedIdx === idx && audio.currentTime > 3) { audio.currentTime = 0; return; }
+    load(idx - 1, 0); play();
+  }
+
+  function setShuffle(on) { shuffle = !!on; set("k7Shuffle", shuffle); syncToggles(); }
+  function setVolume(v) {
+    v = Math.min(1, Math.max(0, v));
+    set("masterVol", v);
+    if (window.cxSetMasterVolume) window.cxSetMasterVolume(v); else { window.cxMasterVolume = v; applyVolume(); }
+    syncVolume();
+  }
+
+  // ---------- Affichage ----------
+  function setMarquee(node, text) {
+    node.textContent = (text + "      ★      ").repeat(2);
+    node.parentNode.style.setProperty("--k7-dur", Math.max(8, text.length * 0.38) + "s");
+    node.style.setProperty("--k7-dur", Math.max(8, text.length * 0.38) + "s");
+  }
+  function renderTrack() {
+    const tr = TRACKS[idx];
+    const side = sideOf(idx);
+    const label = `${num(idx)} — ${tr.t} ・ ${tr.j.split(" · ")[0]}`;
+    $$(".k7-mq").forEach((n) => setMarquee(n, label));
+    $$(".k7-side").forEach((n) => (n.textContent = side));
+    $$(".k7-side2").forEach((n) => (n.textContent = "SIDE " + side));
+    $(deck, ".k7-title").textContent = tr.t;
+    $(deck, ".k7-jp").textContent = tr.j;
+    $(deck, ".k7-pos").textContent = `FACE ${side} · PISTE ${idx + 1}/${TRACKS.length}`;
+    deck.querySelectorAll(".k7-list li").forEach((li) => li.classList.toggle("is-cur", +li.dataset.i === idx));
+    if ("mediaSession" in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: tr.t, artist: "Cartridge — Bande originale", album: "Cartridge · カートリッジ" });
+      } catch (e) {}
+    }
+    updateTime();
+  }
+
+  function updateTime() {
+    const dur = duration();
+    const cur = loadedIdx === idx ? audio.currentTime : resumeAt;
+    const p = dur ? Math.min(1, cur / dur) : 0;
+    document.querySelectorAll("#k7Mini .k7-cur, #k7Deck .k7-cur").forEach((n) => { if (!seeking || n.closest("#k7Mini")) n.textContent = fmt(cur); });
+    document.querySelectorAll(".k7-dur").forEach((n) => (n.textContent = fmt(dur)));
+    const bar = $(mini, ".k7-bar i"); bar.style.width = (p * 100).toFixed(2) + "%";
+    const seek = $(deck, ".k7-seekbar");
+    if (!seeking) { seek.value = Math.round(p * 1000); seek.style.setProperty("--p", (p * 100).toFixed(2) + "%"); }
+    // La bande passe de la bobine gauche à la droite au fil du morceau
+    const rL = (15 + 21 * (1 - p)).toFixed(1), rR = (15 + 21 * p).toFixed(1);
+    $$(".k7-tapeL").forEach((c) => c.setAttribute("r", rL));
+    $$(".k7-tapeR").forEach((c) => c.setAttribute("r", rR));
+    // Petite bobine = tourne plus vite (comme une vraie cassette)
+    $$(".k7-hubL").forEach((h) => (h.style.animationDuration = (0.9 + rL / 16).toFixed(2) + "s"));
+    $$(".k7-hubR").forEach((h) => (h.style.animationDuration = (0.9 + rR / 16).toFixed(2) + "s"));
+  }
+
+  function setPlayingUI(on) {
+    mini.classList.toggle("k7-playing", on);
+    deck.classList.toggle("k7-playing", on);
+    document.querySelectorAll("#k7Mini .k7-play, #k7Deck .k7-play").forEach((b) => {
+      b.innerHTML = on ? IC.pause : IC.play;
+      b.setAttribute("aria-label", on ? "Pause" : "Lecture");
+    });
+    if ("mediaSession" in navigator) { try { navigator.mediaSession.playbackState = on ? "playing" : "paused"; } catch (e) {} }
+  }
+  function syncToggles() {
+    const s = $(deck, ".k7-shuffle"), r = $(deck, ".k7-repeat");
+    s.setAttribute("aria-pressed", String(shuffle));
+    r.setAttribute("aria-pressed", String(repeatOne));
+  }
+  function syncVolume() {
+    const v = Math.round((typeof window.cxMasterVolume === "number" ? window.cxMasterVolume : 0.8) * 100);
+    document.querySelectorAll(".k7-volbar").forEach((r) => { r.value = v; r.style.setProperty("--p", v + "%"); });
+    document.querySelectorAll(".k7-vol output, .k7-set-vol output").forEach((o) => (o.textContent = v + "%"));
+  }
+
+  function showMini() {
+    const on = enabled;
+    mini.hidden = !on;
+    mini.classList.toggle("is-bubble", folded);
+    document.body.classList.toggle("k7-bar-on", on && !folded);
+    const fold = $(mini, ".k7-fold");
+    fold.setAttribute("aria-label", folded ? "Agrandir le lecteur" : "Réduire le lecteur");
+  }
+  function setFolded(f) { folded = !!f; set("k7Folded", folded); showMini(); }
+
+  function openDeck() {
+    if (!enabled) return;
+    syncVolume(); syncToggles(); renderTrack();
+    deck.hidden = false;
+    const panel = $(deck, ".k7-deck-panel"); panel.style.transform = "";
+  }
+  function closeDeck() { deck.hidden = true; }
+
+  function setEnabled(on) {
+    enabled = !!on; set("k7Enabled", enabled);
+    if (!enabled) { pause(); closeDeck(); }
+    showMini();
+  }
+
+  // ---------- Événements du mini-lecteur ----------
+  $(mini, ".k7-mini-tape").addEventListener("click", () => { if (folded) setFolded(false); else openDeck(); });
+  $(mini, ".k7-mini-info").addEventListener("click", openDeck);
+  $(mini, ".k7-mini-info").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openDeck(); } });
+  $(mini, ".k7-play").addEventListener("click", toggle);
+  $(mini, ".k7-next").addEventListener("click", () => next(true));
+  $(mini, ".k7-fold").addEventListener("click", () => setFolded(true));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !deck.hidden) closeDeck(); });
+
+  // ---------- Événements audio ----------
+  audio.addEventListener("play", () => setPlayingUI(true));
+  audio.addEventListener("playing", () => setPlayingUI(true));
+  audio.addEventListener("pause", () => { setPlayingUI(false); set("k7Time", audio.currentTime || 0); });
+  audio.addEventListener("timeupdate", () => {
+    updateTime();
+    const n = Date.now();
+    if (n - lastSave > 4000) { lastSave = n; set("k7Time", audio.currentTime || 0); }
+  });
+  audio.addEventListener("loadedmetadata", updateTime);
+  audio.addEventListener("ended", () => {
+    if (repeatOne) { audio.currentTime = 0; play(); return; }
+    next(false);
+  });
+  audio.addEventListener("error", () => {
+    if (!audio.getAttribute("src")) return;
+    setPlayingUI(false);
+    if (!errorShown) {
+      errorShown = true;
+      try { showToast("Musique introuvable : mets le dossier « musique » à côté de index.html", "xCircle"); } catch (e) {}
+    }
+  });
+  window.addEventListener("pagehide", () => { if (loadedIdx === idx) set("k7Time", audio.currentTime || 0); });
+
+  // Boutons de l'écran verrouillé / casque Bluetooth
+  if ("mediaSession" in navigator) {
+    const ms = navigator.mediaSession;
+    const h = (a, f) => { try { ms.setActionHandler(a, f); } catch (e) {} };
+    h("play", play); h("pause", pause);
+    h("nexttrack", () => next(true)); h("previoustrack", prev);
+    h("seekto", (d) => { if (loadedIdx === idx && d.seekTime != null) audio.currentTime = d.seekTime; });
+  }
+
+  // ---------- Démarrage ----------
+  renderTrack(); syncVolume(); syncToggles(); setPlayingUI(false); showMini();
+
+  return {
+    isEnabled: () => enabled, setEnabled,
+    isShuffle: () => shuffle, setShuffle,
+    getVolume: () => (typeof window.cxMasterVolume === "number" ? window.cxMasterVolume : 0.8), setVolume, syncVolume,
+    applyVolume, open: openDeck, close: closeDeck, play, pause, toggle, next: () => next(true), prev, tracks: TRACKS,
+  };
+})();
 </script>
 </body>
 </html>
