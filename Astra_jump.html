@@ -44,7 +44,7 @@
   .cbtn { pointer-events: auto; width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
     background: radial-gradient(circle at 50% 35%, rgba(196, 181, 253, .45), rgba(91, 47, 168, .55) 60%, rgba(30, 10, 60, .7));
     border: 2px solid rgba(216, 180, 254, .6); box-shadow: 0 5px 0 rgba(0, 0, 0, .55), inset 0 2px 0 rgba(255, 255, 255, .25);
-    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    /* pas de flou : le décor animé dessous le faisait recalculer à chaque image */ }
   .cbtn svg { width: 26px; height: 26px; fill: #fff; filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, .5)); }
   .cbtn.jump { width: 82px; height: 82px; background: radial-gradient(circle at 50% 35%, rgba(251, 207, 232, .6), rgba(219, 39, 119, .6) 60%, rgba(80, 7, 40, .75)); border-color: rgba(251, 207, 232, .7); }
   .cbtn.on { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0, 0, 0, .55), inset 0 2px 0 rgba(255, 255, 255, .25); filter: brightness(1.25); }
@@ -157,6 +157,7 @@ const $ = (id) => document.getElementById(id);
 
 // ------------------------------------------------------------------ AUDIO
 let audio = null;
+addEventListener('pagehide', () => { try { if (audio && audio.close) audio.close(); } catch (e) {} audio = null; });
 function initAudio() {
   if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
   if (audio && audio.state === 'suspended') audio.resume();
