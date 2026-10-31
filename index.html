@@ -17054,7 +17054,9 @@ const CXK7 = (() => {
   audio.setAttribute("playsinline", "");
   let loadedIdx = -1, seeking = false, lastSave = 0, errorShown = false;
   // iOS ignore audio.volume : on passe alors par Web Audio pour régler le son
-  const canSetVolume = (() => { try { const a = new Audio(); a.volume = 0.5; return Math.abs(a.volume - 0.5) < 0.01; } catch (e) { return false; } })();
+  // iPhone/iPad : Safari « accepte » audio.volume mais ne l'applique jamais → Web Audio obligatoire
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const canSetVolume = !isIOS && (() => { try { const a = new Audio(); a.volume = 0.5; return Math.abs(a.volume - 0.5) < 0.01; } catch (e) { return false; } })();
   let actx = null, musicGain = null;
 
   function ensureWebAudio() {
