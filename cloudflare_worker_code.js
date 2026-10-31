@@ -994,6 +994,9 @@ async function ensureMsgTables(env) {
     env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_blocks (user_id INTEGER NOT NULL, blocked_id INTEGER NOT NULL, PRIMARY KEY (user_id, blocked_id))"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_presence (user_id INTEGER PRIMARY KEY, seen INTEGER NOT NULL)"),
     env.DB.prepare("INSERT OR IGNORE INTO msg_convs (id, kind, a, b) VALUES (1, 'room', 0, 0)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, user_id INTEGER NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created_at INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS push_subs_user ON push_subs(user_id)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS push_keys (id INTEGER PRIMARY KEY, pub TEXT NOT NULL, priv TEXT NOT NULL)"),
   ]);
   msgReady = true;
 }
@@ -1019,7 +1022,71 @@ async function msgConv(env, convId, uid) {
 const MSG_AV = (t) => `CASE WHEN json_valid(${t}.data) THEN json_extract(${t}.data, '$.unlocks.avatar') END`;
 const MSG_COLS = `m.id, m.conv_id AS conv, m.user_id AS uid, u.display_name AS name, ${MSG_AV("u")} AS av, m.body, m.created_at AS at`;
 
-async function handleMsg(action, request, env) {
+
+// =====================================================================
+// NOTIFICATIONS (Web Push) — préviennent le joueur d'un message privé,
+// même quand Cartridge est fermé (iPhone : app ajoutée à l'écran d'accueil).
+//   Rien à configurer : les clés VAPID sont créées toutes seules au premier
+//   appel et gardées dans la table D1 push_keys.
+// =====================================================================
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const unb64u = (str) => { str = String(str).replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; return Uint8Array.from(atob(str), (c) => c.charCodeAt(0)); };
+const concatBytes = (...arrs) => { const out = new Uint8Array(arrs.reduce((n, a) => n + a.length, 0)); let i = 0; for (const a of arrs) { out.set(a, i); i += a.length; } return out; };
+let vapidCache = null;
+async function vapidKeys(env) {
+  if (vapidCache) return vapidCache;
+  let row = await env.DB.prepare("SELECT pub, priv FROM push_keys WHERE id = 1").first();
+  if (!row) {
+    const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    const pub = b64u(await crypto.subtle.exportKey("raw", kp.publicKey));
+    const priv = JSON.stringify(await crypto.subtle.exportKey("jwk", kp.privateKey));
+    await env.DB.prepare("INSERT OR IGNORE INTO push_keys (id, pub, priv) VALUES (1, ?, ?)").bind(pub, priv).run();
+    row = await env.DB.prepare("SELECT pub, priv FROM push_keys WHERE id = 1").first();
+  }
+  const key = await crypto.subtle.importKey("jwk", JSON.parse(row.priv), { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  return (vapidCache = { pub: row.pub, key });
+}
+async function vapidAuth(env, endpoint) {
+  const { pub, key } = await vapidKeys(env);
+  const head = b64u(enc.encode(JSON.stringify({ typ: "JWT", alg: "ES256" })));
+  const body = b64u(enc.encode(JSON.stringify({ aud: new URL(endpoint).origin, exp: nowSec() + 12 * 3600, sub: "mailto:cartridge@cartridge.app" })));
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, enc.encode(head + "." + body));
+  return `vapid t=${head}.${body}.${b64u(sig)}, k=${pub}`;
+}
+async function hkdf(salt, ikm, info, len) {
+  const k = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt, info }, k, len * 8));
+}
+// Chiffrement « aes128gcm » imposé par les services de notifications (RFC 8291)
+async function encryptPush(sub, payload) {
+  const uaPub = unb64u(sub.p256dh), auth = unb64u(sub.auth);
+  const as = await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const asPub = new Uint8Array(await crypto.subtle.exportKey("raw", as.publicKey));
+  const uaKey = await crypto.subtle.importKey("raw", uaPub, { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const secret = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: uaKey }, as.privateKey, 256));
+  const ikm = await hkdf(auth, secret, concatBytes(enc.encode("WebPush: info\u0000"), uaPub, asPub), 32);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const cek = await hkdf(salt, ikm, enc.encode("Content-Encoding: aes128gcm\u0000"), 16);
+  const nonce = await hkdf(salt, ikm, enc.encode("Content-Encoding: nonce\u0000"), 12);
+  const key = await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["encrypt"]);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce }, key, concatBytes(enc.encode(payload), new Uint8Array([2]))));
+  const head = new Uint8Array(21); head.set(salt, 0); new DataView(head.buffer).setUint32(16, 4096); head[20] = 65;
+  return concatBytes(head, asPub, ct);
+}
+async function sendPush(env, sub, data) {
+  const body = await encryptPush(sub, JSON.stringify(data));
+  const res = await fetch(sub.endpoint, { method: "POST", headers: { Authorization: await vapidAuth(env, sub.endpoint), "Content-Encoding": "aes128gcm", "Content-Type": "application/octet-stream", TTL: "86400", Urgency: "high" }, body });
+  // abonnement expiré (app désinstallée, notifications coupées…) : on l'oublie
+  if (res.status === 404 || res.status === 410) await env.DB.prepare("DELETE FROM push_subs WHERE endpoint = ?").bind(sub.endpoint).run();
+  return res.status;
+}
+async function pushToUser(env, userId, data) {
+  const { results } = await env.DB.prepare("SELECT endpoint, p256dh, auth FROM push_subs WHERE user_id = ?").bind(userId).all();
+  return Promise.all(results.map((x) => sendPush(env, x, data).catch((e) => "erreur: " + (e && e.message))));
+}
+const validEndpoint = (u, env) => typeof u === "string" && u.length < 800 && (/^https:\/\//.test(u) || (env.PUSH_ALLOW_HTTP === "1" && /^http:\/\/localhost/.test(u)));
+
+async function handleMsg(action, request, env, ctx) {
   await ensureMsgTables(env);
   const me = await sessionUser(request, env);
   if (!me) return jsonRes({ error: "Connecte-toi pour utiliser la messagerie." }, 401);
@@ -1045,6 +1112,28 @@ async function handleMsg(action, request, env) {
     ).bind(since, me.id).all();
     const last = results.length ? results[results.length - 1].id : since;
     return jsonRes({ me: { id: me.id, name: me.name, admin: isAdmin }, messages: results, last });
+  }
+
+  if (action === "pushkey") return jsonRes({ key: (await vapidKeys(env)).pub });
+  if (action === "push") {
+    const sub = body.sub || {}, k = sub.keys || {};
+    if (!validEndpoint(sub.endpoint, env) || typeof k.p256dh !== "string" || typeof k.auth !== "string" || k.p256dh.length > 200 || k.auth.length > 100) return jsonRes({ error: "Abonnement invalide." }, 400);
+    await env.DB.prepare("INSERT INTO push_subs (endpoint, user_id, p256dh, auth, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id, p256dh = excluded.p256dh, auth = excluded.auth, created_at = excluded.created_at").bind(sub.endpoint, me.id, k.p256dh, k.auth, t).run();
+    await env.DB.prepare("DELETE FROM push_subs WHERE user_id = ? AND endpoint NOT IN (SELECT endpoint FROM push_subs WHERE user_id = ? ORDER BY created_at DESC LIMIT 6)").bind(me.id, me.id).run();
+    return jsonRes({ status: "subscribed" });
+  }
+  if (action === "unpush") {
+    await env.DB.prepare("DELETE FROM push_subs WHERE endpoint = ? AND user_id = ?").bind(String(body.endpoint || ""), me.id).run();
+    return jsonRes({ status: "unsubscribed" });
+  }
+  if (action === "pushtest") {
+    const res = await pushToUser(env, me.id, { title: "Cartridge", body: "Les notifications marchent ! 🎉", conv: 0, tag: "cartridge-test" });
+    return jsonRes({ sent: res.length, results: res });
+  }
+  // l'app passe en arrière-plan : le joueur n'est plus « en ligne », les notifications partent tout de suite
+  if (action === "away") {
+    await env.DB.prepare("UPDATE msg_presence SET seen = ? WHERE user_id = ?").bind(t - 3600, me.id).run();
+    return jsonRes({ status: "away" });
   }
 
   if (action === "convs") {
@@ -1135,6 +1224,15 @@ async function handleMsg(action, request, env) {
       env.DB.prepare("INSERT INTO msg_presence (user_id, seen) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET seen = excluded.seen").bind(me.id, t),
     ]);
     await noteFailure(env, rate); // compte le message pour la limite « 12 par minute »
+    // notification pour le destinataire d'un message privé (sauf s'il a l'app ouverte en ce moment)
+    if (conv.kind === "dm") {
+      const other = conv.a === me.id ? conv.b : conv.a;
+      const pr = await env.DB.prepare("SELECT seen FROM msg_presence WHERE user_id = ?").bind(other).first();
+      if (!pr || t - pr.seen > 25) {
+        const job = pushToUser(env, other, { title: me.name, body: text.slice(0, 140), conv: conv.id, tag: "conv-" + conv.id }).catch(() => {});
+        if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
+      }
+    }
     return jsonRes({ message: { id, conv: conv.id, uid: me.id, name: me.name, av: "", body: text, at: t } });
   }
 
@@ -1165,7 +1263,7 @@ async function handleMsg(action, request, env) {
   return jsonRes({ error: "Adresse inconnue." }, 404);
 }
 
-async function handleApi(path, request, env) {
+async function handleApi(path, request, env, ctx) {
   // Vérification rapide dans un navigateur : ouvre https://<ton-worker>/api/msg/ping
   if (path === "/api/msg/ping") {
     if (!env.DB) return jsonRes({ ok: false, error: "binding DB manquant" }, 500);
@@ -1178,7 +1276,7 @@ async function handleApi(path, request, env) {
     if (path === "/api/auth") return await handleAuth(request, env);
     if (path === "/api/save") return await handleSave(request, env);
     if (path === "/api/recover") return await handleRecover(request, env);
-    if (path.startsWith("/api/msg/")) return await handleMsg(path.slice(9), request, env);
+    if (path.startsWith("/api/msg/")) return await handleMsg(path.slice(9), request, env, ctx);
     return jsonRes({ error: "Adresse inconnue." }, 404);
   } catch (e) {
     return jsonRes({ error: "Erreur du serveur.", debug: e && e.message ? String(e.message).slice(0, 200) : "" }, 500);
@@ -1348,7 +1446,7 @@ async function handleRequest(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(request.url);
 
-    if (url.pathname.startsWith("/api/")) return handleApi(url.pathname, request, env);
+    if (url.pathname.startsWith("/api/")) return handleApi(url.pathname, request, env, ctx);
 
     if (url.searchParams.has("translate")) {
       return translateSummary(url.searchParams.get("translate"), url.searchParams.get("lang") || "fr", env, ctx);
