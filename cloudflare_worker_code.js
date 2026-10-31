@@ -14,9 +14,10 @@ const PLATFORM_NAMES = {
 const MONTH_PLATFORMS = [6, 167, 169, 508];
 const FILTERS = { pc: 6, ps5: 167, xbox: 169, switch2: 508 };
 
+// En-têtes CORS : ajoutés à TOUTES les réponses (succès comme erreurs)
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   // « Authorization » est indispensable : la sauvegarde envoie le jeton de connexion dans cet en-tête
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Max-Age": "86400",
@@ -729,10 +730,22 @@ const USERNAME_RE = /^[A-Za-z0-9_-]{3,20}$/;
 // Le Worker n'accepte pas plus de 100 000 tours. 50 000 reste léger pour le plan gratuit ;
 // si Cloudflare affiche « exceeded CPU » à la connexion, passe à 25 000 (ou au plan payant et 100 000).
 const PBKDF2_ITERATIONS = 50000;
-// Plafond maximal sécurisé par profil utilisateur (1 Mo)
+// Plafond maximal sécurisé par profil utilisateur (1 Mo). Un profil réel pèse ~15-20 Ko.
 const MAX_DATA_BYTES = 1000000;
+// Version du format de sauvegarde : l'augmenter le jour où la structure change (migration douce)
+const SCHEMA_VERSION = 1;
+// Délai minimal entre deux sauvegardes d'un même joueur (anti-boucle côté client), en secondes
+const SAVE_MIN_GAP = 3;
 const enc = new TextEncoder();
-const jsonRes = (obj, status = 200) => Response.json(obj, { status, headers: CORS });
+const byteLen = (str) => enc.encode(str).length;
+// Réponse JSON + CORS. On ajoute « ok » (vrai/faux) sans toucher aux champs existants lus par l'app.
+const jsonRes = (obj, status = 200) => Response.json(
+  obj && typeof obj === "object" && !Array.isArray(obj) && !("ok" in obj) ? { ok: status < 400, ...obj } : obj,
+  { status, headers: CORS }
+);
+// Erreur de base D1 (panne, surcharge…) → 503 explicite : l'app réessaiera plus tard
+const dbUnavailable = () => jsonRes({ ok: false, error: "DATABASE_UNAVAILABLE" }, 503);
+const isDbError = (e) => /D1_|SQLITE|database|storage operation|Network connection lost/i.test(String((e && e.message) || e));
 const nowSec = () => Math.floor(Date.now() / 1000);
 
 const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
@@ -766,21 +779,33 @@ function cleanData(d) {
     if (Number.isFinite(d.userCoins) && d.userCoins >= 0) out.userCoins = Math.floor(d.userCoins);
 
     // 1. Vitrine de jaquettes : jusqu'à 3 000 cartes, stockées au format ultra-compact
+    //    On garde aussi « category » (étagère de la vitrine) et « date » : sans eux, une collection
+    //    rechargée sur un autre appareil finissait entièrement rangée dans « Standard ».
     if (Array.isArray(d.myCollection)) {
+      const seen = new Set();
       out.myCollection = d.myCollection.slice(0, 3000).map((c) => {
         if (!c || typeof c !== "object") return null;
+        const id = Number(c.id);
+        const name = String(c.name || "").trim().slice(0, 80);
+        // carte orpheline / corrompue (sans numéro ou sans nom) ou doublon : ignorée
+        if (!Number.isInteger(id) || id <= 0 || !name || seen.has(id)) return null;
+        seen.add(id);
 
         // Si c'est une URL complète, on extrait juste le hash de l'image (ex: "co49x1")
         let imgCode = String(c.cover || "");
         const match = imgCode.match(/([a-zA-Z0-9_]+)\.(jpg|png|webp)/);
         if (match) imgCode = match[1];
+        if (!/^[a-zA-Z0-9_]{0,35}$/.test(imgCode)) imgCode = "";
 
-        return {
-          id: Number(c.id) || 0,
-          name: String(c.name || "").slice(0, 60),
-          cover: imgCode.slice(0, 35),
-          rarity: String(c.rarity || "common").slice(0, 15)
+        const card = {
+          id,
+          name,
+          cover: imgCode,
+          rarity: /^(common|rare|epic|legendary)$/.test(c.rarity) ? c.rarity : "common",
         };
+        if (/^(standard|retro|supreme_retro)$/.test(c.category)) card.category = c.category;
+        if (typeof c.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(c.date)) card.date = c.date;
+        return card;
       }).filter(Boolean);
     }
 
@@ -789,9 +814,24 @@ function cleanData(d) {
       out.favorites = d.favorites.filter((x) => Number.isInteger(x)).slice(0, 500);
     }
     
-    // 3. Historique des scores : les 50 plus récents
+    // 3. Historique des scores. L'app range les plus récents EN TÊTE (unshift) : l'ancien
+    //    « slice(-50) » gardait donc les 50 plus VIEUX. On garde les 60 plus récents + le record
+    //    de chaque borne (pour ne jamais perdre un meilleur score), entrées nettoyées.
     if (Array.isArray(d.gameScores)) {
-      out.gameScores = d.gameScores.slice(-50);
+      const clean = d.gameScores.slice(0, 2000).map((e) => {
+        if (!e || typeof e !== "object" || typeof e.game !== "string" || !e.game.trim()) return null;
+        const o = { game: e.game.slice(0, 40), score: String(e.score == null ? "" : e.score).slice(0, 24) };
+        if (Number.isFinite(+e.value) && +e.value >= 0) o.value = Math.min(99999999, Math.floor(+e.value));
+        if (typeof e.date === "string") o.date = e.date.slice(0, 24);
+        if (Number.isFinite(+e.ts)) o.ts = Math.floor(+e.ts);
+        return o;
+      }).filter(Boolean);
+      const val = (e) => (Number.isFinite(e.value) ? e.value : parseInt(String(e.score).replace(/\D/g, ""), 10) || 0);
+      const keep = new Set(clean.slice(0, 60));
+      const bestOf = {};
+      clean.forEach((e) => { const k = e.game.toLowerCase(); if (!bestOf[k] || val(e) > val(bestOf[k])) bestOf[k] = e; });
+      Object.values(bestOf).forEach((e) => keep.add(e));
+      out.gameScores = clean.filter((e) => keep.has(e)).slice(0, 100);
     }
     
     if (typeof d.theme === "string") out.theme = d.theme.slice(0, 30);
@@ -835,7 +875,7 @@ function cleanData(d) {
     // 6. Easter eggs trouvés
     if (d.eggs && typeof d.eggs === "object" && !Array.isArray(d.eggs)) {
       const found = {};
-      if (d.eggs.found && typeof d.eggs === "object") for (const [k, v] of Object.entries(d.eggs.found).slice(0, 80)) if (/^[a-z0-9_-]{1,25}$/i.test(k)) found[k] = String(v).slice(0, 10);
+      if (d.eggs.found && typeof d.eggs.found === "object" && !Array.isArray(d.eggs.found)) for (const [k, v] of Object.entries(d.eggs.found).slice(0, 80)) if (/^[a-z0-9_-]{1,25}$/i.test(k)) found[k] = String(v).slice(0, 10);
       out.eggs = { found, badge: typeof d.eggs.badge === "string" ? d.eggs.badge.slice(0, 10) : "", badge2: typeof d.eggs.badge2 === "string" ? d.eggs.badge2.slice(0, 10) : "" };
     }
 
@@ -844,14 +884,18 @@ function cleanData(d) {
       const gs = {};
       for (const [k, v] of Object.entries(d.gameSaves).slice(0, 50)) {
         if (/^[a-z0-9_-]{1,30}$/i.test(k) && v && typeof v === "object") {
-          const str = JSON.stringify(v);
-          if (str.length < 12000) gs[k] = v; // autorise jusqu'à 12 Ko par état de jeu
+          let str = "";
+          try { str = JSON.stringify(v); } catch (e) { continue; }
+          if (byteLen(str) < 12000) gs[k] = JSON.parse(str); // jusqu'à 12 Ko par état de jeu (copie propre)
         }
       }
       out.gameSaves = gs;
     }
   }
-  return JSON.stringify(out).length <= MAX_DATA_BYTES ? out : null;
+  // Version du format : permet de migrer plus tard sans casser les anciennes sauvegardes
+  out.schema_version = SCHEMA_VERSION;
+  // Mesure en OCTETS (un accent ou un emoji compte pour 2 à 4 octets, pas 1)
+  return byteLen(JSON.stringify(out)) <= MAX_DATA_BYTES ? out : null;
 }
 
 // Durée de vie d'une connexion : 90 jours, puis il faut se reconnecter
@@ -958,23 +1002,53 @@ async function handleAuth(request, env) {
   return jsonRes({ status: "connected", token: await newSession(env, user.id), username: user.display_name, data: saved });
 }
 
+// /api/save — ordre des contrôles : jeton → taille brute (413) → JSON → session D1 → délai 3 s (429) → écriture
 async function handleSave(request, env) {
   const auth = request.headers.get("Authorization") || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
   if (!/^[0-9a-f]{64}$/.test(token)) return jsonRes({ error: "Non connecté." }, 401);
-  const tokenHash = await sha256Hex(token);
-  const sess = await env.DB.prepare("SELECT user_id, created_at FROM sessions WHERE token_hash = ?").bind(tokenHash).first();
-  if (!sess) return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
-  if (nowSec() - sess.created_at > SESSION_MAX_AGE) {
-    await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(tokenHash).run();
-    return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
-  }
+
+  // 1) Taille brute AVANT tout traitement : d'abord l'en-tête annoncé, puis les octets réellement reçus
+  const tooBig = () => jsonRes({ error: "Sauvegarde trop volumineuse (1 Mo maximum).", code: "PAYLOAD_TOO_LARGE" }, 413);
+  const announced = Number(request.headers.get("Content-Length") || 0);
+  if (announced > MAX_DATA_BYTES) return tooBig();
+  let raw;
+  try { raw = await request.arrayBuffer(); } catch (e) { return jsonRes({ error: "Requête invalide." }, 400); }
+  if (raw.byteLength > MAX_DATA_BYTES) return tooBig();
+
+  // 2) Lecture JSON protégée
   let body;
-  try { body = await request.json(); } catch (e) { return jsonRes({ error: "Requête invalide." }, 400); }
+  try { body = JSON.parse(new TextDecoder().decode(raw)); } catch (e) { return jsonRes({ error: "Requête invalide (JSON illisible)." }, 400); }
+  if (!body || typeof body !== "object") return jsonRes({ error: "Requête invalide." }, 400);
   const data = cleanData(body.data);
-  if (data === null) return jsonRes({ error: "Sauvegarde trop volumineuse." }, 400);
-  await env.DB.prepare("UPDATE users SET data = ?, updated_at = ? WHERE id = ?").bind(JSON.stringify(data), nowSec(), sess.user_id).run();
-  return jsonRes({ status: "saved" });
+  if (data === null) return tooBig();
+  const json = JSON.stringify(data);
+
+  try {
+    // 3) Session (requête préparée + bind)
+    const tokenHash = await sha256Hex(token);
+    const sess = await env.DB.prepare("SELECT user_id, created_at FROM sessions WHERE token_hash = ?").bind(tokenHash).first();
+    if (!sess) return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
+    if (nowSec() - sess.created_at > SESSION_MAX_AGE) {
+      await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(tokenHash).run();
+      return jsonRes({ error: "Session expirée. Reconnecte-toi." }, 401);
+    }
+
+    // 4) Écriture + anti-spam en UNE seule requête atomique : la ligne n'est mise à jour que si
+    //    la dernière sauvegarde date d'au moins 3 s. Deux requêtes simultanées ne peuvent pas passer.
+    const t = nowSec();
+    const res = await env.DB.prepare("UPDATE users SET data = ?, updated_at = ? WHERE id = ? AND updated_at <= ?")
+      .bind(json, t, sess.user_id, t - SAVE_MIN_GAP).run();
+    if (!res.meta || !res.meta.changes) {
+      return new Response(JSON.stringify({ ok: false, error: "Trop de sauvegardes rapprochées. Réessaie dans quelques secondes.", code: "TOO_MANY_REQUESTS", retryAfter: SAVE_MIN_GAP }), {
+        status: 429, headers: { ...CORS, "Content-Type": "application/json", "Retry-After": String(SAVE_MIN_GAP) },
+      });
+    }
+    return jsonRes({ status: "saved", bytes: byteLen(json), schema_version: SCHEMA_VERSION });
+  } catch (e) {
+    // D1 indisponible / surchargée : 503 explicite, la sauvegarde reste en attente côté app
+    return dbUnavailable();
+  }
 }
 
 async function handleRecover(request, env) {
@@ -1450,6 +1524,7 @@ async function handleApi(path, request, env, ctx) {
     if (path.startsWith("/api/scores/")) return await handleScores(path.slice(12), request, env, ctx);
     return jsonRes({ error: "Adresse inconnue." }, 404);
   } catch (e) {
+    if (isDbError(e)) return dbUnavailable();
     return jsonRes({ error: "Erreur du serveur.", debug: e && e.message ? String(e.message).slice(0, 200) : "" }, 500);
   }
 }
@@ -1614,7 +1689,8 @@ export default {
 
 async function handleRequest(request, env, ctx) {
   {
-    if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
+    // Pré-vérification CORS du navigateur : réponse immédiate, sans corps
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     const url = new URL(request.url);
 
     if (url.pathname.startsWith("/api/")) return handleApi(url.pathname, request, env, ctx);
