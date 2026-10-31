@@ -3,9 +3,6 @@
 <head>
 <meta charset="utf-8">
 <script>
-   <link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" type="image/png" href="/favicon.png" sizes="192x192">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 /* Garde-fou : si un mini-jeu est introuvable sur le serveur, l'hébergeur renvoie cette page
    (index.html) DANS la borne. Sans ce garde-fou, une 2e copie de l'app démarrait dans le jeu
    (écran d'intro) et réécrivait les réglages (thème Game Boy au retour…). On s'arrête net. */
@@ -88,6 +85,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cartridge">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="icon-192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="icon-512.png" sizes="512x512">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
 <script src="config.js"></script>
