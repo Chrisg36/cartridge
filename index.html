@@ -6484,6 +6484,14 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
    ===================================================================== */
 @media (max-width: 759px) {
   .cartridge-modal-overlay.cx-msg-ov { position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); background: var(--bg); animation: none; }
+  /* La page derrière (en-têtes flous, barre du bas, particules…) est cachée tant que la
+     messagerie est ouverte : sur iPhone, les calques en backdrop-filter pouvaient « passer
+     au travers » et flouter le haut de la conversation. */
+  body.cx-msg-open > *:not(.cx-msg-ov):not(.cx-msg-banner):not(.cart-toast) { visibility: hidden !important; }
+  body.cx-msg-open .sticky-header-container, body.cx-msg-open .bottom-nav { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .cx-msg-ov, .cx-msg-ov * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .cx-msg-ov .cx-msg-head *, .cx-msg-ov .cx-msg-peer .cx-av { filter: none !important; opacity: 1; }
+  .cx-msg-ov .cx-msg-app { isolation: isolate; transform: translateZ(0); }
   .cx-msg-app { height: 100% !important; }
 
   /* En-tête compact : barre de statut + 50 px, pas plus */
@@ -15711,6 +15719,7 @@ const CXMsg = {
   // appelé quand la fenêtre disparaît (croix, Échap, bouton retour d'Android…)
   closed() {
     if (this.vvOff) { this.vvOff(); this.vvOff = null; }
+    document.body.classList.remove("cx-msg-open");
     this.ov = null; this.active = null;
     unlockBackground();
     document.removeEventListener("keydown", this.onKey);
@@ -15803,6 +15812,7 @@ const CXMsg = {
     document.addEventListener("keydown", this.onKey);
     document.body.append(ov);
     lockBackground();
+    document.body.classList.add("cx-msg-open");
     // Téléphone : la fenêtre prend la hauteur VISIBLE réelle (iOS se trompe avec 100dvh
     // en mode app plein écran) et se recale au-dessus du clavier quand il s'ouvre.
     const vv = window.visualViewport;
