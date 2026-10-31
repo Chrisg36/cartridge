@@ -6302,6 +6302,18 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
 .cx-msg-ib .ic { width: 20px; height: 20px; }
 .cx-msg-ib[hidden] { display: none; }
 .cx-msg-block.is-on { color: #ff5c7a; }
+.cx-msg-tabs { display: flex; gap: 6px; padding: 8px 10px 4px; }
+.cx-msg-tabs[hidden], .cx-msg-search[hidden] { display: none; }
+.cx-msg-tabs button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; height: 36px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.12)); background: transparent; color: var(--mut); font: 800 14px var(--font, sans-serif); cursor: pointer; }
+.cx-msg-tabs button .ic { width: 16px; height: 16px; }
+.cx-msg-tabs button.is-on { background: color-mix(in srgb, var(--acc) 18%, transparent); color: var(--txt); border-color: color-mix(in srgb, var(--acc) 55%, transparent); }
+.cx-msg-search { padding: 6px 10px 2px; }
+.cx-msg-search input { width: 100%; height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: var(--card); color: var(--txt); font: 700 15px var(--font, sans-serif); }
+.cx-conv-go { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--acc); }
+.cx-conv-go .ic { width: 17px; height: 17px; }
+.cx-msg-tipbtn { display: flex; align-items: center; gap: 10px; width: calc(100% - 16px); border: 1px dashed color-mix(in srgb, var(--acc) 50%, transparent); text-align: left; cursor: pointer; font-family: inherit; }
+.cx-msg-tipbtn .ic { width: 22px; height: 22px; flex-shrink: 0; color: var(--acc); }
+.cx-msg-empty small { opacity: .7; }
 .cx-msg-new { display: flex; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line, rgba(255,255,255,.1)); }
 .cx-msg-new[hidden] { display: none; }
 .cx-msg-new input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: var(--card); color: var(--txt); font: 700 15px var(--font, sans-serif); }
@@ -14599,7 +14611,7 @@ Object.assign(ICONS, {
 });
 
 const CXMsg = {
-  me: null, last: 0, synced: false, convs: [], byId: {}, msgs: {}, more: {}, active: null, ov: null, blocked: [], online: 0,
+  me: null, last: 0, synced: false, err: null, tab: "chats", players: null, playersAt: 0, convs: [], byId: {}, msgs: {}, more: {}, active: null, ov: null, blocked: [], online: 0,
   timer: null, convAt: 0, hereAt: 0, busy: false, readTimer: null, net: true,
 
   ready() { return cloudReady() && isLoggedIn(); },
@@ -14608,7 +14620,7 @@ const CXMsg = {
 
   // ---------- Boucle de synchronisation ----------
   schedule(ms) { clearTimeout(this.timer); this.timer = setTimeout(() => this.tick(), ms); },
-  interval() { if (document.hidden) return 45000; return this.ov ? 2000 : 15000; },
+  interval() { if (document.hidden) return 45000; if (this.err && this.ov) return 4000; return this.ov ? 1500 : 15000; },
   async tick() {
     if (!this.ready()) { if (this.me) this.reset(); this.schedule(10000); return; }
     if (this.busy) { this.schedule(800); return; }
@@ -14616,8 +14628,9 @@ const CXMsg = {
     try {
       const here = !document.hidden && Date.now() - this.hereAt > 30000;
       const r = await this.api("sync", { since: this.synced ? this.last : -1, here: here ? 1 : 0 });
-      if (r.status === 401) { this.reset(); this.renderAll(); }
+      if (r.status === 401) { this.reset(); this.err = { status: 401 }; this.renderAll(); }
       else if (r.ok) {
+        const hadErr = !!this.err; this.err = null;
         if (here) this.hereAt = Date.now();
         this.me = r.json.me;
         if (!this.synced) { this.last = r.json.last || 0; this.synced = true; await this.loadConvs(); }
@@ -14627,8 +14640,10 @@ const CXMsg = {
           if (this.ov && Date.now() - this.convAt > 20000) await this.loadConvs();
         }
         this.setNet(true);
-      } else this.setNet(false);
-    } catch (e) { this.setNet(false); }
+        if (hadErr) this.renderAll();
+      } else { this.err = { status: r.status, msg: r.json && r.json.error, debug: r.json && r.json.debug }; this.setNet(false); if (!this.me) this.renderList(); }
+    } catch (e) { this.err = { status: 0 }; this.setNet(false); if (!this.me) this.renderList(); }
+    if (this.ov && this.tab === "players" && this.me && Date.now() - this.playersAt > 20000) this.loadPlayers();
     this.busy = false;
     this.schedule(this.interval());
   },
@@ -14802,6 +14817,8 @@ const CXMsg = {
             <button type="button" class="cx-msg-ib cx-msg-newbtn" title="Nouveau message">${icon("plus")}</button>
             <button type="button" class="cx-msg-ib cx-msg-x" title="Fermer">${icon("x")}</button>
           </header>
+          <div class="cx-msg-tabs" hidden><button type="button" data-tab="chats" class="is-on">${icon("chat")}Discussions</button><button type="button" data-tab="players">${icon("users")}Joueurs</button></div>
+          <div class="cx-msg-search" hidden><input type="search" placeholder="Chercher un joueur…" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
           <form class="cx-msg-new" hidden>
             <input type="text" maxlength="20" placeholder="Pseudo exact du joueur" autocomplete="off" autocapitalize="off" spellcheck="false">
             <button type="submit" class="cta">Écrire</button>
@@ -14830,7 +14847,10 @@ const CXMsg = {
     $o(".cx-msg-back").addEventListener("click", () => { this.active = null; ov.querySelector(".cx-msg-app").classList.remove("is-chat"); this.renderList(); });
     $o(".cx-msg-block").addEventListener("click", () => this.toggleBlock());
     const newForm = $o(".cx-msg-new");
-    $o(".cx-msg-newbtn").addEventListener("click", () => { newForm.hidden = !newForm.hidden; if (!newForm.hidden) newForm.querySelector("input").focus(); });
+    $o(".cx-msg-newbtn").addEventListener("click", () => { this.setTab("players"); if (!matchMedia("(pointer: coarse)").matches) $o(".cx-msg-search input").focus(); });
+    ov.querySelectorAll(".cx-msg-tabs button").forEach((b) => b.addEventListener("click", () => this.setTab(b.dataset.tab)));
+    let sq = null;
+    $o(".cx-msg-search input").addEventListener("input", () => { clearTimeout(sq); sq = setTimeout(() => this.loadPlayers(), 250); });
     newForm.addEventListener("submit", (e) => { e.preventDefault(); const v = newForm.querySelector("input").value; this.startDm(v); newForm.querySelector("input").value = ""; newForm.hidden = true; });
     // composition : Entrée envoie sur ordinateur, Maj+Entrée = nouvelle ligne
     const ta = $o(".cx-msg-compose textarea"), count = $o(".cx-msg-count");
@@ -14878,6 +14898,47 @@ const CXMsg = {
     mo.observe(document.body, { childList: true });
   },
 
+  setTab(tab) {
+    this.tab = tab;
+    if (!this.ov) return;
+    this.ov.querySelectorAll(".cx-msg-tabs button").forEach((b) => b.classList.toggle("is-on", b.dataset.tab === tab));
+    this.renderList();
+    if (tab === "players") this.loadPlayers();
+  },
+  async loadPlayers() {
+    if (!this.ov) return;
+    const q = this.ov.querySelector(".cx-msg-search input").value;
+    try {
+      const r = await this.api("players", { q });
+      if (!r.ok) return;
+      this.players = r.json.players || []; this.playersNow = r.json.now || Math.floor(Date.now() / 1000); this.playersAt = Date.now();
+      if (this.tab === "players") this.renderPlayers();
+    } catch (e) {}
+  },
+  seenLabel(p) {
+    if (p.online) return '<i class="cx-on-txt"></i>En ligne';
+    if (!p.seen) return "Pas encore passé sur la messagerie";
+    const d = Math.max(0, (this.playersNow || Date.now() / 1000) - p.seen);
+    return d < 3600 ? `Vu il y a ${Math.max(1, Math.round(d / 60))} min` : d < 86400 ? `Vu il y a ${Math.round(d / 3600)} h` : `Vu il y a ${Math.round(d / 86400)} j`;
+  },
+  renderPlayers() {
+    const box = this.ov.querySelector(".cx-msg-list");
+    if (!this.players) { box.innerHTML = `<div class="cx-msg-empty">${icon("loader")}<p>Chargement des joueurs…</p></div>`; return; }
+    box.replaceChildren();
+    if (!this.players.length) { box.innerHTML = `<div class="cx-msg-empty">${icon("users")}<p>Aucun joueur trouvé. Tes proches doivent d'abord créer leur compte dans Profil.</p></div>`; return; }
+    const on = this.players.filter((p) => p.online).length;
+    box.append(el("p", "cx-msg-tip", on ? `${on} joueur${on > 1 ? "s" : ""} en ligne en ce moment. Touche un nom pour lui écrire en privé.` : "Touche un nom pour lui écrire en privé."));
+    this.players.forEach((p) => {
+      const b = el("button", "cx-conv");
+      b.type = "button";
+      b.innerHTML = `<span class="cx-conv-av">${this.avatarHTML(p.name, p.av)}${p.online ? '<i class="cx-on"></i>' : ""}</span>
+        <span class="cx-conv-txt"><b>${esc(p.name)}</b><small>${this.seenLabel(p)}</small></span>
+        <span class="cx-conv-meta"><span class="cx-conv-go">${icon("chat")}</span></span>`;
+      b.addEventListener("click", async () => { await this.startDm(p.name); this.setTab("chats"); });
+      box.append(b);
+    });
+  },
+
   findMsg(id) { return (this.msgs[this.active] || []).find((m) => String(m.id) === String(id)); },
 
   avatarHTML(name, av) {
@@ -14911,7 +14972,23 @@ const CXMsg = {
       box.querySelector(".cx-msg-login").addEventListener("click", () => { this.close(); if (typeof openSettingsMainPage === "function") openSettingsMainPage(); });
       return;
     }
-    if (!this.me) { box.innerHTML = `<div class="cx-msg-empty">${icon("loader")}<p>Connexion à la messagerie…</p></div>`; return; }
+    this.ov.querySelector(".cx-msg-tabs").hidden = !this.me;
+    this.ov.querySelector(".cx-msg-search").hidden = !this.me || this.tab !== "players";
+    if (!this.me) {
+      const e = this.err;
+      if (!e) { box.innerHTML = `<div class="cx-msg-empty">${icon("loader")}<p>Connexion à la messagerie…</p></div>`; return; }
+      const why = e.status === 401 ? ["Session expirée", "Ton compte doit se reconnecter sur cet appareil : va dans Profil, déconnecte-toi puis reconnecte-toi avec ton pseudo et ton mot de passe.", "Aller au Profil"]
+        : e.status === 404 || e.status === 405 ? ["Serveur pas encore à jour", "Le Worker Cloudflare ne connaît pas encore la messagerie. Colle le nouveau code du Worker puis appuie bien sur « Deploy ».", "Réessayer"]
+        : e.status === 0 ? ["Pas de connexion", "Impossible de joindre le serveur. Vérifie ta connexion internet.", "Réessayer"]
+        : ["Erreur du serveur", esc(e.msg || "Erreur " + e.status) + (e.debug ? `<br><small>${esc(e.debug)}</small>` : ""), "Réessayer"];
+      box.innerHTML = `<div class="cx-msg-empty">${icon("xCircle")}<b>${why[0]}</b><p>${why[1]}</p><button type="button" class="cta cx-msg-retry">${why[2]}</button></div>`;
+      box.querySelector(".cx-msg-retry").addEventListener("click", () => {
+        if (e.status === 401) { this.close(); if (typeof openSettingsMainPage === "function") openSettingsMainPage(); return; }
+        this.err = null; this.renderList(); this.schedule(50);
+      });
+      return;
+    }
+    if (this.tab === "players") return this.renderPlayers();
     box.replaceChildren();
     this.convs.forEach((c) => {
       const room = c.kind === "room";
@@ -14926,7 +15003,12 @@ const CXMsg = {
       b.addEventListener("click", () => this.openConv(c.id));
       box.append(b);
     });
-    if (this.convs.length <= 1) box.append(el("p", "cx-msg-tip", "Pour écrire en privé, appuie sur + et tape le pseudo exact de la personne (ou touche son nom dans le salon)."));
+    if (this.convs.length <= 1) {
+      const tip = el("button", "cx-msg-tip cx-msg-tipbtn"); tip.type = "button";
+      tip.innerHTML = `${icon("users")}<span>Pour écrire en privé à un proche, ouvre l'onglet <b>Joueurs</b> et touche son nom.</span>`;
+      tip.addEventListener("click", () => this.setTab("players"));
+      box.append(tip);
+    }
   },
 
   renderPeer() {
