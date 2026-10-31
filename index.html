@@ -6302,6 +6302,22 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
 .cx-msg-ib .ic { width: 20px; height: 20px; }
 .cx-msg-ib[hidden] { display: none; }
 .cx-msg-block.is-on { color: #ff5c7a; }
+.cx-push { display: flex; flex-direction: column; gap: 6px; margin: 4px 4px 8px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 12%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); }
+.cx-push b { font-size: 14.5px; }
+.cx-push small { font-size: 12.5px; line-height: 1.4; font-weight: 600; color: var(--mut); }
+.cx-push .cta { min-height: 38px; font-size: 13px; }
+.cx-push-on.cta, .cx-push .cx-push-on { margin-top: 2px; }
+.cx-push.cx-push-on { flex-direction: row; align-items: center; padding: 8px 10px; background: rgba(53, 208, 127, .1); border-color: rgba(53, 208, 127, .35); }
+.cx-push.cx-push-on span { flex: 1; font-size: 13px; font-weight: 800; }
+.cx-push.cx-push-on button { padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: var(--card); color: var(--txt); font: 800 12px var(--font, sans-serif); cursor: pointer; }
+.cx-push.cx-push-unsupported { background: rgba(255,255,255,.04); border-color: var(--line, rgba(255,255,255,.1)); }
+.cx-msg-banner { position: fixed; left: 50%; top: max(10px, env(safe-area-inset-top)); z-index: 99990; display: flex; align-items: center; gap: 10px; width: min(420px, calc(100% - 20px)); padding: 10px 12px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--acc) 45%, transparent); background: color-mix(in srgb, var(--card) 92%, transparent); color: var(--txt); text-align: left; font-family: var(--font, sans-serif); box-shadow: 0 14px 40px rgba(0,0,0,.45); backdrop-filter: blur(10px); transform: translate(-50%, -140%); transition: transform .35s cubic-bezier(.2,.9,.3,1.2); cursor: pointer; }
+.cx-msg-banner.on { transform: translate(-50%, 0); }
+.cx-msg-banner .cx-av { width: 40px; height: 40px; flex: 0 0 40px; }
+.cx-msg-banner > span:not(.cx-av) { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cx-msg-banner b { font-size: 15px; font-weight: 800; }
+.cx-msg-banner small { font-size: 13.5px; font-weight: 600; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-msg-banner i { color: var(--acc); } .cx-msg-banner i .ic { width: 20px; height: 20px; }
 .cx-msg-tabs { display: flex; gap: 6px; padding: 8px 10px 4px; }
 .cx-msg-tabs[hidden], .cx-msg-search[hidden] { display: none; }
 .cx-msg-tabs button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; height: 36px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.12)); background: transparent; color: var(--mut); font: 800 14px var(--font, sans-serif); cursor: pointer; }
@@ -14620,13 +14636,13 @@ const CXMsg = {
 
   // ---------- Boucle de synchronisation ----------
   schedule(ms) { clearTimeout(this.timer); this.timer = setTimeout(() => this.tick(), ms); },
-  interval() { if (document.hidden) return 45000; if (this.err && this.ov) return 4000; return this.ov ? 1500 : 15000; },
+  interval() { if (document.hidden) return 45000; if (this.err && this.ov) return 4000; return this.ov ? 1500 : 8000; },
   async tick() {
     if (!this.ready()) { if (this.me) this.reset(); this.schedule(10000); return; }
     if (this.busy) { this.schedule(800); return; }
     this.busy = true;
     try {
-      const here = !document.hidden && Date.now() - this.hereAt > 30000;
+      const here = !document.hidden && Date.now() - this.hereAt > 15000;
       const r = await this.api("sync", { since: this.synced ? this.last : -1, here: here ? 1 : 0 });
       if (r.status === 401) { this.reset(); this.err = { status: 401 }; this.renderAll(); }
       else if (r.ok) {
@@ -14697,16 +14713,28 @@ const CXMsg = {
     if (this.ov && this.active && list.some((m) => m.conv === this.active)) { this.renderThread(true); this.markRead(); }
     if (notify && notify.c.kind === "dm") {
       const { m } = notify;
-      showToast(`<b>${esc(m.name)}</b> : ${esc(String(m.body || "").slice(0, 60))}`, "chat");
+      this.banner(m);
       try { if (soundEnabled) CXSfx.select(); } catch (e) {}
       try { navigator.vibrate && navigator.vibrate(30); } catch (e) {}
     }
   },
 
+  // Bandeau « nouveau message » en haut de l'écran : on le touche pour ouvrir la conversation
+  banner(m) {
+    document.querySelectorAll(".cx-msg-banner").forEach((n) => n.remove());
+    const b = el("button", "cx-msg-banner"); b.type = "button";
+    b.innerHTML = `${this.avatarHTML(m.name, m.av)}<span><b>${esc(m.name)}</b><small>${esc(String(m.body || "").slice(0, 90))}</small></span><i>${icon("chat")}</i>`;
+    b.addEventListener("click", () => { b.remove(); this.open(m.conv); });
+    document.body.append(b);
+    requestAnimationFrame(() => b.classList.add("on"));
+    setTimeout(() => { b.classList.remove("on"); setTimeout(() => b.remove(), 400); }, 6000);
+  },
   totalUnread() { return this.convs.reduce((n, c) => n + (c.unread || 0), 0); },
   updateBadge() {
     const n = this.totalUnread();
     document.querySelectorAll(".cx-msg-dot").forEach((d) => { d.textContent = n > 99 ? "99+" : String(n); d.hidden = !n; });
+    // pastille rouge sur l'icône de l'app (iPhone/Android, app installée)
+    try { if (navigator.setAppBadge) { if (n) navigator.setAppBadge(n); else navigator.clearAppBadge(); } } catch (e) {}
   },
   markRead() {
     clearTimeout(this.readTimer);
@@ -14990,6 +15018,7 @@ const CXMsg = {
     }
     if (this.tab === "players") return this.renderPlayers();
     box.replaceChildren();
+    box.append(CXPush.card());
     this.convs.forEach((c) => {
       const room = c.kind === "room";
       const b = el("button", "cx-conv" + (c.id === this.active ? " is-active" : "") + (c.unread ? " is-unread" : ""));
@@ -15072,6 +15101,78 @@ const CXMsg = {
   },
 };
 
+// ---------------------------------------------------------------------
+// 26.1 NOTIFICATIONS — même app fermée (service worker sw.js + Web Push)
+//   iPhone : il faut iOS 16.4+ et Cartridge ajouté à l'écran d'accueil.
+// ---------------------------------------------------------------------
+const CXPush = {
+  key: null,
+  supported() { return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; },
+  standalone() { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; },
+  isOn() { try { return localStorage.getItem("cartridge_push") === "1" && Notification.permission === "granted"; } catch (e) { return false; } },
+  state() {
+    if (!this.supported()) return isIOS && !this.standalone() ? "install" : "unsupported";
+    if (Notification.permission === "denied") return "denied";
+    return this.isOn() ? "on" : "off";
+  },
+  b64(str) { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; return Uint8Array.from(atob(str), (c) => c.charCodeAt(0)); },
+  async prefetchKey() { if (this.key || !CXMsg.ready()) return; try { const r = await CXMsg.api("pushkey"); if (r.ok) this.key = r.json.key; } catch (e) {} },
+  async subscribe() {
+    const reg = await navigator.serviceWorker.register("sw.js");
+    await navigator.serviceWorker.ready;
+    if (!this.key) await this.prefetchKey();
+    if (!this.key) throw new Error("Serveur injoignable");
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: this.b64(this.key) });
+    const r = await CXMsg.api("push", { sub: sub.toJSON() });
+    if (!r.ok) throw new Error(r.json.error || "Erreur " + r.status);
+    try { localStorage.setItem("cartridge_push", "1"); } catch (e) {}
+  },
+  // à appeler pendant un toucher (obligatoire sur iPhone)
+  async enable() {
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") { showToast("Notifications refusées", "xCircle"); CXMsg.renderList(); return; }
+      await this.subscribe();
+      showToast("Notifications activées 🔔", "check");
+    } catch (e) { showToast("Activation impossible : " + esc(e.message || e), "xCircle"); }
+    CXMsg.renderList();
+  },
+  async disable() {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      const sub = reg && (await reg.pushManager.getSubscription());
+      if (sub) { await CXMsg.api("unpush", { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); }
+    } catch (e) {}
+    try { localStorage.removeItem("cartridge_push"); } catch (e) {}
+    showToast("Notifications désactivées", "check");
+    CXMsg.renderList();
+  },
+  async test() {
+    const r = await CXMsg.api("pushtest").catch(() => null);
+    showToast(r && r.ok && r.json.sent ? "Notification de test envoyée… 📱" : "Aucun appareil abonné", r && r.ok && r.json.sent ? "check" : "xCircle");
+  },
+  // au démarrage : on renvoie l'abonnement au serveur (il peut changer)
+  async refresh() { if (this.isOn() && CXMsg.ready()) { try { await this.subscribe(); } catch (e) {} } },
+  card() {
+    const st = this.state(), c = el("div", "cx-push cx-push-" + st);
+    if (st === "on") {
+      c.innerHTML = `<span>🔔 Notifications activées</span><button type="button" class="cx-push-test">Tester</button><button type="button" class="cx-push-off">Couper</button>`;
+      c.querySelector(".cx-push-test").addEventListener("click", () => this.test());
+      c.querySelector(".cx-push-off").addEventListener("click", () => this.disable());
+    } else if (st === "off") {
+      c.innerHTML = `<b>🔔 Être prévenu des nouveaux messages</b><small>Une notification sur ton téléphone quand quelqu'un t'écrit, même app fermée.</small><button type="button" class="cta cx-push-on">Activer les notifications</button>`;
+      c.querySelector(".cx-push-on").addEventListener("click", () => this.enable());
+      this.prefetchKey();
+    } else if (st === "install") {
+      c.innerHTML = `<b>🔔 Notifications sur iPhone</b><small>Ouvre Cartridge depuis son icône sur l'écran d'accueil (dans Safari : Partager › « Sur l'écran d'accueil »), puis reviens ici pour les activer.</small>`;
+    } else if (st === "denied") {
+      c.innerHTML = `<b>🔕 Notifications bloquées</b><small>Autorise-les dans Réglages › Notifications › Cartridge, puis rouvre l'app.</small>`;
+    } else c.innerHTML = `<small>Ce navigateur ne gère pas les notifications. Le badge rouge te préviendra dans l'app.</small>`;
+    return c;
+  },
+};
+
 // Bulle « Messagerie » dans chaque en-tête (à gauche du pseudo) + barre latérale sur PC
 function cxPaintMsgButtons() {
   document.querySelectorAll(".header-top .nav, .sidebar-account").forEach((nav) => {
@@ -15088,7 +15189,19 @@ function cxPaintMsgButtons() {
 (function cxMsgStart() {
   cxPaintMsgButtons();
   setInterval(cxPaintMsgButtons, 4000);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) CXMsg.schedule(300); });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) { CXMsg.hereAt = 0; CXMsg.schedule(300); return; }
+    // l'app part en arrière-plan : le serveur enverra les notifications tout de suite
+    if (CXMsg.ready() && CXPush.isOn()) { try { fetch(API + "/api/msg/away", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", Authorization: "Bearer " + getCloudToken() }, body: "{}" }); } catch (e) {} }
+  });
+  // toucher une notification : ouvrir la bonne conversation
+  if ("serviceWorker" in navigator) navigator.serviceWorker.addEventListener("message", (e) => { if (e.data && e.data.type === "cartridge:open-conv") CXMsg.open(e.data.conv || undefined); });
+  const qMsg = new URLSearchParams(location.search).get("msg");
+  if (qMsg !== null) {
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    const wait = setInterval(() => { if (!document.getElementById("splash") || Date.now() - t0 > 8000) { clearInterval(wait); CXMsg.open(+qMsg || undefined); } }, 400), t0 = Date.now();
+  }
+  setTimeout(() => CXPush.refresh(), 5000);
   window.addEventListener("online", () => CXMsg.schedule(300));
   // connexion / déconnexion du compte : on repart de zéro
   if (typeof cloudAuth === "function") {
