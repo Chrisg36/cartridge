@@ -198,7 +198,7 @@ function doUndo() {
 let W = 0, H = 0, DPR = 1, cw = 50, ch = 70, gap = 6, x0 = 0, yTop = 8, yTab = 90, ps = 2, layoutDirty = true;
 const CARD = {}; let BACK = null, EMPTY = null, EMPTYF = null, FIGS = {};
 function resize() {
-  const r = felt.getBoundingClientRect(); DPR = Math.min(3, window.devicePixelRatio || 1);
+  const r = felt.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1); // plafond 2× : cartes nettes, mémoire maîtrisée
   W = r.width; H = r.height; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
   gap = Math.max(4, Math.round(Math.min(W, 900) * 0.016));
   cw = Math.floor((W - gap * 8) / 7);
