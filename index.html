@@ -6410,6 +6410,134 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
 .cx-msg-count[hidden] { display: none; }
 
 </style>
+<style id="cx-34">
+/* =====================================================================
+   34. SONS DES THÈMES COLLECTOR · CLASSEMENT DES JOUEURS · BOUTON MESSAGERIE
+       — doit rester tout en bas du CSS
+   ===================================================================== */
+
+/* --- 34.1 Bouton « Écouter » sur les aperçus de thèmes collector --- */
+.theme-preview .cx-ts-listen {
+  position: absolute; top: 9px; right: 9px; z-index: 3; display: inline-flex; align-items: center; gap: 5px;
+  height: 28px; padding: 0 10px 0 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25);
+  background: rgba(0,0,0,.55); color: #fff; font: 800 11.5px/1 'Rajdhani', sans-serif; letter-spacing: .4px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: pointer; touch-action: manipulation;
+}
+.theme-preview .cx-ts-listen .ic { width: 15px; height: 15px; }
+.theme-preview .cx-ts-listen:active { transform: scale(.92); }
+.theme-preview .cx-ts-listen.is-on { animation: cxTsPulse 1.2s ease-out; }
+@keyframes cxTsPulse { 0% { box-shadow: 0 0 0 0 var(--p-acc, #fff); } 100% { box-shadow: 0 0 0 14px transparent; } }
+
+/* --- 34.2 Classement des joueurs (onglet Scores de l'Arcade) --- */
+.cx-board { margin: 4px 0 18px; padding: 14px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+  background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 60%), var(--card); }
+.cx-board-head { display: flex; align-items: center; gap: 8px; }
+.cx-board-title { flex: 1; display: flex; align-items: center; gap: 8px; font: 400 11px/1.3 'Press Start 2P', monospace; letter-spacing: .5px; color: var(--txt); }
+.cx-board-title .ic { width: 20px; height: 20px; color: var(--acc); flex-shrink: 0; }
+.cx-board-refresh { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid var(--line, rgba(255,255,255,.12)); background: transparent; color: var(--mut); cursor: pointer; }
+.cx-board-refresh .ic { width: 17px; height: 17px; }
+.cx-board-refresh.is-spin .ic { animation: cxMsgSpin .8s linear infinite; }
+.cx-board-sub { margin: 6px 0 12px; font-size: 13.5px; font-weight: 600; color: var(--mut); line-height: 1.35; }
+.cx-board-login { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0 0 12px; padding: 10px 12px; border-radius: 12px;
+  border: 1px dashed color-mix(in srgb, var(--acc) 55%, transparent); background: transparent; color: var(--txt); font: 700 13.5px/1.3 var(--font, sans-serif); text-align: left; cursor: pointer; }
+.cx-board-login .ic { width: 20px; height: 20px; color: var(--acc); flex-shrink: 0; }
+.cx-board-list { display: grid; gap: 10px; }
+@media (min-width: 700px) { .cx-board-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cx-board-msg { padding: 18px 8px; text-align: center; color: var(--mut); font-weight: 700; font-size: 14px; }
+.cx-board-msg .ic { display: block; width: 26px; height: 26px; margin: 0 auto 6px; }
+.cx-board-msg .ic-loader { animation: cxMsgSpin 1s linear infinite; }
+
+.cx-bcard { --g: var(--acc); position: relative; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--bg) 70%, var(--card)); border: 1px solid color-mix(in srgb, var(--g) 35%, transparent); overflow: hidden; }
+.cx-bcard::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--g); opacity: .85; }
+.cx-bcard-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.cx-bcard-head > .ic { width: 22px; height: 22px; color: var(--g); flex-shrink: 0; }
+.cx-bcard-head > span { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cx-bcard-head b { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-bcard-head small { font-size: 12px; font-weight: 700; color: var(--mut); }
+.cx-bplay { flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 10px; border: 0; background: var(--g); color: #0b0d12; font: 800 13px var(--font, sans-serif); cursor: pointer; }
+.cx-bplay:active { transform: scale(.94); }
+.cx-bpod { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.cx-brow { display: flex; align-items: center; gap: 9px; min-height: 40px; padding: 4px 6px 4px 4px; border-radius: 10px; background: rgba(255,255,255,.03); }
+.cx-brow.is-me { background: color-mix(in srgb, var(--g) 18%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g) 55%, transparent); }
+.cx-brk { width: 26px; flex-shrink: 0; text-align: center; font: 400 10px/1 'Press Start 2P', monospace; color: var(--mut); }
+.cx-brow.r1 .cx-brk { color: #facc15; } .cx-brow.r2 .cx-brk { color: #d1d5db; } .cx-brow.r3 .cx-brk { color: #e3a066; }
+.cx-brow .cx-av { width: 30px; height: 30px; flex: 0 0 30px; font-size: 13px; }
+.cx-bname { flex: 1; min-width: 0; font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cx-bname em { font-style: normal; font-size: 11px; font-weight: 800; color: var(--g); margin-left: 4px; }
+.cx-bscore { font: 400 10.5px/1 'Press Start 2P', monospace; color: var(--txt); white-space: nowrap; }
+.cx-bdm { display: grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--mut); cursor: pointer; }
+.cx-bdm .ic { width: 17px; height: 17px; }
+.cx-bdm:hover, .cx-bdm:active { color: var(--acc); background: rgba(255,255,255,.07); }
+.cx-bme { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(0,0,0,.18); font-size: 13px; font-weight: 700; line-height: 1.35; color: var(--mut); }
+.cx-bme b { color: var(--txt); }
+.cx-bme .is-gap { color: var(--g); }
+.cx-ball { display: block; width: 100%; margin-top: 8px; padding: 7px; border: 0; border-radius: 10px; background: transparent; color: var(--acc); font: 800 13px var(--font, sans-serif); cursor: pointer; }
+.cx-bempty { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--mut); }
+.cx-bempty button { height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line, rgba(255,255,255,.14)); background: transparent; color: var(--txt); font: 700 12.5px var(--font, sans-serif); cursor: pointer; }
+
+/* Fenêtre « tous les joueurs » d'une borne */
+.cx-board-ov { position: fixed; inset: 0; z-index: 9980; display: flex; align-items: flex-end; justify-content: center; background: rgba(0,0,0,.6); }
+.cx-board-ov .cx-board-sheet { width: 100%; max-width: 560px; max-height: 86vh; max-height: 86dvh; display: flex; flex-direction: column; border-radius: 20px 20px 0 0; background: var(--bg); color: var(--txt); font-family: var(--font, sans-serif); border: 1px solid var(--line, rgba(255,255,255,.12)); padding-bottom: env(safe-area-inset-bottom); animation: cxBoardUp .28s cubic-bezier(.2,.9,.3,1); }
+@media (min-width: 760px) { .cx-board-ov { align-items: center; } .cx-board-ov .cx-board-sheet { border-radius: 20px; } }
+@keyframes cxBoardUp { from { transform: translateY(40px); opacity: 0; } }
+.cx-board-sheet header { display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; border-bottom: 1px solid var(--line, rgba(255,255,255,.1)); }
+.cx-board-sheet header b { flex: 1; font-size: 18px; }
+.cx-board-sheet .cx-bpod { padding: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/* Rival affiché pendant la partie (sous le HUD) */
+.cx-hud-rival { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 50%; z-index: 3; pointer-events: none;
+  display: flex; align-items: center; gap: 7px; max-width: calc(100% - 24px); height: 30px; padding: 0 12px; border-radius: 999px;
+  font: 7.5px/1 'Press Start 2P', monospace; color: #e8eaf0; background: rgba(0,0,0,.72); border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap;
+  transform: translateX(-50%); transition: opacity .4s, transform .4s; }
+.cx-hud-rival.is-off { opacity: 0; transform: translate(-50%, -10px); }
+.cx-hud-rival[hidden] { display: none; }
+.cx-hud-rival em { font-style: normal; color: #8b93a7; }
+.cx-hud-rival i { font-style: normal; color: #f87171; }
+.cx-hud-rival b { color: #fff; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+.cx-hud-rival span { color: #facc15; }
+.cx-hud-rival.is-passed { border-color: #22c55e; animation: cxRivalPop .6s ease; }
+.cx-hud-rival.is-passed i { color: #22c55e; }
+.cx-hud-rival.is-king i { color: #facc15; }
+@keyframes cxRivalPop { 30% { transform: translateX(-50%) scale(1.15); } }
+
+/* --- 34.3 Bouton messagerie flottant (téléphone) --- */
+.cx-msg-fab { display: none; }
+@media (max-width: 899px) {
+  .header-top .cx-msg-btn { display: none !important; } /* remplacée par le bouton flottant */
+  .cx-msg-fab {
+    position: fixed; right: 16px; bottom: calc(65px + env(safe-area-inset-bottom, 0px) + 14px); z-index: 95;
+    display: grid; place-items: center; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%;
+    background: var(--acc); color: var(--on, #111);
+    box-shadow: 0 8px 22px rgba(0,0,0,.45), 0 0 0 3px color-mix(in srgb, var(--bg) 70%, transparent);
+    cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    transition: transform .25s cubic-bezier(.2,.9,.3,1.3), opacity .2s;
+  }
+  .cx-msg-fab > .ic { width: 26px; height: 26px; position: relative; z-index: 1; }
+  .cx-msg-fab:active { transform: scale(.88); }
+  .cx-msg-fab.is-hidden { opacity: 0; transform: scale(.4); pointer-events: none; }
+  .cx-msg-fab .cx-msg-dot { top: -2px; right: -2px; min-width: 21px; height: 21px; font-size: 11.5px; line-height: 21px; border-radius: 11px; z-index: 2; }
+  .cx-fab-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--acc); opacity: 0; pointer-events: none; }
+  .cx-msg-fab.has-unread .cx-fab-ring { animation: cxFabRing 1.8s ease-out infinite; }
+  .cx-msg-fab.has-unread > .ic { animation: cxFabWiggle 2.4s ease-in-out infinite; }
+  .cx-msg-fab.is-bump { animation: cxFabBump .5s ease; }
+  /* Petite bulle d'accueil, montrée une seule fois */
+  .cx-fab-tip { position: fixed; right: 80px; bottom: calc(65px + env(safe-area-inset-bottom, 0px) + 22px); z-index: 95; max-width: min(240px, calc(100vw - 110px));
+    padding: 9px 12px; border-radius: 14px 14px 4px 14px; background: var(--card); color: var(--txt); border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+    font: 700 13px/1.3 var(--font, sans-serif); box-shadow: 0 10px 26px rgba(0,0,0,.4); animation: cxTipIn .35s cubic-bezier(.2,.9,.3,1.3); }
+  .cx-fab-tip b { color: var(--acc); }
+  .cx-fab-tip.is-out { opacity: 0; transform: translateX(10px); transition: .3s; }
+  /* Collector Arcade : bouton façon gros bouton de borne */
+  body.theme-arcadecabinet .cx-msg-fab { border-radius: 50%; box-shadow: 0 5px 0 #8a0d4b, 0 10px 20px rgba(0,0,0,.5); }
+}
+@keyframes cxFabRing { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes cxFabWiggle { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-14deg); } 84% { transform: rotate(12deg); } 92% { transform: rotate(-6deg); } }
+@keyframes cxFabBump { 40% { transform: scale(1.18); } }
+@keyframes cxTipIn { from { opacity: 0; transform: translateX(14px) scale(.9); } }
+@media (prefers-reduced-motion: reduce) {
+  .cx-msg-fab.has-unread .cx-fab-ring, .cx-msg-fab.has-unread > .ic, .cx-msg-fab.is-bump { animation: none !important; }
+}
+</style>
 </head>
 <body>
 
@@ -9999,6 +10127,16 @@ function renderShopMainPage(tab = 0) {
           <div class="tp-row"><b></b><div><span></span><span class="short"></span></div></div>
         </div>
         <span class="tp-rank">${esc(thm.rank)}</span>`;
+      // Bouton « Écouter » : joue le son signature du thème (section 34)
+      if (typeof CXThemeSound === "object" && CXThemeSound.has(id)) {
+        const listen = el("button", "cx-ts-listen");
+        listen.type = "button";
+        listen.title = "Écouter le son du thème";
+        listen.setAttribute("aria-label", `Écouter le son du thème ${thm.name}`);
+        listen.innerHTML = `${icon("volume")}<span>Écouter</span>`;
+        listen.addEventListener("click", (e) => { e.stopPropagation(); CXThemeSound.play(id, true); listen.classList.remove("is-on"); void listen.offsetWidth; listen.classList.add("is-on"); });
+        preview.append(listen);
+      }
 
       const body = el("div", "theme-card-body");
       const head = el("div", "theme-card-head");
@@ -15255,6 +15393,605 @@ function cxPaintMsgButtons() {
     }
   };
 })();
+
+
+// =====================================================================
+// 28. SONS DES THÈMES COLLECTOR · CLASSEMENT DES JOUEURS · BOUTON MESSAGERIE
+//   (CSS : section 34, tout en bas des styles)
+//   28.1 Chaque thème collector a son jingle (à l'activation) et son clic.
+//   28.2 Classement de tous les joueurs (routes /api/scores/* du Worker) :
+//        les records partent tout seuls à la fin de chaque partie.
+//   28.3 Bouton messagerie flottant sur téléphone (pastille + animation).
+// =====================================================================
+Object.assign(ICONS, {
+  refresh: '<path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M20.5 3.5V8.5H15.5"/>',
+  crown: '<path d="M3 7.5l4.5 4 4.5-7 4.5 7 4.5-4-2 11.5H5z"/><path d="M5 21.5h14"/>',
+});
+
+// ---------------------------------------------------------------------
+// 28.1 SONS DES THÈMES COLLECTOR
+//   jingle() : joué quand on active le thème (et avec le bouton « Écouter »)
+//   click()  : remplace le petit son des boutons tant que le thème est actif
+//   Tout est synthétisé (aucun fichier à héberger), via le moteur CXAudio.
+// ---------------------------------------------------------------------
+const CXThemeSound = (() => {
+  const T = (o) => CXAudio.tone(o);
+  const N = (o) => CXAudio.noise(o);
+  // corde pincée (koto, harpe) : triangle + harmoniques qui s'éteignent vite
+  const pluck = (f, t = 0, v = 0.05, d = 0.55) => {
+    T({ f, type: "triangle", t, d, v, a: 0.002 });
+    T({ f: f * 2, type: "sine", t, d: d * 0.4, v: v * 0.35, a: 0.002 });
+    T({ f: f * 3, type: "sine", t, d: d * 0.15, v: v * 0.2, a: 0.001 });
+  };
+  // cloche : partiels non harmoniques (1 · 2,76 · 5,4)
+  const bell = (f, t = 0, v = 0.04, d = 1.2) => {
+    T({ f, type: "sine", t, d, v, a: 0.003 });
+    T({ f: f * 2.76, type: "sine", t, d: d * 0.5, v: v * 0.4, a: 0.002 });
+    T({ f: f * 5.4, type: "sine", t, d: d * 0.25, v: v * 0.2, a: 0.001 });
+  };
+
+  const S = {
+    // Carnet noir : grattement de plume, puis cloche grave en mineur
+    shinigamiquill: {
+      jingle() {
+        [0, 0.1, 0.19, 0.26].forEach((t, i) => N({ f: 3200 + i * 500, q: 2.5, t, d: 0.08, v: 0.05 }));
+        T({ f: 73.42, type: "sine", t: 0.35, d: 1.9, v: 0.06 });
+        bell(146.83, 0.35, 0.05, 1.8); bell(174.61, 0.42, 0.03, 1.7); bell(220, 0.49, 0.025, 1.6);
+        T({ f: 1174.66, to: 1108.7, type: "sine", t: 0.9, d: 1, v: 0.012, vib: 6 });
+      },
+      click() { N({ f: 4200, q: 3, d: 0.035, v: 0.035 }); T({ f: 220, type: "sine", d: 0.06, v: 0.02 }); },
+    },
+    // Années 80 : arpège de synthé désaccordé, caisse claire « gated », accord tenu
+    synthwave84: {
+      jingle() {
+        [220, 261.63, 329.63, 440, 523.25, 659.25].forEach((f, i) => {
+          T({ f, type: "sawtooth", t: i * 0.075, d: 0.32, v: 0.028, lp: 2600 });
+          T({ f: f * 1.007, type: "sawtooth", t: i * 0.075, d: 0.32, v: 0.02, lp: 2600 });
+        });
+        N({ type: "highpass", f: 1400, t: 0.5, d: 0.22, v: 0.06 });
+        [349.23, 440, 523.25, 698.46].forEach((f) => T({ f, type: "sawtooth", t: 0.5, d: 1.3, v: 0.016, lp: 2000, vib: 3, a: 0.05 }));
+        T({ f: 87.31, type: "square", t: 0.5, d: 0.9, v: 0.03, lp: 500 });
+      },
+      click() { T({ f: 880, type: "sawtooth", d: 0.07, v: 0.028, lp: 3000 }); T({ f: 886, type: "sawtooth", d: 0.07, v: 0.02, lp: 3000 }); },
+    },
+    // Tokyo de nuit : grésillement de néon, carillon pentatonique, pluie fine
+    neontokyo: {
+      jingle() {
+        [0, 0.06, 0.1, 0.17].forEach((t) => T({ f: 120, type: "sawtooth", t, d: 0.04, v: 0.022, lp: 1500 }));
+        N({ type: "highpass", f: 6000, t: 0.15, d: 1.3, v: 0.012 });
+        [1174.66, 1318.5, 1567.98, 1760, 2349.3].forEach((f, i) => T({ f, duty: 0.125, t: 0.22 + i * 0.07, d: 0.13, v: 0.03 }));
+        bell(1174.66, 0.6, 0.03, 1.2);
+        T({ f: 2349.3, type: "sine", t: 0.62, d: 0.9, v: 0.02, vib: 10 });
+      },
+      click() { T({ f: 2093, duty: 0.125, d: 0.03, v: 0.028 }); T({ f: 3136, duty: 0.125, t: 0.025, d: 0.03, v: 0.018 }); },
+    },
+    // Aura de Ki : énergie qui se charge, puis la décharge
+    kameenergy: {
+      jingle() {
+        T({ f: 160, to: 1400, type: "sawtooth", d: 0.75, v: 0.032, lp: 4000, vib: 14 });
+        [800, 1300, 2000, 3000, 4200].forEach((f, i) => N({ f, q: 1.5, t: i * 0.13, d: 0.14, v: 0.018 + i * 0.004 }));
+        N({ type: "lowpass", f: 900, t: 0.76, d: 0.65, v: 0.09 });
+        T({ f: 95, to: 40, type: "square", t: 0.76, d: 0.55, v: 0.045, lp: 900 });
+        T({ f: 1760, type: "triangle", t: 0.8, d: 0.5, v: 0.025, vib: 35 });
+      },
+      click() { T({ f: 400, to: 1600, type: "square", d: 0.06, v: 0.022, lp: 3500 }); },
+    },
+    // Pourfendeurs : shamisen en gamme japonaise, puis lame qui sort du fourreau
+    nichirin: {
+      jingle() {
+        const sham = (f, t) => { T({ f, type: "sawtooth", t, d: 0.4, v: 0.032, lp: 3200, a: 0.001 }); N({ f: f * 4, q: 4, t, d: 0.03, v: 0.025 }); };
+        [[587.33, 0], [466.16, 0.12], [440, 0.24], [311.13, 0.42], [293.66, 0.54]].forEach(([f, t]) => sham(f, t));
+        N({ type: "highpass", f: 6500, t: 0.82, d: 0.28, v: 0.05 });
+        T({ f: 3520, to: 5274, type: "sine", t: 0.82, d: 0.45, v: 0.022 });
+        T({ f: 4186, type: "sine", t: 0.86, d: 1.1, v: 0.014, vib: 18 });
+      },
+      click() { pluck(587.33, 0, 0.035, 0.25); },
+    },
+    // Grimoire : glissando de harpe, cloches d'or et poussière magique
+    goldgrimoire: {
+      jingle() {
+        [293.66, 329.63, 369.99, 415.3, 440, 493.88, 554.37, 587.33, 659.25, 739.99, 880].forEach((f, i) => pluck(f, i * 0.045, 0.028, 0.75));
+        bell(1174.66, 0.55, 0.035, 1.7); bell(1760, 0.63, 0.02, 1.4);
+        [2637, 3136, 3520, 2960, 3951].forEach((f, i) => T({ f, type: "sine", t: 0.62 + i * 0.08, d: 0.16, v: 0.012 }));
+      },
+      click() { bell(1567.98, 0, 0.022, 0.35); },
+    },
+    // Noël : grelots de traîneau et petite mélodie de célesta
+    noel: {
+      jingle() {
+        for (let i = 0; i < 9; i++) N({ type: "highpass", f: 7000, q: 1, t: i * 0.1, d: 0.07, v: i % 2 ? 0.022 : 0.04 });
+        [[1318.5, 0.05], [1567.98, 0.23], [1760, 0.41], [1567.98, 0.59], [2093, 0.77]].forEach(([f, t]) => bell(f, t, 0.03, 0.9));
+        T({ f: 261.63, type: "triangle", t: 0.77, d: 1, v: 0.035 });
+      },
+      click() { bell(2093, 0, 0.018, 0.25); N({ type: "highpass", f: 8000, d: 0.04, v: 0.018 }); },
+    },
+    // Horreur : thérémine qui glisse, orgue diminué, vent et grincement
+    halloween: {
+      jingle() {
+        N({ type: "bandpass", f: 500, q: 0.6, d: 1.6, v: 0.022 });
+        T({ f: 440, to: 330, type: "sine", d: 0.6, v: 0.038, vib: 14, a: 0.08 });
+        T({ f: 330, to: 493.88, type: "sine", t: 0.6, d: 0.75, v: 0.038, vib: 14 });
+        [130.81, 155.56, 185, 261.63].forEach((f) => T({ f, type: "square", t: 0.2, d: 1.4, v: 0.014, lp: 1100, a: 0.08 }));
+        T({ f: 72, to: 52, type: "sawtooth", t: 1.15, d: 0.35, v: 0.03, lp: 600 });
+      },
+      click() { T({ f: 1200, to: 300, type: "sine", d: 0.08, v: 0.028 }); },
+    },
+    // Salle d'arcade : pièce glissée dans la fente, puis « CREDIT 1 »
+    arcade_cabinet: {
+      jingle() {
+        N({ type: "lowpass", f: 400, d: 0.06, v: 0.05 });
+        T({ f: 1975.5, duty: 0.5, d: 0.05, v: 0.042 }); T({ f: 2637, duty: 0.5, t: 0.05, d: 0.25, v: 0.042 });
+        [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5, 1318.5].forEach((f, i, a) => {
+          T({ f, duty: 0.25, t: 0.38 + i * 0.065, d: i === a.length - 1 ? 0.4 : 0.09, v: 0.038 });
+          T({ f: f / 2, type: "triangle", t: 0.38 + i * 0.065, d: 0.09, v: 0.04 });
+        });
+      },
+      click() { T({ f: 1318.5, duty: 0.5, d: 0.03, v: 0.028 }); T({ f: 1975.5, duty: 0.5, t: 0.03, d: 0.05, v: 0.028 }); },
+    },
+    // Soir de printemps chez les deux frères : flûte douce, carillon à vent, lucioles
+    tyrielsoren: {
+      jingle() {
+        N({ type: "lowpass", f: 700, d: 1.6, v: 0.014 });
+        [[783.99, 0], [880, 0.22], [1046.5, 0.44], [1174.66, 0.66], [1046.5, 0.92]].forEach(([f, t], i, a) =>
+          T({ f, type: "sine", t, d: i === a.length - 1 ? 0.9 : 0.42, v: 0.034, a: 0.05, vib: 5 }));
+        [[2093, 0.3], [2349.3, 0.72], [2637, 1.05], [3136, 1.3]].forEach(([f, t]) => bell(f, t, 0.012, 0.8));
+        [0.5, 0.95, 1.4].forEach((t) => T({ f: 4200, type: "sine", t, d: 0.03, v: 0.008 }));
+      },
+      click() { T({ f: 1046.5, type: "triangle", d: 0.12, v: 0.03 }); T({ f: 2093, type: "sine", d: 0.05, v: 0.012 }); },
+    },
+  };
+
+  const norm = (id) => (id === "deathnote" ? "shinigamiquill" : id);
+  return {
+    has: (id) => !!S[norm(id)],
+    play(id, force) {
+      const s = S[norm(id)];
+      if (!s || (!soundEnabled && !force)) return;
+      try { CXAudio.ctx(); s.jingle(); } catch (e) {}
+    },
+    click(id) {
+      const s = S[norm(id)];
+      if (!s || !soundEnabled) return;
+      try { if (CXAudio.guard("ts-" + id)) s.click(); } catch (e) {}
+    },
+  };
+})();
+
+// Thème collector actif → ses propres clics (sauf si le « FX Cartouche » est choisi dans les réglages)
+(function cxThemeSoundHooks() {
+  const baseSound = playThemeSound;
+  playThemeSound = function (th) {
+    const id = document.body.dataset.unique;
+    if (id && CXThemeSound.has(id)) {
+      let fx = false;
+      try { fx = localStorage.getItem("cartridgeFx") === "true"; } catch (e) {}
+      if (!fx) { CXThemeSound.click(id); return; }
+    }
+    return baseSound.apply(this, arguments);
+  };
+
+  // Jingle à l'activation d'un thème collector — seulement après un vrai toucher/clic
+  // (pas au démarrage de l'app, quand le thème choisi est simplement remis)
+  let lastGesture = 0;
+  ["pointerdown", "keydown", "touchend"].forEach((ev) =>
+    window.addEventListener(ev, () => { lastGesture = performance.now(); }, { capture: true, passive: true }));
+  const baseApply = applyUniqueTheme;
+  applyUniqueTheme = function (id) {
+    const r = baseApply.apply(this, arguments);
+    if (performance.now() - lastGesture < 2500) setTimeout(() => CXThemeSound.play(id), 140);
+    return r;
+  };
+})();
+
+// ---------------------------------------------------------------------
+// 28.2 CLASSEMENT DES JOUEURS
+// ---------------------------------------------------------------------
+const CXBoard = {
+  data: null, at: 0, err: "", loading: null, pend: {}, timer: null, sec: null, openGame: null, hud: null,
+
+  api(action, body) { return cloudPost("/api/scores/" + action, body || {}, isLoggedIn() ? getCloudToken() : null); },
+  // nom officiel de la borne (celui du Worker), ou null si ce n'est pas une borne de l'app
+  canon(name) { const g = CX_ARCADE_GAMES.find((x) => CXScores.same(x.name, name)); return g ? g.name : null; },
+  meta(name) { return CX_ARCADE_GAMES.find((x) => CXScores.same(x.name, name)) || {}; },
+  ord: (n) => (n === 1 ? "1er" : n + "e"),
+
+  async load(force) {
+    if (!cloudReady()) return null;
+    if (!force && this.data && Date.now() - this.at < 30000) return this.data;
+    if (this.loading) return this.loading;
+    this.loading = (async () => {
+      try {
+        const r = await this.api("top");
+        if (r.ok && r.json.games) { this.data = r.json; this.at = Date.now(); this.err = ""; }
+        else this.err = (r.json && r.json.error) || "Erreur du serveur (" + r.status + ")";
+      } catch (e) { this.err = "Pas de connexion"; }
+      this.loading = null;
+      return this.data;
+    })();
+    return this.loading;
+  },
+
+  // ---------- Envoi des records ----------
+  queue(game, n) {
+    const g = this.canon(game);
+    if (!g || !Number.isFinite(n) || n <= 0 || !isLoggedIn() || !cloudReady()) return;
+    if (!(this.pend[g] >= n)) this.pend[g] = Math.floor(n);
+    clearTimeout(this.timer);
+    // pendant une partie, on attend la fin (CXScores.end) ; sinon envoi quelques secondes après
+    if (!CXScores.game) this.timer = setTimeout(() => this.flush(), 3000);
+  },
+  async flush(silent) {
+    clearTimeout(this.timer);
+    const scores = Object.entries(this.pend).map(([game, score]) => ({ game, score }));
+    if (!scores.length || !isLoggedIn() || !cloudReady()) return;
+    this.pend = {};
+    const putBack = () => scores.forEach((s) => { if (!(this.pend[s.game] >= s.score)) this.pend[s.game] = s.score; });
+    try {
+      const r = await this.api("submit", { scores });
+      if (!r.ok) { if (r.status !== 401 && r.status !== 400) putBack(); return; }
+      this.at = 0; // le classement sera rechargé
+      if (!silent) this.celebrate(r.json.results || []);
+      if (this.sec && this.sec.isConnected) this.load(true).then(() => this.paint());
+    } catch (e) { putBack(); }
+  },
+  celebrate(results) {
+    let shown = 0;
+    results.forEach((x) => {
+      if (!x.improved || shown >= 2) return;
+      let msg = "";
+      if (x.rank === 1 && x.passed) msg = `👑 Tu es N°1 à ${esc(x.game)} ! Tu as détrôné ${esc(x.passed.name)}.`;
+      else if (x.passed) msg = `🏆 Tu as dépassé ${esc(x.passed.name)} à ${esc(x.game)} ! Te voilà ${this.ord(x.rank)}.`;
+      if (!msg) return;
+      shown++;
+      setTimeout(() => {
+        try { if (soundEnabled) CXSfx.unlock(); } catch (e) {}
+        showToast(msg, "trophy");
+      }, 1400 + shown * 2200); // après le toast « Nouveau record » de fin de partie
+    });
+  },
+  // Au démarrage et après connexion : on envoie les records déjà faits sur ce téléphone
+  syncLocal() {
+    if (!isLoggedIn() || !cloudReady()) return;
+    (gameScores || []).forEach((e) => {
+      if (!e || !e.live) return;
+      const g = this.canon(e.game), v = CXScores.value(e);
+      if (g && Number.isFinite(v) && v > 0 && !(this.pend[g] >= v)) this.pend[g] = Math.floor(v);
+    });
+    this.flush(true);
+  },
+
+  // ---------- Rival affiché pendant la partie ----------
+  startHud(name) {
+    this.hud = null;
+    const game = this.canon(name), ov = CXScores.overlay;
+    if (!game || !ov || !cloudReady()) return;
+    const chip = el("div", "cx-hud-rival");
+    chip.hidden = true;
+    ov.append(chip);
+    const st = (this.hud = { game, chip, rivals: [], cur: 0, t: null });
+    this.api("top", { game }).then((r) => {
+      if (this.hud !== st || !r.ok || !r.json.games) return;
+      const g = r.json.games[game];
+      if (!g) return;
+      const myId = r.json.me ? r.json.me.id : null;
+      const myName = String(getCloudUser() || "").toLowerCase();
+      st.rivals = (g.top || []).filter((p) => p.id !== myId && p.name.toLowerCase() !== myName).sort((a, b) => a.best - b.best);
+      this.hudPaint();
+    }).catch(() => {});
+  },
+  // Petit bandeau en haut de la borne : affiché quelques secondes puis effacé (les jeux ont leur propre écran)
+  hudPaint(passedName) {
+    const st = this.hud;
+    if (!st) return;
+    const chip = st.chip;
+    clearTimeout(st.t);
+    const show = (cls, html, ms, then) => {
+      chip.className = "cx-hud-rival" + (cls ? " " + cls : "");
+      chip.innerHTML = html;
+      chip.hidden = false;
+      st.t = setTimeout(() => { if (then) then(); else chip.classList.add("is-off"); }, ms);
+    };
+    if (passedName) {
+      show("is-passed", `<i>✔</i><b>${esc(passedName)}</b><span>DÉPASSÉ !</span>`, 1700, () => this.hudPaint());
+      return;
+    }
+    const next = st.rivals.find((p) => p.best >= st.cur);
+    if (next) show("", `<em>OBJECTIF</em><i>▲</i><b>${esc(next.name)}</b><span>${CXScores.fmt(next.best)}</span>`, 3500);
+    else if (st.rivals.length) show("is-king", `<i>♛</i><b>N°1</b><span>DES JOUEURS</span>`, 3000);
+    else chip.hidden = true;
+  },
+  hudCheck(n, game) {
+    const st = this.hud;
+    if (!st || this.canon(game) !== st.game || !(n > st.cur)) return;
+    const passed = st.rivals.filter((p) => p.best >= st.cur && p.best < n);
+    st.cur = n;
+    if (passed.length) {
+      try { if (soundEnabled) CXSfx.select(); } catch (e) {}
+      this.hudPaint(passed[passed.length - 1].name);
+    }
+  },
+
+  // ---------- Section « Classement des joueurs » (onglet Scores) ----------
+  section(openGame) {
+    const sec = el("section", "cx-board");
+    this.sec = sec;
+    this.openGame = openGame;
+    this.paint();
+    if (!this.data || Date.now() - this.at > 30000) this.load(true).then(() => this.paint());
+    return sec;
+  },
+  play(game) {
+    const m = this.meta(game);
+    if (!m.url) return;
+    try { playThemeSound(theme); } catch (e) {}
+    if (typeof this.openGame === "function") this.openGame(m.url, m.name);
+    else if (typeof CXArcade === "object") CXArcade.open(m.url, m.name);
+  },
+  dm(name) {
+    try { playThemeSound(theme); } catch (e) {}
+    CXMsg.open();
+    if (CXMsg.ready()) CXMsg.startDm(name);
+  },
+  rows(top, me) {
+    const ol = el("ol", "cx-bpod");
+    top.forEach((p) => {
+      const isMe = !!(me && p.id === me.id);
+      const li = el("li", "cx-brow r" + p.rank + (isMe ? " is-me" : ""));
+      li.innerHTML = `<span class="cx-brk">${p.rank}</span>${CXMsg.avatarHTML(p.name, p.av)}<span class="cx-bname">${esc(p.name)}${isMe ? "<em>TOI</em>" : ""}</span><span class="cx-bscore">${CXScores.fmt(p.best)}</span>`;
+      if (!isMe) {
+        const b = el("button", "cx-bdm");
+        b.type = "button";
+        b.title = `Écrire à ${p.name}`;
+        b.setAttribute("aria-label", `Écrire à ${p.name}`);
+        b.innerHTML = icon("chat");
+        b.addEventListener("click", () => this.dm(p.name));
+        li.append(b);
+      }
+      ol.append(li);
+    });
+    return ol;
+  },
+  meLine(g) {
+    const box = el("div", "cx-bme");
+    const fmt = CXScores.fmt;
+    if (g.me) {
+      if (g.me.rank === 1) box.innerHTML = `👑 <b>Tu es 1er</b> avec ${fmt(g.me.best)}. Défends ta place !`;
+      else {
+        box.innerHTML = `Toi : <b>${this.ord(g.me.rank)}</b> · ${fmt(g.me.best)}` + (g.me.next
+          ? ` — <span class="is-gap">encore ${fmt(g.me.next.best - g.me.best + 1)} pts</span> pour dépasser <b>${esc(g.me.next.name)}</b>`
+          : "");
+      }
+    } else box.textContent = isLoggedIn() ? "Pas encore classé : joue pour entrer dans le classement !" : "Connecte-toi pour apparaître ici.";
+    return box;
+  },
+  card(game, g, me) {
+    const m = this.meta(game);
+    const c = el("article", "cx-bcard");
+    c.style.setProperty("--g", m.fg || "var(--acc)");
+    const head = el("div", "cx-bcard-head");
+    head.innerHTML = `${icon(m.ic || "trophy")}<span><b>${esc(game)}</b><small>${g.players} joueur${g.players > 1 ? "s" : ""}</small></span>`;
+    if (m.url) {
+      const pb = el("button", "cx-bplay", "Jouer");
+      pb.type = "button";
+      pb.addEventListener("click", () => this.play(game));
+      head.append(pb);
+    }
+    c.append(head, this.rows(g.top || [], me), this.meLine(g));
+    if (g.players > (g.top || []).length) {
+      const all = el("button", "cx-ball", `Voir les ${g.players} joueurs`);
+      all.type = "button";
+      all.addEventListener("click", () => this.openFull(game));
+      c.append(all);
+    }
+    return c;
+  },
+  paint() {
+    const sec = this.sec;
+    if (!sec) return;
+    sec.innerHTML = `
+      <div class="cx-board-head">
+        <span class="cx-board-title">${icon("crown")}CLASSEMENT DES JOUEURS</span>
+        <button type="button" class="cx-board-refresh" title="Actualiser" aria-label="Actualiser le classement">${icon("refresh")}</button>
+      </div>
+      <p class="cx-board-sub">Les records de tous les joueurs de Cartridge, borne par borne. À toi de les battre !</p>`;
+    const rb = sec.querySelector(".cx-board-refresh");
+    rb.addEventListener("click", () => {
+      try { playThemeSound(theme); } catch (e) {}
+      rb.classList.add("is-spin");
+      this.load(true).then(() => this.paint());
+    });
+    if (this.loading) rb.classList.add("is-spin");
+
+    if (!isLoggedIn()) {
+      const lb = el("button", "cx-board-login");
+      lb.type = "button";
+      lb.innerHTML = `${icon("user")}<span>Connecte-toi dans Profil pour mettre tes records au classement et défier les autres joueurs.</span>`;
+      lb.addEventListener("click", () => { const n = document.getElementById("navSettings"); if (n) n.click(); });
+      sec.append(lb);
+    }
+    if (!cloudReady()) { sec.append(this.msg("cloud", "Serveur introuvable : vérifie config.js.")); return; }
+    const d = this.data;
+    if (!d) { sec.append(this.err && !this.loading ? this.msg("xCircle", this.err) : this.msg("loader", "Chargement du classement…")); return; }
+
+    const list = el("div", "cx-board-list");
+    const empty = [];
+    (d.order || []).forEach((game) => {
+      const g = d.games[game];
+      if (!g) return;
+      if (!g.players) empty.push(game);
+      else list.append(this.card(game, g, d.me));
+    });
+    if (list.children.length) sec.append(list);
+    else sec.append(this.msg("trophy", "Personne n'a encore de score classé. Lance une borne et sois le premier !"));
+    const playable = empty.filter((g) => this.meta(g).url);
+    if (playable.length) {
+      const e = el("div", "cx-bempty");
+      e.append(el("span", "", "Pas encore de champion :"));
+      playable.forEach((game) => {
+        const b = el("button", "", game);
+        b.type = "button";
+        b.addEventListener("click", () => this.play(game));
+        e.append(b);
+      });
+      sec.append(e);
+    }
+  },
+  msg(ic, text) {
+    const m = el("div", "cx-board-msg");
+    m.innerHTML = `${icon(ic)}<span>${esc(text)}</span>`;
+    return m;
+  },
+  // Tous les joueurs d'une borne (50 premiers)
+  async openFull(game) {
+    try { playThemeSound(theme); } catch (e) {}
+    const ov = el("div", "cx-board-ov");
+    const sheet = el("div", "cx-board-sheet");
+    sheet.innerHTML = `<header>${icon("crown")}<b>${esc(game)}</b><button type="button" class="cx-board-refresh" aria-label="Fermer">${icon("x")}</button></header>`;
+    const body = el("div", "");
+    body.style.cssText = "display:flex;flex-direction:column;min-height:0;flex:1;";
+    body.append(this.msg("loader", "Chargement…"));
+    sheet.append(body);
+    ov.append(sheet);
+    const close = () => { ov.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+    sheet.querySelector("header button").addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.append(ov);
+    try {
+      const r = await this.api("top", { game });
+      const g = r.ok && r.json.games && r.json.games[game];
+      body.replaceChildren();
+      if (!g) { body.append(this.msg("xCircle", (r.json && r.json.error) || "Classement indisponible")); return; }
+      sheet.style.setProperty("--g", this.meta(game).fg || "var(--acc)");
+      body.append(this.rows(g.top || [], r.json.me));
+      const me = this.meLine(g);
+      me.style.margin = "0 10px 10px";
+      body.append(me);
+    } catch (e) { body.replaceChildren(this.msg("xCircle", "Pas de connexion")); }
+  },
+};
+
+(function cxBoardHooks() {
+  // Scores en direct → classement
+  const baseReport = CXScores.report;
+  CXScores.report = function (value, game) {
+    const g = game || this.game;
+    const r = baseReport.apply(this, arguments);
+    const n = Number(value);
+    if (g && Number.isFinite(n) && n > 0) { CXBoard.queue(g, n); CXBoard.hudCheck(n, g); }
+    return r;
+  };
+  const baseBegin = CXScores.begin;
+  CXScores.begin = function (name) {
+    const r = baseBegin.apply(this, arguments);
+    try { CXBoard.startHud(name); } catch (e) {}
+    return r;
+  };
+  const baseEnd = CXScores.end;
+  CXScores.end = function () {
+    const r = baseEnd.apply(this, arguments);
+    CXBoard.hud = null;
+    setTimeout(() => CXBoard.flush(), 300);
+    return r;
+  };
+
+  // Onglet Scores : le classement des joueurs s'affiche juste sous le titre
+  const baseRender = cxRenderScores;
+  cxRenderScores = function (box, rerender, games, openGame) {
+    const r = baseRender.apply(this, arguments);
+    try {
+      const sec = CXBoard.section(openGame);
+      const head = box.firstElementChild;
+      if (head) head.after(sec); else box.prepend(sec);
+    } catch (e) {}
+    return r;
+  };
+
+  // Connexion au compte : on envoie les records déjà faits et on recharge le classement
+  if (typeof cloudAuth === "function") {
+    const oa = cloudAuth;
+    cloudAuth = async function () {
+      const r = await oa.apply(this, arguments);
+      CXBoard.data = null;
+      setTimeout(() => CXBoard.syncLocal(), 800);
+      return r;
+    };
+  }
+  setTimeout(() => CXBoard.syncLocal(), 7000);
+  // l'app passe en arrière-plan en pleine partie : on envoie quand même
+  document.addEventListener("visibilitychange", () => { if (document.hidden && Object.keys(CXBoard.pend).length) CXBoard.flush(true); });
+})();
+
+// ---------------------------------------------------------------------
+// 28.3 BOUTON MESSAGERIE FLOTTANT (téléphone, < 900 px)
+//   Toujours à portée de pouce au-dessus de la barre du bas, avec la pastille
+//   des messages non lus. Il bouge quand un message arrive et se cache
+//   pendant une fiche jeu, une borne ou la messagerie elle-même.
+//   Sur PC, la bulle reste dans la barre latérale (section 26).
+// ---------------------------------------------------------------------
+const CXMsgFab = {
+  el: null, last: 0,
+  init() {
+    const b = el("button", "cx-msg-fab");
+    b.type = "button";
+    b.title = "Messagerie";
+    b.setAttribute("aria-label", "Messagerie");
+    b.innerHTML = `<span class="cx-fab-ring"></span>${icon("chat")}<i class="cx-msg-dot" hidden>0</i>`;
+    b.addEventListener("click", () => {
+      this.hideTip();
+      try { playThemeSound(theme); } catch (e) {}
+      CXMsg.open();
+    });
+    document.body.append(b);
+    this.el = b;
+    CXMsg.updateBadge();
+    this.sync();
+    this.t0 = Date.now();
+    setInterval(() => this.sync(), 700);
+  },
+  covered() {
+    const sp = document.getElementById("splash"); // l'écran d'allumage reste dans la page, caché, après le toucher
+    return document.body.classList.contains("bg-locked")
+      || !!(sp && !sp.classList.contains("hidden") && !sp.classList.contains("off"))
+      || !!document.querySelector(".cx-msg-ov, .game-overlay, .cx-board-ov");
+  },
+  sync() {
+    if (!this.el) return;
+    const hide = this.covered();
+    this.el.classList.toggle("is-hidden", hide);
+    const n = CXMsg.totalUnread();
+    this.el.classList.toggle("has-unread", n > 0);
+    if (n > this.last && !hide) {
+      this.el.classList.remove("is-bump"); void this.el.offsetWidth; this.el.classList.add("is-bump");
+    }
+    this.last = n;
+    if (hide) this.hideTip();
+    // bulle d'accueil : une fois l'écran d'allumage passé et rien d'ouvert
+    else if (!this.tipTried && Date.now() - this.t0 > 3000) { this.tipTried = true; setTimeout(() => this.showTip(), 1500); }
+  },
+  // Bulle « Nouveau ! » montrée une seule fois, pour faire découvrir la messagerie
+  showTip() {
+    let seen = false;
+    try { seen = localStorage.getItem("cx_fab_tip") === "1"; } catch (e) {}
+    if (seen || window.innerWidth >= 900 || this.covered()) return;
+    try { localStorage.setItem("cx_fab_tip", "1"); } catch (e) {}
+    const t = el("div", "cx-fab-tip");
+    t.innerHTML = `<b>Nouveau !</b> Écris aux autres joueurs et défie-les sur leurs records 💬`;
+    t.addEventListener("click", () => { this.hideTip(); CXMsg.open(); });
+    document.body.append(t);
+    this.tip = t;
+    setTimeout(() => this.hideTip(), 8000);
+  },
+  hideTip() {
+    const t = this.tip;
+    if (!t) return;
+    this.tip = null;
+    t.classList.add("is-out");
+    setTimeout(() => t.remove(), 350);
+  },
+};
+CXMsgFab.init();
 
 </script>
 </body>
