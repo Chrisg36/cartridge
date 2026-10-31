@@ -6476,6 +6476,69 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
 .cx-msg-count { position: absolute; right: 64px; top: -18px; font-size: 11px; font-weight: 800; color: var(--mut); }
 .cx-msg-count[hidden] { display: none; }
 
+/* =====================================================================
+   MESSAGERIE — VERSION TÉLÉPHONE (≤ 759 px)
+   En-tête fin façon iMessage, fil plein écran, barre d'écriture flottante.
+   La hauteur suit l'écran réel (visualViewport) : plus de bande vide en bas
+   ni d'en-tête géant, et la barre reste collée au-dessus du clavier.
+   ===================================================================== */
+@media (max-width: 759px) {
+  .cartridge-modal-overlay.cx-msg-ov { position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); background: var(--bg); animation: none; }
+  .cx-msg-app { height: 100% !important; }
+
+  /* En-tête compact : barre de statut + 50 px, pas plus */
+  .cx-msg-ov .cx-msg-head {
+    min-height: 0; height: calc(50px + env(safe-area-inset-top, 0px)); gap: 4px;
+    padding: env(safe-area-inset-top, 0px) 6px 0 2px;
+    background: color-mix(in srgb, var(--bg) 88%, var(--card));
+    border-bottom: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
+    box-shadow: 0 6px 18px rgba(0,0,0,.18); position: relative; z-index: 2; flex-shrink: 0;
+  }
+  .cx-msg-ov .cx-msg-title { font-size: 17px; padding-left: 10px; }
+  .cx-msg-ov .cx-msg-ib { width: 40px; height: 40px; }
+  .cx-msg-ov .cx-msg-back { color: var(--acc); }
+  .cx-msg-ov .cx-msg-back .ic { width: 24px; height: 24px; }
+  .cx-msg-ov .cx-msg-peer { gap: 9px; }
+  .cx-msg-ov .cx-msg-peer .cx-av { width: 34px; height: 34px; flex: 0 0 34px; font-size: 14px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--acc) 35%, transparent); }
+  .cx-msg-ov .cx-msg-peer b { font-size: 15.5px; line-height: 1.15; }
+  .cx-msg-ov .cx-msg-peer small { font-size: 11.5px; line-height: 1.2; opacity: .85; }
+  .cx-msg-ov .cx-msg-block .ic { width: 19px; height: 19px; opacity: .75; }
+
+  /* Fil de discussion */
+  .cx-msg-ov .cx-msg-chat { background: var(--bg); }
+  .cx-msg-ov .cx-msg-scroll {
+    background:
+      radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--acc) 7%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .cx-msg-ov .cx-msg-thread { padding: 10px 10px 14px; gap: 2px; }
+  .cx-msg-ov .cx-bub { max-width: 80%; padding: 8px 12px 5px; border-radius: 20px; box-shadow: none; }
+  .cx-msg-ov .cx-bub-row.theirs .cx-bub { background: color-mix(in srgb, var(--card) 85%, var(--txt) 4%); }
+  .cx-msg-ov .cx-bub p { font-size: 16px; }
+  .cx-msg-ov .cx-bub-av, .cx-msg-ov .cx-bub-av .cx-av { width: 28px; }
+  .cx-msg-ov .cx-bub-av .cx-av { height: 28px; }
+
+  /* Écran vide plus doux */
+  .cx-msg-ov .cx-msg-empty { padding: 30px 24px; gap: 12px; }
+  .cx-msg-ov .cx-msg-empty .ic { width: 52px; height: 52px; padding: 13px; border-radius: 50%; opacity: 1; color: var(--acc);
+    background: color-mix(in srgb, var(--acc) 14%, transparent); box-sizing: border-box; }
+  .cx-msg-ov .cx-msg-empty p { font-size: 14.5px; color: var(--mut); text-wrap: balance; }
+
+  /* Barre d'écriture flottante */
+  .cx-msg-ov .cx-msg-compose {
+    align-items: center; gap: 8px; flex-shrink: 0;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--bg) 88%, var(--card));
+    border-top: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
+  }
+  .cx-msg-ov.is-kb .cx-msg-compose { padding-bottom: 8px; } /* clavier ouvert : pas de marge barre d'accueil */
+  .cx-msg-ov .cx-msg-compose textarea { min-height: 40px; padding: 9px 15px; border-radius: 20px; font-size: 16px;
+    background: color-mix(in srgb, var(--card) 70%, var(--bg)); border-color: color-mix(in srgb, var(--txt) 12%, transparent); }
+  .cx-msg-ov .cx-msg-send { width: 40px; height: 40px; box-shadow: 0 4px 14px color-mix(in srgb, var(--acc) 45%, transparent); }
+  .cx-msg-ov .cx-msg-send .ic { width: 18px; height: 18px; }
+  .cx-msg-ov .cx-msg-count { right: 60px; }
+}
+
 </style>
 <style id="cx-34">
 /* =====================================================================
@@ -15647,6 +15710,7 @@ const CXMsg = {
   },
   // appelé quand la fenêtre disparaît (croix, Échap, bouton retour d'Android…)
   closed() {
+    if (this.vvOff) { this.vvOff(); this.vvOff = null; }
     this.ov = null; this.active = null;
     unlockBackground();
     document.removeEventListener("keydown", this.onKey);
@@ -15739,6 +15803,21 @@ const CXMsg = {
     document.addEventListener("keydown", this.onKey);
     document.body.append(ov);
     lockBackground();
+    // Téléphone : la fenêtre prend la hauteur VISIBLE réelle (iOS se trompe avec 100dvh
+    // en mode app plein écran) et se recale au-dessus du clavier quand il s'ouvre.
+    const vv = window.visualViewport;
+    if (vv) {
+      const fit = () => {
+        if (this.ov !== ov) return;
+        ov.style.setProperty("--cx-vvh", vv.height + "px");
+        ov.style.top = vv.offsetTop + "px";
+        ov.classList.toggle("is-kb", window.innerHeight - vv.height > 120);
+        if (document.activeElement === ta) { const scr = $o(".cx-msg-scroll"); scr.scrollTop = scr.scrollHeight; }
+      };
+      fit();
+      vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit);
+      this.vvOff = () => { vv.removeEventListener("resize", fit); vv.removeEventListener("scroll", fit); };
+    }
     // si la fenêtre est retirée par autre chose (retour Android), on nettoie
     const mo = new MutationObserver(() => { if (this.ov === ov && !ov.isConnected) { mo.disconnect(); this.closed(); } });
     mo.observe(document.body, { childList: true });
