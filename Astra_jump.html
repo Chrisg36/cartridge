@@ -244,12 +244,17 @@ const stars = [];
 for (let i = 0; i < 90; i++) stars.push({ x: rnd(0, V_WIDTH), y: rnd(0, 900), s: Math.random() < .15 ? 2 : 1, depth: rnd(0.05, 0.35), tw: rnd(0, 6.28), hue: Math.random() });
 let shooting = [];
 
-// Palette du ciel selon l'altitude : violet → turquoise → aurore dorée → cosmos
+// Palette du ciel selon l'altitude : elle se fond en continu d'une ambiance à
+// l'autre et repart au début après la dernière → le décor change sans fin.
+const SKY_BAND = 800; // mètres pour passer d'une ambiance à la suivante
 const SKIES = [
-  [0, ['#05020c', '#140726', '#2a1052']],
-  [1200, ['#020617', '#0b2540', '#0f5960']],
-  [2600, ['#1a0b20', '#5b1f4a', '#c2563a']],
-  [4200, ['#000005', '#0a0a2a', '#251a5a']],
+  ['#05020c', '#140726', '#2a1052'], // violet
+  ['#020617', '#0b2540', '#0f5960'], // turquoise
+  ['#03140c', '#0b3a2a', '#1f7a4a'], // aurore verte
+  ['#1a0b20', '#5b1f4a', '#c2563a'], // aube dorée
+  ['#1a0208', '#4a0a24', '#9d174d'], // nébuleuse rose
+  ['#000005', '#0a0a2a', '#251a5a'], // cosmos
+  ['#0c0a02', '#3a2a06', '#8a5a12'], // soleil ambré
 ];
 function lerpColor(a, b, t) {
   const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
@@ -257,11 +262,10 @@ function lerpColor(a, b, t) {
   return `rgb(${r | 0},${g | 0},${bl | 0})`;
 }
 function skyAt(alt) {
-  let i = 0; while (i < SKIES.length - 1 && alt > SKIES[i + 1][0]) i++;
-  if (i === SKIES.length - 1) return SKIES[i][1];
-  const [a0, c0] = SKIES[i], [a1, c1] = SKIES[i + 1];
-  const t = Math.min(1, Math.max(0, (alt - a0) / (a1 - a0)));
-  return c0.map((c, k) => lerpColor(c, c1[k], t));
+  const pos = Math.max(0, alt) / SKY_BAND;
+  const i = Math.floor(pos) % SKIES.length, j = (i + 1) % SKIES.length;
+  const f = pos - Math.floor(pos), t = f * f * (3 - 2 * f); // transition douce
+  return SKIES[i].map((c, k) => lerpColor(c, SKIES[j][k], t));
 }
 
 // ------------------------------------------------------------------ ÉTAT DU JEU
@@ -447,8 +451,18 @@ function update() {
 
   for (const p of platforms) {
     if (p.squash > 0) p.squash--;
+    if (p.fadeIn > 0) p.fadeIn--;
+    // Plaque cassée : elle se reforme au bout de quelques secondes (sauf si le héros est dans sa zone)
+    if (p.broken && p.type === 'fragile') {
+      const inside = player.x + player.width > p.x && player.x < p.x + p.width && player.y + player.height > p.y - 4 && player.y < p.y + p.height;
+      if (++p.respawn >= FRAGILE_RESPAWN && !inside) {
+        p.broken = false; p.crack = 0; p.respawn = 0; p.fadeIn = 24;
+        burst(p.x + p.width / 2, p.y + 6, 12, ['#e7e5e4', '#c4b5fd', '#fff'], 2.5, 0.01);
+      }
+      continue;
+    }
     if (p.type === 'fragile' && p.crack && !p.broken && ++p.crack >= FRAGILE_TIME) {
-      p.broken = true; sfx.crack(); shake = 3;
+      p.broken = true; p.respawn = 0; sfx.crack(); shake = 3;
       if (player.currentPlatform === p) { player.grounded = false; player.currentPlatform = null; }
       for (let i = 0; i < 6; i++) particles.push({ x: p.x + i * p.width / 6, y: p.y, vx: rnd(-1, 1), vy: rnd(-1, 1), life: 40, max: 40, color: i % 2 ? '#78716c' : '#a8a29e', size: 4, grav: 0.25 });
     }
@@ -536,9 +550,11 @@ function drawBackground() {
   ctx.globalAlpha = 1;
 
   // Planète annelée
-  const py = 110 + ((-cameraY * 0.03) % 1400);
-  if (py < V_HEIGHT + 60) {
-    ctx.save(); ctx.translate(205, py);
+  // (repart d'au-dessus de l'écran à chaque cycle, côté alterné, au lieu de réapparaître d'un coup)
+  const cyc = Math.floor((-cameraY * 0.03 + 170) / 1400);
+  const py = ((-cameraY * 0.03 + 170) % 1400) - 60;
+  if (py > -60 && py < V_HEIGHT + 60) {
+    ctx.save(); ctx.translate(cyc % 2 ? 65 : 205, py);
     const pg = ctx.createRadialGradient(-8, -8, 2, 0, 0, 30); pg.addColorStop(0, '#fbcfe8'); pg.addColorStop(0.5, '#c084fc'); pg.addColorStop(1, '#3b0764');
     ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(0, 0, 26, 0, 6.28); ctx.fill();
     ctx.strokeStyle = 'rgba(253,224,71,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, 44, 9, -0.35, 0, 6.28); ctx.stroke();
@@ -559,6 +575,7 @@ function drawBackground() {
 }
 
 const FRAGILE_TIME = 42; // images à 60 i/s avant l'effondrement (≈ 0,7 s)
+const FRAGILE_RESPAWN = 180; // images avant que la plaque se reforme (≈ 3 s)
 const PLAT_STYLE = {
   normal: { top: '#c084fc', body: '#6d28d9', dark: '#3b0764', dot: '#e9d5ff' },
   moving: { top: '#67e8f9', body: '#0e7490', dark: '#083344', dot: '#ecfeff' },
@@ -662,7 +679,10 @@ function draw() {
 
   if (state !== STATE.MENU) {
     ctx.save(); ctx.translate(0, -Math.round(cameraY));
-    for (const p of platforms) if (!p.broken && p.y > cameraY - 30 && p.y < cameraY + V_HEIGHT + 20) drawPlatform(p);
+    for (const p of platforms) if (!p.broken && p.y > cameraY - 30 && p.y < cameraY + V_HEIGHT + 20) {
+      if (p.fadeIn > 0) ctx.globalAlpha = 1 - p.fadeIn / 24;
+      drawPlatform(p); ctx.globalAlpha = 1;
+    }
     for (const it of items) if (!it.collected && it.y > cameraY - 30 && it.y < cameraY + V_HEIGHT) drawCrystal(it);
     for (const e of enemies) if (e.alive && e.y > cameraY - 30 && e.y < cameraY + V_HEIGHT) drawBat(e);
     for (const p of particles) { ctx.globalAlpha = Math.max(0, p.life / p.max); ctx.fillStyle = p.color; ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size); }
