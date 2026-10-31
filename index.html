@@ -12395,6 +12395,7 @@ const CX_ARCADE_GAMES = [
   { name: "Snake", url: "snake_nokia.html", fg: "#9bbc0f", scr: "#0f380f", ic: "snake" },
   { name: "Astra Jump", url: "Astra_jump.html", fg: "#f472b6", scr: "#0b0418", ic: "star" },
   { name: "Tyriel & Soren", url: "TyrielSoren.html", fg: "#5a92dc", scr: "#0b1530", ic: "trophy" },
+  { name: "Un Soir d'Été", url: "UnSoirDete.html", fg: "#ffae00", scr: "#1a0f3f", ic: "cassette" },
 ];
 
 const CXScores = {
@@ -13088,6 +13089,7 @@ const CX_PX = {
   snake: { c: ["#43523d", "#43523d"], m: ["0000000000000", "0111111110000", "0100000010020", "0100000011100", "0111100000000"] },
   astra: { c: ["#a78bfa", "#22d3ee"], m: ["000010000", "000111000", "001111100", "011222110", "011222110", "001111100", "011111110", "010000010"] },
   tyrielsoren: { c: ["#5a92dc", "#7bb56e"], m: ["0111000222000", "1111101222220", "1111101222220", "0111000222000", "0101000020200"] },
+  soirdete: { c: ["#ffb347", "#ff4f8b"], m: ["0000111100000", "0011111111000", "0111111111100", "0000000000000", "2222222222222", "0000000000000", "0202020202020"] },
 };
 const CX_GAMES = [
   { id: "pacman", name: "Pac-Man", url: "pacman_arcade.html", tag: "Labyrinthe · 4 fantômes", color: "#ffd21f", scr: "#000", div: 250 },
@@ -13097,6 +13099,7 @@ const CX_GAMES = [
   { id: "snake", name: "Snake", url: "snake_nokia.html", tag: "Hommage Nokia 3310", color: "#7dff9a", scr: "#c7f0d8", fg: "#43523d", div: 15 },
   { id: "astra", name: "Astra Jump", url: "Astra_jump.html", tag: "Grimpe vers les étoiles", color: "#f472b6", scr: "#0b0418", div: 60 },
   { id: "tyrielsoren", name: "Tyriel & Soren", url: "TyrielSoren.html", tag: "Plateforme · 6 niveaux + boss", color: "#5a92dc", scr: "#0b1530", div: 600 },
+  { id: "soirdete", name: "Un Soir d'Été", url: "UnSoirDete.html", tag: "Aventure 32-bit · 4 fins", color: "#ffae00", scr: "#1a0f3f", div: 250 },
 ];
 const cxGame = (idOrName) => CX_GAMES.find((g) => g.id === idOrName || CXScores.same(g.name, idOrName));
 
@@ -13131,6 +13134,8 @@ const CX_MISSIONS = [
   { id: "astra_500", game: "astra", text: "Monte à 500 m dans Astra Jump", reward: 25, test: (s) => (s.altitude || 0) >= 500 },
   { id: "ts_lvl2", game: "tyrielsoren", text: "Termine le niveau 1-1 de Tyriel & Soren", reward: 30, test: (s) => (s.level || 0) >= 2 },
   { id: "ts_5k", game: "tyrielsoren", text: "Fais 5 000 pts à Tyriel & Soren", reward: 25, test: (s) => s.score >= 5000 },
+  { id: "sde_fin", game: "soirdete", text: "Termine une nuit d'Un Soir d'Été", reward: 30, test: (s) => !!s.ending },
+  { id: "sde_new", game: "soirdete", text: "Débloque 2 fins d'Un Soir d'Été", reward: 35, test: (s) => (s.endings || 0) >= 2 },
   { id: "any_3", game: "any", text: "Joue 3 parties aujourd'hui", reward: 15, test: (s, R) => R.gamesToday >= 3 },
   { id: "any_mix", game: "any", text: "Joue à 3 bornes différentes", reward: 20, test: (s, R) => (R.gamesSet || []).length >= 3 },
 ];
@@ -13147,6 +13152,7 @@ const CX_ACHIEVEMENTS = [
   { id: "pongx", icon: "trophy", title: "Maître du Pong", desc: "Bats l'IA Expert", reward: 40, test: (R) => !!R.stats.pongExpert },
   { id: "snk30", icon: "snake", title: "Anaconda", desc: "Longueur 30 à Snake", reward: 30, test: (R) => (R.stats.max.length || 0) >= 30 },
   { id: "quiz10", icon: "notebook", title: "Encyclopédie rétro", desc: "10 bonnes réponses au quiz", reward: 30, test: (R) => (R.stats.quizGood || 0) >= 10 },
+  { id: "sde_secret", icon: "cassette", title: "Gardiens de la rue des Érables", desc: "Fin secrète d'Un Soir d'Été", reward: 50, test: (R) => (R.stats.best.soirdete || 0) >= 5000 },
   { id: "jackpot", icon: "dice", title: "Jackpot !", desc: "Aligne trois 7 à la machine", reward: 25, test: (R) => !!R.stats.jackpot },
   { id: "fav10", icon: "heart", title: "Cœur de joueur", desc: "Mets 10 jeux en favoris", reward: 20, test: () => (favorites || []).length >= 10 },
   { id: "col10", icon: "archive", title: "Collectionneur", desc: "10 jaquettes dans ta collection", reward: 40, test: () => (myCollection || []).length >= 10 },
@@ -13511,7 +13517,7 @@ function renderArcadeMainPage(tab = 0) {
 
   function showScores() {
     displayBox.replaceChildren();
-    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake", astra: "star", tyrielsoren: "trophy" }[g.id] })), openGame);
+    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake", astra: "star", tyrielsoren: "trophy", soirdete: "cassette" }[g.id] })), openGame);
   }
 
   contentArea.append(tabs.el, displayBox);
