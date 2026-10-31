@@ -4819,6 +4819,8 @@ body.theme-arcadecabinet {
 @keyframes arcCeil { 0%, 100% { opacity: .75; } 46% { opacity: .35; } 47% { opacity: .75; } 50% { opacity: .45; } 51% { opacity: .75; } }
 @keyframes arcScreens { 0%, 100% { opacity: .92; } 50% { opacity: 1; } }
 @media (min-width: 900px) { .theme-scenery.scenery-arcade_cabinet:not(.is-mini)::after { height: 40%; opacity: 1; } }
+/* Bornes toujours entières : hauteur fixe + répétition horizontale (avant : « cover » coupait le haut sur les écrans larges) */
+.theme-scenery.scenery-arcade_cabinet::after { background-size: auto 100%; background-repeat: repeat-x; background-position: center bottom; }
 
 /* Aperçu miniature (Boutique) */
 .theme-scenery.is-mini.scenery-arcade_cabinet { background-size: auto, auto, auto, auto, 110px 110px, auto; }
@@ -6696,6 +6698,303 @@ html:has(.game-overlay) main, html:has(.game-overlay) .bottom-nav { visibility: 
   .pack-fullscreen-overlay .pack-big.pack-animating { will-change: auto; }
 }
 </style>
+
+<style id="cx-theme-kyotoretro">
+/* =====================================================================
+   RUELLE DE KYOTO — UN SOIR D'AUTOMNE DANS LE VIEUX QUARTIER (légendaire)
+   Estampe lo-fi : ciel du crépuscule, pagode Yasaka au loin, rangée de
+   machiya en bois aux treillis éclairés, noren, lanternes rouges, fils
+   électriques, pavés mouillés et un chat noir sur le pas de la porte.
+   Effets : feuilles d'érable qui tombent, lueurs de lanternes qui
+   respirent, nuages fins qui dérivent.
+   Palette : sumi (encre), bois de cèdre, papier washi, mousse, shu (rouge).
+   ===================================================================== */
+body.theme-kyotoretro {
+  color-scheme: dark;
+  /* — Palette — */
+  --ky-sumi: #1a1412; --ky-sumi-2: #221a16; --ky-wood: #3b2a20; --ky-wood-2: #5a3e2b;
+  --ky-washi: #f3e9d6; --ky-washi-2: #e6d8bf; --ky-paper-ink: #3a2a20;
+  --ky-moss: #9bb07f; --ky-moss-2: #6f8a5b; --ky-shu: #d9483b; --ky-shu-2: #b8352a;
+  --ky-amber: #f0b36a; --ky-indigo: #2d3a5c;
+  --ky-line: rgba(232, 205, 160, .16); --ky-line-2: rgba(232, 205, 160, .3);
+  --ky-glow: rgba(240, 160, 90, .45);
+  /* — Espacements, rayons, ombres — */
+  --ky-r-sm: 6px; --ky-r: 10px; --ky-r-lg: 14px;
+  --ky-ease: cubic-bezier(.22, .8, .25, 1);
+  --ky-shadow: 0 10px 26px -14px rgba(8, 5, 4, .85), inset 0 1px 0 rgba(255, 236, 205, .07);
+  --ky-font-title: 'Shippori Mincho', 'Zen Kaku Gothic New', Georgia, serif;
+  --ky-font-body: 'Zen Kaku Gothic New', 'Rajdhani', sans-serif;
+  /* — Variables de l'app — */
+  --bg: #1a1412; --card: #251b16; --cov: #33261e; --txt: #f3e9d6; --mut: #bfae96;
+  --acc: #d9483b; --acc2: #f0b36a; --on: #fff4e6; --radius: 10px;
+  --line: var(--ky-line); --line-2: var(--ky-line-2);
+  --sig-font: var(--ky-font-title); --sig-logo: var(--ky-font-title);
+  --sig-line: linear-gradient(90deg, transparent, #d9483b 18%, #f0b36a 50%, #9bb07f 82%, transparent);
+  --sig-glow: rgba(240, 160, 90, .42); --sig-2: #f0b36a;
+  background-color: var(--ky-sumi);
+}
+
+/* --- Décor : ciel du crépuscule, lune, étoiles, collines, ruelle --- */
+.scenery-kyotoretro {
+  background:
+    radial-gradient(circle at 18% 12%, #fbefd6 0 11px, rgba(251, 230, 196, .35) 12px, rgba(251, 220, 180, .08) 36px, transparent 80px),
+    radial-gradient(1.2px 1.2px at 9% 6%, #fff 99%, transparent), radial-gradient(1px 1px at 31% 18%, #fff 99%, transparent),
+    radial-gradient(1.3px 1.3px at 52% 7%, #fff 99%, transparent), radial-gradient(1px 1px at 68% 15%, #fff 99%, transparent),
+    radial-gradient(1.1px 1.1px at 83% 5%, #fff 99%, transparent), radial-gradient(1px 1px at 94% 21%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 42% 26%, #fff 99%, transparent),
+    linear-gradient(0deg, #15100d 0 64px, transparent 64px),
+    radial-gradient(90% 34% at 50% 76%, rgba(240, 150, 90, .32), transparent 70%),
+    linear-gradient(180deg, #15132a 0%, #231d3a 18%, #43304d 36%, #7a4651 52%, #b8645a 66%, #e0935f 80%, #edb070 100%);
+}
+.scenery-kyotoretro::before {
+  height: 74%; bottom: calc(60px + env(safe-area-inset-bottom));
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 500' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3ClinearGradient id='h1' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%235a3f57'/%3E%3Cstop offset='1' stop-color='%233b2a40'/%3E%3C/linearGradient%3E%3ClinearGradient id='h2' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%2333243a'/%3E%3Cstop offset='1' stop-color='%23241a2b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 330 C120 280 220 300 330 262 C450 222 560 270 660 250 C780 226 880 268 990 240 C1080 218 1150 246 1200 236 L1200 500 L0 500 Z' fill='url(%23h1)' opacity='.85'/%3E%3Cpath d='M0 380 C140 350 240 372 380 340 C520 310 600 352 740 334 C880 316 980 350 1200 320 L1200 500 L0 500 Z' fill='url(%23h2)'/%3E%3Cellipse cx='389' cy='345' rx='18' ry='22' fill='%2321182a'/%3E%3Cellipse cx='87' cy='362' rx='14' ry='18' fill='%2321182a'/%3E%3Cellipse cx='70' cy='360' rx='10' ry='13' fill='%2321182a'/%3E%3Cellipse cx='520' cy='341' rx='11' ry='14' fill='%2321182a'/%3E%3Cellipse cx='509' cy='374' rx='11' ry='14' fill='%2321182a'/%3E%3Cellipse cx='268' cy='366' rx='21' ry='27' fill='%2321182a'/%3E%3Cellipse cx='693' cy='355' rx='22' ry='27' fill='%2321182a'/%3E%3Cellipse cx='56' cy='376' rx='13' ry='17' fill='%2321182a'/%3E%3Cellipse cx='173' cy='343' rx='14' ry='17' fill='%2321182a'/%3E%3Cellipse cx='979' cy='346' rx='17' ry='21' fill='%2321182a'/%3E%3Cellipse cx='767' cy='354' rx='17' ry='21' fill='%2321182a'/%3E%3Cellipse cx='75' cy='341' rx='12' ry='16' fill='%2321182a'/%3E%3Cellipse cx='816' cy='357' rx='14' ry='17' fill='%2321182a'/%3E%3Cellipse cx='703' cy='358' rx='14' ry='17' fill='%2321182a'/%3E%3Cellipse cx='953' cy='369' rx='13' ry='16' fill='%2321182a'/%3E%3Cellipse cx='689' cy='361' rx='21' ry='26' fill='%2321182a'/%3E%3Cellipse cx='875' cy='351' rx='22' ry='27' fill='%2321182a'/%3E%3Cellipse cx='142' cy='356' rx='19' ry='24' fill='%2321182a'/%3E%3Cellipse cx='182' cy='360' rx='10' ry='13' fill='%2321182a'/%3E%3Cellipse cx='802' cy='372' rx='17' ry='21' fill='%2321182a'/%3E%3Cellipse cx='1051' cy='352' rx='18' ry='23' fill='%2321182a'/%3E%3Cellipse cx='713' cy='364' rx='15' ry='19' fill='%2321182a'/%3E%3Cellipse cx='1008' cy='380' rx='16' ry='20' fill='%2321182a'/%3E%3Cellipse cx='797' cy='341' rx='18' ry='23' fill='%2321182a'/%3E%3Cellipse cx='777' cy='382' rx='20' ry='25' fill='%2321182a'/%3E%3Cellipse cx='342' cy='355' rx='18' ry='23' fill='%2321182a'/%3E%3Cellipse cx='27' cy='358' rx='12' ry='15' fill='%2321182a'/%3E%3Cellipse cx='141' cy='341' rx='19' ry='24' fill='%2321182a'/%3E%3Cellipse cx='155' cy='349' rx='15' ry='18' fill='%2321182a'/%3E%3Cellipse cx='1046' cy='342' rx='15' ry='19' fill='%2321182a'/%3E%3Cellipse cx='659' cy='377' rx='20' ry='25' fill='%2321182a'/%3E%3Cellipse cx='1037' cy='350' rx='15' ry='19' fill='%2321182a'/%3E%3Cellipse cx='431' cy='377' rx='21' ry='27' fill='%2321182a'/%3E%3Cellipse cx='181' cy='346' rx='13' ry='16' fill='%2321182a'/%3E%3Cellipse cx='280' cy='359' rx='17' ry='21' fill='%2321182a'/%3E%3Cellipse cx='315' cy='338' rx='15' ry='19' fill='%2321182a'/%3E%3Cellipse cx='443' cy='363' rx='21' ry='27' fill='%2321182a'/%3E%3Cellipse cx='829' cy='361' rx='17' ry='22' fill='%2321182a'/%3E%3Cellipse cx='811' cy='340' rx='21' ry='26' fill='%2321182a'/%3E%3Cellipse cx='936' cy='376' rx='20' ry='24' fill='%2321182a'/%3E%3Cellipse cx='471' cy='356' rx='11' ry='14' fill='%2321182a'/%3E%3Cellipse cx='761' cy='341' rx='11' ry='14' fill='%2321182a'/%3E%3Cellipse cx='251' cy='345' rx='14' ry='18' fill='%2321182a'/%3E%3Cellipse cx='63' cy='338' rx='12' ry='15' fill='%2321182a'/%3E%3Cellipse cx='122' cy='354' rx='10' ry='13' fill='%2321182a'/%3E%3Cellipse cx='1049' cy='365' rx='12' ry='15' fill='%2321182a'/%3E%3Cpath d='M168 400 Q192.0 404 204.0 386 L276.0 386 Q288.0 404 312 400 Z' fill='%231e1626'/%3E%3Crect x='194.4' y='400' width='91.2' height='60' fill='%231e1626'/%3E%3Cpath d='M408 392 Q429.0 396 438.0 378 L492.0 378 Q501.0 396 522 392 Z' fill='%231e1626'/%3E%3Crect x='430.8' y='392' width='68.4' height='60' fill='%231e1626'/%3E%3Cpath d='M888 398 Q913.0 402 926.0 384 L1004.0 384 Q1017.0 402 1042 398 Z' fill='%231e1626'/%3E%3Crect x='915.6' y='398' width='98.8' height='60' fill='%231e1626'/%3E%3Cpath d='M1048 404 Q1069.0 408 1078.0 390 L1132.0 390 Q1141.0 408 1162 404 Z' fill='%231e1626'/%3E%3Crect x='1070.8' y='404' width='68.4' height='60' fill='%231e1626'/%3E%3Crect x='632.8' y='454' width='134.4' height='16' fill='%2322192b'/%3E%3Crect x='658.0' y='404.0' width='84.0' height='50' fill='%2322192b'/%3E%3Crect x='697.0' y='412.0' width='6' height='10' fill='%23f2b56b' opacity='.5'/%3E%3Cpath d='M607.0 399.0 Q622.0 409.0 649.6 408.0 L750.4 408.0 Q778.0 409.0 793.0 399.0 L747.0 393.0 L653.0 393.0 Z' fill='%2322192b'/%3E%3Crect x='662.6' y='349.0' width='74.8' height='44' fill='%2322192b'/%3E%3Cpath d='M616.2 344.0 Q631.2 354.0 655.1 353.0 L744.9 353.0 Q768.8 354.0 783.8 344.0 L741.9 338.0 L658.1 338.0 Z' fill='%2322192b'/%3E%3Crect x='667.2' y='294.0' width='65.5' height='44' fill='%2322192b'/%3E%3Crect x='697.0' y='302.0' width='6' height='10' fill='%23f2b56b' opacity='.5'/%3E%3Cpath d='M625.5 289.0 Q640.5 299.0 660.7 298.0 L739.3 298.0 Q759.5 299.0 774.5 289.0 L736.7 283.0 L663.3 283.0 Z' fill='%2322192b'/%3E%3Crect x='671.9' y='239.0' width='56.3' height='44' fill='%2322192b'/%3E%3Cpath d='M634.7 234.0 Q649.7 244.0 666.2 243.0 L733.8 243.0 Q750.3 244.0 765.3 234.0 L731.5 228.0 L668.5 228.0 Z' fill='%2322192b'/%3E%3Crect x='676.5' y='184.0' width='47.0' height='44' fill='%2322192b'/%3E%3Cpath d='M644.0 179.0 Q659.0 189.0 671.8 188.0 L728.2 188.0 Q741.0 189.0 756.0 179.0 L726.3 173.0 L673.7 173.0 Z' fill='%2322192b'/%3E%3Crect x='697.8' y='115.0' width='4.4' height='58' fill='%2322192b'/%3E%3Crect x='693.5' y='123.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='129.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='135.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='141.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='147.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='153.0' width='13' height='2.2' fill='%2322192b'/%3E%3Crect x='693.5' y='159.0' width='13' height='2.2' fill='%2322192b'/%3E%3Ccircle cx='700' cy='113.0' r='4' fill='%2322192b'/%3E%3Crect y='450' width='1200' height='50' fill='%231c1522'/%3E%3Crect x='313' y='427' width='3' height='3' fill='%23f2b56b' opacity='0.51'/%3E%3Crect x='162' y='452' width='3' height='3' fill='%23f2b56b' opacity='0.80'/%3E%3Crect x='561' y='434' width='3' height='3' fill='%23f2b56b' opacity='0.39'/%3E%3Crect x='139' y='427' width='3' height='3' fill='%23f2b56b' opacity='0.47'/%3E%3Crect x='981' y='418' width='3' height='3' fill='%23f2b56b' opacity='0.36'/%3E%3Crect x='1123' y='436' width='3' height='3' fill='%23f2b56b' opacity='0.42'/%3E%3Crect x='650' y='411' width='3' height='3' fill='%23f2b56b' opacity='0.59'/%3E%3Crect x='1155' y='453' width='3' height='3' fill='%23f2b56b' opacity='0.66'/%3E%3Crect x='323' y='428' width='3' height='3' fill='%23f2b56b' opacity='0.43'/%3E%3Crect x='915' y='437' width='3' height='3' fill='%23f2b56b' opacity='0.70'/%3E%3Crect x='402' y='421' width='3' height='3' fill='%23f2b56b' opacity='0.72'/%3E%3Crect x='1163' y='453' width='3' height='3' fill='%23f2b56b' opacity='0.71'/%3E%3Crect x='969' y='447' width='3' height='3' fill='%23f2b56b' opacity='0.45'/%3E%3Crect x='620' y='428' width='3' height='3' fill='%23f2b56b' opacity='0.36'/%3E%3Crect x='52' y='424' width='3' height='3' fill='%23f2b56b' opacity='0.47'/%3E%3Crect x='823' y='458' width='3' height='3' fill='%23f2b56b' opacity='0.55'/%3E%3Crect x='1107' y='459' width='3' height='3' fill='%23f2b56b' opacity='0.78'/%3E%3Crect x='443' y='421' width='3' height='3' fill='%23f2b56b' opacity='0.45'/%3E%3Crect x='248' y='420' width='3' height='3' fill='%23f2b56b' opacity='0.63'/%3E%3Crect x='1064' y='452' width='3' height='3' fill='%23f2b56b' opacity='0.57'/%3E%3Crect x='777' y='450' width='3' height='3' fill='%23f2b56b' opacity='0.39'/%3E%3Crect x='786' y='455' width='3' height='3' fill='%23f2b56b' opacity='0.70'/%3E%3C/svg%3E") center bottom / cover no-repeat;
+}
+.scenery-kyotoretro::after {
+  height: 47%; bottom: calc(60px + env(safe-area-inset-bottom));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3CradialGradient id='lg'%3E%3Cstop offset='0' stop-color='%23ffb46a' stop-opacity='.55'/%3E%3Cstop offset='.45' stop-color='%23ff8d4a' stop-opacity='.18'/%3E%3Cstop offset='1' stop-color='%23ff8d4a' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='lb' cx='.42' cy='.4' r='.7'%3E%3Cstop offset='0' stop-color='%23ff9a6a'/%3E%3Cstop offset='.5' stop-color='%23d8402e'/%3E%3Cstop offset='1' stop-color='%238e1f16'/%3E%3C/radialGradient%3E%3ClinearGradient id='wl' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f6c47a'/%3E%3Cstop offset='1' stop-color='%23d88842'/%3E%3C/linearGradient%3E%3ClinearGradient id='df' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f0a860' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23f0a860' stop-opacity='.35'/%3E%3C/linearGradient%3E%3ClinearGradient id='pv' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232b211c'/%3E%3Cstop offset='1' stop-color='%23171110'/%3E%3C/linearGradient%3E%3Cpattern id='ks' width='7' height='10' patternUnits='userSpaceOnUse'%3E%3Crect width='4' height='10' fill='%233a271c'/%3E%3C/pattern%3E%3Cpattern id='mk' width='9' height='10' patternUnits='userSpaceOnUse'%3E%3Crect width='5' height='10' fill='%234d3d31'/%3E%3C/pattern%3E%3Cpattern id='tl' width='9' height='10' patternUnits='userSpaceOnUse'%3E%3Crect width='9' height='10' fill='%231b181e'/%3E%3Crect width='1.6' height='10' fill='%232b262d'/%3E%3C/pattern%3E%3Cpattern id='iy' width='5' height='10' patternUnits='userSpaceOnUse'%3E%3Crect width='1.4' height='10' fill='%232c1e15'/%3E%3C/pattern%3E%3Cpattern id='st' width='64' height='24' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 23H64M0 11H64M20 0V11M52 0V11M6 11V23M38 11V23' stroke='%23140f0d' stroke-width='1.6' fill='none'/%3E%3C/pattern%3E%3Cfilter id='bl' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cg stroke='%23120d10' stroke-width='1.4' fill='none'%3E%3Cpath d='M-20 70 Q420 150 862 96'/%3E%3Cpath d='M-20 92 Q420 170 862 112'/%3E%3Cpath d='M874 96 Q1040 150 1220 118'/%3E%3Cpath d='M874 112 Q1040 166 1220 140'/%3E%3C/g%3E%3Crect x='-30' y='330' width='250' height='210' fill='%232a1c15'/%3E%3Crect x='-24' y='334' width='238' height='71.60000000000002' fill='%2358483b'/%3E%3Crect x='37.5' y='352.7' width='115.0' height='31.8' fill='%233a2c23' opacity='1'/%3E%3Crect x='37.5' y='352.7' width='115.0' height='31.8' fill='url(%23mk)'/%3E%3Cpath d='M-46 334 L236 334 L222 306 L-32 306 Z' fill='%2317141a'/%3E%3Crect x='-32' y='306' width='254' height='28' fill='url(%23tl)'/%3E%3Crect x='-46' y='332' width='282' height='3' fill='%233b333a'/%3E%3Crect x='-34' y='300' width='258' height='7' rx='2' fill='%231d1a20'/%3E%3Cpath d='M-50 429.6 L240 429.6 L224 405.6 L-34 405.6 Z' fill='%231a161c'/%3E%3Crect x='-34' y='405.6' width='258' height='24' fill='url(%23tl)' opacity='.8'/%3E%3Crect x='-50' y='427.6' width='290' height='2.5' fill='%233b333a'/%3E%3Crect x='-26' y='429.6' width='242' height='110.4' fill='%233a271c'/%3E%3Crect x='-12.5' y='443.6' width='120.0' height='62.4' fill='url(%23wl)'/%3E%3Crect x='-12.5' y='443.6' width='120.0' height='62.4' fill='url(%23ks)'/%3E%3Crect x='-15.5' y='439.6' width='126.0' height='5' fill='%2324170f'/%3E%3Crect x='-15.5' y='505.0' width='126.0' height='5' fill='%2324170f'/%3E%3Cpath d='M-16.5 540 Q-16.5 510 -0.5 510 L99.5 510 Q113.5 510 113.5 540 Z' fill='%234a3424'/%3E%3Cpath d='M-16.5 540 Q-16.5 510 -0.5 510 L99.5 510 Q113.5 510 113.5 540 Z' fill='url(%23iy)'/%3E%3Crect x='120.0' y='437.6' width='80.0' height='102.4' fill='%23120c0a'/%3E%3Crect x='120.0' y='504.0' width='80.0' height='36' fill='url(%23df)'/%3E%3Crect x='117.0' y='435.6' width='86.0' height='3' fill='%237a5a3a'/%3E%3Cpath d='M120.0 437.6 H145.3 V484.7 Q132.7 487.7 120.0 483.7 Z' fill='%235a2a22'/%3E%3Cpath d='M147.3 437.6 H172.7 V484.7 Q160.0 487.7 147.3 483.7 Z' fill='%235a2a22'/%3E%3Cpath d='M174.7 437.6 H200.0 V484.7 Q187.3 487.7 174.7 483.7 Z' fill='%235a2a22'/%3E%3Ccircle cx='160.0' cy='458.8' r='8.1' fill='none' stroke='%23efe4cf' stroke-width='1.6' opacity='.85'/%3E%3Ccircle cx='108' cy='458' r='46' fill='url(%23lg)'/%3E%3Cline x1='108' y1='434.0' x2='108' y2='443.0' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='101.0' y='441.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='108' cy='458' rx='11.0' ry='14.5' fill='url(%23lb)'/%3E%3Cpath d='M97.4 450.0 Q108 451.6 118.6 450.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M97.4 454.5 Q108 456.1 118.6 454.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M97.4 459.0 Q108 460.6 118.6 459.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M97.4 463.5 Q108 465.1 118.6 463.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M97.4 468.0 Q108 469.6 118.6 468.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='104.5' y='452.0' width='7.0' height='11.0' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='101.0' y='471.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='206.0' cy='520' rx='13' ry='14' fill='%233f5a3a'/%3E%3Cellipse cx='200.0' cy='514' rx='8' ry='9' fill='%2356774a'/%3E%3Crect x='197.0' y='528' width='18' height='12' rx='2' fill='%235b3a28'/%3E%3Cpath d='M-30 540 Q-10 531 16 536 Q40 530 60 540 Z' fill='%2334472f' opacity='.9'/%3E%3Crect x='226' y='356' width='238' height='184' fill='%232a1c15'/%3E%3Crect x='232' y='360' width='226' height='60.15999999999997' fill='%2358483b'/%3E%3Crect x='290.3' y='375.2' width='109.5' height='26.9' fill='%23e9ad62' opacity='.75'/%3E%3Crect x='290.3' y='375.2' width='109.5' height='26.9' fill='url(%23mk)'/%3E%3Cpath d='M210 360 L480 360 L466 332 L224 332 Z' fill='%2317141a'/%3E%3Crect x='224' y='332' width='242' height='28' fill='url(%23tl)'/%3E%3Crect x='210' y='358' width='270' height='3' fill='%233b333a'/%3E%3Crect x='222' y='326' width='246' height='7' rx='2' fill='%231d1a20'/%3E%3Cpath d='M206 444.2 L484 444.2 L468 420.2 L222 420.2 Z' fill='%231a161c'/%3E%3Crect x='222' y='420.2' width='246' height='24' fill='url(%23tl)' opacity='.8'/%3E%3Crect x='206' y='442.2' width='278' height='2.5' fill='%233b333a'/%3E%3Crect x='230' y='444.2' width='230' height='95.8' fill='%233a271c'/%3E%3Crect x='242.7' y='458.2' width='114.2' height='47.8' fill='url(%23wl)'/%3E%3Crect x='242.7' y='458.2' width='114.2' height='47.8' fill='url(%23ks)'/%3E%3Crect x='239.7' y='454.2' width='120.2' height='5' fill='%2324170f'/%3E%3Crect x='239.7' y='505.0' width='120.2' height='5' fill='%2324170f'/%3E%3Cpath d='M238.7 540 Q238.7 510 254.7 510 L348.9 510 Q362.9 510 362.9 540 Z' fill='%234a3424'/%3E%3Cpath d='M238.7 540 Q238.7 510 254.7 510 L348.9 510 Q362.9 510 362.9 540 Z' fill='url(%23iy)'/%3E%3Crect x='368.8' y='452.2' width='76.2' height='87.8' fill='%23120c0a'/%3E%3Crect x='368.8' y='504.0' width='76.2' height='36' fill='url(%23df)'/%3E%3Crect x='365.8' y='450.2' width='82.2' height='3' fill='%237a5a3a'/%3E%3Cpath d='M368.8 452.2 H392.9 V492.6 Q380.8 495.6 368.8 491.6 Z' fill='%232d3a5c'/%3E%3Cpath d='M394.9 452.2 H418.9 V492.6 Q406.9 495.6 394.9 491.6 Z' fill='%232d3a5c'/%3E%3Cpath d='M420.9 452.2 H445.0 V492.6 Q432.9 495.6 420.9 491.6 Z' fill='%232d3a5c'/%3E%3Ccircle cx='406.9' cy='470.3' r='7.7' fill='none' stroke='%23efe4cf' stroke-width='1.6' opacity='.85'/%3E%3Ccircle cx='357' cy='472' r='46' fill='url(%23lg)'/%3E%3Cline x1='357' y1='448.0' x2='357' y2='457.0' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='350.0' y='455.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='357' cy='472' rx='11.0' ry='14.5' fill='url(%23lb)'/%3E%3Cpath d='M346.4 464.0 Q357 465.6 367.6 464.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M346.4 468.5 Q357 470.1 367.6 468.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M346.4 473.0 Q357 474.6 367.6 473.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M346.4 477.5 Q357 479.1 367.6 477.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M346.4 482.0 Q357 483.6 367.6 482.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='353.5' y='466.0' width='7.0' height='11.0' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='350.0' y='485.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='451.0' cy='520' rx='13' ry='14' fill='%233f5a3a'/%3E%3Cellipse cx='445.0' cy='514' rx='8' ry='9' fill='%2356774a'/%3E%3Crect x='442.0' y='528' width='18' height='12' rx='2' fill='%235b3a28'/%3E%3Cpath d='M226 540 Q246 531 272 536 Q296 530 316 540 Z' fill='%2334472f' opacity='.9'/%3E%3Crect x='470' y='312' width='270' height='228' fill='%232a1c15'/%3E%3Crect x='476' y='316' width='258' height='79.51999999999998' fill='%2358483b'/%3E%3Crect x='542.9' y='337.1' width='124.2' height='35.1' fill='%233a2c23' opacity='1'/%3E%3Crect x='542.9' y='337.1' width='124.2' height='35.1' fill='url(%23mk)'/%3E%3Cpath d='M454 316 L756 316 L742 288 L468 288 Z' fill='%2317141a'/%3E%3Crect x='468' y='288' width='274' height='28' fill='url(%23tl)'/%3E%3Crect x='454' y='314' width='302' height='3' fill='%233b333a'/%3E%3Crect x='466' y='282' width='278' height='7' rx='2' fill='%231d1a20'/%3E%3Cpath d='M450 419.5 L760 419.5 L744 395.5 L466 395.5 Z' fill='%231a161c'/%3E%3Crect x='466' y='395.5' width='278' height='24' fill='url(%23tl)' opacity='.8'/%3E%3Crect x='450' y='417.5' width='310' height='2.5' fill='%233b333a'/%3E%3Crect x='474' y='419.5' width='262' height='120.5' fill='%233a271c'/%3E%3Crect x='488.9' y='433.5' width='129.6' height='72.5' fill='url(%23wl)'/%3E%3Crect x='488.9' y='433.5' width='129.6' height='72.5' fill='url(%23ks)'/%3E%3Crect x='485.9' y='429.5' width='135.6' height='5' fill='%2324170f'/%3E%3Crect x='485.9' y='505.0' width='135.6' height='5' fill='%2324170f'/%3E%3Cpath d='M484.9 540 Q484.9 510 500.9 510 L610.5 510 Q624.5 510 624.5 540 Z' fill='%234a3424'/%3E%3Cpath d='M484.9 540 Q484.9 510 500.9 510 L610.5 510 Q624.5 510 624.5 540 Z' fill='url(%23iy)'/%3E%3Crect x='632.0' y='427.5' width='86.4' height='112.5' fill='%23120c0a'/%3E%3Crect x='632.0' y='504.0' width='86.4' height='36' fill='url(%23df)'/%3E%3Crect x='629.0' y='425.5' width='92.4' height='3' fill='%237a5a3a'/%3E%3Cpath d='M632.0 427.5 H659.5 V479.3 Q645.7 482.3 632.0 478.3 Z' fill='%232d3a5c'/%3E%3Cpath d='M661.5 427.5 H688.9 V479.3 Q675.2 482.3 661.5 478.3 Z' fill='%232d3a5c'/%3E%3Cpath d='M690.9 427.5 H718.4 V479.3 Q704.7 482.3 690.9 478.3 Z' fill='%232d3a5c'/%3E%3Ccircle cx='675.2' cy='450.8' r='8.8' fill='none' stroke='%23efe4cf' stroke-width='1.6' opacity='.85'/%3E%3Ccircle cx='620' cy='448' r='46' fill='url(%23lg)'/%3E%3Cline x1='620' y1='424.0' x2='620' y2='433.0' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='613.0' y='431.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='620' cy='448' rx='11.0' ry='14.5' fill='url(%23lb)'/%3E%3Cpath d='M609.4 440.0 Q620 441.6 630.6 440.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M609.4 444.5 Q620 446.1 630.6 444.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M609.4 449.0 Q620 450.6 630.6 449.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M609.4 453.5 Q620 455.1 630.6 453.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M609.4 458.0 Q620 459.6 630.6 458.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='616.5' y='442.0' width='7.0' height='11.0' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='613.0' y='461.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Ccircle cx='551' cy='446' r='39' fill='url(%23lg)'/%3E%3Cline x1='551' y1='425.6' x2='551' y2='433.2' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='545.0' y='431.6' width='11.9' height='3.4' rx='1' fill='%231a1412'/%3E%3Cellipse cx='551' cy='446' rx='9.3' ry='12.3' fill='url(%23lb)'/%3E%3Cpath d='M542.0 439.2 Q551 440.6 560.0 439.2' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M542.0 443.0 Q551 444.4 560.0 443.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M542.0 446.9 Q551 448.2 560.0 446.9' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M542.0 450.7 Q551 452.0 560.0 450.7' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M542.0 454.5 Q551 455.9 560.0 454.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='548.0' y='440.9' width='6.0' height='9.3' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='545.0' y='457.1' width='11.9' height='3.4' rx='1' fill='%231a1412'/%3E%3Cellipse cx='724.4' cy='520' rx='13' ry='14' fill='%233f5a3a'/%3E%3Cellipse cx='718.4' cy='514' rx='8' ry='9' fill='%2356774a'/%3E%3Crect x='715.4' y='528' width='18' height='12' rx='2' fill='%235b3a28'/%3E%3Cpath d='M470 540 Q490 531 516 536 Q540 530 560 540 Z' fill='%2334472f' opacity='.9'/%3E%3Crect x='746' y='348' width='226' height='192' fill='%232a1c15'/%3E%3Crect x='752' y='352' width='214' height='63.68000000000001' fill='%2358483b'/%3E%3Crect x='807.0' y='368.3' width='104.0' height='28.4' fill='%23e9ad62' opacity='.75'/%3E%3Crect x='807.0' y='368.3' width='104.0' height='28.4' fill='url(%23mk)'/%3E%3Cpath d='M730 352 L988 352 L974 324 L744 324 Z' fill='%2317141a'/%3E%3Crect x='744' y='324' width='230' height='28' fill='url(%23tl)'/%3E%3Crect x='730' y='350' width='258' height='3' fill='%233b333a'/%3E%3Crect x='742' y='318' width='234' height='7' rx='2' fill='%231d1a20'/%3E%3Cpath d='M726 439.7 L992 439.7 L976 415.7 L742 415.7 Z' fill='%231a161c'/%3E%3Crect x='742' y='415.7' width='234' height='24' fill='url(%23tl)' opacity='.8'/%3E%3Crect x='726' y='437.7' width='266' height='2.5' fill='%233b333a'/%3E%3Crect x='750' y='439.7' width='218' height='100.3' fill='%233a271c'/%3E%3Crect x='761.8' y='453.7' width='108.5' height='52.3' fill='%231c130e'/%3E%3Crect x='761.8' y='453.7' width='108.5' height='52.3' fill='url(%23ks)'/%3E%3Crect x='758.8' y='449.7' width='114.5' height='5' fill='%2324170f'/%3E%3Crect x='758.8' y='505.0' width='114.5' height='5' fill='%2324170f'/%3E%3Cpath d='M757.8 540 Q757.8 510 773.8 510 L862.3 510 Q876.3 510 876.3 540 Z' fill='%234a3424'/%3E%3Cpath d='M757.8 540 Q757.8 510 773.8 510 L862.3 510 Q876.3 510 876.3 540 Z' fill='url(%23iy)'/%3E%3Crect x='881.6' y='447.7' width='72.3' height='92.3' fill='%23120c0a'/%3E%3Crect x='881.6' y='504.0' width='72.3' height='36' fill='url(%23df)'/%3E%3Crect x='878.6' y='445.7' width='78.3' height='3' fill='%237a5a3a'/%3E%3Cpath d='M881.6 447.7 H904.4 V490.1 Q893.0 493.1 881.6 489.1 Z' fill='%236b3326'/%3E%3Cpath d='M906.4 447.7 H929.1 V490.1 Q917.8 493.1 906.4 489.1 Z' fill='%236b3326'/%3E%3Cpath d='M931.1 447.7 H953.9 V490.1 Q942.5 493.1 931.1 489.1 Z' fill='%236b3326'/%3E%3Ccircle cx='917.8' cy='466.8' r='7.3' fill='none' stroke='%23efe4cf' stroke-width='1.6' opacity='.85'/%3E%3Ccircle cx='870' cy='468' r='46' fill='url(%23lg)'/%3E%3Cline x1='870' y1='444.0' x2='870' y2='453.0' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='863.0' y='451.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='870' cy='468' rx='11.0' ry='14.5' fill='url(%23lb)'/%3E%3Cpath d='M859.4 460.0 Q870 461.6 880.6 460.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M859.4 464.5 Q870 466.1 880.6 464.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M859.4 469.0 Q870 470.6 880.6 469.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M859.4 473.5 Q870 475.1 880.6 473.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M859.4 478.0 Q870 479.6 880.6 478.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='866.5' y='462.0' width='7.0' height='11.0' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='863.0' y='481.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='959.9' cy='520' rx='13' ry='14' fill='%233f5a3a'/%3E%3Cellipse cx='953.9' cy='514' rx='8' ry='9' fill='%2356774a'/%3E%3Crect x='950.9' y='528' width='18' height='12' rx='2' fill='%235b3a28'/%3E%3Cpath d='M746 540 Q766 531 792 536 Q816 530 836 540 Z' fill='%2334472f' opacity='.9'/%3E%3Crect x='978' y='326' width='252' height='214' fill='%232a1c15'/%3E%3Crect x='984' y='330' width='240' height='73.36000000000001' fill='%2358483b'/%3E%3Crect x='1046.0' y='349.2' width='115.9' height='32.5' fill='%233a2c23' opacity='1'/%3E%3Crect x='1046.0' y='349.2' width='115.9' height='32.5' fill='url(%23mk)'/%3E%3Cpath d='M962 330 L1246 330 L1232 302 L976 302 Z' fill='%2317141a'/%3E%3Crect x='976' y='302' width='256' height='28' fill='url(%23tl)'/%3E%3Crect x='962' y='328' width='284' height='3' fill='%233b333a'/%3E%3Crect x='974' y='296' width='260' height='7' rx='2' fill='%231d1a20'/%3E%3Cpath d='M958 427.4 L1250 427.4 L1234 403.4 L974 403.4 Z' fill='%231a161c'/%3E%3Crect x='974' y='403.4' width='260' height='24' fill='url(%23tl)' opacity='.8'/%3E%3Crect x='958' y='425.4' width='292' height='2.5' fill='%233b333a'/%3E%3Crect x='982' y='427.4' width='244' height='112.6' fill='%233a271c'/%3E%3Crect x='995.6' y='441.4' width='121.0' height='64.6' fill='url(%23wl)'/%3E%3Crect x='995.6' y='441.4' width='121.0' height='64.6' fill='url(%23ks)'/%3E%3Crect x='992.6' y='437.4' width='127.0' height='5' fill='%2324170f'/%3E%3Crect x='992.6' y='505.0' width='127.0' height='5' fill='%2324170f'/%3E%3Cpath d='M991.6 540 Q991.6 510 1007.6 510 L1108.6 510 Q1122.6 510 1122.6 540 Z' fill='%234a3424'/%3E%3Cpath d='M991.6 540 Q991.6 510 1007.6 510 L1108.6 510 Q1122.6 510 1122.6 540 Z' fill='url(%23iy)'/%3E%3Crect x='1129.2' y='435.4' width='80.6' height='104.6' fill='%23120c0a'/%3E%3Crect x='1129.2' y='504.0' width='80.6' height='36' fill='url(%23df)'/%3E%3Crect x='1126.2' y='433.4' width='86.6' height='3' fill='%237a5a3a'/%3E%3Cpath d='M1129.2 435.4 H1154.7 V483.5 Q1142.0 486.5 1129.2 482.5 Z' fill='%232d3a5c'/%3E%3Cpath d='M1156.7 435.4 H1182.3 V483.5 Q1169.5 486.5 1156.7 482.5 Z' fill='%232d3a5c'/%3E%3Cpath d='M1184.3 435.4 H1209.8 V483.5 Q1197.1 486.5 1184.3 482.5 Z' fill='%232d3a5c'/%3E%3Ccircle cx='1169.5' cy='457.0' r='8.2' fill='none' stroke='%23efe4cf' stroke-width='1.6' opacity='.85'/%3E%3Ccircle cx='1117' cy='455' r='46' fill='url(%23lg)'/%3E%3Cline x1='1117' y1='431.0' x2='1117' y2='440.0' stroke='%23140f0e' stroke-width='1.6'/%3E%3Crect x='1110.0' y='438.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cellipse cx='1117' cy='455' rx='11.0' ry='14.5' fill='url(%23lb)'/%3E%3Cpath d='M1106.4 447.0 Q1117 448.6 1127.6 447.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M1106.4 451.5 Q1117 453.1 1127.6 451.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M1106.4 456.0 Q1117 457.6 1127.6 456.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M1106.4 460.5 Q1117 462.1 1127.6 460.5' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Cpath d='M1106.4 465.0 Q1117 466.6 1127.6 465.0' stroke='%238f2419' stroke-width='.7' fill='none' opacity='.7'/%3E%3Crect x='1113.5' y='449.0' width='7.0' height='11.0' fill='%232a0f0b' opacity='.55'/%3E%3Crect x='1110.0' y='468.0' width='14.0' height='4.0' rx='1' fill='%231a1412'/%3E%3Cpath d='M978 540 Q998 531 1024 536 Q1048 530 1068 540 Z' fill='%2334472f' opacity='.9'/%3E%3Crect x='861' y='60' width='14' height='482' fill='%231b1416'/%3E%3Crect x='838' y='92' width='60' height='6' fill='%231b1416'/%3E%3Crect x='844' y='108' width='48' height='5' fill='%231b1416'/%3E%3Crect x='876' y='140' width='16' height='26' rx='2' fill='%23221a1c'/%3E%3Crect x='864' y='300' width='8' height='60' fill='%232a2124'/%3E%3Crect y='540' width='1200' height='60' fill='url(%23pv)'/%3E%3Crect y='540' width='1200' height='60' fill='url(%23st)' opacity='.8'/%3E%3Cellipse cx='161' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='452' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='632' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='783' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='1101' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='306' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Cellipse cx='1041' cy='570' rx='9' ry='26' fill='%23ff9a55' opacity='.28' filter='url(%23bl)'/%3E%3Crect y='540' width='1200' height='2' fill='%233a2c24'/%3E%3Cg fill='%230d0908'%3E%3Cellipse cx='612' cy='529' rx='13' ry='10'/%3E%3Ccircle cx='621' cy='516' r='7.5'/%3E%3Cpath d='M615 512 l2 -9 5 6 Z M623 510 l5 -8 2 9 Z'/%3E%3Cpath d='M600 534 q-14 -2 -12 -20 q1 -6 5 -4' fill='none' stroke='%230d0908' stroke-width='3.4' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='619' cy='515' r='1.2' fill='%23f2c46b'/%3E%3Ccircle cx='624' cy='515' r='1.2' fill='%23f2c46b'/%3E%3C/svg%3E");
+}
+@media (min-width: 900px) {
+  .theme-scenery.scenery-kyotoretro:not(.is-mini)::before { height: 86%; bottom: 0; }
+  .theme-scenery.scenery-kyotoretro:not(.is-mini)::after { height: 60%; bottom: 0; }
+}
+
+/* Aperçu miniature (Boutique) */
+.theme-scenery.is-mini.scenery-kyotoretro::before { height: 100%; bottom: 0; }
+.theme-scenery.is-mini.scenery-kyotoretro::after { display: block; height: 84%; bottom: 0; }
+.tp-kyotoretro { --p-bg: #1a1412; --p-card: #251b16; --p-acc: #d9483b; --p-txt: #f3e9d6; --p-font: 'Shippori Mincho'; }
+.tp-kyotoretro .tp-logo { font-family: 'Shippori Mincho', serif !important; font-weight: 800 !important; letter-spacing: 3px !important; color: #f3e9d6 !important; text-shadow: 0 0 8px rgba(240, 160, 90, .7) !important; }
+.tp-kyotoretro .tp-bar { border-radius: 6px !important; border-color: rgba(232, 205, 160, .35) !important; }
+.tp-kyotoretro .tp-row { background: rgba(37, 27, 22, .92) !important; border: 1px solid rgba(232, 205, 160, .22) !important; border-radius: 6px !important; }
+.tp-kyotoretro .tp-row span.short { background: #f0b36a !important; }
+.tp-kyotoretro .tp-bar i { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='.42' cy='.4' r='.7'%3E%3Cstop offset='0' stop-color='%23ffa274'/%3E%3Cstop offset='.55' stop-color='%23d8402e'/%3E%3Cstop offset='1' stop-color='%238e1f16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cline x1='12' y1='0' x2='12' y2='5' stroke='%232a1d16' stroke-width='1.6'/%3E%3Crect x='6' y='4' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3Cellipse cx='12' cy='17' rx='10' ry='11' fill='url(%23b)'/%3E%3Cpath d='M2.4 12 Q12 14 21.6 12 M2 17 Q12 19 22 17 M2.4 22 Q12 24 21.6 22' stroke='%238f2419' stroke-width='.8' fill='none' opacity='.75'/%3E%3Crect x='6' y='26.6' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3C/svg%3E") center / contain no-repeat !important; border-radius: 0 !important; width: 12px !important; height: 16px !important; box-shadow: none !important; filter: drop-shadow(0 0 5px rgba(240, 140, 80, .9)); }
+.tp-kyotoretro ~ * .tp-rank, .tp-kyotoretro .tp-rank { color: #fff4e6 !important; }
+
+/* --- Typographie --- */
+body.theme-kyotoretro .t b, body.theme-kyotoretro .grid-title {
+  font-family: var(--ky-font-title) !important; font-weight: 800 !important; letter-spacing: .3px; color: var(--ky-washi) !important;
+}
+body.theme-kyotoretro .pg-head h2, body.theme-kyotoretro .theme-card-head h3, body.theme-kyotoretro .shelf-head b, body.theme-kyotoretro .pack-head h2 {
+  font-family: var(--ky-font-title) !important; font-weight: 800 !important; letter-spacing: 1px !important;
+}
+body.theme-kyotoretro .platform-badge, body.theme-kyotoretro .time-badge, body.theme-kyotoretro .seg-btn,
+body.theme-kyotoretro .bottom-nav .nav-item span, body.theme-kyotoretro .search-box, body.theme-kyotoretro .pg-head p {
+  font-family: var(--ky-font-body) !important;
+}
+
+/* --- En-tête : bois sombre vitré + grille de shoji très fine --- */
+body.theme-kyotoretro .sticky-header-container {
+  background:
+    repeating-linear-gradient(90deg, rgba(243, 233, 214, .035) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(0deg, rgba(243, 233, 214, .03) 0 1px, transparent 1px 32px),
+    linear-gradient(180deg, rgba(30, 22, 18, .9), rgba(22, 16, 13, .86)) !important;
+}
+body.theme-kyotoretro #sub-title.neon-logo { font-family: var(--ky-font-title) !important; box-shadow: none !important; text-shadow: none !important; }
+body.theme-kyotoretro #homeMainContent .brand-text, body.theme-kyotoretro #sub-title .brand-text {
+  font-family: var(--ky-font-title) !important; font-weight: 800 !important; letter-spacing: 3.5px !important;
+  background: linear-gradient(92deg, #f3e9d6 0 45%, #f0c48a 75%, #e9875a 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+  filter: drop-shadow(0 0 7px rgba(240, 160, 90, .35));
+}
+body.theme-kyotoretro .header-currency-badge {
+  border: 1px solid rgba(240, 179, 106, .5) !important; background: rgba(42, 30, 22, .7) !important;
+  color: var(--ky-amber) !important; box-shadow: 0 0 16px -5px rgba(240, 160, 90, .55) !important; border-radius: var(--ky-r-sm) !important;
+}
+
+/* --- Jour : plaque de papier washi suspendue, petite lanterne rouge --- */
+body.theme-kyotoretro .day {
+  display: flex !important; width: fit-content; align-items: center; gap: 9px;
+  padding: 5px 14px 5px 10px !important; border-radius: 4px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .16 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E"), linear-gradient(180deg, #f6eddc, #e9dcc4) !important;
+  border: 0 !important; border-left: 3px solid var(--ky-shu) !important;
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .7), inset 0 0 0 1px rgba(90, 62, 43, .14) !important;
+  font-family: var(--ky-font-title) !important; font-weight: 800 !important; letter-spacing: 1.6px !important;
+  color: var(--ky-paper-ink) !important; text-shadow: none !important;
+}
+body.theme-kyotoretro .day::before {
+  content: "" !important; flex: none; width: 11px; height: 15px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='.42' cy='.4' r='.7'%3E%3Cstop offset='0' stop-color='%23ffa274'/%3E%3Cstop offset='.55' stop-color='%23d8402e'/%3E%3Cstop offset='1' stop-color='%238e1f16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cline x1='12' y1='0' x2='12' y2='5' stroke='%232a1d16' stroke-width='1.6'/%3E%3Crect x='6' y='4' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3Cellipse cx='12' cy='17' rx='10' ry='11' fill='url(%23b)'/%3E%3Cpath d='M2.4 12 Q12 14 21.6 12 M2 17 Q12 19 22 17 M2.4 22 Q12 24 21.6 22' stroke='%238f2419' stroke-width='.8' fill='none' opacity='.75'/%3E%3Crect x='6' y='26.6' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform-origin: 50% 0; animation: kySwing 4.5s ease-in-out infinite; filter: drop-shadow(0 0 3px rgba(217, 72, 59, .5));
+}
+body.theme-kyotoretro .day::after { content: none !important; }
+
+/* --- Cartes de jeu : panneau de bois sombre, motif asanoha, cadre de shoji --- */
+body.theme-kyotoretro .row,
+body.theme-kyotoretro .grid-card {
+  position: relative;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'%3E%3Cg fill='none' stroke='%23f3e9d6' stroke-width='.6' opacity='.05'%3E%3Cpath d='M0 0L20 11.55L40 0M0 69.28L20 57.73L40 69.28M20 11.55V34.64M20 57.73V34.64M0 23.09L20 34.64L40 23.09M0 46.19L20 34.64L40 46.19M0 0V69.28M40 0V69.28'/%3E%3Cpath d='M0 23.09L20 11.55M40 23.09L20 11.55M0 46.19L20 57.73M40 46.19L20 57.73'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 40px 69.28px,
+    linear-gradient(165deg, rgba(44, 32, 25, .94), rgba(30, 22, 18, .95)) !important;
+  border: 1px solid var(--ky-line) !important; border-radius: var(--ky-r) !important;
+  box-shadow: var(--ky-shadow), inset 0 0 0 4px rgba(26, 20, 18, .55), inset 0 0 0 5px rgba(232, 205, 160, .06) !important;
+  transition: transform .5s var(--ky-ease), box-shadow .5s ease, border-color .35s ease !important;
+}
+/* Lanterne qui s'allume au survol (coin haut droit) */
+body.theme-kyotoretro .row::after, body.theme-kyotoretro .grid-card::after {
+  content: ""; position: absolute; top: -6px; right: 20px; width: 15px; height: 21px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='.42' cy='.4' r='.7'%3E%3Cstop offset='0' stop-color='%23ffa274'/%3E%3Cstop offset='.55' stop-color='%23d8402e'/%3E%3Cstop offset='1' stop-color='%238e1f16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cline x1='12' y1='0' x2='12' y2='5' stroke='%232a1d16' stroke-width='1.6'/%3E%3Crect x='6' y='4' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3Cellipse cx='12' cy='17' rx='10' ry='11' fill='url(%23b)'/%3E%3Cpath d='M2.4 12 Q12 14 21.6 12 M2 17 Q12 19 22 17 M2.4 22 Q12 24 21.6 22' stroke='%238f2419' stroke-width='.8' fill='none' opacity='.75'/%3E%3Crect x='6' y='26.6' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3C/svg%3E") center / contain no-repeat; transform-origin: 50% 0;
+  opacity: 0; transform: translateY(-6px) rotate(-12deg); transition: opacity .35s ease, transform .6s cubic-bezier(.2, .9, .25, 1.4);
+  filter: drop-shadow(0 0 8px rgba(240, 120, 70, .9));
+}
+body.theme-kyotoretro .row.is-hyped, body.theme-kyotoretro .grid-card.is-hyped { border-color: rgba(240, 179, 106, .34) !important; }
+body.theme-kyotoretro .row:active, body.theme-kyotoretro .grid-card:active { transform: scale(.985) !important; }
+body.theme-kyotoretro .cov-container, body.theme-kyotoretro .grid-cov-container {
+  border-radius: var(--ky-r-sm) !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .45), 0 0 0 1px rgba(232, 205, 160, .18), 0 0 0 4px rgba(26, 20, 18, .8), 0 0 0 5px rgba(232, 205, 160, .1) !important;
+}
+body.theme-kyotoretro .platform-badge { border-radius: 4px !important; border-color: rgba(232, 205, 160, .24) !important; color: var(--ky-washi-2) !important; background: rgba(243, 233, 214, .04) !important; }
+body.theme-kyotoretro .time-badge { border-radius: 4px !important; }
+body.theme-kyotoretro .row .btn-icon {
+  border-radius: var(--ky-r-sm) !important; background: rgba(243, 233, 214, .06) !important; border: 1px solid rgba(232, 205, 160, .2) !important;
+  color: var(--ky-washi) !important; transition: transform .35s cubic-bezier(.2, .9, .25, 1.4), background .2s ease !important;
+}
+body.theme-kyotoretro .row .btn-icon.add {
+  background: linear-gradient(170deg, #e45a4b, #b8352a) !important; color: #fff4e6 !important; border: 0 !important;
+  box-shadow: 0 6px 16px -6px rgba(217, 72, 59, .85), inset 0 1px 0 rgba(255, 220, 200, .35) !important;
+}
+body.theme-kyotoretro .row .btn-icon:active { transform: scale(.9) !important; }
+body.theme-kyotoretro .grid-card, body.theme-kyotoretro .day { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* Textes posés sur le décor : ombre d'encre douce pour rester lisibles */
+body.theme-kyotoretro .pg-head h2, body.theme-kyotoretro .pg-head p, body.theme-kyotoretro .settings-section-title, body.theme-kyotoretro .msg, body.theme-kyotoretro .pg-head-aside {
+  text-shadow: 0 1px 2px rgba(14, 9, 8, .95), 0 0 14px rgba(14, 9, 8, .8), 0 0 28px rgba(14, 9, 8, .55) !important;
+}
+body.theme-kyotoretro .pg-head p { color: var(--ky-washi-2) !important; }
+body.theme-kyotoretro .settings-section-title { color: var(--ky-amber) !important; font-family: var(--ky-font-title) !important; letter-spacing: 1.5px !important; }
+
+/* Cartes Boutique / Collection : coins sobres, liseré de bois */
+body.theme-kyotoretro .theme-card, body.theme-kyotoretro .shop-card, body.theme-kyotoretro .collection-item-card, body.theme-kyotoretro .avatar-pick-card, body.theme-kyotoretro .console-vitrine-card {
+  border-radius: var(--ky-r-lg) !important; border-color: var(--ky-line) !important;
+}
+body.theme-kyotoretro .cta { background: linear-gradient(170deg, #e45a4b, #b8352a) !important; color: #fff4e6 !important; border-radius: var(--ky-r-sm) !important; box-shadow: 0 8px 18px -8px rgba(217, 72, 59, .8) !important; }
+body.theme-kyotoretro .cta-sec { border-radius: var(--ky-r-sm) !important; border-color: var(--ky-line-2) !important; }
+body.theme-kyotoretro .price-tag { border-radius: 4px !important; }
+
+/* --- Onglets du haut : porte coulissante de shoji (papier crème qui glisse) --- */
+body.theme-kyotoretro .seg {
+  background: rgba(26, 20, 18, .82) !important; border: 1px solid var(--ky-line) !important; border-radius: var(--ky-r) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+body.theme-kyotoretro .seg::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(90, 62, 43, .16) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(0deg, rgba(90, 62, 43, .14) 0 1px, transparent 1px 14px),
+    linear-gradient(180deg, #f6eddc, #e7d9c0) !important;
+  border-radius: var(--ky-r-sm) !important; box-shadow: 0 4px 14px -4px rgba(240, 160, 90, .55), inset 0 0 0 1px rgba(90, 62, 43, .25) !important;
+  transition: transform .6s cubic-bezier(.3, .9, .3, 1) !important;
+}
+body.theme-kyotoretro .seg-btn { border-radius: var(--ky-r-sm) !important; font-weight: 700 !important; transition: color .3s ease !important; }
+body.theme-kyotoretro .seg-btn[aria-selected="true"] { color: var(--ky-paper-ink) !important; text-shadow: none !important; }
+body.theme-kyotoretro .seg-btn[aria-selected="true"] .ic { color: var(--ky-shu) !important; }
+
+/* --- Barre du bas : bois laqué, lanterne au-dessus de l'onglet actif --- */
+body.theme-kyotoretro .bottom-nav {
+  background:
+    repeating-linear-gradient(90deg, rgba(243, 233, 214, .025) 0 1px, transparent 1px 38px),
+    linear-gradient(180deg, rgba(34, 25, 20, .95), rgba(20, 14, 12, .98)) !important;
+  box-shadow: 0 -1px 0 rgba(232, 205, 160, .2), 0 -16px 30px -18px rgba(240, 150, 90, .5) !important;
+}
+body.theme-kyotoretro .bottom-nav .nav-item { isolation: isolate; }
+body.theme-kyotoretro .bottom-nav .nav-item span { font-weight: 700 !important; letter-spacing: .8px !important; }
+body.theme-kyotoretro .bottom-nav .nav-item svg { transition: transform .5s cubic-bezier(.2, .9, .25, 1.3), stroke .3s ease !important; }
+body.theme-kyotoretro .bottom-nav .nav-item.active { color: var(--ky-amber) !important; }
+body.theme-kyotoretro .bottom-nav .nav-item.active svg { filter: drop-shadow(0 0 7px rgba(240, 160, 90, .7)) !important; }
+body.theme-kyotoretro .bottom-nav .nav-item.active::before {
+  width: 13px !important; height: 18px !important; top: -11px !important; border-radius: 0 !important; box-shadow: none !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 32'%3E%3Cdefs%3E%3CradialGradient id='b' cx='.42' cy='.4' r='.7'%3E%3Cstop offset='0' stop-color='%23ffa274'/%3E%3Cstop offset='.55' stop-color='%23d8402e'/%3E%3Cstop offset='1' stop-color='%238e1f16'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cline x1='12' y1='0' x2='12' y2='5' stroke='%232a1d16' stroke-width='1.6'/%3E%3Crect x='6' y='4' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3Cellipse cx='12' cy='17' rx='10' ry='11' fill='url(%23b)'/%3E%3Cpath d='M2.4 12 Q12 14 21.6 12 M2 17 Q12 19 22 17 M2.4 22 Q12 24 21.6 22' stroke='%238f2419' stroke-width='.8' fill='none' opacity='.75'/%3E%3Crect x='6' y='26.6' width='12' height='3.4' rx='1' fill='%232a1d16'/%3E%3C/svg%3E") center / contain no-repeat !important; transform-origin: 50% 0;
+  filter: drop-shadow(0 0 7px rgba(240, 110, 60, .95)); animation: kySwing 4s ease-in-out infinite;
+}
+/* Halo chaud derrière l'icône au toucher / survol */
+body.theme-kyotoretro .bottom-nav .nav-item::after {
+  content: ""; position: absolute; z-index: -1; top: 50%; left: 50%; width: 54px; height: 54px; margin: -35px 0 0 -27px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240, 150, 90, .4), rgba(240, 150, 90, 0) 70%); pointer-events: none;
+  opacity: 0; transform: scale(.4); transition: opacity .45s ease, transform .6s var(--ky-ease);
+}
+body.theme-kyotoretro .bottom-nav .nav-item:active::after { opacity: .9; transform: scale(1.05); }
+@media (hover: hover) {
+  body.theme-kyotoretro .bottom-nav .nav-item:hover { color: var(--ky-washi) !important; }
+  body.theme-kyotoretro .bottom-nav .nav-item:hover::after { opacity: 1; transform: scale(1); }
+  body.theme-kyotoretro .bottom-nav .nav-item:hover svg { stroke: var(--ky-amber) !important; transform: translateY(-2px); }
+  body.theme-kyotoretro .seg-btn:not([aria-selected="true"]):hover { color: var(--ky-amber) !important; }
+  body.theme-kyotoretro .row:hover, body.theme-kyotoretro .grid-card:hover {
+    transform: translateY(-3px) !important; border-color: rgba(240, 179, 106, .45) !important;
+    box-shadow: 0 18px 34px -16px rgba(240, 140, 80, .45), inset 0 0 0 4px rgba(26, 20, 18, .55), inset 0 0 0 5px rgba(240, 179, 106, .14), inset 0 -40px 50px -40px rgba(240, 150, 90, .25) !important;
+  }
+  body.theme-kyotoretro .row:hover::after, body.theme-kyotoretro .grid-card:hover::after { opacity: 1; transform: translateY(0) rotate(0); animation: kySwing 3.6s ease-in-out .6s infinite; }
+  body.theme-kyotoretro .row .btn-icon:hover { transform: translateY(-2px); background: rgba(243, 233, 214, .12) !important; }
+  body.theme-kyotoretro .row .btn-icon.add:hover { background: linear-gradient(170deg, #ee6a5a, #c63d30) !important; }
+}
+@media (min-width: 900px) {
+  body.theme-kyotoretro .bottom-nav .nav-item { border-radius: var(--ky-r-sm) !important; border-color: rgba(232, 205, 160, .14) !important; background: rgba(243, 233, 214, .03) !important; }
+  body.theme-kyotoretro .bottom-nav .nav-item.active {
+    background: repeating-linear-gradient(90deg, rgba(90, 62, 43, .14) 0 1px, transparent 1px 26px), linear-gradient(180deg, #f6eddc, #e7d9c0) !important;
+    color: var(--ky-paper-ink) !important; border-color: transparent !important; box-shadow: 0 6px 18px -6px rgba(240, 160, 90, .55) !important;
+  }
+  body.theme-kyotoretro .bottom-nav .nav-item.active svg { stroke: var(--ky-shu) !important; filter: none !important; }
+  body.theme-kyotoretro .bottom-nav .nav-item::after { left: 34px; margin-top: -27px; }
+  body.theme-kyotoretro .bottom-nav .nav-item:hover { transform: translateX(4px) !important; }
+}
+@keyframes kySwing { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+/* --- Calques animés créés par le JS --- */
+.ky-decor, .ky-front { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.ky-decor { z-index: -1; }
+.ky-front { z-index: 55; }
+@media (min-width: 900px) { .ky-decor, .ky-front { left: 280px; } }
+
+/* Nuages fins du soir qui dérivent */
+.ky-cloud {
+  position: absolute; left: 0; width: 200%; background-repeat: repeat-x; background-size: 50% 100%; will-change: transform;
+  background-image:
+    radial-gradient(ellipse 22% 26% at 18% 50%, rgba(255, 196, 170, .55), transparent 70%),
+    radial-gradient(ellipse 30% 20% at 52% 40%, rgba(240, 170, 160, .45), transparent 70%),
+    radial-gradient(ellipse 18% 24% at 84% 56%, rgba(255, 205, 175, .5), transparent 70%);
+  animation: kyDrift var(--cd, 160s) linear infinite;
+}
+.ky-cloud.c1 { top: 24vh; height: 9vh; opacity: .55; --cd: 180s; }
+.ky-cloud.c2 { top: 34vh; height: 6vh; opacity: .35; --cd: 240s; animation-direction: reverse; }
+@keyframes kyDrift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+
+/* Lueurs de lanternes (bokeh) qui respirent doucement */
+.ky-bokeh {
+  position: absolute; width: var(--s); height: var(--s); border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 180, 110, .55), rgba(255, 140, 80, .18) 45%, transparent 70%);
+  animation: kyBreathe var(--d) ease-in-out infinite, kyFloat var(--f) ease-in-out infinite alternate;
+}
+@keyframes kyBreathe { 0%, 100% { opacity: .25; } 50% { opacity: .85; } }
+@keyframes kyFloat { from { transform: translateY(0); } to { transform: translateY(-18px); } }
+
+/* Écriture verticale « 京の路地 · 夕暮れ » + sceau 古都 */
+.ky-tate {
+  position: absolute; left: 6px; top: 210px; writing-mode: vertical-rl;
+  font-family: 'Shippori Mincho', serif; font-weight: 600; font-size: 12px; letter-spacing: 7px;
+  color: rgba(243, 233, 214, .5); text-shadow: 0 0 10px rgba(240, 160, 90, .4);
+}
+.ky-hanko {
+  position: absolute; right: 6px; top: 210px; padding: 6px 4px; writing-mode: vertical-rl;
+  font-family: 'Shippori Mincho', serif; font-weight: 800; font-size: 13px; line-height: 1; color: #fff1e6;
+  background: #c8372d; border-radius: 3px; box-shadow: inset 0 0 0 1.5px rgba(255, 240, 230, .55), 0 2px 8px rgba(0, 0, 0, .35);
+  transform: rotate(-3deg); opacity: .88;
+}
+@media (max-width: 899px) { .ky-tate, .ky-hanko { display: none; } }
+@media (min-width: 900px) { .ky-tate { left: 16px; font-size: 14px; } .ky-hanko { right: 20px; top: 230px; font-size: 16px; } }
+
+/* Feuilles d'érable (momiji) qui tombent en se balançant */
+.ky-leaf { position: absolute; top: -30px; left: var(--x); width: var(--s); height: var(--s); animation: kyFall var(--d) linear forwards; will-change: transform; }
+.ky-leaf i { display: block; width: 100%; height: 100%; background: var(--img) center / contain no-repeat; animation: kySpin var(--t) ease-in-out infinite; opacity: .92; }
+@keyframes kyFall {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; } 8% { opacity: 1; }
+  30% { transform: translate3d(calc(var(--w) * .5), 30vh, 0); }
+  60% { transform: translate3d(calc(var(--w) * -.2), 62vh, 0); }
+  90% { opacity: .9; } 100% { transform: translate3d(var(--w), calc(100vh + 40px), 0); opacity: 0; }
+}
+@keyframes kySpin { 0% { transform: rotate(0) rotateY(0); } 50% { transform: rotate(160deg) rotateY(180deg); } 100% { transform: rotate(360deg) rotateY(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ky-cloud, .ky-bokeh, .ky-leaf, .ky-leaf i { animation: none !important; }
+  body.theme-kyotoretro .day::before, body.theme-kyotoretro .bottom-nav .nav-item.active::before,
+  body.theme-kyotoretro .row:hover::after, body.theme-kyotoretro .grid-card:hover::after { animation: none !important; }
+}
+</style>
 </head>
 <body>
 
@@ -7801,6 +8100,7 @@ const UNIQUE_THEMES_DATA = {
   noel: { name: "Noël Joyeux", price: 250, rank: "Légendaire", desc: "Sapins enneigés, étoile dorée et rouge de fête.", cls: "theme-noel", bar: "#0c1c14", acc: "#ef4444" },
   halloween: { name: "Halloween Horror", price: 300, rank: "Légendaire", desc: "Lune de sang, arbre mort, chauves-souris et brume.", cls: "theme-halloween", bar: "#050303", acc: "#dc2626" },
   arcade_cabinet: { name: "Arcade Cabinet", price: 1000, rank: "Légendaire", desc: "Salle d'arcade des années 90 : moquette cosmique fluo, bornes allumées, néons et pluie de jetons d'or.", cls: "theme-arcadecabinet", bar: "#07030f", acc: "#ff2d95" },
+  kyotoretro: { name: "Ruelle de Kyoto", price: 1000, rank: "Légendaire", desc: "Un soir d'automne dans le vieux Kyoto : machiya en bois, lanternes rouges, pagode au loin, pavés mouillés et feuilles d'érable. Le calme d'une ruelle oubliée.", cls: "theme-kyotoretro", bar: "#1a1412", acc: "#d9483b" },
   tyrielsoren: { name: "Tyriel & Soren", price: 1000, rank: "Légendaire", desc: "Un soir de printemps à la campagne : maison en bois, cerisiers en fleurs, brume vagabonde et lucioles. La maison des deux frères.", cls: "theme-tyrielsoren", bar: "#16213b", acc: "#f7a8c0" }
 };
 
@@ -8215,6 +8515,7 @@ function stopUniqueEffects() {
   // 🕹️ C'est ici qu'on ajoute la fonction pour l'Arcade Cabinet !
   if (typeof stopArcadeCabinetParticles === "function") stopArcadeCabinetParticles();
   if (typeof stopTyrielSorenParticles === "function") stopTyrielSorenParticles();
+  if (typeof stopKyotoRetroParticles === "function") stopKyotoRetroParticles();
 }
 
 
@@ -8247,6 +8548,7 @@ const THEME_FONTS = {
   halloween: "Creepster",
   arcade_cabinet: "Press+Start+2P",
   tyrielsoren: "Zen+Maru+Gothic:wght@500;700;900&family=Kaisei+Decol:wght@700",
+  kyotoretro: "Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@500;700",
 };
 function loadThemeFont(id) {
   const fam = THEME_FONTS[id];
@@ -8305,6 +8607,7 @@ let reduce = false;
   else if (id === "noel") initNoelParticles();
   else if (id === "arcade_cabinet") initArcadeCabinetParticles();
   else if (id === "tyrielsoren") initTyrielSorenParticles();
+  else if (id === "kyotoretro") initKyotoRetroParticles();
 }
 
 // ▸ restoreUniqueTheme : au démarrage, remet le thème collector choisi (avant, il disparaissait à chaque relance)
@@ -8495,6 +8798,83 @@ function stopTyrielSorenParticles(keepDuo) {
   tsLayers.forEach((el) => el.remove());
   tsLayers = [];
   document.querySelectorAll(".ts-decor, .ts-front").forEach((el) => el.remove());
+}
+
+
+// =====================================================================
+// RUELLE DE KYOTO — nuages fins, lueurs de lanternes, feuilles d'érable
+// =====================================================================
+let kyLeafTimer = null, kyBreezeTimer = null, kyLayers = [];
+const KY_LEAVES = ["#c8452f", "#d9682b", "#e0a43a", "#b8352a", "#9bb07f"].map((c) =>
+  `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='${c}' d='M12 1.5 L13.7 6.4 L16.6 4.9 L16 9 L20.8 7.8 L19.2 11.2 L22.6 12.6 L17.8 15.4 L18.7 17.6 L13.3 16.6 L12.5 21 L11.5 21 L10.7 16.6 L5.3 17.6 L6.2 15.4 L1.4 12.6 L4.8 11.2 L3.2 7.8 L8 9 L7.4 4.9 L10.3 6.4 Z'/><path d='M12 21 L12 23.4 M12 20 L12 6 M12 15 L6.5 11.5 M12 15 L17.5 11.5' stroke='rgba(60,20,10,.35)' stroke-width='.7' fill='none'/></svg>`)}")`);
+
+function kySpawnLeaf(front, breeze) {
+  if (!front.isConnected) return;
+  const l = document.createElement("span");
+  l.className = "ky-leaf";
+  const dur = breeze ? 7 + Math.random() * 4 : 11 + Math.random() * 7;
+  // les feuilles vertes restent rares : un érable d'automne, pas de printemps
+  const img = KY_LEAVES[Math.random() < 0.08 ? 4 : Math.floor(Math.random() * 4)];
+  l.style.setProperty("--x", (Math.random() * 100).toFixed(1) + "%");
+  l.style.setProperty("--s", (11 + Math.random() * 9).toFixed(0) + "px");
+  l.style.setProperty("--d", dur.toFixed(1) + "s");
+  l.style.setProperty("--w", ((breeze ? 120 : 30) + Math.random() * 90) * (Math.random() < 0.5 ? -1 : 1) + "px");
+  l.style.setProperty("--t", (3 + Math.random() * 3).toFixed(1) + "s");
+  l.style.setProperty("--img", img);
+  if (breeze) l.style.animationDelay = (Math.random() * 1.4).toFixed(2) + "s";
+  l.innerHTML = "<i></i>";
+  front.appendChild(l);
+  setTimeout(() => l.remove(), (dur + 2) * 1000);
+}
+
+function initKyotoRetroParticles() {
+  try {
+    stopKyotoRetroParticles();
+    if (!document.body.classList.contains("theme-kyotoretro")) return;
+
+    // Calque arrière : nuages, lueurs de lanternes, écriture verticale, sceau
+    const decor = document.createElement("div");
+    decor.className = "ky-decor";
+    decor.setAttribute("aria-hidden", "true");
+    let bokeh = "";
+    for (let i = 0; i < 9; i++) {
+      bokeh += `<span class="ky-bokeh" style="left:${(3 + Math.random() * 90).toFixed(1)}%;bottom:${(14 + Math.random() * 30).toFixed(1)}%;--s:${(26 + Math.random() * 46).toFixed(0)}px;--d:${(4 + Math.random() * 5).toFixed(1)}s;--f:${(6 + Math.random() * 6).toFixed(1)}s;animation-delay:-${(Math.random() * 6).toFixed(1)}s"></span>`;
+    }
+    decor.innerHTML = `<div class="ky-cloud c1"></div><div class="ky-cloud c2"></div>${bokeh}<div class="ky-tate">京の路地・夕暮れ</div><div class="ky-hanko">古都</div>`;
+
+    // Calque avant (au-dessus des cartes, ne bloque aucun clic) : feuilles d'érable
+    const front = document.createElement("div");
+    front.className = "ky-front";
+    front.setAttribute("aria-hidden", "true");
+
+    document.body.append(decor, front);
+    kyLayers = [decor, front];
+
+    for (let i = 0; i < 4; i++) setTimeout(() => kySpawnLeaf(front, false), i * 700);
+    kyLeafTimer = setInterval(() => {
+      if (!document.body.classList.contains("theme-kyotoretro")) return stopKyotoRetroParticles();
+      if (document.hidden) return;
+      kySpawnLeaf(front, false);
+    }, 1700);
+
+    // Une brise d'automne de temps en temps : quelques feuilles d'un coup
+    const breeze = () => {
+      if (!document.body.classList.contains("theme-kyotoretro")) return;
+      if (!document.hidden) for (let i = 0; i < 7; i++) kySpawnLeaf(front, true);
+      kyBreezeTimer = setTimeout(breeze, 18000 + Math.random() * 12000);
+    };
+    kyBreezeTimer = setTimeout(breeze, 9000);
+  } catch (err) {
+    console.error("Erreur initialisation Ruelle de Kyoto:", err);
+  }
+}
+
+function stopKyotoRetroParticles() {
+  clearInterval(kyLeafTimer); kyLeafTimer = null;
+  clearTimeout(kyBreezeTimer); kyBreezeTimer = null;
+  kyLayers.forEach((el) => el.remove());
+  kyLayers = [];
+  document.querySelectorAll(".ky-decor, .ky-front").forEach((el) => el.remove());
 }
 
 
@@ -15824,6 +16204,17 @@ const CXThemeSound = (() => {
         });
       },
       click() { T({ f: 1318.5, duty: 0.5, d: 0.03, v: 0.028 }); T({ f: 1975.5, duty: 0.5, t: 0.03, d: 0.05, v: 0.028 }); },
+    },
+    // Ruelle de Kyoto : claquoirs en bois, koto en gamme miyako-bushi, carillon à vent
+    kyotoretro: {
+      jingle() {
+        [0, 0.13].forEach((t) => { N({ type: "bandpass", f: 2400, q: 6, t, d: 0.05, v: 0.06 }); T({ f: 880, type: "triangle", t, d: 0.05, v: 0.02 }); });
+        [[659.25, 0.34], [587.33, 0.52], [523.25, 0.7], [493.88, 0.88], [440, 1.06], [493.88, 1.34], [329.63, 1.52]].forEach(([f, t], i, a) =>
+          pluck(f, t, 0.05, i === a.length - 1 ? 1.4 : 0.7));
+        [[2637, 1.0], [3136, 1.38], [2793.8, 1.7]].forEach(([f, t]) => bell(f, t, 0.011, 1.1));
+        N({ type: "lowpass", f: 500, t: 0.3, d: 1.8, v: 0.008 });
+      },
+      click() { N({ type: "bandpass", f: 1900, q: 7, d: 0.035, v: 0.04 }); T({ f: 659.25, type: "triangle", d: 0.09, v: 0.02 }); },
     },
     // Soir de printemps chez les deux frères : flûte douce, carillon à vent, lucioles
     tyrielsoren: {
