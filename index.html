@@ -6483,7 +6483,14 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
    ni d'en-tête géant, et la barre reste collée au-dessus du clavier.
    ===================================================================== */
 @media (max-width: 759px) {
-  .cartridge-modal-overlay.cx-msg-ov { position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); background: var(--bg); animation: none; }
+  /* Fenêtre flottante aux bords arrondis, en retrait de l'encoche et de la barre d'accueil */
+  .cartridge-modal-overlay.cx-msg-ov {
+    position: fixed; inset: 0 0 auto 0; height: var(--cx-vvh, 100%); animation: none; box-sizing: border-box;
+    padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 10px);
+    align-items: stretch;
+    background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 65%), color-mix(in srgb, var(--bg) 70%, #000);
+  }
+  .cx-msg-ov.is-kb { padding-bottom: 6px; } /* clavier ouvert : la fenêtre descend jusqu'au clavier */
   /* La page derrière (en-têtes flous, barre du bas, particules…) est cachée tant que la
      messagerie est ouverte : sur iPhone, les calques en backdrop-filter pouvaient « passer
      au travers » et flouter le haut de la conversation. */
@@ -6492,12 +6499,18 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
   .cx-msg-ov, .cx-msg-ov * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
   .cx-msg-ov .cx-msg-head *, .cx-msg-ov .cx-msg-peer .cx-av { filter: none !important; opacity: 1; }
   .cx-msg-ov .cx-msg-app { isolation: isolate; transform: translateZ(0); }
-  .cx-msg-app { height: 100% !important; }
+  .cx-msg-app {
+    height: 100% !important; border-radius: 22px; overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03) inset;
+    animation: cxMsgPop .22s cubic-bezier(.2,.9,.3,1.15);
+  }
+  @keyframes cxMsgPop { from { transform: translateY(14px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
 
   /* En-tête compact : barre de statut + 50 px, pas plus */
   .cx-msg-ov .cx-msg-head {
-    min-height: 0; height: calc(50px + env(safe-area-inset-top, 0px)); gap: 4px;
-    padding: env(safe-area-inset-top, 0px) 6px 0 2px;
+    min-height: 0 !important; height: 54px; gap: 4px;
+    padding: 0 6px 0 2px !important;
     background: color-mix(in srgb, var(--bg) 88%, var(--card));
     border-bottom: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
     box-shadow: 0 6px 18px rgba(0,0,0,.18); position: relative; z-index: 2; flex-shrink: 0;
@@ -6535,11 +6548,10 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
   /* Barre d'écriture flottante */
   .cx-msg-ov .cx-msg-compose {
     align-items: center; gap: 8px; flex-shrink: 0;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+    padding: 8px 10px 10px;
     background: color-mix(in srgb, var(--bg) 88%, var(--card));
     border-top: 1px solid color-mix(in srgb, var(--txt) 8%, transparent);
   }
-  .cx-msg-ov.is-kb .cx-msg-compose { padding-bottom: 8px; } /* clavier ouvert : pas de marge barre d'accueil */
   .cx-msg-ov .cx-msg-compose textarea { min-height: 40px; padding: 9px 15px; border-radius: 20px; font-size: 16px;
     background: color-mix(in srgb, var(--card) 70%, var(--bg)); border-color: color-mix(in srgb, var(--txt) 12%, transparent); }
   .cx-msg-ov .cx-msg-send { width: 40px; height: 40px; box-shadow: 0 4px 14px color-mix(in srgb, var(--acc) 45%, transparent); }
