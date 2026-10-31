@@ -799,8 +799,14 @@ function cleanData(d) {
         slot: r.slot && typeof r.slot === "object" ? { reels: strs(r.slot.reels).slice(0, 3), win: num(r.slot.win) } : null,
         quiz: { answers: Array.isArray(r.quiz && r.quiz.answers) ? r.quiz.answers.slice(0, 3).map((a) => (Number.isInteger(a) && a >= 0 && a < 4 ? a : null)) : [null, null, null] },
         ach,
-        stats: { games: num(st.games), quizGood: num(st.quizGood), played: nums(st.played), best: nums(st.best), max: nums(st.max), pongExpert: !!st.pongExpert, jackpot: !!st.jackpot },
+        stats: { games: num(st.games), quizGood: num(st.quizGood), played: nums(st.played), best: nums(st.best), max: nums(st.max), wins: nums(st.wins), pongExpert: !!st.pongExpert, jackpot: !!st.jackpot },
       };
+    }
+    // Chasse aux secrets (2 séries d'easter eggs) : { found: { id: "AAAA-MM-JJ" }, badge, badge2 }
+    if (d.eggs && typeof d.eggs === "object" && !Array.isArray(d.eggs)) {
+      const found = {};
+      if (d.eggs.found && typeof d.eggs.found === "object") for (const [k, v] of Object.entries(d.eggs.found).slice(0, 60)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) found[k] = String(v).slice(0, 10);
+      out.eggs = { found, badge: typeof d.eggs.badge === "string" ? d.eggs.badge.slice(0, 10) : "", badge2: typeof d.eggs.badge2 === "string" ? d.eggs.badge2.slice(0, 10) : "" };
     }
   }
   return JSON.stringify(out).length <= MAX_DATA_BYTES ? out : null;
@@ -957,6 +963,194 @@ async function handleRecover(request, env) {
   return jsonRes({ status: "reset" });
 }
 
+
+// =====================================================================
+// MESSAGERIE — salon commun + conversations privées entre joueurs
+//   Routes (POST, en-tête « Authorization: Bearer <jeton> ») :
+//     /api/msg/sync     { since, here }      → nouveaux messages depuis l'id « since »
+//     /api/msg/convs    {}                   → liste des conversations (non lus, en ligne)
+//     /api/msg/history  { conv, before }     → 40 messages plus anciens
+//     /api/msg/open     { to: "pseudo" }     → ouvre (ou retrouve) une conversation privée
+//     /api/msg/send     { conv, body }       → envoie un message (500 caractères max)
+//     /api/msg/read     { conv, upto }       → marque comme lu
+//     /api/msg/block    { user, on }         → bloque / débloque un joueur
+//     /api/msg/delete   { id }               → efface un de ses messages (ou n'importe lequel pour l'admin)
+//   Variable facultative MSG_ADMIN = ton pseudo (pour pouvoir effacer n'importe quel message du salon).
+//   Les tables sont créées toutes seules au premier appel. Le salon commun a toujours l'id 1.
+// =====================================================================
+const MSG_MAX_LEN = 500;
+const MSG_ONLINE = 75;           // « en ligne » = vu il y a moins de 75 s
+const MSG_RATE = { max: 12, window: 60 }; // 12 messages par minute maximum
+let msgReady = false;
+
+async function ensureMsgTables(env) {
+  if (msgReady) return;
+  await env.DB.batch([
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_convs (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL, a INTEGER NOT NULL, b INTEGER NOT NULL, last_id INTEGER NOT NULL DEFAULT 0, last_at INTEGER NOT NULL DEFAULT 0, UNIQUE(a, b))"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS msg_convs_b ON msg_convs(b)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, conv_id INTEGER NOT NULL, user_id INTEGER NOT NULL, body TEXT NOT NULL, created_at INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS messages_conv ON messages(conv_id, id)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_reads (conv_id INTEGER NOT NULL, user_id INTEGER NOT NULL, last_read INTEGER NOT NULL, PRIMARY KEY (conv_id, user_id))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_blocks (user_id INTEGER NOT NULL, blocked_id INTEGER NOT NULL, PRIMARY KEY (user_id, blocked_id))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS msg_presence (user_id INTEGER PRIMARY KEY, seen INTEGER NOT NULL)"),
+    env.DB.prepare("INSERT OR IGNORE INTO msg_convs (id, kind, a, b) VALUES (1, 'room', 0, 0)"),
+  ]);
+  msgReady = true;
+}
+
+// Joueur connecté (d'après le jeton), ou null
+async function sessionUser(request, env) {
+  const auth = request.headers.get("Authorization") || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!/^[0-9a-f]{64}$/.test(token)) return null;
+  const row = await env.DB.prepare(
+    "SELECT s.user_id AS id, s.created_at, u.display_name AS name, u.name_lower FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ?"
+  ).bind(await sha256Hex(token)).first();
+  if (!row || nowSec() - row.created_at > SESSION_MAX_AGE) return null;
+  return row;
+}
+
+async function msgConv(env, convId, uid) {
+  if (!Number.isInteger(convId) || convId < 1) return null;
+  return env.DB.prepare("SELECT * FROM msg_convs WHERE id = ? AND (id = 1 OR a = ? OR b = ?)").bind(convId, uid, uid).first();
+}
+
+// av = avatar pixel choisi dans la Boutique (lu dans la sauvegarde du joueur)
+const MSG_COLS = "m.id, m.conv_id AS conv, m.user_id AS uid, u.display_name AS name, json_extract(u.data, '$.unlocks.avatar') AS av, m.body, m.created_at AS at";
+
+async function handleMsg(action, request, env) {
+  await ensureMsgTables(env);
+  const me = await sessionUser(request, env);
+  if (!me) return jsonRes({ error: "Connecte-toi pour utiliser la messagerie." }, 401);
+  let body = {};
+  try { body = await request.json(); } catch (e) {}
+  const t = nowSec();
+  const isAdmin = !!env.MSG_ADMIN && String(env.MSG_ADMIN).toLowerCase() === me.name_lower;
+
+  if (action === "sync") {
+    if (body.here) await env.DB.prepare("INSERT INTO msg_presence (user_id, seen) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET seen = excluded.seen").bind(me.id, t).run();
+    // since < 0 (ou absent) = première synchro : on renvoie juste le dernier numéro de message
+    const raw = Number(body.since);
+    if (!Number.isFinite(raw) || raw < 0) {
+      const last = await env.DB.prepare("SELECT COALESCE(MAX(id), 0) AS id FROM messages").first();
+      return jsonRes({ me: { id: me.id, name: me.name, admin: isAdmin }, messages: [], last: last.id });
+    }
+    const since = Math.floor(raw);
+    const { results } = await env.DB.prepare(
+      `SELECT ${MSG_COLS} FROM messages m JOIN users u ON u.id = m.user_id
+       WHERE m.id > ?1 AND (m.conv_id = 1 OR m.conv_id IN (SELECT id FROM msg_convs WHERE a = ?2 OR b = ?2))
+         AND m.user_id NOT IN (SELECT blocked_id FROM msg_blocks WHERE user_id = ?2)
+       ORDER BY m.id LIMIT 100`
+    ).bind(since, me.id).all();
+    const last = results.length ? results[results.length - 1].id : since;
+    return jsonRes({ me: { id: me.id, name: me.name, admin: isAdmin }, messages: results, last });
+  }
+
+  if (action === "convs") {
+    const { results } = await env.DB.prepare(
+      `SELECT c.id, c.kind, c.last_id, c.last_at,
+              o.id AS other_id, o.display_name AS other, json_extract(o.data, '$.unlocks.avatar') AS other_av,
+              p.seen AS other_seen,
+              lm.body AS last_body, lm.user_id AS last_uid,
+              (SELECT COUNT(*) FROM (SELECT 1 FROM messages m WHERE m.conv_id = c.id AND m.id > COALESCE(r.last_read, 0) AND m.user_id != ?1
+                 AND m.user_id NOT IN (SELECT blocked_id FROM msg_blocks WHERE user_id = ?1) LIMIT 99)) AS unread
+       FROM msg_convs c
+       LEFT JOIN msg_reads r ON r.conv_id = c.id AND r.user_id = ?1
+       LEFT JOIN users o ON o.id = CASE WHEN c.a = ?1 THEN c.b ELSE c.a END AND c.kind = 'dm'
+       LEFT JOIN msg_presence p ON p.user_id = o.id
+       LEFT JOIN messages lm ON lm.id = c.last_id
+       WHERE c.id = 1 OR c.a = ?1 OR c.b = ?1
+       ORDER BY (c.id = 1) DESC, c.last_at DESC LIMIT 60`
+    ).bind(me.id).all();
+    const blocks = await env.DB.prepare("SELECT blocked_id FROM msg_blocks WHERE user_id = ?").bind(me.id).all();
+    const online = await env.DB.prepare("SELECT COUNT(*) AS n FROM msg_presence WHERE seen > ?").bind(t - MSG_ONLINE).first();
+    return jsonRes({
+      me: { id: me.id, name: me.name, admin: isAdmin },
+      online: online.n,
+      blocked: blocks.results.map((b) => b.blocked_id),
+      convs: results.map((c) => ({
+        id: c.id, kind: c.kind, last_at: c.last_at, unread: c.unread,
+        other: c.other || null, other_id: c.other_id || null, other_av: c.other_av || "",
+        online: !!(c.other_seen && t - c.other_seen < MSG_ONLINE),
+        last: c.last_body ? { body: String(c.last_body).slice(0, 80), mine: c.last_uid === me.id } : null,
+      })),
+    });
+  }
+
+  if (action === "history") {
+    const conv = await msgConv(env, Number(body.conv), me.id);
+    if (!conv) return jsonRes({ error: "Conversation introuvable." }, 404);
+    const before = Math.floor(Number(body.before) || 0) || 2147483647;
+    const { results } = await env.DB.prepare(
+      `SELECT ${MSG_COLS} FROM messages m JOIN users u ON u.id = m.user_id
+       WHERE m.conv_id = ? AND m.id < ? AND m.user_id NOT IN (SELECT blocked_id FROM msg_blocks WHERE user_id = ?)
+       ORDER BY m.id DESC LIMIT 40`
+    ).bind(conv.id, before, me.id).all();
+    return jsonRes({ messages: results.reverse(), more: results.length === 40 });
+  }
+
+  if (action === "open") {
+    const to = String(body.to || "").trim().toLowerCase();
+    if (!USERNAME_RE.test(to)) return jsonRes({ error: "Pseudo invalide." }, 400);
+    const other = await env.DB.prepare("SELECT id, display_name FROM users WHERE name_lower = ?").bind(to).first();
+    if (!other) return jsonRes({ error: "Aucun joueur avec ce pseudo." }, 404);
+    if (other.id === me.id) return jsonRes({ error: "Tu ne peux pas t'écrire à toi-même 🙂" }, 400);
+    const a = Math.min(me.id, other.id), b = Math.max(me.id, other.id);
+    await env.DB.prepare("INSERT OR IGNORE INTO msg_convs (kind, a, b, last_at) VALUES ('dm', ?, ?, ?)").bind(a, b, t).run();
+    const conv = await env.DB.prepare("SELECT id FROM msg_convs WHERE a = ? AND b = ?").bind(a, b).first();
+    return jsonRes({ conv: conv.id, other: other.display_name, other_id: other.id });
+  }
+
+  if (action === "send") {
+    const conv = await msgConv(env, Number(body.conv), me.id);
+    if (!conv) return jsonRes({ error: "Conversation introuvable." }, 404);
+    const text = String(body.body || "").replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, MSG_MAX_LEN);
+    if (!text) return jsonRes({ error: "Message vide." }, 400);
+    const rate = [{ key: "msg:" + me.id, max: MSG_RATE.max, window: MSG_RATE.window }];
+    if (await tooManyAttempts(env, rate)) return jsonRes({ error: "Doucement ! Attends quelques secondes avant d'écrire encore." }, 429);
+    if (conv.kind === "dm") {
+      const other = conv.a === me.id ? conv.b : conv.a;
+      const blocked = await env.DB.prepare("SELECT 1 FROM msg_blocks WHERE user_id = ? AND blocked_id = ?").bind(other, me.id).first();
+      if (blocked) return jsonRes({ error: "Ce joueur ne reçoit pas tes messages." }, 403);
+    }
+    const res = await env.DB.prepare("INSERT INTO messages (conv_id, user_id, body, created_at) VALUES (?, ?, ?, ?)").bind(conv.id, me.id, text, t).run();
+    const id = res.meta && res.meta.last_row_id;
+    await env.DB.batch([
+      env.DB.prepare("UPDATE msg_convs SET last_id = ?, last_at = ? WHERE id = ?").bind(id, t, conv.id),
+      env.DB.prepare("INSERT INTO msg_reads (conv_id, user_id, last_read) VALUES (?, ?, ?) ON CONFLICT(conv_id, user_id) DO UPDATE SET last_read = MAX(last_read, excluded.last_read)").bind(conv.id, me.id, id),
+      env.DB.prepare("INSERT INTO msg_presence (user_id, seen) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET seen = excluded.seen").bind(me.id, t),
+    ]);
+    await noteFailure(env, rate); // compte le message pour la limite « 12 par minute »
+    return jsonRes({ message: { id, conv: conv.id, uid: me.id, name: me.name, av: "", body: text, at: t } });
+  }
+
+  if (action === "read") {
+    const conv = await msgConv(env, Number(body.conv), me.id);
+    if (!conv) return jsonRes({ error: "Conversation introuvable." }, 404);
+    const upto = Math.max(0, Math.floor(Number(body.upto) || 0));
+    await env.DB.prepare("INSERT INTO msg_reads (conv_id, user_id, last_read) VALUES (?, ?, ?) ON CONFLICT(conv_id, user_id) DO UPDATE SET last_read = MAX(last_read, excluded.last_read)").bind(conv.id, me.id, upto).run();
+    return jsonRes({ status: "ok" });
+  }
+
+  if (action === "block") {
+    const uid = Math.floor(Number(body.user) || 0);
+    if (!uid || uid === me.id) return jsonRes({ error: "Joueur invalide." }, 400);
+    if (body.on) await env.DB.prepare("INSERT OR IGNORE INTO msg_blocks (user_id, blocked_id) VALUES (?, ?)").bind(me.id, uid).run();
+    else await env.DB.prepare("DELETE FROM msg_blocks WHERE user_id = ? AND blocked_id = ?").bind(me.id, uid).run();
+    return jsonRes({ status: body.on ? "blocked" : "unblocked" });
+  }
+
+  if (action === "delete") {
+    const id = Math.floor(Number(body.id) || 0);
+    const m = await env.DB.prepare("SELECT id, user_id, conv_id FROM messages WHERE id = ?").bind(id).first();
+    if (!m || (m.user_id !== me.id && !isAdmin)) return jsonRes({ error: "Tu ne peux pas effacer ce message." }, 403);
+    await env.DB.prepare("UPDATE messages SET body = '' WHERE id = ?").bind(id).run();
+    return jsonRes({ status: "deleted" });
+  }
+
+  return jsonRes({ error: "Adresse inconnue." }, 404);
+}
+
 async function handleApi(path, request, env) {
   if (request.method !== "POST") return jsonRes({ error: "Méthode non autorisée." }, 405);
   if (!env.DB) return jsonRes({ error: "Base de données non reliée au Worker (binding DB manquant)." }, 500);
@@ -964,9 +1158,10 @@ async function handleApi(path, request, env) {
     if (path === "/api/auth") return await handleAuth(request, env);
     if (path === "/api/save") return await handleSave(request, env);
     if (path === "/api/recover") return await handleRecover(request, env);
+    if (path.startsWith("/api/msg/")) return await handleMsg(path.slice(9), request, env);
     return jsonRes({ error: "Adresse inconnue." }, 404);
   } catch (e) {
-    return jsonRes({ error: "Erreur du serveur." }, 500);
+    return jsonRes({ error: "Erreur du serveur.", debug: e && e.message ? String(e.message).slice(0, 200) : "" }, 500);
   }
 }
 
