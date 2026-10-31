@@ -729,7 +729,7 @@ const USERNAME_RE = /^[A-Za-z0-9_-]{3,20}$/;
 // Le Worker n'accepte pas plus de 100 000 tours. 50 000 reste léger pour le plan gratuit ;
 // si Cloudflare affiche « exceeded CPU » à la connexion, passe à 25 000 (ou au plan payant et 100 000).
 const PBKDF2_ITERATIONS = 50000;
-const MAX_DATA_BYTES = 100000;
+const MAX_DATA_BYTES = 250000;
 const enc = new TextEncoder();
 const jsonRes = (obj, status = 200) => Response.json(obj, { status, headers: CORS });
 const nowSec = () => Math.floor(Date.now() / 1000);
@@ -763,10 +763,27 @@ function cleanData(d) {
   const out = {};
   if (d && typeof d === "object") {
     if (Number.isFinite(d.userCoins) && d.userCoins >= 0) out.userCoins = Math.floor(d.userCoins);
-    if (Array.isArray(d.myCollection)) out.myCollection = d.myCollection;
+
+    // Collection de jaquettes : allégée (on ne stocke pas les descriptions/releases complètes)
+    if (Array.isArray(d.myCollection)) {
+      out.myCollection = d.myCollection.slice(0, 300).map((c) => {
+        if (!c || typeof c !== "object") return null;
+        return {
+          id: Number(c.id) || 0,
+          name: String(c.name || "").slice(0, 70),
+          cover: String(c.cover || "").slice(0, 140),
+          rarity: String(c.rarity || "common").slice(0, 15)
+        };
+      }).filter(Boolean);
+    }
+
     if (Array.isArray(d.favorites)) out.favorites = d.favorites.filter((x) => Number.isInteger(x));
-    if (Array.isArray(d.gameScores)) out.gameScores = d.gameScores;
+    
+    // Historique des scores limité aux 30 derniers
+    if (Array.isArray(d.gameScores)) out.gameScores = d.gameScores.slice(-30);
+    
     if (typeof d.theme === "string") out.theme = d.theme.slice(0, 30);
+
     // Achats de la Boutique (thèmes collector, avatars, bannières) : listes de petits identifiants
     if (d.unlocks && typeof d.unlocks === "object") {
       const ids = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,40}$/i.test(x)).slice(0, 100) : []);
@@ -778,11 +795,11 @@ function cleanData(d) {
         avatar: one(d.unlocks.avatar),
         banner: one(d.unlocks.banner),
         uniqueTheme: one(d.unlocks.uniqueTheme),
-        // sets de boutons de la Boutique (avant, ils étaient effacés à chaque sauvegarde)
         buttons: ids(d.unlocks.buttons),
         buttonSkin: one(d.unlocks.buttonSkin),
       };
     }
+
     // Gains de l'Arcade : succès, statistiques, missions/quiz/machine du jour
     if (d.rewards && typeof d.rewards === "object" && !Array.isArray(d.rewards)) {
       const r = d.rewards;
@@ -802,11 +819,24 @@ function cleanData(d) {
         stats: { games: num(st.games), quizGood: num(st.quizGood), played: nums(st.played), best: nums(st.best), max: nums(st.max), wins: nums(st.wins), pongExpert: !!st.pongExpert, jackpot: !!st.jackpot },
       };
     }
-    // Chasse aux secrets (2 séries d'easter eggs) : { found: { id: "AAAA-MM-JJ" }, badge, badge2 }
+
+    // Chasse aux secrets (2 séries d'easter eggs)
     if (d.eggs && typeof d.eggs === "object" && !Array.isArray(d.eggs)) {
       const found = {};
       if (d.eggs.found && typeof d.eggs.found === "object") for (const [k, v] of Object.entries(d.eggs.found).slice(0, 60)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) found[k] = String(v).slice(0, 10);
       out.eggs = { found, badge: typeof d.eggs.badge === "string" ? d.eggs.badge.slice(0, 10) : "", badge2: typeof d.eggs.badge2 === "string" ? d.eggs.badge2.slice(0, 10) : "" };
+    }
+
+    // Sauvegardes internes de chaque borne (Yaelle, Tyriel & Soren, Solitaire, Un Soir d'Été...)
+    if (d.gameSaves && typeof d.gameSaves === "object" && !Array.isArray(d.gameSaves)) {
+      const gs = {};
+      for (const [k, v] of Object.entries(d.gameSaves).slice(0, 25)) {
+        if (/^[a-z0-9_-]{1,30}$/i.test(k) && v && typeof v === "object") {
+          const str = JSON.stringify(v);
+          if (str.length < 8000) gs[k] = v;
+        }
+      }
+      out.gameSaves = gs;
     }
   }
   return JSON.stringify(out).length <= MAX_DATA_BYTES ? out : null;
