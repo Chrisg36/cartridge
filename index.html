@@ -6187,6 +6187,8 @@ body.theme-shinigamiquill .player-badge { font-size: 12px !important; padding: 0
 </style>
 <style id="patch-2026-10-31b">
 body[data-unique] .cov, body[data-unique] .grid-cov, body[data-unique] .big, body[data-unique] .collection-item-card img { filter: none !important; }
+/* Thème collector actif : aucune trame / filtre Game Boy ne peut rester par-dessus */
+html:has(> body[data-unique])::before { content: none !important; display: none !important; }
 </style>
 </head>
 <body>
@@ -7766,7 +7768,8 @@ function applyUniqueTheme(id) {
   const pb = document.getElementById("prev"), nb = document.getElementById("next");
   if (pb) { pb.innerHTML = arrow("M15 6l-6 6 6 6"); pb.style.fontFamily = ""; }
   if (nb) { nb.innerHTML = arrow("M9 6l6 6-6 6"); nb.style.fontFamily = ""; }
-  document.querySelectorAll(".cov, .grid-cov, .big, .collection-item-card img").forEach((img) => { img.style.filter = ""; img.style.border = ""; });
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img, img[style*="hue-rotate"]').forEach((img) => { img.style.filter = ""; img.style.border = ""; });
+  document.body.style.backgroundColor = ""; document.body.style.backgroundImage = ""; document.body.style.backgroundSize = "";
 
   // Décor illustré propre au thème (derrière l'interface, ne gêne aucun clic)
   const scenery = document.createElement("div");
@@ -7813,6 +7816,18 @@ function applyTheme(th, { keepUnique = false } = {}) {
     try { localStorage.removeItem("cartridge_active_unique_theme"); } catch(e) {}
   }
 
+  // 🧹 Nettoie les restes du code secret f12 et les anciens filtres posés en ligne
+  document.body.style.backgroundColor = ""; document.body.style.backgroundImage = ""; document.body.style.backgroundSize = "";
+  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img, img[style*="hue-rotate"]').forEach(img => { img.style.filter = ""; img.style.border = ""; });
+
+  // Un thème collector est actif (démarrage, synchro cloud…) : on mémorise le thème de base
+  // sans l'afficher, sinon le Game Boy repasse par-dessus le collector
+  if (document.body.dataset.unique) {
+    try { localStorage.setItem("theme", th); } catch (e) {}
+    document.documentElement.dataset.theme = "dark";
+    return th;
+  }
+
   document.documentElement.dataset.theme = th;
   try { localStorage.setItem("theme", th); } catch (e) {}
   if ($("#themeMeta") && !document.body.dataset.unique) $("#themeMeta").content = THEMES[th][1];
@@ -7833,11 +7848,7 @@ function applyTheme(th, { keepUnique = false } = {}) {
   if (th === "gameboy-dark") {
     if (prevBtn) { prevBtn.textContent = "B"; prevBtn.style.fontFamily = "'Press Start 2P', monospace"; }
     if (nextBtn) { nextBtn.textContent = "A"; nextBtn.style.fontFamily = "'Press Start 2P', monospace"; }
-    
-    document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
-      img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%)";
-      img.style.border = "1px solid #729c15";
-    });
+    // (le filtre vert des jaquettes est géré par le CSS [data-theme="gameboy-dark"] : il s'en va avec le thème)
   } else {
     if (prevBtn) { prevBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`; prevBtn.style.fontFamily = ""; }
     if (nextBtn) { nextBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`; nextBtn.style.fontFamily = ""; }
@@ -11088,27 +11099,9 @@ function importCartridgeSave() {
 // ▸ f12() : code secret à taper dans la console du navigateur → mode Dark Game Boy Pro
 window.f12 = function() {
   console.log("🎮 Activation du Mode Dark Game Boy Pro...");
-
-  // Active le thème Game Boy Dark
-  document.documentElement.dataset.theme = "gameboy-dark";
-  try { localStorage.setItem("theme", "gameboy-dark"); } catch (e) {}
-
-  // Force l'affichage de "B" et "A" sur les boutons de navigation
-  const prevBtn = document.getElementById("prev");
-  const nextBtn = document.getElementById("next");
-  if (prevBtn) { prevBtn.textContent = "B"; prevBtn.style.fontFamily = "'Press Start 2P', monospace"; }
-  if (nextBtn) { nextBtn.textContent = "A"; nextBtn.style.fontFamily = "'Press Start 2P', monospace"; }
-
-  // Applique le filtre vert LCD rétro sur les jaquettes de jeux
-  document.querySelectorAll('.cov, .grid-cov, .big, .collection-item-card img').forEach(img => {
-    img.style.filter = "grayscale(100%) sepia(100%) hue-rotate(65deg) contrast(180%) brightness(90%)";
-    img.style.border = "1px solid #729c15";
-  });
-
-  // Fond d'écran points LCD
-  document.body.style.backgroundColor = "#070f07";
-  document.body.style.backgroundImage = "radial-gradient(circle, #122612 1px, transparent 1px)";
-  document.body.style.backgroundSize = "4px 4px";
+  // Passe par applyTheme : boutons B/A, filtre LCD et fond sont posés par le thème
+  // et retirés proprement quand on change de thème (avant, ils restaient collés)
+  theme = applyTheme("gameboy-dark");
 
   // Jingle 8-bits de démarrage
   try {
