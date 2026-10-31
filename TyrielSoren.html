@@ -122,11 +122,45 @@ addEventListener('keyup', (e) => {
   press(k, false);
 });
 document.querySelectorAll('[data-k]').forEach((b) => {
+  if (b.closest('.dpad')) return; // la croix a sa propre gestion (diagonales) juste en dessous
   const k = b.dataset.k;
   const on = (e) => { e.preventDefault(); initAudio(); b.setPointerCapture?.(e.pointerId); b.classList.add('on'); press(k, true); };
   const off = (e) => { e.preventDefault(); b.classList.remove('on'); press(k, false); };
   b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
 });
+// Croix tactile « glissable » à 8 directions : un seul pouce peut courir ET sauter
+// (diagonale haut-gauche / haut-droite = avancer + sauter), et on peut glisser
+// d'une direction à l'autre sans relever le doigt.
+(function () {
+  const pad = document.querySelector('.dpad'); if (!pad) return;
+  const keyEl = { up: pad.querySelector('.u'), down: pad.querySelector('.d'), left: pad.querySelector('.l'), right: pad.querySelector('.r') };
+  let pid = null; const cur = { up: 0, down: 0, left: 0, right: 0 };
+  const set = (next) => {
+    for (const k in cur) if (cur[k] !== next[k]) { cur[k] = next[k]; press(k, !!next[k]); keyEl[k] && keyEl[k].classList.toggle('on', !!next[k]); }
+  };
+  const pick = (e) => {
+    const r = pad.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    const n = { up: 0, down: 0, left: 0, right: 0 };
+    if (Math.hypot(dx, dy) >= r.width * 0.12) {
+      const a = Math.atan2(dy, dx) * 180 / Math.PI; // 0 = droite, -90 = haut
+      if (a > -67.5 && a < 67.5) n.right = 1;
+      if (a > 112.5 || a < -112.5) n.left = 1;
+      if (a > -157.5 && a < -22.5) n.up = 1;
+      if (a > 22.5 && a < 157.5) n.down = 1;
+    }
+    set(n);
+  };
+  pad.style.touchAction = 'none';
+  pad.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); initAudio(); if (pid !== null) return;
+    pid = e.pointerId; try { pad.setPointerCapture(e.pointerId); } catch (_) {}
+    pick(e);
+  });
+  pad.addEventListener('pointermove', (e) => { if (e.pointerId === pid) pick(e); });
+  const end = (e) => { if (e.pointerId !== pid) return; pid = null; set({ up: 0, down: 0, left: 0, right: 0 }); };
+  pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end); pad.addEventListener('lostpointercapture', end);
+})();
 // Toucher l'écran : valide dans les menus (et choisit le héros sur l'écran de sélection)
 let tapX = -1, tapY = -1;
 cv.addEventListener('pointerdown', (e) => {
@@ -1421,8 +1455,9 @@ function update() {
     case ST.TITLE: {
       playSong('title');
       const n = unlocked > 0 ? 2 : 1;
-      if (P.up || P.left) { titleSel = (titleSel + n - 1) % n; SFX.select(); }
-      if (P.down || P.right) { titleSel = (titleSel + 1) % n; SFX.select(); }
+      const mUp = P.up || P.left, mDn = P.down || P.right; // (diagonale de la croix : on ne bouge que d'un cran)
+      if (mUp && !mDn) { titleSel = (titleSel + n - 1) % n; SFX.select(); }
+      else if (mDn && !mUp) { titleSel = (titleSel + 1) % n; SFX.select(); }
       if (P.tap && n > 1 && tapY > 108 && tapY < 136) titleSel = tapY < 124 ? 0 : 1;
       if (P.confirm && stateT > 20) { SFX.select(); setState(ST.SELECT); }
       break;
@@ -1451,7 +1486,7 @@ function update() {
       updateParts();
       if (stateT > 150) {
         lives--;
-        if (lives <= 0) { saveBest(); setState(ST.OVER); }
+        if (lives <= 0) { saveBest(); setState(ST.OVER); cxPost({ type: 'cartridge:gameover', game: 'Tyriel & Soren', id: 'tyrielsoren', score, stats: { level: lvlIndex + 1 } }); }
         else { const cp = checkpoint; startLevel(lvlIndex, true); checkpoint = cp; }
       }
       break;
@@ -1460,7 +1495,7 @@ function update() {
       if (stateT === 40) score += clearTally.timePts + clearTally.perfect;
       if (stateT > 90 && P.confirm) {
         saveBest();
-        if (lvlIndex >= LEVELS.length - 1) { setState(ST.END); playSong('title'); }
+        if (lvlIndex >= LEVELS.length - 1) { setState(ST.END); playSong('title'); cxPost({ type: 'cartridge:gameover', game: 'Tyriel & Soren', id: 'tyrielsoren', score, stats: { level: lvlIndex + 1, won: true } }); }
         else { checkpoint = null; startLevel(lvlIndex + 1, false); }
       }
       break;
@@ -1511,6 +1546,10 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden && state === ST.PLAY) setState(ST.PAUSE); });
+// Dialogue avec l'app Cartridge (borne d'arcade) : prêt, fin de partie (pièces + missions), pause
+function cxPost(m) { try { if (window.parent !== window) window.parent.postMessage(m, '*'); } catch (e) {} }
+addEventListener('message', (e) => { const d = e.data; if (d && d.type === 'cartridge:pause' && state === ST.PLAY) setState(ST.PAUSE); });
+cxPost({ type: 'cartridge:ready', game: 'Tyriel & Soren', id: 'tyrielsoren' });
 if (document.fonts && document.fonts.load) document.fonts.load(`8px ${FONT}`).finally(() => requestAnimationFrame(loop)); else requestAnimationFrame(loop);
 // Accès de test : window.__TS = { startLevel, ... }
 window.__TS = { get state() { return state; }, startLevel: (i, h = 'tyriel') => { heroId = h; H = HEROES[h]; lives = 3; startLevel(i, false); setState(ST.PLAY); playSong(theme.song); }, get pl() { return pl; }, get boss() { return boss; }, get camX() { return camX; }, setCam: (v) => { camX = v; }, ST, get enemies() { return enemies; } };
