@@ -729,7 +729,8 @@ const USERNAME_RE = /^[A-Za-z0-9_-]{3,20}$/;
 // Le Worker n'accepte pas plus de 100 000 tours. 50 000 reste léger pour le plan gratuit ;
 // si Cloudflare affiche « exceeded CPU » à la connexion, passe à 25 000 (ou au plan payant et 100 000).
 const PBKDF2_ITERATIONS = 50000;
-const MAX_DATA_BYTES = 250000;
+// Plafond maximal sécurisé par profil utilisateur (1 Mo)
+const MAX_DATA_BYTES = 1000000;
 const enc = new TextEncoder();
 const jsonRes = (obj, status = 200) => Response.json(obj, { status, headers: CORS });
 const nowSec = () => Math.floor(Date.now() / 1000);
@@ -758,35 +759,46 @@ async function checkHash(secret, hash, salt, iters) {
   return safeEqual(await pbkdf2(secret, unb64(salt), iters || PBKDF2_ITERATIONS), hash);
 }
 
-// Données de sauvegarde : on ne garde que les champs attendus, avec leur type
+// Données de sauvegarde : nettoyage et compaction poussés pour l'extrême
 function cleanData(d) {
   const out = {};
   if (d && typeof d === "object") {
     if (Number.isFinite(d.userCoins) && d.userCoins >= 0) out.userCoins = Math.floor(d.userCoins);
 
-    // Collection de jaquettes : allégée (on ne stocke pas les descriptions/releases complètes)
+    // 1. Vitrine de jaquettes : jusqu'à 3 000 cartes, stockées au format ultra-compact
     if (Array.isArray(d.myCollection)) {
-      out.myCollection = d.myCollection.slice(0, 300).map((c) => {
+      out.myCollection = d.myCollection.slice(0, 3000).map((c) => {
         if (!c || typeof c !== "object") return null;
+
+        // Si c'est une URL complète, on extrait juste le hash de l'image (ex: "co49x1")
+        let imgCode = String(c.cover || "");
+        const match = imgCode.match(/([a-zA-Z0-9_]+)\.(jpg|png|webp)/);
+        if (match) imgCode = match[1];
+
         return {
           id: Number(c.id) || 0,
-          name: String(c.name || "").slice(0, 70),
-          cover: String(c.cover || "").slice(0, 140),
+          name: String(c.name || "").slice(0, 60),
+          cover: imgCode.slice(0, 35),
           rarity: String(c.rarity || "common").slice(0, 15)
         };
       }).filter(Boolean);
     }
 
-    if (Array.isArray(d.favorites)) out.favorites = d.favorites.filter((x) => Number.isInteger(x));
+    // 2. Favoris : jusqu'à 500 jeux gardés en mémoires sous forme d'IDs numériques
+    if (Array.isArray(d.favorites)) {
+      out.favorites = d.favorites.filter((x) => Number.isInteger(x)).slice(0, 500);
+    }
     
-    // Historique des scores limité aux 30 derniers
-    if (Array.isArray(d.gameScores)) out.gameScores = d.gameScores.slice(-30);
+    // 3. Historique des scores : les 50 plus récents
+    if (Array.isArray(d.gameScores)) {
+      out.gameScores = d.gameScores.slice(-50);
+    }
     
     if (typeof d.theme === "string") out.theme = d.theme.slice(0, 30);
 
-    // Achats de la Boutique (thèmes collector, avatars, bannières) : listes de petits identifiants
+    // 4. Achats boutique (thèmes de consoles, avatars, bannières, boutons)
     if (d.unlocks && typeof d.unlocks === "object") {
-      const ids = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,40}$/i.test(x)).slice(0, 100) : []);
+      const ids = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,40}$/i.test(x)).slice(0, 150) : []);
       const one = (x) => (typeof x === "string" && /^[a-z0-9_-]{0,40}$/i.test(x) ? x : "");
       out.unlocks = {
         themes: ids(d.unlocks.themes),
@@ -800,14 +812,14 @@ function cleanData(d) {
       };
     }
 
-    // Gains de l'Arcade : succès, statistiques, missions/quiz/machine du jour
+    // 5. Récompenses Arcade, quiz, statistiques et succès
     if (d.rewards && typeof d.rewards === "object" && !Array.isArray(d.rewards)) {
       const r = d.rewards;
       const num = (x) => (Number.isFinite(+x) && +x >= 0 ? Math.floor(+x) : 0);
-      const nums = (o) => { const out = {}; if (o && typeof o === "object") for (const [k, v] of Object.entries(o).slice(0, 20)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) out[k] = num(v); return out; };
-      const strs = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,20}$/i.test(x)).slice(0, 20) : []);
+      const nums = (o) => { const res = {}; if (o && typeof o === "object") for (const [k, v] of Object.entries(o).slice(0, 35)) if (/^[a-z0-9_-]{1,25}$/i.test(k)) res[k] = num(v); return res; };
+      const strs = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === "string" && /^[a-z0-9_-]{1,25}$/i.test(x)).slice(0, 30) : []);
       const ach = {};
-      if (r.ach && typeof r.ach === "object") for (const [k, v] of Object.entries(r.ach).slice(0, 50)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) ach[k] = String(v).slice(0, 10);
+      if (r.ach && typeof r.ach === "object") for (const [k, v] of Object.entries(r.ach).slice(0, 60)) if (/^[a-z0-9_-]{1,25}$/i.test(k)) ach[k] = String(v).slice(0, 10);
       const st = r.stats && typeof r.stats === "object" ? r.stats : {};
       out.rewards = {
         day: typeof r.day === "string" ? r.day.slice(0, 10) : "",
@@ -820,20 +832,20 @@ function cleanData(d) {
       };
     }
 
-    // Chasse aux secrets (2 séries d'easter eggs)
+    // 6. Easter eggs trouvés
     if (d.eggs && typeof d.eggs === "object" && !Array.isArray(d.eggs)) {
       const found = {};
-      if (d.eggs.found && typeof d.eggs.found === "object") for (const [k, v] of Object.entries(d.eggs.found).slice(0, 60)) if (/^[a-z0-9_-]{1,20}$/i.test(k)) found[k] = String(v).slice(0, 10);
+      if (d.eggs.found && typeof d.eggs === "object") for (const [k, v] of Object.entries(d.eggs.found).slice(0, 80)) if (/^[a-z0-9_-]{1,25}$/i.test(k)) found[k] = String(v).slice(0, 10);
       out.eggs = { found, badge: typeof d.eggs.badge === "string" ? d.eggs.badge.slice(0, 10) : "", badge2: typeof d.eggs.badge2 === "string" ? d.eggs.badge2.slice(0, 10) : "" };
     }
 
-    // Sauvegardes internes de chaque borne (Yaelle, Tyriel & Soren, Solitaire, Un Soir d'Été...)
+    // 7. Sauvegardes internes de bornes : jusqu'à 50 jeux différents (Yaelle, Solitaire, etc.)
     if (d.gameSaves && typeof d.gameSaves === "object" && !Array.isArray(d.gameSaves)) {
       const gs = {};
-      for (const [k, v] of Object.entries(d.gameSaves).slice(0, 25)) {
+      for (const [k, v] of Object.entries(d.gameSaves).slice(0, 50)) {
         if (/^[a-z0-9_-]{1,30}$/i.test(k) && v && typeof v === "object") {
           const str = JSON.stringify(v);
-          if (str.length < 8000) gs[k] = v;
+          if (str.length < 12000) gs[k] = v; // autorise jusqu'à 12 Ko par état de jeu
         }
       }
       out.gameSaves = gs;
