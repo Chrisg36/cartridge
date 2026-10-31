@@ -1263,6 +1263,134 @@ async function handleMsg(action, request, env, ctx) {
   return jsonRes({ error: "Adresse inconnue." }, 404);
 }
 
+
+// =====================================================================
+// CLASSEMENT DES JOUEURS — meilleur score de chaque joueur, borne par borne
+//   Routes (POST) :
+//     /api/scores/submit { scores: [{ game, score }] }   (connecté)
+//         → garde le meilleur score, renvoie la place et le joueur dépassé
+//     /api/scores/top    { game? }                        (connecté ou non)
+//         → sans « game » : le podium (3 premiers) de chaque borne
+//         → avec « game » : les 50 premiers de cette borne
+//         + si connecté : ta place, ton record et le joueur juste devant toi
+//   Le joueur dépassé reçoit une notification (1 fois par heure et par borne au maximum).
+//   La table « scores » est créée toute seule au premier appel.
+// =====================================================================
+const SCORE_GAMES = ["Pac-Man", "Space Invaders", "Tetris", "Pong", "Snake", "Astra Jump", "Tyriel & Soren", "Un Soir d'Été", "Solitaire", "Mahjong", "Yaelle"];
+const scoreKey = (s) => String(s || "").trim().toLowerCase().replace(/[’`]/g, "'");
+const SCORE_BY_KEY = Object.fromEntries(SCORE_GAMES.map((g) => [scoreKey(g), g]));
+const SCORE_MAX = 99999999;                 // garde-fou contre les scores absurdes
+const SCORE_RATE = { max: 40, window: 60 }; // 40 envois par minute maximum
+const fmtScore = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+let scoreReady = false;
+
+async function ensureScoreTables(env) {
+  if (scoreReady) return;
+  await env.DB.batch([
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS scores (user_id INTEGER NOT NULL, game TEXT NOT NULL, best INTEGER NOT NULL, at INTEGER NOT NULL, PRIMARY KEY (user_id, game))"),
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS scores_game ON scores(game, best DESC)"),
+  ]);
+  scoreReady = true;
+}
+
+async function handleScores(action, request, env, ctx) {
+  await ensureMsgTables(env);   // pour les notifications (table push_subs)
+  await ensureScoreTables(env);
+  const me = await sessionUser(request, env);
+  let body = {};
+  try { body = await request.json(); } catch (e) {}
+  const t = nowSec();
+
+  if (action === "submit") {
+    if (!me) return jsonRes({ error: "Connecte-toi pour entrer au classement." }, 401);
+    const rate = [{ key: "sc:" + me.id, max: SCORE_RATE.max, window: SCORE_RATE.window }];
+    if (await tooManyAttempts(env, rate)) return jsonRes({ error: "Trop d'envois. Réessaie dans une minute." }, 429);
+    await noteFailure(env, rate);
+
+    const results = [];
+    for (const s of (Array.isArray(body.scores) ? body.scores : []).slice(0, 15)) {
+      const game = SCORE_BY_KEY[scoreKey(s && s.game)];
+      const n = Math.floor(Number(s && s.score));
+      if (!game || !Number.isFinite(n) || n <= 0 || n > SCORE_MAX) continue;
+
+      const old = await env.DB.prepare("SELECT best FROM scores WHERE user_id = ? AND game = ?").bind(me.id, game).first();
+      const oldBest = old ? old.best : 0;
+      let passed = null;
+      if (n > oldBest) {
+        // Joueur dépassé : le meilleur score compris entre ton ancien record et le nouveau
+        passed = await env.DB.prepare(
+          "SELECT s.user_id AS id, u.display_name AS name, s.best FROM scores s JOIN users u ON u.id = s.user_id WHERE s.game = ? AND s.user_id != ? AND s.best >= ? AND s.best < ? ORDER BY s.best DESC LIMIT 1"
+        ).bind(game, me.id, Math.max(1, oldBest), n).first();
+        await env.DB.prepare(
+          "INSERT INTO scores (user_id, game, best, at) VALUES (?, ?, ?, ?) ON CONFLICT(user_id, game) DO UPDATE SET best = MAX(best, excluded.best), at = CASE WHEN excluded.best > best THEN excluded.at ELSE at END"
+        ).bind(me.id, game, n, t).run();
+
+        // Notification au joueur dépassé (au plus 1 par heure et par borne)
+        if (passed) {
+          const lim = [{ key: `sn:${passed.id}:${scoreKey(game)}`, max: 1, window: 3600 }];
+          if (!(await tooManyAttempts(env, lim))) {
+            await noteFailure(env, lim);
+            const job = pushToUser(env, passed.id, {
+              title: "🏆 Record battu !",
+              body: `${me.name} t'a dépassé à ${game} avec ${fmtScore(n)} pts. À toi de jouer !`,
+              conv: 0, tag: "score-" + scoreKey(game),
+            }).catch(() => {});
+            if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
+          }
+        }
+      }
+      const best = Math.max(n, oldBest);
+      const above = await env.DB.prepare("SELECT COUNT(*) AS n FROM scores WHERE game = ? AND best > ?").bind(game, best).first();
+      results.push({ game, best, improved: n > oldBest, rank: above.n + 1, passed: passed ? { name: passed.name, best: passed.best } : null });
+    }
+    return jsonRes({ results });
+  }
+
+  if (action === "top") {
+    const one = body.game ? SCORE_BY_KEY[scoreKey(body.game)] : null;
+    if (body.game && !one) return jsonRes({ error: "Borne inconnue." }, 400);
+    const limit = one ? 50 : 3;
+    const where = one ? "WHERE game = ?" : "";
+    const args = one ? [one] : [];
+
+    const { results: rows } = await env.DB.prepare(
+      `SELECT r.game, r.user_id AS id, u.display_name AS name, ${MSG_AV("u")} AS av, r.best, r.rnk AS rank
+       FROM (SELECT game, user_id, best,
+                    RANK() OVER (PARTITION BY game ORDER BY best DESC) AS rnk,
+                    ROW_NUMBER() OVER (PARTITION BY game ORDER BY best DESC, at ASC) AS pos
+             FROM scores ${where}) r
+       JOIN users u ON u.id = r.user_id
+       WHERE r.pos <= ${limit}
+       ORDER BY r.game, r.pos`
+    ).bind(...args).all();
+    const { results: counts } = await env.DB.prepare(`SELECT game, COUNT(*) AS n FROM scores ${where} GROUP BY game`).bind(...args).all();
+
+    let mine = [];
+    if (me) {
+      mine = (await env.DB.prepare(
+        `SELECT s.game, s.best,
+                (SELECT COUNT(*) FROM scores s2 WHERE s2.game = s.game AND s2.best > s.best) + 1 AS rank,
+                (SELECT u.display_name FROM scores s3 JOIN users u ON u.id = s3.user_id
+                   WHERE s3.game = s.game AND s3.best > s.best ORDER BY s3.best ASC LIMIT 1) AS next_name,
+                (SELECT MIN(s4.best) FROM scores s4 WHERE s4.game = s.game AND s4.best > s.best) AS next_best
+         FROM scores s WHERE s.user_id = ? ${one ? "AND s.game = ?" : ""}`
+      ).bind(me.id, ...args).all()).results;
+    }
+
+    const games = {};
+    for (const g of one ? [one] : SCORE_GAMES) games[g] = { players: 0, top: [], me: null };
+    counts.forEach((c) => { if (games[c.game]) games[c.game].players = c.n; });
+    rows.forEach((r) => { if (games[r.game]) games[r.game].top.push({ id: r.id, name: r.name, av: r.av || "", best: r.best, rank: r.rank }); });
+    mine.forEach((m) => {
+      if (games[m.game]) games[m.game].me = { best: m.best, rank: m.rank, next: m.next_name ? { name: m.next_name, best: m.next_best } : null };
+    });
+    return jsonRes({ me: me ? { id: me.id, name: me.name } : null, order: one ? [one] : SCORE_GAMES, games },
+      200);
+  }
+
+  return jsonRes({ error: "Adresse inconnue." }, 404);
+}
+
 async function handleApi(path, request, env, ctx) {
   // Vérification rapide dans un navigateur : ouvre https://<ton-worker>/api/msg/ping
   if (path === "/api/msg/ping") {
@@ -1277,6 +1405,7 @@ async function handleApi(path, request, env, ctx) {
     if (path === "/api/save") return await handleSave(request, env);
     if (path === "/api/recover") return await handleRecover(request, env);
     if (path.startsWith("/api/msg/")) return await handleMsg(path.slice(9), request, env, ctx);
+    if (path.startsWith("/api/scores/")) return await handleScores(path.slice(12), request, env, ctx);
     return jsonRes({ error: "Adresse inconnue." }, 404);
   } catch (e) {
     return jsonRes({ error: "Erreur du serveur.", debug: e && e.message ? String(e.message).slice(0, 200) : "" }, 500);
