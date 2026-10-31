@@ -4699,6 +4699,425 @@ body.theme-nichirin::before { display: none; }
 .banner-pick-preview { height: 54px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
 .avatar-pick-card .avatar-box { width: 52px; height: 52px; background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--acc) 22%, var(--cov)), var(--cov) 70%); }
 
+
+/* =====================================================================
+   ARCADE CABINET — SALLE D'ARCADE ANNÉES 90 (thème légendaire)
+   Décor : plafond de néons, moquette cosmique fluo, rangée de bornes
+   allumées. Effets : pluie de jetons pixel, HUD « INSERT COIN »,
+   guirlande d'ampoules sous l'en-tête, boutons façon borne.
+   ===================================================================== */
+body.theme-arcadecabinet {
+  color-scheme: dark;
+  --bg: #07030f; --card: #150a2b; --cov: #241142; --txt: #fff4fb; --mut: #b9a3e8;
+  --acc: #ff2d95; --acc2: #22e4ff; --on: #1a0010; --radius: 6px;
+  --line: rgba(160, 110, 255, .22); --line-2: rgba(160, 110, 255, .38);
+  --arc-yel: #ffe14d; --arc-cy: #22e4ff; --arc-pk: #ff2d95; --arc-panel: #3a1f73;
+  --sig-font: 'Press Start 2P', monospace; --sig-logo: 'Press Start 2P', monospace;
+  --sig-line: linear-gradient(90deg, #ff2d95, #a855ff, #22e4ff, #ffe14d, #ff2d95);
+  --sig-glow: rgba(255, 45, 149, .55); --sig-2: #22e4ff;
+}
+
+/* --- Décor : moquette cosmique + scanlines + plafond de néons + bornes --- */
+.scenery-arcade_cabinet {
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 55% at 50% 0%, rgba(124, 58, 237, .38), transparent 62%),
+    radial-gradient(70% 40% at 50% 100%, rgba(255, 45, 149, .22), transparent 70%),
+    linear-gradient(180deg, #07030f 0%, rgba(7, 3, 15, .9) 24%, rgba(7, 3, 15, .5) 62%, rgba(7, 3, 15, .3) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E %3Cg fill='none' stroke-linecap='round' stroke-linejoin='round' stroke-width='3.2'%3E %3Cpolyline points='14,34 25,20 36,34 47,20 58,34' stroke='%23ff2d95'/%3E %3Ccircle cx='160' cy='44' r='11' stroke='%2322e4ff'/%3E %3Cpath d='M96 98 q11 -15 22 0 t22 0 t22 0' stroke='%23a855ff'/%3E %3Cpolygon points='42,140 62,172 22,172' stroke='%2339ff88'/%3E %3Cpolyline points='134,160 145,146 156,160 167,146' stroke='%23ffe14d'/%3E %3Ccircle cx='196' cy='196' r='6' stroke='%23ff2d95'/%3E %3Cpath d='M74 44 l8 8 M82 44 l-8 8' stroke='%23ffe14d'/%3E %3Crect x='172' y='100' width='16' height='16' transform='rotate(22 180 108)' stroke='%2322e4ff'/%3E %3Cpath d='M8 98 q9 10 18 0' stroke='%23ff7a1a'/%3E %3Cpath d='M94 196 l7 -12 l7 12 z' stroke='%23ff2d95'/%3E %3Cpath d='M120 206 q8 -10 16 0' stroke='%2339ff88'/%3E %3C/g%3E %3Cpolygon fill='%23ffe14d' points='104,18 107,27 116,27 109,32 112,41 104,36 96,41 99,32 92,27 101,27'/%3E %3Cg fill='%23ffffff' opacity='.75'%3E%3Ccircle cx='62' cy='86' r='1.6'/%3E%3Ccircle cx='126' cy='128' r='1.6'/%3E%3Ccircle cx='30' cy='204' r='1.6'/%3E%3Ccircle cx='200' cy='74' r='1.6'/%3E%3Ccircle cx='84' cy='160' r='1.3'/%3E%3Ccircle cx='150' cy='186' r='1.3'/%3E%3C/g%3E %3Cg fill='%2322e4ff'%3E%3Ccircle cx='130' cy='70' r='2.6'/%3E%3Ccircle cx='22' cy='64' r='2.1'/%3E%3C/g%3E %3Cg fill='%23ff2d95'%3E%3Ccircle cx='78' cy='122' r='2.6'/%3E%3Ccircle cx='182' cy='140' r='2.1'/%3E%3C/g%3E %3C/svg%3E") 0 0 / 220px 220px,
+    #0a0618;
+}
+.scenery-arcade_cabinet::before {
+  top: 0; height: 30%; opacity: .75;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='xMidYMin slice'%3E %3Cg stroke='%237c3aed' stroke-width='2' opacity='.35'%3E %3Cline x1='0' y1='0' x2='520' y2='300'/%3E%3Cline x1='1200' y1='0' x2='680' y2='300'/%3E %3Cline x1='300' y1='0' x2='560' y2='300'/%3E%3Cline x1='900' y1='0' x2='640' y2='300'/%3E %3C/g%3E %3Cg stroke-linecap='round'%3E %3Cline x1='110' y1='38' x2='1090' y2='38' stroke='%23ff2d95' stroke-width='22' opacity='.16'/%3E %3Cline x1='110' y1='38' x2='1090' y2='38' stroke='%23ff7ab8' stroke-width='5'/%3E %3Cline x1='260' y1='112' x2='940' y2='112' stroke='%2322e4ff' stroke-width='18' opacity='.16'/%3E %3Cline x1='260' y1='112' x2='940' y2='112' stroke='%239ff4ff' stroke-width='4'/%3E %3Cline x1='370' y1='168' x2='830' y2='168' stroke='%23ff2d95' stroke-width='14' opacity='.16'/%3E %3Cline x1='370' y1='168' x2='830' y2='168' stroke='%23ff7ab8' stroke-width='3'/%3E %3C/g%3E %3C/svg%3E"); background-size: cover; background-position: center top;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent);
+  animation: arcCeil 7s steps(1) infinite;
+}
+.scenery-arcade_cabinet::after {
+  height: 36%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1200 330' preserveAspectRatio='xMidYMax slice'%3E %3Cdefs%3E %3ClinearGradient id='bd' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%2322113f'/%3E%3Cstop offset='1' stop-color='%230a0516'/%3E%3C/linearGradient%3E %3ClinearGradient id='fl' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ff2d95' stop-opacity='.35'/%3E%3Cstop offset='1' stop-color='%23ff2d95' stop-opacity='0'/%3E%3C/linearGradient%3E %3Cpattern id='sl' width='4' height='4' patternUnits='userSpaceOnUse'%3E%3Crect width='4' height='2' fill='%23000' opacity='.35'/%3E%3C/pattern%3E %3Cg id='cab'%3E %3Cpath d='M8 0 H112 L116 42 H4 Z' fill='currentColor'/%3E %3Cpath d='M8 0 H112 L116 42 H4 Z' fill='%23000' opacity='.25'/%3E %3Crect x='14' y='9' width='92' height='22' rx='3' fill='currentColor'/%3E %3Crect x='14' y='9' width='92' height='9' rx='3' fill='%23fff' opacity='.45'/%3E %3Cpath d='M4 42 H116 V330 H4 Z' fill='url(%23bd)' stroke='%233a2170' stroke-width='2'/%3E %3Cpath d='M4 42 H10 V330 H4 Z' fill='currentColor' opacity='.55'/%3E %3Cpath d='M110 42 H116 V330 H110 Z' fill='currentColor' opacity='.55'/%3E %3Crect x='14' y='52' width='92' height='80' rx='7' fill='%2303020a'/%3E %3Crect x='20' y='58' width='80' height='68' rx='5' fill='currentColor' opacity='.38'/%3E %3Crect x='20' y='58' width='80' height='68' rx='5' fill='url(%23sl)'/%3E %3Crect x='22' y='60' width='76' height='10' rx='3' fill='%23fff' opacity='.12'/%3E %3Cpath d='M0 142 H120 L112 172 H8 Z' fill='%232a1552' stroke='%234a2b8a' stroke-width='2'/%3E %3Crect x='32' y='148' width='5' height='12' fill='%239aa0b4'/%3E%3Ccircle cx='34.5' cy='148' r='6.5' fill='%23ff2d55'/%3E%3Ccircle cx='32.5' cy='146' r='2' fill='%23fff' opacity='.6'/%3E %3Ccircle cx='64' cy='158' r='5' fill='%2322e4ff'/%3E%3Ccircle cx='79' cy='154' r='5' fill='%23ffe14d'/%3E%3Ccircle cx='94' cy='158' r='5' fill='%2339ff88'/%3E %3Crect x='44' y='212' width='32' height='48' rx='3' fill='%2307030f' stroke='%233a2170' stroke-width='2'/%3E %3Crect x='50' y='222' width='7' height='13' rx='1' fill='%23ff9f1a'/%3E%3Crect x='63' y='222' width='7' height='13' rx='1' fill='%23ff9f1a'/%3E %3C/g%3E %3C/defs%3E %3Crect y='300' width='1200' height='30' fill='url(%23fl)'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='12' y='0' color='%23ff2d95'/%3E%3Cg transform='translate(60 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='12' width='24' height='4'/%3E%3Crect x='4' y='8' width='16' height='4'/%3E%3Crect x='8' y='4' width='8' height='4'/%3E%3Crect x='10' y='0' width='4' height='4'/%3E%3C/g%3E%3C/g%3E%3Crect x='38' y='112' width='20' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='144' y='0' color='%2322e4ff'/%3E%3Cg transform='translate(192 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='2' y='0' width='6' height='4'/%3E%3Crect x='14' y='0' width='6' height='4'/%3E%3Crect x='0' y='4' width='22' height='4'/%3E%3Crect x='2' y='8' width='18' height='4'/%3E%3Crect x='6' y='12' width='10' height='4'/%3E%3Crect x='9' y='16' width='4' height='3'/%3E%3C/g%3E%3C/g%3E%3Crect x='170' y='112' width='33' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='276' y='0' color='%23ffe14d'/%3E%3Cg transform='translate(324 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='0' width='10' height='5'/%3E%3Crect x='12' y='0' width='10' height='5'/%3E%3Crect x='6' y='7' width='10' height='5'/%3E%3Crect x='10' y='16' width='5' height='5'/%3E%3C/g%3E%3C/g%3E%3Crect x='302' y='112' width='46' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='408' y='0' color='%2339ff88'/%3E%3Cg transform='translate(456 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='9' y='0' width='4' height='6'/%3E%3Crect x='0' y='6' width='22' height='4'/%3E%3Crect x='4' y='10' width='14' height='4'/%3E%3Crect x='2' y='14' width='6' height='5'/%3E%3Crect x='14' y='14' width='6' height='5'/%3E%3C/g%3E%3C/g%3E%3Crect x='434' y='112' width='59' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='540' y='0' color='%23a855ff'/%3E%3Cg transform='translate(588 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='12' width='24' height='4'/%3E%3Crect x='4' y='8' width='16' height='4'/%3E%3Crect x='8' y='4' width='8' height='4'/%3E%3Crect x='10' y='0' width='4' height='4'/%3E%3C/g%3E%3C/g%3E%3Crect x='566' y='112' width='32' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='672' y='0' color='%23ff7a1a'/%3E%3Cg transform='translate(720 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='2' y='0' width='6' height='4'/%3E%3Crect x='14' y='0' width='6' height='4'/%3E%3Crect x='0' y='4' width='22' height='4'/%3E%3Crect x='2' y='8' width='18' height='4'/%3E%3Crect x='6' y='12' width='10' height='4'/%3E%3Crect x='9' y='16' width='4' height='3'/%3E%3C/g%3E%3C/g%3E%3Crect x='698' y='112' width='45' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='804' y='0' color='%2322e4ff'/%3E%3Cg transform='translate(852 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='0' width='10' height='5'/%3E%3Crect x='12' y='0' width='10' height='5'/%3E%3Crect x='6' y='7' width='10' height='5'/%3E%3Crect x='10' y='16' width='5' height='5'/%3E%3C/g%3E%3C/g%3E%3Crect x='830' y='112' width='58' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='936' y='0' color='%23ff2d95'/%3E%3Cg transform='translate(984 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='9' y='0' width='4' height='6'/%3E%3Crect x='0' y='6' width='22' height='4'/%3E%3Crect x='4' y='10' width='14' height='4'/%3E%3Crect x='2' y='14' width='6' height='5'/%3E%3Crect x='14' y='14' width='6' height='5'/%3E%3C/g%3E%3C/g%3E%3Crect x='962' y='112' width='31' height='4' fill='%23fff' opacity='.7'/%3E%3Cuse href='%23cab' xlink:href='%23cab' x='1068' y='0' color='%23ffe14d'/%3E%3Cg transform='translate(1116 80) scale(1)' opacity='.95'%3E%3Cg fill='%23ffffff'%3E%3Crect x='0' y='12' width='24' height='4'/%3E%3Crect x='4' y='8' width='16' height='4'/%3E%3Crect x='8' y='4' width='8' height='4'/%3E%3Crect x='10' y='0' width='4' height='4'/%3E%3C/g%3E%3C/g%3E%3Crect x='1094' y='112' width='44' height='4' fill='%23fff' opacity='.7'/%3E%3C/svg%3E"); background-size: cover; background-position: center bottom;
+  animation: arcScreens 2.8s ease-in-out infinite;
+}
+@keyframes arcCeil { 0%, 100% { opacity: .75; } 46% { opacity: .35; } 47% { opacity: .75; } 50% { opacity: .45; } 51% { opacity: .75; } }
+@keyframes arcScreens { 0%, 100% { opacity: .92; } 50% { opacity: 1; } }
+@media (min-width: 900px) { .theme-scenery.scenery-arcade_cabinet:not(.is-mini)::after { height: 40%; opacity: 1; } }
+
+/* Aperçu miniature (Boutique) */
+.theme-scenery.is-mini.scenery-arcade_cabinet { background-size: auto, auto, auto, auto, 110px 110px, auto; }
+.theme-scenery.is-mini.scenery-arcade_cabinet::before { height: 45%; animation: none; }
+.theme-scenery.is-mini.scenery-arcade_cabinet::after { display: block; height: 62%; animation: none; }
+.tp-arcade_cabinet { --p-bg: #07030f; --p-card: #150a2b; --p-acc: #ff2d95; --p-txt: #fff4fb; --p-font: 'Press Start 2P'; }
+.tp-arcade_cabinet .tp-logo { font-family: 'Press Start 2P', monospace; color: #ffe14d; text-shadow: 1px 1px 0 #ff2d95; }
+.tp-arcade_cabinet .tp-row { background: #150a2b; border: 2px solid #3a1f73; border-radius: 4px; box-shadow: 3px 3px 0 #000; }
+
+/* --- En-tête : logo pixel + guirlande d'ampoules qui défile --- */
+body.theme-arcadecabinet .sticky-header-container { background-color: rgba(9, 4, 20, .9) !important; }
+body.theme-arcadecabinet .sticky-header-container::after {
+  height: 8px !important; bottom: -4px !important; opacity: 1 !important;
+  background:
+    radial-gradient(circle at 6px 4px, #fffbe0 0 1.4px, #ffd23f 2.4px, rgba(255, 170, 0, .55) 3.4px, transparent 4.6px) 0 0 / 24px 8px repeat-x,
+    radial-gradient(circle at 18px 4px, #7a3d00 0 2.2px, transparent 3.2px) 0 0 / 24px 8px repeat-x,
+    linear-gradient(180deg, #ff2d95 0 1px, #1a0814 1px 7px, #22e4ff 7px) !important;
+  animation: arcBulbs .7s steps(2) infinite;
+}
+@keyframes arcBulbs { to { background-position: 24px 0, 24px 0, 0 0; } }
+body.theme-arcadecabinet #sub-title.neon-logo { font-family: 'Press Start 2P', monospace !important; box-shadow: none !important; text-shadow: none !important; }
+body.theme-arcadecabinet #homeMainContent .brand-text, body.theme-arcadecabinet #sub-title .brand-text {
+  font-family: 'Press Start 2P', monospace !important; font-size: 13px !important; letter-spacing: 1px !important;
+  background: linear-gradient(180deg, #fff6a8 0 30%, #ffc21a 30% 55%, #ff7a1a 55% 78%, #ff2d6f 78%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+  filter: drop-shadow(2px 2px 0 #3b0a6b) drop-shadow(0 0 8px rgba(255, 45, 149, .45));
+}
+body.theme-arcadecabinet .header-currency-badge {
+  border: 2px solid #8a5a00 !important; background: linear-gradient(180deg, #2a1a00, #140a00) !important;
+  color: #ffe14d !important; box-shadow: 0 0 14px rgba(255, 204, 26, .35), inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+  font-family: 'Press Start 2P', monospace !important; font-size: 10px !important;
+}
+
+/* --- Liste : panneaux de borne, ombre pixel, titres « ▶ STAGE » --- */
+body.theme-arcadecabinet .day {
+  font-family: 'Press Start 2P', monospace !important; font-size: 10px !important; letter-spacing: .5px !important;
+  color: var(--arc-yel) !important; text-shadow: 2px 2px 0 #b0125f !important;
+}
+body.theme-arcadecabinet .day::before { content: "▶ " !important; color: var(--arc-cy) !important; animation: arcBlink 1s steps(1) infinite; }
+body.theme-arcadecabinet .day::after { content: none !important; }
+body.theme-arcadecabinet .row,
+body.theme-arcadecabinet .grid-card {
+  background: linear-gradient(180deg, #1d0e3a 0%, #12082a 100%) !important;
+  border: 2px solid var(--arc-panel) !important; border-radius: 6px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 4px 4px 0 #000 !important;
+  transition: transform .12s steps(3), box-shadow .12s steps(3), border-color .12s linear !important;
+}
+body.theme-arcadecabinet .row.is-hyped, body.theme-arcadecabinet .grid-card.is-hyped { border-color: #7a1f6b !important; }
+body.theme-arcadecabinet .row:active, body.theme-arcadecabinet .grid-card:active { transform: translate(3px, 3px) !important; box-shadow: 1px 1px 0 #000 !important; }
+body.theme-arcadecabinet .cov-container, body.theme-arcadecabinet .grid-cov-container { border-radius: 4px !important; box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--arc-panel) !important; }
+body.theme-arcadecabinet .t b, body.theme-arcadecabinet .grid-title { color: #fff !important; letter-spacing: .3px !important; }
+body.theme-arcadecabinet .platform-badge { border-radius: 3px !important; border-color: rgba(160, 110, 255, .45) !important; color: #e3d6ff !important; }
+
+/* Boutons ronds façon borne : bleu = favori, rouge = ajouter, jaune = favori allumé */
+body.theme-arcadecabinet .row .btn-icon {
+  width: 40px !important; height: 40px !important; border-radius: 50% !important; border: 0 !important; color: #032a33 !important;
+  background: radial-gradient(circle at 50% 36%, #a5f8ff 0 14%, #16c4e6 46%, #06637a 100%) !important;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .35), inset 0 3px 0 rgba(255, 255, 255, .35), 0 0 0 2px #0b0616, 0 0 0 4px var(--arc-panel), 0 4px 0 2px #000 !important;
+  transition: transform .06s linear, box-shadow .06s linear !important;
+}
+body.theme-arcadecabinet .row .btn-icon.add { color: #fff !important; background: radial-gradient(circle at 50% 36%, #ffb3d2 0 14%, #ff2d6f 46%, #8e002f 100%) !important; }
+body.theme-arcadecabinet .row .btn-icon.fav-active { background: radial-gradient(circle at 50% 36%, #fffbd0 0 14%, #ffd60a 46%, #a87800 100%) !important; box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .3), inset 0 3px 0 rgba(255, 255, 255, .45), 0 0 0 3px #0b0616, 0 0 0 5px #8a5a00, 0 5px 0 3px #000, 0 0 22px rgba(255, 214, 10, .55) !important; }
+body.theme-arcadecabinet .row .btn-icon:active { transform: translateY(4px) !important; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .35), inset 0 3px 0 rgba(255, 255, 255, .25), 0 0 0 3px #0b0616, 0 0 0 5px var(--arc-panel), 0 1px 0 3px #000 !important; }
+
+/* Cartes de la Boutique / Collection : même panneau pixel */
+body.theme-arcadecabinet .theme-card, body.theme-arcadecabinet .shop-card, body.theme-arcadecabinet .collection-item-card, body.theme-arcadecabinet .avatar-pick-card, body.theme-arcadecabinet .console-vitrine-card {
+  border: 2px solid var(--arc-panel) !important; border-radius: 6px !important; box-shadow: 4px 4px 0 #000 !important;
+}
+
+/* --- Onglets du haut (Boutique, Collection…) : sélection façon menu d'arcade --- */
+body.theme-arcadecabinet .seg { background: #0b0518 !important; border: 2px solid var(--arc-panel) !important; border-radius: 8px !important; box-shadow: 4px 4px 0 #000 !important; }
+body.theme-arcadecabinet .seg::before {
+  background: linear-gradient(180deg, #ff5fb0, #c8166a) !important; border-radius: 4px !important;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .35), inset 0 -3px 0 rgba(0, 0, 0, .3), 0 0 16px rgba(255, 45, 149, .55) !important;
+  transition: transform .24s steps(4) !important;
+}
+body.theme-arcadecabinet .seg-btn { font-weight: 800 !important; letter-spacing: .3px; transition: color .1s linear, transform .1s steps(2) !important; }
+body.theme-arcadecabinet .seg-btn[aria-selected="true"] { color: #fff !important; text-shadow: 2px 2px 0 #6b0034 !important; }
+body.theme-arcadecabinet .seg-btn[aria-selected="true"] .ic { color: var(--arc-yel) !important; }
+body.theme-arcadecabinet .seg-btn:active { transform: translateY(2px); }
+
+/* --- Barre du bas : police pixel, curseur ▶ et icône qui sautille au survol --- */
+body.theme-arcadecabinet .bottom-nav {
+  background: linear-gradient(180deg, #14092c, #07030f) !important;
+  box-shadow: 0 -2px 0 #000, 0 -4px 0 var(--arc-panel), 0 -16px 30px -12px rgba(255, 45, 149, .45) !important;
+}
+body.theme-arcadecabinet .bottom-nav .nav-item span { font-family: 'Press Start 2P', monospace !important; font-size: 6.5px !important; font-weight: 400 !important; letter-spacing: 0 !important; }
+body.theme-arcadecabinet .bottom-nav .nav-item { transition: color .1s linear !important; }
+body.theme-arcadecabinet .bottom-nav .nav-item.active { color: var(--arc-yel) !important; }
+body.theme-arcadecabinet .bottom-nav .nav-item.active span { text-shadow: 1px 1px 0 #b0125f; }
+body.theme-arcadecabinet .bottom-nav .nav-item.active svg { stroke: var(--arc-yel) !important; filter: drop-shadow(2px 2px 0 #b0125f) !important; }
+body.theme-arcadecabinet .bottom-nav .nav-item.active::before {
+  width: 34px !important; height: 4px !important; border-radius: 0 !important;
+  background: repeating-linear-gradient(90deg, var(--arc-pk) 0 6px, transparent 6px 8px) !important; box-shadow: 0 0 10px var(--arc-pk) !important;
+}
+body.theme-arcadecabinet .bottom-nav .nav-item::after {
+  content: "▶"; position: absolute; top: 15px; left: calc(50% - 25px);
+  font: 8px 'Press Start 2P', monospace; color: var(--arc-cy); text-shadow: 1px 1px 0 var(--arc-pk);
+  opacity: 0; transform: translateX(-4px); transition: opacity .1s linear, transform .15s steps(2); pointer-events: none;
+}
+body.theme-arcadecabinet .bottom-nav .nav-item:active svg { transform: translateY(3px) scale(.9) !important; }
+body.theme-arcadecabinet .bottom-nav .nav-item:active::after { opacity: 1; transform: none; }
+@media (hover: hover) {
+  body.theme-arcadecabinet .bottom-nav .nav-item:hover { color: #fff !important; }
+  body.theme-arcadecabinet .bottom-nav .nav-item:hover svg { stroke: var(--arc-cy) !important; filter: drop-shadow(2px 2px 0 var(--arc-pk)) !important; animation: arcHop .36s steps(3) infinite alternate; }
+  body.theme-arcadecabinet .bottom-nav .nav-item:hover span { color: var(--arc-yel); text-shadow: 1px 1px 0 var(--arc-pk); }
+  body.theme-arcadecabinet .bottom-nav .nav-item:hover::after { opacity: 1; transform: none; animation: arcBlink .5s steps(1) infinite; }
+  body.theme-arcadecabinet .seg-btn:not([aria-selected="true"]):hover { color: var(--arc-yel) !important; text-shadow: 2px 2px 0 #6b0034; }
+  body.theme-arcadecabinet .seg-btn:hover .ic { animation: arcHop .36s steps(3) infinite alternate; }
+  body.theme-arcadecabinet .row:hover, body.theme-arcadecabinet .grid-card:hover {
+    transform: translate(-2px, -2px) !important; border-color: var(--arc-cy) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 6px 6px 0 var(--arc-pk), 0 0 24px rgba(34, 228, 255, .25) !important;
+  }
+  body.theme-arcadecabinet .row .btn-icon:hover { filter: brightness(1.15); }
+}
+@media (min-width: 900px) {
+  body.theme-arcadecabinet .bottom-nav .nav-item span { font-size: 9px !important; }
+  body.theme-arcadecabinet .bottom-nav .nav-item { border: 2px solid var(--arc-panel) !important; border-radius: 6px !important; box-shadow: 3px 3px 0 #000 !important; }
+  body.theme-arcadecabinet .bottom-nav .nav-item.active { background: linear-gradient(180deg, #ff5fb0, #c8166a) !important; color: #fff !important; border-color: #ff9fd0 !important; }
+  body.theme-arcadecabinet .bottom-nav .nav-item.active svg { stroke: #fff !important; }
+  body.theme-arcadecabinet .bottom-nav .nav-item::after { top: 50%; left: 6px; margin-top: -5px; }
+  body.theme-arcadecabinet .bottom-nav .nav-item:hover { transform: translateX(6px) !important; }
+}
+@keyframes arcHop { from { transform: translateY(0); } to { transform: translateY(-5px); } }
+@keyframes arcBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+body.theme-arcadecabinet .pg-head h2, body.theme-arcadecabinet .pg-head p, body.theme-arcadecabinet .settings-section-title, body.theme-arcadecabinet .msg, body.theme-arcadecabinet .pg-head-aside { text-shadow: 2px 2px 0 #000, 0 0 10px rgba(7, 3, 15, .9) !important; }
+body.theme-arcadecabinet .pg-head h2 { color: var(--arc-yel) !important; text-shadow: 2px 2px 0 #b0125f, 4px 4px 0 #000 !important; }
+
+/* --- Pluie de jetons pixel (au-dessus des cartes, ne bloque aucun clic) --- */
+.arc-coin-layer { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+.arc-coin { position: absolute; top: -40px; width: var(--s); height: var(--s); animation: arcCoinFall var(--d) cubic-bezier(.5, .05, .9, .55) forwards; will-change: transform; }
+.arc-coin i {
+  display: block; width: 100%; height: 100%; image-rendering: pixelated;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'%3E%3Crect x='4' y='0' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='5' y='0' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='7' y='0' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='1' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='1' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='1' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='7' y='1' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='1' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='9' y='1' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='2' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23fff6b0'/%3E%3Crect x='5' y='2' width='1' height='1' fill='%23fff6b0'/%3E%3Crect x='6' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='7' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='2' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='10' y='2' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='3' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='3' width='1' height='1' fill='%23fff6b0'/%3E%3Crect x='4' y='3' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='3' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='3' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='3' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='3' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='3' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='10' y='3' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='0' y='4' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='2' y='4' width='1' height='1' fill='%23fff6b0'/%3E%3Crect x='3' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='4' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='6' y='4' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='4' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='10' y='4' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='11' y='4' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='0' y='5' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23fff6b0'/%3E%3Crect x='3' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='5' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='5' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='10' y='5' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='11' y='5' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='0' y='6' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='6' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='6' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='10' y='6' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='11' y='6' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='0' y='7' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='2' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='7' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='7' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='10' y='7' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='11' y='7' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='8' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='8' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='8' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='8' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='8' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='6' y='8' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='7' y='8' width='1' height='1' fill='%23b86e00'/%3E%3Crect x='8' y='8' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='9' y='8' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='10' y='8' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='1' y='9' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='3' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='4' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='5' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='6' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='7' y='9' width='1' height='1' fill='%23ffcc1a'/%3E%3Crect x='8' y='9' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='9' y='9' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='10' y='9' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='2' y='10' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='3' y='10' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='4' y='10' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='5' y='10' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='6' y='10' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='7' y='10' width='1' height='1' fill='%23d98a00'/%3E%3Crect x='8' y='10' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='9' y='10' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='4' y='11' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='5' y='11' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='6' y='11' width='1' height='1' fill='%237a3f00'/%3E%3Crect x='7' y='11' width='1' height='1' fill='%237a3f00'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  animation: arcCoinSpin var(--spin) steps(8) infinite;
+  filter: drop-shadow(0 0 5px rgba(255, 204, 26, .7));
+}
+@keyframes arcCoinFall { 0% { transform: translate3d(0, 0, 0); opacity: 0; } 5% { opacity: 1; } 88% { opacity: 1; } 100% { transform: translate3d(var(--sway), calc(100vh + 80px), 0); opacity: 0; } }
+@keyframes arcCoinSpin { 0% { transform: scaleX(1); } 25% { transform: scaleX(.12); } 50% { transform: scaleX(-1); } 75% { transform: scaleX(-.12); } 100% { transform: scaleX(1); } }
+
+/* --- HUD d'arcade en bas du décor (derrière les cartes) --- */
+.arc-hud {
+  position: fixed; left: 0; right: 0; bottom: calc(66px + env(safe-area-inset-bottom)); z-index: -1;
+  display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 8px;
+  font-family: 'Press Start 2P', monospace; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(5, 2, 12, .85) 45%);
+}
+.arc-hud div { display: flex; flex-direction: column; gap: 5px; }
+.arc-hud b { font-weight: 400; font-size: 7px; color: #ff3b5c; }
+.arc-hud span { font-size: 8px; color: #fff; }
+.arc-hud div:last-child { align-items: flex-end; }
+.arc-hud .ins { font-size: 9px; color: var(--arc-yel); text-shadow: 2px 2px 0 #b0125f; animation: arcBlink 1.1s steps(1) infinite; }
+@media (min-width: 900px) { .arc-hud { left: 280px; bottom: 0; padding-bottom: 14px; } }
+
+
+/* =====================================================================
+   TYRIEL & SOREN — UN SOIR DE PRINTEMPS À LA CAMPAGNE (thème légendaire)
+   Peinture à la japonaise : ciel du soir, gros nuages roses qui dérivent,
+   maison en bois aux fenêtres allumées, grand camphrier, cerisiers en
+   fleurs, torii, lanterne de pierre et les deux frères main dans la main.
+   Effets : brume qui se balade, pétales de sakura, coups de vent, lucioles.
+   ===================================================================== */
+body.theme-tyrielsoren {
+  color-scheme: dark;
+  --bg: #16213b; --card: #1d2744; --cov: #2a3558; --txt: #fff6ec; --mut: #cdbfd9;
+  --acc: #f7a8c0; --acc2: #ffd28a; --on: #3a1626; --radius: 16px;
+  --line: rgba(255, 226, 200, .16); --line-2: rgba(255, 226, 200, .28);
+  --ts-pink: #f7a8c0; --ts-lantern: #ffd28a; --ts-moss: #9cc59a; --ts-cream: #fff3e2;
+  --sig-font: 'Zen Maru Gothic', 'Rajdhani', sans-serif; --sig-logo: 'Zen Maru Gothic', 'Rajdhani', sans-serif;
+  --sig-line: linear-gradient(90deg, transparent, #f7a8c0 18%, #ffd28a 50%, #9cc59a 82%, transparent);
+  --sig-glow: rgba(247, 168, 192, .45); --sig-2: #ffd28a;
+}
+
+/* --- Décor : ciel du soir, lune, étoiles, nuages, paysage --- */
+.scenery-tyrielsoren {
+  background:
+    radial-gradient(circle at 84% 11%, #fff8e6 0 13px, rgba(255, 240, 210, .4) 14px, rgba(255, 230, 200, .1) 40px, transparent 90px),
+    radial-gradient(1.4px 1.4px at 12% 7%, #fff 99%, transparent), radial-gradient(1.1px 1.1px at 28% 15%, #fff 99%, transparent),
+    radial-gradient(1.3px 1.3px at 47% 5%, #fff 99%, transparent), radial-gradient(1px 1px at 63% 13%, #fff 99%, transparent),
+    radial-gradient(1.2px 1.2px at 72% 4%, #fff 99%, transparent), radial-gradient(1px 1px at 93% 19%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 6% 22%, #fff 99%, transparent), radial-gradient(1.2px 1.2px at 38% 24%, #fff 99%, transparent),
+    linear-gradient(0deg, #14211f 0 64px, transparent 64px),
+    radial-gradient(90% 38% at 50% 74%, rgba(255, 190, 140, .38), transparent 70%),
+    linear-gradient(180deg, #16213b 0%, #22325a 16%, #3d5a8a 36%, #8a7ba6 53%, #d69aa2 66%, #f2bf94 80%, #f6cf9e 100%);
+}
+.scenery-tyrielsoren::before {
+  top: 3%; height: 300px; right: auto !important; width: calc(100% + 1143px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='420' viewBox='0 0 1600 420'%3E%3Cdefs%3E%3CclipPath id='cb'%3E%3Crect width='1600' height='420'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23cb)'%3E%3Cg opacity='.9'%3E%3Ccircle cx='80' cy='288' r='35' fill='%23f2a48f'/%3E%3Ccircle cx='110' cy='253' r='55' fill='%23f2a48f'/%3E%3Ccircle cx='140' cy='224' r='65' fill='%23f2a48f'/%3E%3Ccircle cx='170' cy='207' r='62' fill='%23f2a48f'/%3E%3Ccircle cx='200' cy='194' r='67' fill='%23f2a48f'/%3E%3Ccircle cx='230' cy='192' r='71' fill='%23f2a48f'/%3E%3Ccircle cx='260' cy='166' r='83' fill='%23f2a48f'/%3E%3Ccircle cx='290' cy='188' r='73' fill='%23f2a48f'/%3E%3Ccircle cx='320' cy='174' r='84' fill='%23f2a48f'/%3E%3Ccircle cx='350' cy='201' r='75' fill='%23f2a48f'/%3E%3Ccircle cx='380' cy='223' r='75' fill='%23f2a48f'/%3E%3Ccircle cx='410' cy='249' r='59' fill='%23f2a48f'/%3E%3Ccircle cx='440' cy='289' r='33' fill='%23f2a48f'/%3E%3Ccircle cx='221' cy='186' r='64' fill='%23f2a48f'/%3E%3Ccircle cx='276' cy='175' r='59' fill='%23f2a48f'/%3E%3Ccircle cx='270' cy='193' r='46' fill='%23f2a48f'/%3E%3Ccircle cx='201' cy='171' r='60' fill='%23f2a48f'/%3E%3Ccircle cx='223' cy='170' r='58' fill='%23f2a48f'/%3E%3Ccircle cx='220' cy='155' r='63' fill='%23f2a48f'/%3E%3Ccircle cx='80' cy='281' r='35' fill='%23e8cfe0'/%3E%3Ccircle cx='110' cy='246' r='55' fill='%23e8cfe0'/%3E%3Ccircle cx='140' cy='217' r='65' fill='%23e8cfe0'/%3E%3Ccircle cx='170' cy='200' r='62' fill='%23e8cfe0'/%3E%3Ccircle cx='200' cy='187' r='67' fill='%23e8cfe0'/%3E%3Ccircle cx='230' cy='185' r='71' fill='%23e8cfe0'/%3E%3Ccircle cx='260' cy='159' r='83' fill='%23e8cfe0'/%3E%3Ccircle cx='290' cy='181' r='73' fill='%23e8cfe0'/%3E%3Ccircle cx='320' cy='167' r='84' fill='%23e8cfe0'/%3E%3Ccircle cx='350' cy='194' r='75' fill='%23e8cfe0'/%3E%3Ccircle cx='380' cy='216' r='75' fill='%23e8cfe0'/%3E%3Ccircle cx='410' cy='242' r='59' fill='%23e8cfe0'/%3E%3Ccircle cx='440' cy='282' r='33' fill='%23e8cfe0'/%3E%3Ccircle cx='221' cy='179' r='64' fill='%23e8cfe0'/%3E%3Ccircle cx='276' cy='168' r='59' fill='%23e8cfe0'/%3E%3Ccircle cx='270' cy='186' r='46' fill='%23e8cfe0'/%3E%3Ccircle cx='201' cy='164' r='60' fill='%23e8cfe0'/%3E%3Ccircle cx='223' cy='163' r='58' fill='%23e8cfe0'/%3E%3Ccircle cx='220' cy='148' r='63' fill='%23e8cfe0'/%3E%3Ccircle cx='74' cy='274' r='25' fill='%23fbf0f2'/%3E%3Ccircle cx='128' cy='204' r='45' fill='%23fbf0f2'/%3E%3Ccircle cx='188' cy='173' r='47' fill='%23fbf0f2'/%3E%3Ccircle cx='245' cy='143' r='58' fill='%23fbf0f2'/%3E%3Ccircle cx='305' cy='150' r='59' fill='%23fbf0f2'/%3E%3Ccircle cx='366' cy='201' r='53' fill='%23fbf0f2'/%3E%3Ccircle cx='434' cy='275' r='23' fill='%23fbf0f2'/%3E%3Ccircle cx='266' cy='156' r='42' fill='%23fbf0f2'/%3E%3Ccircle cx='190' cy='152' r='42' fill='%23fbf0f2'/%3E%3Ccircle cx='208' cy='135' r='44' fill='%23fbf0f2'/%3E%3Crect x='70' y='298' width='380' height='40' fill='%23000' opacity='0'/%3E%3C/g%3E%3Cg opacity='.75'%3E%3Ccircle cx='690' cy='226' r='20' fill='%23f2a48f'/%3E%3Ccircle cx='719' cy='195' r='34' fill='%23f2a48f'/%3E%3Ccircle cx='748' cy='177' r='46' fill='%23f2a48f'/%3E%3Ccircle cx='777' cy='164' r='56' fill='%23f2a48f'/%3E%3Ccircle cx='806' cy='154' r='49' fill='%23f2a48f'/%3E%3Ccircle cx='834' cy='161' r='44' fill='%23f2a48f'/%3E%3Ccircle cx='863' cy='166' r='40' fill='%23f2a48f'/%3E%3Ccircle cx='892' cy='174' r='46' fill='%23f2a48f'/%3E%3Ccircle cx='921' cy='196' r='38' fill='%23f2a48f'/%3E%3Ccircle cx='950' cy='224' r='24' fill='%23f2a48f'/%3E%3Ccircle cx='832' cy='141' r='33' fill='%23f2a48f'/%3E%3Ccircle cx='885' cy='147' r='33' fill='%23f2a48f'/%3E%3Ccircle cx='756' cy='148' r='37' fill='%23f2a48f'/%3E%3Ccircle cx='892' cy='161' r='38' fill='%23f2a48f'/%3E%3Ccircle cx='803' cy='170' r='36' fill='%23f2a48f'/%3E%3Ccircle cx='690' cy='219' r='20' fill='%23e8cfe0'/%3E%3Ccircle cx='719' cy='188' r='34' fill='%23e8cfe0'/%3E%3Ccircle cx='748' cy='170' r='46' fill='%23e8cfe0'/%3E%3Ccircle cx='777' cy='157' r='56' fill='%23e8cfe0'/%3E%3Ccircle cx='806' cy='147' r='49' fill='%23e8cfe0'/%3E%3Ccircle cx='834' cy='154' r='44' fill='%23e8cfe0'/%3E%3Ccircle cx='863' cy='159' r='40' fill='%23e8cfe0'/%3E%3Ccircle cx='892' cy='167' r='46' fill='%23e8cfe0'/%3E%3Ccircle cx='921' cy='189' r='38' fill='%23e8cfe0'/%3E%3Ccircle cx='950' cy='217' r='24' fill='%23e8cfe0'/%3E%3Ccircle cx='832' cy='134' r='33' fill='%23e8cfe0'/%3E%3Ccircle cx='885' cy='140' r='33' fill='%23e8cfe0'/%3E%3Ccircle cx='756' cy='141' r='37' fill='%23e8cfe0'/%3E%3Ccircle cx='892' cy='154' r='38' fill='%23e8cfe0'/%3E%3Ccircle cx='803' cy='163' r='36' fill='%23e8cfe0'/%3E%3Ccircle cx='686' cy='215' r='14' fill='%23fbf0f2'/%3E%3Ccircle cx='740' cy='161' r='32' fill='%23fbf0f2'/%3E%3Ccircle cx='797' cy='138' r='35' fill='%23fbf0f2'/%3E%3Ccircle cx='856' cy='151' r='28' fill='%23fbf0f2'/%3E%3Ccircle cx='914' cy='181' r='27' fill='%23fbf0f2'/%3E%3Ccircle cx='826' cy='127' r='23' fill='%23fbf0f2'/%3E%3Ccircle cx='749' cy='133' r='26' fill='%23fbf0f2'/%3E%3Ccircle cx='797' cy='156' r='25' fill='%23fbf0f2'/%3E%3Crect x='680' y='228' width='280' height='40' fill='%23000' opacity='0'/%3E%3C/g%3E%3Cg opacity='.85'%3E%3Ccircle cx='1080' cy='312' r='46' fill='%23f2a48f'/%3E%3Ccircle cx='1108' cy='283' r='53' fill='%23f2a48f'/%3E%3Ccircle cx='1136' cy='246' r='82' fill='%23f2a48f'/%3E%3Ccircle cx='1164' cy='226' r='77' fill='%23f2a48f'/%3E%3Ccircle cx='1192' cy='202' r='106' fill='%23f2a48f'/%3E%3Ccircle cx='1220' cy='184' r='98' fill='%23f2a48f'/%3E%3Ccircle cx='1248' cy='158' r='119' fill='%23f2a48f'/%3E%3Ccircle cx='1276' cy='168' r='120' fill='%23f2a48f'/%3E%3Ccircle cx='1304' cy='175' r='103' fill='%23f2a48f'/%3E%3Ccircle cx='1332' cy='154' r='119' fill='%23f2a48f'/%3E%3Ccircle cx='1360' cy='199' r='87' fill='%23f2a48f'/%3E%3Ccircle cx='1388' cy='211' r='85' fill='%23f2a48f'/%3E%3Ccircle cx='1416' cy='219' r='85' fill='%23f2a48f'/%3E%3Ccircle cx='1444' cy='255' r='68' fill='%23f2a48f'/%3E%3Ccircle cx='1472' cy='278' r='60' fill='%23f2a48f'/%3E%3Ccircle cx='1500' cy='311' r='48' fill='%23f2a48f'/%3E%3Ccircle cx='1335' cy='153' r='70' fill='%23f2a48f'/%3E%3Ccircle cx='1331' cy='132' r='57' fill='%23f2a48f'/%3E%3Ccircle cx='1356' cy='140' r='81' fill='%23f2a48f'/%3E%3Ccircle cx='1265' cy='192' r='67' fill='%23f2a48f'/%3E%3Ccircle cx='1322' cy='194' r='57' fill='%23f2a48f'/%3E%3Ccircle cx='1222' cy='174' r='60' fill='%23f2a48f'/%3E%3Ccircle cx='1185' cy='188' r='55' fill='%23f2a48f'/%3E%3Ccircle cx='1196' cy='198' r='66' fill='%23f2a48f'/%3E%3Ccircle cx='1080' cy='305' r='46' fill='%23e8cfe0'/%3E%3Ccircle cx='1108' cy='276' r='53' fill='%23e8cfe0'/%3E%3Ccircle cx='1136' cy='239' r='82' fill='%23e8cfe0'/%3E%3Ccircle cx='1164' cy='219' r='77' fill='%23e8cfe0'/%3E%3Ccircle cx='1192' cy='195' r='106' fill='%23e8cfe0'/%3E%3Ccircle cx='1220' cy='177' r='98' fill='%23e8cfe0'/%3E%3Ccircle cx='1248' cy='151' r='119' fill='%23e8cfe0'/%3E%3Ccircle cx='1276' cy='161' r='120' fill='%23e8cfe0'/%3E%3Ccircle cx='1304' cy='168' r='103' fill='%23e8cfe0'/%3E%3Ccircle cx='1332' cy='147' r='119' fill='%23e8cfe0'/%3E%3Ccircle cx='1360' cy='192' r='87' fill='%23e8cfe0'/%3E%3Ccircle cx='1388' cy='204' r='85' fill='%23e8cfe0'/%3E%3Ccircle cx='1416' cy='212' r='85' fill='%23e8cfe0'/%3E%3Ccircle cx='1444' cy='248' r='68' fill='%23e8cfe0'/%3E%3Ccircle cx='1472' cy='271' r='60' fill='%23e8cfe0'/%3E%3Ccircle cx='1500' cy='304' r='48' fill='%23e8cfe0'/%3E%3Ccircle cx='1335' cy='146' r='70' fill='%23e8cfe0'/%3E%3Ccircle cx='1331' cy='125' r='57' fill='%23e8cfe0'/%3E%3Ccircle cx='1356' cy='133' r='81' fill='%23e8cfe0'/%3E%3Ccircle cx='1265' cy='185' r='67' fill='%23e8cfe0'/%3E%3Ccircle cx='1322' cy='187' r='57' fill='%23e8cfe0'/%3E%3Ccircle cx='1222' cy='167' r='60' fill='%23e8cfe0'/%3E%3Ccircle cx='1185' cy='181' r='55' fill='%23e8cfe0'/%3E%3Ccircle cx='1196' cy='191' r='66' fill='%23e8cfe0'/%3E%3Ccircle cx='1072' cy='295' r='32' fill='%23fbf0f2'/%3E%3Ccircle cx='1121' cy='223' r='57' fill='%23fbf0f2'/%3E%3Ccircle cx='1173' cy='174' r='74' fill='%23fbf0f2'/%3E%3Ccircle cx='1227' cy='127' r='83' fill='%23fbf0f2'/%3E%3Ccircle cx='1285' cy='147' r='72' fill='%23fbf0f2'/%3E%3Ccircle cx='1344' cy='175' r='61' fill='%23fbf0f2'/%3E%3Ccircle cx='1401' cy='195' r='59' fill='%23fbf0f2'/%3E%3Ccircle cx='1461' cy='259' r='42' fill='%23fbf0f2'/%3E%3Ccircle cx='1322' cy='132' r='49' fill='%23fbf0f2'/%3E%3Ccircle cx='1341' cy='116' r='57' fill='%23fbf0f2'/%3E%3Ccircle cx='1311' cy='176' r='40' fill='%23fbf0f2'/%3E%3Ccircle cx='1175' cy='170' r='39' fill='%23fbf0f2'/%3E%3Crect x='1070' y='328' width='440' height='40' fill='%23000' opacity='0'/%3E%3C/g%3E%3Cg opacity='.55'%3E%3Ccircle cx='500' cy='379' r='15' fill='%23f2a48f'/%3E%3Ccircle cx='533' cy='360' r='20' fill='%23f2a48f'/%3E%3Ccircle cx='567' cy='346' r='26' fill='%23f2a48f'/%3E%3Ccircle cx='600' cy='339' r='26' fill='%23f2a48f'/%3E%3Ccircle cx='633' cy='342' r='33' fill='%23f2a48f'/%3E%3Ccircle cx='667' cy='359' r='22' fill='%23f2a48f'/%3E%3Ccircle cx='700' cy='381' r='11' fill='%23f2a48f'/%3E%3Ccircle cx='574' cy='345' r='22' fill='%23f2a48f'/%3E%3Ccircle cx='547' cy='337' r='23' fill='%23f2a48f'/%3E%3Ccircle cx='560' cy='348' r='20' fill='%23f2a48f'/%3E%3Ccircle cx='500' cy='372' r='15' fill='%23e8cfe0'/%3E%3Ccircle cx='533' cy='353' r='20' fill='%23e8cfe0'/%3E%3Ccircle cx='567' cy='339' r='26' fill='%23e8cfe0'/%3E%3Ccircle cx='600' cy='332' r='26' fill='%23e8cfe0'/%3E%3Ccircle cx='633' cy='335' r='33' fill='%23e8cfe0'/%3E%3Ccircle cx='667' cy='352' r='22' fill='%23e8cfe0'/%3E%3Ccircle cx='700' cy='374' r='11' fill='%23e8cfe0'/%3E%3Ccircle cx='574' cy='338' r='22' fill='%23e8cfe0'/%3E%3Ccircle cx='547' cy='330' r='23' fill='%23e8cfe0'/%3E%3Ccircle cx='560' cy='341' r='20' fill='%23e8cfe0'/%3E%3Ccircle cx='497' cy='369' r='10' fill='%23fbf0f2'/%3E%3Ccircle cx='562' cy='334' r='19' fill='%23fbf0f2'/%3E%3Ccircle cx='627' cy='328' r='23' fill='%23fbf0f2'/%3E%3Ccircle cx='698' cy='372' r='8' fill='%23fbf0f2'/%3E%3Ccircle cx='542' cy='326' r='16' fill='%23fbf0f2'/%3E%3Crect x='490' y='378' width='220' height='40' fill='%23000' opacity='0'/%3E%3C/g%3E%3Cg fill='%23f6b39c' opacity='.55'%3E%3Cellipse cx='260' cy='300' rx='175' ry='9'/%3E%3Cellipse cx='1290' cy='330' rx='205' ry='10'/%3E%3Cellipse cx='820' cy='230' rx='125' ry='6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); background-repeat: repeat-x; background-size: 1143px 300px; opacity: .6;
+  animation: tsClouds 260s linear infinite; will-change: transform;
+}
+.scenery-tyrielsoren::after {
+  height: 47%; bottom: calc(60px + env(safe-area-inset-bottom));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='xMidYMax slice'%3E %3Cdefs%3E %3CradialGradient id='win' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23ffd98a' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23ffb35c' stop-opacity='0'/%3E%3C/radialGradient%3E %3ClinearGradient id='mtn' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%237d86b8'/%3E%3Cstop offset='1' stop-color='%239f9cc4'/%3E%3C/linearGradient%3E %3ClinearGradient id='hill' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%233f5f72'/%3E%3Cstop offset='1' stop-color='%232c4352'/%3E%3C/linearGradient%3E %3ClinearGradient id='gnd' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%232a4140'/%3E%3Cstop offset='1' stop-color='%2314211f'/%3E%3C/linearGradient%3E %3ClinearGradient id='roof' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%237a6040'/%3E%3Cstop offset='1' stop-color='%234d3a26'/%3E%3C/linearGradient%3E %3C/defs%3E %3Cpath d='M0 330 L90 290 L170 312 L260 250 L340 296 L430 262 L520 300 L610 232 L700 286 L790 258 L880 298 L980 240 L1070 288 L1200 262 L1200 600 L0 600 Z' fill='url(%23mtn)' opacity='.75'/%3E %3Cpath d='M0 330 L90 290 L170 312 L260 250 L340 296 L430 262 L520 300 L610 232 L700 286 L790 258 L880 298 L980 240 L1070 288 L1200 262' fill='none' stroke='%23f4c6b4' stroke-width='2' opacity='.45'/%3E %3Cpath d='M0 395 C120 360 240 372 360 385 C470 396 560 350 690 360 C820 370 900 330 1010 342 C1100 352 1160 372 1200 366 L1200 600 L0 600 Z' fill='url(%23hill)'/%3E %3Cg transform='translate(930 300)'%3E %3Crect x='4' y='10' width='5' height='44' fill='%23b8402a'/%3E%3Crect x='35' y='10' width='5' height='44' fill='%23b8402a'/%3E %3Cpath d='M-6 6 Q22 -2 50 6 L50 11 Q22 4 -6 11 Z' fill='%23d1543a'/%3E%3Crect x='0' y='16' width='44' height='4' fill='%23b8402a'/%3E %3C/g%3E %3Cpath d='M940 356 L944 360 M960 352 L963 362' stroke='%232c4352' stroke-width='2'/%3E%3Cpath d='M455 520 C458 450 448 400 430 350 M462 470 C480 420 510 390 540 360 M450 430 C420 400 395 385 370 380' stroke='%232a1e18' stroke-width='16' stroke-linecap='round' fill='none'/%3E%3Crect x='444' y='420' width='24' height='110' fill='%232a1e18'/%3E%3Ccircle cx='330' cy='327' r='65' fill='%231f3a36'/%3E%3Ccircle cx='334' cy='319' r='55' fill='%23244440'/%3E%3Ccircle cx='505' cy='381' r='56' fill='%231a302e'/%3E%3Ccircle cx='468' cy='267' r='47' fill='%231f3a36'/%3E%3Ccircle cx='590' cy='361' r='58' fill='%23244440'/%3E%3Ccircle cx='627' cy='333' r='66' fill='%231a302e'/%3E%3Ccircle cx='377' cy='220' r='42' fill='%231f3a36'/%3E%3Ccircle cx='581' cy='308' r='39' fill='%23244440'/%3E%3Ccircle cx='485' cy='354' r='38' fill='%231a302e'/%3E%3Ccircle cx='343' cy='318' r='63' fill='%231f3a36'/%3E%3Ccircle cx='315' cy='288' r='52' fill='%23244440'/%3E%3Ccircle cx='394' cy='229' r='46' fill='%231a302e'/%3E%3Ccircle cx='635' cy='298' r='63' fill='%231f3a36'/%3E%3Ccircle cx='430' cy='235' r='44' fill='%23244440'/%3E%3Ccircle cx='445' cy='329' r='60' fill='%231a302e'/%3E%3Ccircle cx='322' cy='368' r='49' fill='%231f3a36'/%3E%3Ccircle cx='614' cy='270' r='38' fill='%23244440'/%3E%3Ccircle cx='498' cy='417' r='52' fill='%231a302e'/%3E%3Ccircle cx='563' cy='291' r='40' fill='%231f3a36'/%3E%3Ccircle cx='347' cy='219' r='46' fill='%23244440'/%3E%3Ccircle cx='539' cy='336' r='66' fill='%231a302e'/%3E%3Ccircle cx='458' cy='261' r='45' fill='%231f3a36'/%3E%3Ccircle cx='486' cy='316' r='61' fill='%23244440'/%3E%3Ccircle cx='512' cy='383' r='51' fill='%231a302e'/%3E%3Ccircle cx='510' cy='400' r='41' fill='%231f3a36'/%3E%3Ccircle cx='421' cy='269' r='50' fill='%23244440'/%3E%3Ccircle cx='475' cy='360' r='67' fill='%231a302e'/%3E%3Ccircle cx='486' cy='237' r='64' fill='%231f3a36'/%3E%3Ccircle cx='481' cy='374' r='63' fill='%23244440'/%3E%3Ccircle cx='423' cy='272' r='67' fill='%231a302e'/%3E%3Ccircle cx='475' cy='359' r='61' fill='%231f3a36'/%3E%3Ccircle cx='411' cy='357' r='40' fill='%23244440'/%3E%3Ccircle cx='568' cy='351' r='45' fill='%231a302e'/%3E%3Ccircle cx='371' cy='256' r='51' fill='%231f3a36'/%3E%3Ccircle cx='572' cy='278' r='55' fill='%23244440'/%3E%3Ccircle cx='502' cy='263' r='42' fill='%231a302e'/%3E%3Ccircle cx='590' cy='238' r='45' fill='%231f3a36'/%3E%3Ccircle cx='511' cy='400' r='66' fill='%23244440'/%3E%3Ccircle cx='513' cy='417' r='64' fill='%231a302e'/%3E%3Ccircle cx='366' cy='252' r='41' fill='%231f3a36'/%3E%3Ccircle cx='305' cy='253' r='32' fill='%2335604f'/%3E%3Ccircle cx='487' cy='254' r='44' fill='%232e5547'/%3E%3Ccircle cx='472' cy='245' r='31' fill='%234a7a5c'/%3E%3Ccircle cx='468' cy='278' r='32' fill='%2335604f'/%3E%3Ccircle cx='476' cy='188' r='40' fill='%232e5547'/%3E%3Ccircle cx='369' cy='200' r='31' fill='%234a7a5c'/%3E%3Ccircle cx='392' cy='280' r='36' fill='%2335604f'/%3E%3Ccircle cx='410' cy='280' r='35' fill='%232e5547'/%3E%3Ccircle cx='462' cy='265' r='35' fill='%234a7a5c'/%3E%3Ccircle cx='592' cy='230' r='41' fill='%2335604f'/%3E%3Ccircle cx='508' cy='221' r='30' fill='%232e5547'/%3E%3Ccircle cx='446' cy='292' r='46' fill='%234a7a5c'/%3E%3Ccircle cx='533' cy='192' r='27' fill='%2335604f'/%3E%3Ccircle cx='488' cy='226' r='42' fill='%232e5547'/%3E%3Ccircle cx='378' cy='188' r='29' fill='%234a7a5c'/%3E%3Ccircle cx='469' cy='198' r='46' fill='%2335604f'/%3E%3Ccircle cx='528' cy='217' r='44' fill='%232e5547'/%3E%3Ccircle cx='525' cy='266' r='41' fill='%234a7a5c'/%3E%3Ccircle cx='583' cy='238' r='36' fill='%2335604f'/%3E%3Ccircle cx='556' cy='214' r='39' fill='%232e5547'/%3E%3Ccircle cx='588' cy='269' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='596' cy='260' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='526' cy='205' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='618' cy='322' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='594' cy='282' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='604' cy='282' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='592' cy='237' r='21' fill='%237f9a63' opacity='.28'/%3E%3Ccircle cx='530' cy='202' r='21' fill='%237f9a63' opacity='.28'/%3E%3Cpath d='M0 470 C150 440 300 452 420 470 C540 488 640 468 760 470 C880 472 1000 440 1200 456 L1200 600 L0 600 Z' fill='%23284038'/%3E%3Cg%3E %3Cellipse cx='690' cy='470' rx='190' ry='70' fill='url(%23win)' opacity='.8'/%3E %3Crect x='572' y='436' width='236' height='70' fill='%233a2a1f'/%3E %3Cg fill='%23241811'%3E%3Crect x='572' y='436' width='6' height='70'/%3E%3Crect x='630' y='436' width='5' height='70'/%3E%3Crect x='690' y='436' width='5' height='70'/%3E%3Crect x='750' y='436' width='5' height='70'/%3E%3Crect x='802' y='436' width='6' height='70'/%3E%3C/g%3E %3Cg fill='%23ffd58a'%3E%3Crect x='584' y='448' width='40' height='38'/%3E%3Crect x='642' y='448' width='42' height='38'/%3E%3Crect x='702' y='448' width='42' height='38'/%3E%3C/g%3E %3Cg fill='%23ffeab8' opacity='.7'%3E%3Crect x='588' y='452' width='15' height='14'/%3E%3Crect x='646' y='452' width='16' height='14'/%3E%3C/g%3E %3Cg stroke='%23b5772f' stroke-width='1.6'%3E%3Cpath d='M604 448 V486 M584 461 H624 M584 474 H624'/%3E%3Cpath d='M663 448 V486 M642 461 H684 M642 474 H684'/%3E%3Cpath d='M723 448 V486 M702 461 H744 M702 474 H744'/%3E%3C/g%3E %3Crect x='760' y='448' width='36' height='48' fill='%231a120c'/%3E %3Cpath d='M540 440 L612 366 L768 366 L842 440 Z' fill='url(%23roof)'/%3E %3Cpath d='M540 440 L612 366 L768 366 L842 440' fill='none' stroke='%2333251a' stroke-width='3'/%3E %3Cg stroke='%235a442c' stroke-width='1.5' opacity='.8'%3E%3Cpath d='M580 430 L630 378 M620 432 L660 380 M660 432 L690 380 M700 432 L722 380 M740 432 L752 380 M780 432 L770 378 M815 432 L780 376'/%3E%3C/g%3E %3Crect x='602' y='358' width='176' height='12' rx='3' fill='%232f2318'/%3E %3Cpath d='M660 358 L690 340 L720 358 Z' fill='%232f2318'/%3E %3Cpath d='M690 340 V330' stroke='%232f2318' stroke-width='3'/%3E %3Crect x='560' y='504' width='262' height='9' fill='%235a4030'/%3E %3Crect x='560' y='504' width='262' height='3' fill='%237a5a40'/%3E %3Cg fill='%232a1d14'%3E%3Crect x='566' y='513' width='6' height='16'/%3E%3Crect x='690' y='513' width='6' height='16'/%3E%3Crect x='810' y='513' width='6' height='16'/%3E%3C/g%3E %3Crect x='660' y='516' width='44' height='7' rx='2' fill='%236f6a66'/%3E%3Crect x='668' y='524' width='30' height='7' rx='2' fill='%235c5753'/%3E %3Cg transform='translate(842 488)'%3E%3Crect x='0' y='0' width='22' height='26' fill='%234a3628'/%3E%3Crect x='-3' y='-4' width='28' height='5' fill='%232f2318'/%3E%3C/g%3E %3C/g%3E%3Cpath d='M560 600 C600 570 650 560 672 532 L694 532 C700 560 690 580 720 600 Z' fill='%23c9b394' opacity='.38'/%3E%3Cg transform='translate(520 478)'%3E %3Cellipse cx='12' cy='14' rx='30' ry='22' fill='url(%23win)' opacity='.9'/%3E %3Cpath d='M-2 4 L12 -6 L26 4 Z' fill='%235c5753'/%3E%3Crect x='2' y='4' width='20' height='16' fill='%236f6a66'/%3E%3Crect x='7' y='8' width='10' height='9' fill='%23ffd27a'/%3E %3Crect x='4' y='20' width='16' height='5' fill='%235c5753'/%3E%3Crect x='9' y='25' width='6' height='20' fill='%236f6a66'/%3E%3Crect x='2' y='44' width='20' height='6' fill='%235c5753'/%3E %3C/g%3E%3Cg transform='translate(330 500) scale(1.0)'%3E%3Cpath d='M0 80 C2 40 -6 10 -30 -30 M0 30 C20 0 40 -20 60 -40 M-4 10 C-30 -6 -50 -10 -70 -8 M2 -4 C6 -30 4 -50 -2 -70' stroke='%233a2626' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3Crect x='-6' y='20' width='12' height='70' fill='%233a2626'/%3E%3Ccircle cx='10' cy='-50' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='-29' cy='-23' r='16' fill='%23d9739a'/%3E%3Ccircle cx='-80' cy='-80' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='-51' cy='-25' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-6' cy='-22' r='18' fill='%23f9c6d4'/%3E%3Ccircle cx='-90' cy='-42' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-47' cy='-68' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='15' cy='-74' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='-43' cy='-44' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='-6' cy='-86' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='-39' cy='-41' r='16' fill='%23d9739a'/%3E%3Ccircle cx='-39' cy='-39' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='-64' cy='-74' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='4' cy='-58' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-29' cy='-59' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='-55' cy='-23' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-9' cy='-36' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='-22' cy='-70' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-62' cy='-73' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='-14' cy='-91' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-57' cy='-53' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-85' cy='-49' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='36' cy='-40' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='-4' cy='-64' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='55' cy='-95' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='37' cy='-71' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='68' cy='-71' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='57' cy='-96' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='54' cy='-30' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='9' cy='-84' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='99' cy='-65' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='16' cy='-27' r='19' fill='%23f9c6d4'/%3E%3Ccircle cx='32' cy='-53' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='-9' cy='-70' r='15' fill='%23e98aa8'/%3E%3Ccircle cx='44' cy='-67' r='18' fill='%23f9c6d4'/%3E%3Ccircle cx='14' cy='-31' r='12' fill='%23f4a7bf'/%3E%3Ccircle cx='64' cy='-39' r='18' fill='%23d9739a'/%3E%3Ccircle cx='66' cy='-86' r='20' fill='%23e98aa8'/%3E%3Ccircle cx='53' cy='-63' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='28' cy='-29' r='17' fill='%23f4a7bf'/%3E%3Ccircle cx='-14' cy='-65' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='0' cy='-36' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='54' cy='-26' r='20' fill='%23d9739a'/%3E%3Ccircle cx='-2' cy='-64' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-43' cy='-96' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='-33' cy='-97' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='-46' cy='-93' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='-33' cy='-100' r='19' fill='%23fbe0e8'/%3E%3Ccircle cx='-4' cy='-72' r='11' fill='%23e98aa8'/%3E%3Ccircle cx='-47' cy='-82' r='18' fill='%23d9739a'/%3E%3Ccircle cx='-29' cy='-92' r='12' fill='%23f4a7bf'/%3E%3Ccircle cx='-41' cy='-119' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='21' cy='-93' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-11' cy='-112' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='38' cy='-76' r='11' fill='%23d9739a'/%3E%3Ccircle cx='-25' cy='-96' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-29' cy='-87' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='-19' cy='-97' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-25' cy='-114' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='15' cy='-107' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='24' cy='-106' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='11' cy='-59' r='18' fill='%23f9c6d4'/%3E%3Ccircle cx='16' cy='-83' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='-1' cy='-86' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='-103' cy='-9' r='8' fill='%23e98aa8'/%3E%3Ccircle cx='-98' cy='-8' r='8' fill='%23f4a7bf'/%3E%3Ccircle cx='-60' cy='1' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-59' cy='-21' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-104' cy='-20' r='9' fill='%23f9c6d4'/%3E%3Ccircle cx='-65' cy='-18' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-100' cy='-22' r='8' fill='%23f9c6d4'/%3E%3Ccircle cx='-59' cy='3' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='-61' cy='-23' r='8' fill='%23fbe0e8'/%3E%3Ccircle cx='-105' cy='-15' r='10' fill='%23d9739a'/%3E%3Ccircle cx='-98' cy='-16' r='10' fill='%23d9739a'/%3E%3Ccircle cx='-73' cy='-21' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='81' cy='-10' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='57' cy='-19' r='9' fill='%23fbe0e8'/%3E%3Ccircle cx='67' cy='-25' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='59' cy='-49' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='47' cy='-36' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='68' cy='1' r='13' fill='%23f4a7bf'/%3E%3Ccircle cx='77' cy='-49' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='95' cy='-40' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='41' cy='-13' r='8' fill='%23d9739a'/%3E%3Ccircle cx='55' cy='-11' r='8' fill='%23fbe0e8'/%3E%3Ccircle cx='50' cy='-9' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='75' cy='1' r='12' fill='%23fbe0e8'/%3E%3C/g%3E%3Cg transform='translate(968 495) scale(1.08)'%3E%3Cpath d='M0 80 C2 40 -6 10 -30 -30 M0 30 C20 0 40 -20 60 -40 M-4 10 C-30 -6 -50 -10 -70 -8 M2 -4 C6 -30 4 -50 -2 -70' stroke='%233a2626' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3Crect x='-6' y='20' width='12' height='70' fill='%233a2626'/%3E%3Ccircle cx='-61' cy='-28' r='17' fill='%23e98aa8'/%3E%3Ccircle cx='-70' cy='-60' r='21' fill='%23fbe0e8'/%3E%3Ccircle cx='-51' cy='-87' r='21' fill='%23f9c6d4'/%3E%3Ccircle cx='-74' cy='-77' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='-13' cy='-50' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='-13' cy='-45' r='20' fill='%23f9c6d4'/%3E%3Ccircle cx='-75' cy='-63' r='21' fill='%23fbe0e8'/%3E%3Ccircle cx='13' cy='-56' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='-78' cy='-75' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-14' cy='-33' r='13' fill='%23f4a7bf'/%3E%3Ccircle cx='-81' cy='-54' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='-0' cy='-63' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='-55' cy='-41' r='18' fill='%23d9739a'/%3E%3Ccircle cx='-62' cy='-62' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-8' cy='-53' r='11' fill='%23f4a7bf'/%3E%3Ccircle cx='-6' cy='-27' r='15' fill='%23d9739a'/%3E%3Ccircle cx='7' cy='-75' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-23' cy='-58' r='20' fill='%23e98aa8'/%3E%3Ccircle cx='-96' cy='-49' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-94' cy='-61' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='20' cy='-60' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='-63' cy='-73' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='23' cy='-62' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='14' cy='-55' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='-5' cy='-44' r='16' fill='%23f4a7bf'/%3E%3Ccircle cx='98' cy='-61' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='82' cy='-36' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='17' cy='-75' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='-0' cy='-71' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='50' cy='-45' r='20' fill='%23f4a7bf'/%3E%3Ccircle cx='88' cy='-78' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='35' cy='-37' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='73' cy='-44' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='81' cy='-44' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='17' cy='-76' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='12' cy='-33' r='19' fill='%23fbe0e8'/%3E%3Ccircle cx='55' cy='-55' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='3' cy='-83' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='37' cy='-26' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='6' cy='-91' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='39' cy='-97' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='85' cy='-40' r='11' fill='%23d9739a'/%3E%3Ccircle cx='77' cy='-46' r='15' fill='%23d9739a'/%3E%3Ccircle cx='29' cy='-77' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='10' cy='-67' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-16' cy='-66' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='-4' cy='-84' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='-5' cy='-115' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-50' cy='-110' r='19' fill='%23fbe0e8'/%3E%3Ccircle cx='-47' cy='-83' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='-14' cy='-76' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='20' cy='-105' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-22' cy='-79' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='14' cy='-70' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='-50' cy='-103' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='3' cy='-129' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-40' cy='-98' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='-29' cy='-121' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='3' cy='-103' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='11' cy='-100' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='-1' cy='-123' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='4' cy='-120' r='17' fill='%23e98aa8'/%3E%3Ccircle cx='-30' cy='-64' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='-40' cy='-94' r='17' fill='%23f4a7bf'/%3E%3Ccircle cx='-80' cy='-45' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='-89' cy='-41' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='-38' cy='-37' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-79' cy='-43' r='10' fill='%23e98aa8'/%3E%3Ccircle cx='-48' cy='-2' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='-80' cy='-13' r='9' fill='%23e98aa8'/%3E%3Ccircle cx='-88' cy='-14' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-50' cy='-15' r='8' fill='%23d9739a'/%3E%3Ccircle cx='-92' cy='-39' r='9' fill='%23f9c6d4'/%3E%3Ccircle cx='-100' cy='-15' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-59' cy='-18' r='9' fill='%23e98aa8'/%3E%3Ccircle cx='-66' cy='-9' r='12' fill='%23d9739a'/%3E%3Ccircle cx='56' cy='-31' r='9' fill='%23f9c6d4'/%3E%3Ccircle cx='87' cy='-5' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='34' cy='-32' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='101' cy='-42' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='96' cy='-30' r='9' fill='%23f9c6d4'/%3E%3Ccircle cx='105' cy='-33' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='51' cy='-26' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='70' cy='-23' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='44' cy='-8' r='12' fill='%23d9739a'/%3E%3Ccircle cx='59' cy='-31' r='9' fill='%23e98aa8'/%3E%3Ccircle cx='68' cy='-0' r='11' fill='%23f4a7bf'/%3E%3Ccircle cx='42' cy='-46' r='9' fill='%23fbe0e8'/%3E%3C/g%3E%3Cg transform='translate(1110 520) scale(0.8)'%3E%3Cpath d='M0 80 C2 40 -6 10 -30 -30 M0 30 C20 0 40 -20 60 -40 M-4 10 C-30 -6 -50 -10 -70 -8 M2 -4 C6 -30 4 -50 -2 -70' stroke='%233a2626' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3Crect x='-6' y='20' width='12' height='70' fill='%233a2626'/%3E%3Ccircle cx='-4' cy='-27' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-10' cy='-88' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='-41' cy='-23' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-74' cy='-52' r='21' fill='%23f4a7bf'/%3E%3Ccircle cx='-84' cy='-74' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-86' cy='-36' r='12' fill='%23d9739a'/%3E%3Ccircle cx='-24' cy='-69' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='-4' cy='-25' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-40' cy='-47' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-85' cy='-48' r='15' fill='%23f4a7bf'/%3E%3Ccircle cx='-41' cy='-65' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='20' cy='-62' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-71' cy='-32' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-71' cy='-65' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-28' cy='-70' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='-66' cy='-36' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='-54' cy='-36' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-36' cy='-40' r='18' fill='%23f4a7bf'/%3E%3Ccircle cx='-64' cy='-21' r='17' fill='%23f4a7bf'/%3E%3Ccircle cx='-40' cy='-75' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='-25' cy='-47' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='-41' cy='-69' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='28' cy='-65' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='65' cy='-44' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='72' cy='-71' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='46' cy='-94' r='14' fill='%23e98aa8'/%3E%3Ccircle cx='36' cy='-58' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='22' cy='-96' r='18' fill='%23fbe0e8'/%3E%3Ccircle cx='36' cy='-62' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='31' cy='-68' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='53' cy='-93' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='46' cy='-96' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='21' cy='-60' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='-9' cy='-63' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='83' cy='-70' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='41' cy='-32' r='17' fill='%23d9739a'/%3E%3Ccircle cx='13' cy='-28' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='23' cy='-57' r='20' fill='%23fbe0e8'/%3E%3Ccircle cx='77' cy='-33' r='16' fill='%23f4a7bf'/%3E%3Ccircle cx='1' cy='-70' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='93' cy='-62' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='53' cy='-76' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='-8' cy='-75' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='47' cy='-58' r='12' fill='%23f4a7bf'/%3E%3Ccircle cx='55' cy='-98' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='-23' cy='-122' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='2' cy='-98' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='20' cy='-79' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='18' cy='-73' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='-27' cy='-103' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='-9' cy='-105' r='19' fill='%23fbe0e8'/%3E%3Ccircle cx='-33' cy='-91' r='16' fill='%23d9739a'/%3E%3Ccircle cx='-18' cy='-124' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='52' cy='-96' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-37' cy='-84' r='18' fill='%23f9c6d4'/%3E%3Ccircle cx='-39' cy='-99' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-4' cy='-89' r='17' fill='%23f4a7bf'/%3E%3Ccircle cx='39' cy='-113' r='16' fill='%23fbe0e8'/%3E%3Ccircle cx='-14' cy='-70' r='11' fill='%23d9739a'/%3E%3Ccircle cx='25' cy='-79' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='-8' cy='-91' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='-24' cy='-98' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='1' cy='-88' r='19' fill='%23d9739a'/%3E%3Ccircle cx='44' cy='-101' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-64' cy='-30' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='-61' cy='-24' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-110' cy='-26' r='7' fill='%23f9c6d4'/%3E%3Ccircle cx='-77' cy='-7' r='8' fill='%23f4a7bf'/%3E%3Ccircle cx='-40' cy='-35' r='10' fill='%23f9c6d4'/%3E%3Ccircle cx='-76' cy='-22' r='8' fill='%23fbe0e8'/%3E%3Ccircle cx='-80' cy='-3' r='14' fill='%23d9739a'/%3E%3Ccircle cx='-43' cy='-22' r='9' fill='%23e98aa8'/%3E%3Ccircle cx='-35' cy='-32' r='9' fill='%23fbe0e8'/%3E%3Ccircle cx='-86' cy='-6' r='9' fill='%23e98aa8'/%3E%3Ccircle cx='-39' cy='-39' r='9' fill='%23fbe0e8'/%3E%3Ccircle cx='-56' cy='4' r='8' fill='%23f4a7bf'/%3E%3Ccircle cx='98' cy='-11' r='10' fill='%23d9739a'/%3E%3Ccircle cx='102' cy='-40' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='56' cy='-50' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='74' cy='-12' r='12' fill='%23f4a7bf'/%3E%3Ccircle cx='75' cy='-16' r='9' fill='%23fbe0e8'/%3E%3Ccircle cx='51' cy='-45' r='10' fill='%23fbe0e8'/%3E%3Ccircle cx='93' cy='-38' r='9' fill='%23f9c6d4'/%3E%3Ccircle cx='100' cy='-34' r='9' fill='%23fbe0e8'/%3E%3Ccircle cx='106' cy='-11' r='10' fill='%23f9c6d4'/%3E%3Ccircle cx='41' cy='-28' r='8' fill='%23fbe0e8'/%3E%3Ccircle cx='66' cy='-13' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='87' cy='-18' r='13' fill='%23d9739a'/%3E%3C/g%3E%3Cg transform='translate(120 520) scale(0.85)'%3E%3Cpath d='M0 80 C2 40 -6 10 -30 -30 M0 30 C20 0 40 -20 60 -40 M-4 10 C-30 -6 -50 -10 -70 -8 M2 -4 C6 -30 4 -50 -2 -70' stroke='%233a2626' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3Crect x='-6' y='20' width='12' height='70' fill='%233a2626'/%3E%3Ccircle cx='-34' cy='-36' r='16' fill='%23d9739a'/%3E%3Ccircle cx='-12' cy='-20' r='21' fill='%23e98aa8'/%3E%3Ccircle cx='3' cy='-50' r='19' fill='%23f4a7bf'/%3E%3Ccircle cx='-80' cy='-30' r='16' fill='%23e98aa8'/%3E%3Ccircle cx='-16' cy='-30' r='17' fill='%23d9739a'/%3E%3Ccircle cx='-66' cy='-31' r='19' fill='%23f4a7bf'/%3E%3Ccircle cx='-76' cy='-58' r='19' fill='%23fbe0e8'/%3E%3Ccircle cx='-95' cy='-60' r='13' fill='%23fbe0e8'/%3E%3Ccircle cx='-11' cy='-29' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-85' cy='-42' r='19' fill='%23f9c6d4'/%3E%3Ccircle cx='-28' cy='-71' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='-71' cy='-68' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='-45' cy='-83' r='20' fill='%23f9c6d4'/%3E%3Ccircle cx='-32' cy='-52' r='16' fill='%23d9739a'/%3E%3Ccircle cx='-70' cy='-45' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-31' cy='-63' r='20' fill='%23fbe0e8'/%3E%3Ccircle cx='-87' cy='-64' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='-39' cy='-49' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='-66' cy='-74' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='12' cy='-36' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-36' cy='-42' r='18' fill='%23d9739a'/%3E%3Ccircle cx='-9' cy='-85' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='24' cy='-48' r='20' fill='%23e98aa8'/%3E%3Ccircle cx='78' cy='-53' r='18' fill='%23d9739a'/%3E%3Ccircle cx='59' cy='-61' r='15' fill='%23fbe0e8'/%3E%3Ccircle cx='65' cy='-56' r='19' fill='%23f4a7bf'/%3E%3Ccircle cx='62' cy='-43' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='29' cy='-56' r='11' fill='%23d9739a'/%3E%3Ccircle cx='91' cy='-61' r='18' fill='%23f9c6d4'/%3E%3Ccircle cx='39' cy='-33' r='13' fill='%23f9c6d4'/%3E%3Ccircle cx='-16' cy='-51' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='9' cy='-28' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='74' cy='-55' r='17' fill='%23f9c6d4'/%3E%3Ccircle cx='69' cy='-53' r='17' fill='%23f4a7bf'/%3E%3Ccircle cx='69' cy='-81' r='19' fill='%23f9c6d4'/%3E%3Ccircle cx='-2' cy='-38' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='45' cy='-75' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='21' cy='-64' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='11' cy='-56' r='15' fill='%23f9c6d4'/%3E%3Ccircle cx='88' cy='-61' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='31' cy='-55' r='17' fill='%23e98aa8'/%3E%3Ccircle cx='22' cy='-47' r='11' fill='%23e98aa8'/%3E%3Ccircle cx='51' cy='-44' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='84' cy='-75' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='32' cy='-66' r='13' fill='%23f4a7bf'/%3E%3Ccircle cx='5' cy='-125' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-14' cy='-76' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='22' cy='-108' r='17' fill='%23fbe0e8'/%3E%3Ccircle cx='31' cy='-88' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='18' cy='-92' r='16' fill='%23d9739a'/%3E%3Ccircle cx='28' cy='-91' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='-17' cy='-98' r='17' fill='%23e98aa8'/%3E%3Ccircle cx='-7' cy='-123' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='-9' cy='-66' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-40' cy='-73' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-8' cy='-76' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='6' cy='-94' r='16' fill='%23f9c6d4'/%3E%3Ccircle cx='-46' cy='-108' r='19' fill='%23e98aa8'/%3E%3Ccircle cx='-26' cy='-126' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='-28' cy='-126' r='18' fill='%23e98aa8'/%3E%3Ccircle cx='-9' cy='-101' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='30' cy='-87' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='-27' cy='-95' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-30' cy='-81' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-79' cy='-30' r='8' fill='%23f9c6d4'/%3E%3Ccircle cx='-82' cy='-16' r='11' fill='%23e98aa8'/%3E%3Ccircle cx='-79' cy='-38' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='-88' cy='-11' r='8' fill='%23f9c6d4'/%3E%3Ccircle cx='-76' cy='-17' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='-93' cy='-29' r='10' fill='%23e98aa8'/%3E%3Ccircle cx='-48' cy='-18' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='-87' cy='-25' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='-101' cy='-16' r='14' fill='%23f4a7bf'/%3E%3Ccircle cx='-90' cy='-5' r='14' fill='%23fbe0e8'/%3E%3Ccircle cx='-66' cy='-40' r='12' fill='%23f9c6d4'/%3E%3Ccircle cx='-87' cy='-14' r='13' fill='%23d9739a'/%3E%3Ccircle cx='87' cy='-35' r='14' fill='%23f9c6d4'/%3E%3Ccircle cx='89' cy='-11' r='10' fill='%23f9c6d4'/%3E%3Ccircle cx='43' cy='-4' r='8' fill='%23f4a7bf'/%3E%3Ccircle cx='76' cy='-15' r='12' fill='%23e98aa8'/%3E%3Ccircle cx='70' cy='-25' r='11' fill='%23d9739a'/%3E%3Ccircle cx='56' cy='-18' r='11' fill='%23fbe0e8'/%3E%3Ccircle cx='53' cy='-40' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='90' cy='-48' r='10' fill='%23e98aa8'/%3E%3Ccircle cx='86' cy='-34' r='12' fill='%23fbe0e8'/%3E%3Ccircle cx='54' cy='-50' r='13' fill='%23e98aa8'/%3E%3Ccircle cx='50' cy='-37' r='11' fill='%23f9c6d4'/%3E%3Ccircle cx='62' cy='-3' r='11' fill='%23f4a7bf'/%3E%3C/g%3E%3Cg fill='%23141c28' transform='translate(628 548)'%3E %3Ccircle cx='0' cy='-34' r='7.5'/%3E%3Cpath d='M-8 -25 Q0 -28 8 -25 L10 2 L4 2 L3 16 L-3 16 L-4 2 L-10 2 Z'/%3E %3Ccircle cx='26' cy='-24' r='6.2'/%3E%3Cpath d='M19 -17 Q26 -20 33 -17 L35 4 L30 4 L29 14 L23 14 L22 4 L17 4 Z'/%3E %3Cpath d='M8 -14 Q14 -8 20 -10' stroke='%23141c28' stroke-width='3.2' fill='none' stroke-linecap='round'/%3E %3C/g%3E%3Cpath d='M0 548 C140 530 260 548 400 556 C520 562 560 590 600 600 L0 600 Z' fill='url(%23gnd)'/%3E%3Cpath d='M760 600 C820 572 920 552 1040 548 C1110 546 1160 552 1200 556 L1200 600 Z' fill='url(%23gnd)'/%3E%3Cg stroke='%230f1a19' stroke-width='3' stroke-linecap='round' fill='none'%3E%3Cpath d='M284 597 Q282 589 279 582' /%3E%3Cpath d='M151 599 Q148 594 145 588' /%3E%3Cpath d='M846 595 Q848 589 850 583' /%3E%3Cpath d='M195 591 Q192 578 188 564' /%3E%3Cpath d='M305 592 Q304 582 303 572' /%3E%3Cpath d='M859 593 Q858 585 856 578' /%3E%3Cpath d='M401 592 Q403 579 406 566' /%3E%3Cpath d='M505 594 Q507 582 510 570' /%3E%3Cpath d='M961 596 Q963 590 964 584' /%3E%3Cpath d='M277 600 Q278 593 279 586' /%3E%3Cpath d='M1129 599 Q1131 584 1132 569' /%3E%3Cpath d='M503 596 Q507 585 510 573' /%3E%3Cpath d='M1187 593 Q1184 587 1180 582' /%3E%3Cpath d='M51 593 Q55 585 59 577' /%3E%3Cpath d='M144 600 Q145 591 145 583' /%3E%3Cpath d='M448 592 Q451 584 454 576' /%3E%3Cpath d='M340 594 Q343 585 345 576' /%3E%3Cpath d='M1177 593 Q1178 584 1178 575' /%3E%3Cpath d='M960 598 Q957 592 954 585' /%3E%3Cpath d='M1120 595 Q1117 588 1114 580' /%3E%3Cpath d='M388 594 Q386 589 383 584' /%3E%3Cpath d='M329 595 Q328 588 327 581' /%3E%3Cpath d='M312 599 Q315 594 318 588' /%3E%3Cpath d='M371 598 Q371 592 371 587' /%3E%3Cpath d='M1197 591 Q1196 584 1196 577' /%3E%3Cpath d='M497 596 Q494 583 490 570' /%3E%3Cpath d='M788 597 Q792 586 795 575' /%3E%3Cpath d='M1038 596 Q1040 581 1043 566' /%3E%3Cpath d='M870 600 Q867 593 865 586' /%3E%3Cpath d='M143 596 Q145 591 147 585' /%3E%3Cpath d='M372 600 Q370 590 367 580' /%3E%3Cpath d='M1151 595 Q1154 590 1156 585' /%3E%3Cpath d='M951 596 Q953 584 956 571' /%3E%3Cpath d='M993 590 Q990 577 987 565' /%3E%3Cpath d='M1140 593 Q1138 584 1136 575' /%3E%3Cpath d='M1092 594 Q1089 589 1087 584' /%3E%3Cpath d='M466 593 Q469 585 471 576' /%3E%3Cpath d='M438 596 Q436 585 434 574' /%3E%3Cpath d='M1086 599 Q1085 591 1084 583' /%3E%3Cpath d='M890 593 Q890 585 891 578' /%3E%3Cpath d='M816 599 Q813 592 811 585' /%3E%3Cpath d='M420 600 Q420 591 420 581' /%3E%3Cpath d='M484 595 Q488 586 491 578' /%3E%3Cpath d='M246 597 Q248 583 250 569' /%3E%3Cpath d='M130 596 Q134 581 137 566' /%3E%3Cpath d='M264 593 Q261 584 258 575' /%3E%3Cpath d='M328 591 Q327 579 325 567' /%3E%3Cpath d='M220 590 Q217 582 215 573' /%3E%3Cpath d='M762 594 Q759 585 757 576' /%3E%3Cpath d='M1065 594 Q1065 580 1065 567' /%3E%3Cpath d='M137 593 Q137 580 136 566' /%3E%3Cpath d='M799 596 Q796 587 794 578' /%3E%3Cpath d='M39 596 Q39 584 40 573' /%3E%3Cpath d='M1118 595 Q1122 589 1126 582' /%3E%3Cpath d='M886 593 Q890 585 893 576' /%3E%3Cpath d='M483 599 Q486 585 490 571' /%3E%3Cpath d='M281 594 Q284 580 288 567' /%3E%3C/g%3E%3Cellipse cx='995' cy='589' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.66'/%3E%3Cellipse cx='1192' cy='558' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.84'/%3E%3Cellipse cx='854' cy='566' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.80'/%3E%3Cellipse cx='545' cy='578' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.83'/%3E%3Cellipse cx='235' cy='567' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.72'/%3E%3Cellipse cx='88' cy='579' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.79'/%3E%3Cellipse cx='589' cy='565' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.80'/%3E%3Cellipse cx='1026' cy='588' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.67'/%3E%3Cellipse cx='1087' cy='589' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.48'/%3E%3Cellipse cx='439' cy='559' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.42'/%3E%3Cellipse cx='415' cy='592' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.82'/%3E%3Cellipse cx='141' cy='563' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.59'/%3E%3Cellipse cx='1019' cy='582' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.85'/%3E%3Cellipse cx='86' cy='597' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.50'/%3E%3Cellipse cx='755' cy='593' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.76'/%3E%3Cellipse cx='236' cy='584' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.62'/%3E%3Cellipse cx='18' cy='570' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.56'/%3E%3Cellipse cx='756' cy='567' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.70'/%3E%3Cellipse cx='834' cy='563' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.46'/%3E%3Cellipse cx='833' cy='575' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.46'/%3E%3Cellipse cx='139' cy='595' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.71'/%3E%3Cellipse cx='429' cy='563' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.90'/%3E%3Cellipse cx='830' cy='587' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.58'/%3E%3Cellipse cx='372' cy='573' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.47'/%3E%3Cellipse cx='757' cy='573' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.81'/%3E%3Cellipse cx='491' cy='575' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.65'/%3E%3Cellipse cx='1130' cy='570' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.75'/%3E%3Cellipse cx='282' cy='580' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.54'/%3E%3Cellipse cx='1047' cy='567' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.83'/%3E%3Cellipse cx='812' cy='575' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.87'/%3E%3Cellipse cx='465' cy='587' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.70'/%3E%3Cellipse cx='538' cy='558' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.61'/%3E%3Cellipse cx='338' cy='574' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.88'/%3E%3Cellipse cx='352' cy='585' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.74'/%3E%3Cellipse cx='294' cy='573' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.47'/%3E%3Cellipse cx='1074' cy='566' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.61'/%3E%3Cellipse cx='410' cy='590' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.83'/%3E%3Cellipse cx='709' cy='578' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.45'/%3E%3Cellipse cx='1076' cy='559' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.58'/%3E%3Cellipse cx='449' cy='586' rx='3' ry='1.6' fill='%23f4a7bf' opacity='0.73'/%3E%3C/svg%3E"); background-size: cover; background-position: center bottom;
+}
+@keyframes tsClouds { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-1143px, 0, 0); } }
+@media (min-width: 900px) { .theme-scenery.scenery-tyrielsoren:not(.is-mini)::after { height: 58%; bottom: 0; opacity: 1; } }
+
+/* Aperçu miniature (Boutique) */
+.theme-scenery.is-mini.scenery-tyrielsoren::before { top: 2%; height: 60%; width: 300%; background-size: auto 100%; animation: none; }
+.theme-scenery.is-mini.scenery-tyrielsoren::after { display: block; height: 78%; bottom: 0; }
+.tp-tyrielsoren { --p-bg: #16213b; --p-card: #1d2744; --p-acc: #f7a8c0; --p-txt: #fff6ec; --p-font: 'Zen Maru Gothic'; }
+.tp-tyrielsoren .tp-logo { font-family: 'Zen Maru Gothic', sans-serif; font-weight: 900; color: #fff3e2; text-shadow: 0 0 8px rgba(247, 168, 192, .7); }
+.tp-tyrielsoren .tp-row { background: rgba(26, 36, 66, .82); border: 1px solid rgba(255, 226, 200, .2); border-radius: 10px; backdrop-filter: blur(4px); }
+.tp-tyrielsoren .tp-row span.short { background: #f7a8c0; }
+
+/* --- En-tête : verre bleu nuit, logo doux, ligne de sakura --- */
+body.theme-tyrielsoren .sticky-header-container { background-color: rgba(18, 26, 48, .78) !important; }
+body.theme-tyrielsoren #sub-title.neon-logo { font-family: 'Zen Maru Gothic', sans-serif !important; box-shadow: none !important; text-shadow: none !important; }
+body.theme-tyrielsoren #homeMainContent .brand-text, body.theme-tyrielsoren #sub-title .brand-text {
+  font-family: 'Zen Maru Gothic', sans-serif !important; font-weight: 900 !important; letter-spacing: 2.5px !important;
+  background: linear-gradient(92deg, #fff3e2 0 40%, #ffc4d6 65%, #ffd28a 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+  filter: drop-shadow(0 0 8px rgba(247, 168, 192, .45));
+}
+body.theme-tyrielsoren .header-currency-badge { border: 1px solid rgba(255, 210, 138, .45) !important; background: rgba(40, 32, 30, .55) !important; color: var(--ts-lantern) !important; box-shadow: 0 0 16px -4px rgba(255, 200, 120, .5) !important; }
+
+/* --- Liste : panneaux de verre bleu nuit, lumière de lanterne au survol --- */
+body.theme-tyrielsoren .day {
+  display: flex !important; width: fit-content; align-items: center; gap: 8px;
+  padding: 5px 13px 5px 9px !important; border-radius: 999px;
+  background: rgba(18, 24, 46, .62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 226, 200, .14);
+  font-family: 'Zen Maru Gothic', sans-serif !important; font-weight: 700 !important; letter-spacing: 1.2px !important;
+  color: var(--ts-cream) !important; text-shadow: none !important;
+}
+body.theme-tyrielsoren .day::before { content: "" !important; flex: none; width: 15px; height: 15px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='%23ffc2d4'%3E %3Cellipse cx='0' cy='-6' rx='4.2' ry='6'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(288)'/%3E%3C/g%3E %3Ccircle r='2.4' fill='%23ffe8a3'/%3E%3C/svg%3E") center / contain no-repeat; animation: tsSpin 14s linear infinite; }
+body.theme-tyrielsoren .day::after { content: none !important; }
+body.theme-tyrielsoren .row,
+body.theme-tyrielsoren .grid-card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(26, 36, 66, .84), rgba(36, 30, 62, .78)) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.15); backdrop-filter: blur(10px) saturate(1.15);
+  border: 1px solid rgba(255, 226, 200, .16) !important; border-radius: 18px !important;
+  box-shadow: 0 10px 28px -14px rgba(8, 10, 30, .75), inset 0 1px 0 rgba(255, 240, 225, .08) !important;
+  transition: transform .45s cubic-bezier(.2, .9, .25, 1), box-shadow .45s ease, border-color .3s ease !important;
+}
+body.theme-tyrielsoren .row::after, body.theme-tyrielsoren .grid-card::after {
+  content: ""; position: absolute; top: -9px; right: 18px; width: 20px; height: 20px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='%23ffc2d4'%3E %3Cellipse cx='0' cy='-6' rx='4.2' ry='6'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(288)'/%3E%3C/g%3E %3Ccircle r='2.4' fill='%23ffe8a3'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0; transform: scale(.3) rotate(-90deg); transition: opacity .35s ease, transform .55s cubic-bezier(.2, .9, .25, 1.4);
+  filter: drop-shadow(0 0 6px rgba(247, 168, 192, .8));
+}
+body.theme-tyrielsoren .row.is-hyped, body.theme-tyrielsoren .grid-card.is-hyped { border-color: rgba(255, 210, 138, .32) !important; }
+body.theme-tyrielsoren .row:active, body.theme-tyrielsoren .grid-card:active { transform: scale(.985) !important; }
+body.theme-tyrielsoren .cov-container { border-radius: 12px !important; box-shadow: 0 6px 16px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 226, 200, .14) !important; }
+body.theme-tyrielsoren .t b, body.theme-tyrielsoren .grid-title { font-family: 'Zen Maru Gothic', sans-serif !important; font-weight: 700 !important; color: var(--ts-cream) !important; }
+body.theme-tyrielsoren .platform-badge { border-radius: 999px !important; border-color: rgba(255, 226, 200, .22) !important; color: #e8dcef !important; }
+body.theme-tyrielsoren .row .btn-icon {
+  border-radius: 14px !important; background: rgba(255, 243, 226, .08) !important; border: 1px solid rgba(255, 226, 200, .18) !important;
+  color: var(--ts-cream) !important; transition: transform .35s cubic-bezier(.2, .9, .25, 1.4), background .2s ease !important;
+}
+body.theme-tyrielsoren .row .btn-icon.add {
+  background: linear-gradient(160deg, #ffcadb, #f294b4) !important; color: #4a1a2c !important; border: 0 !important;
+  box-shadow: 0 6px 16px -6px rgba(242, 148, 180, .85), inset 0 1px 0 rgba(255, 255, 255, .55) !important;
+}
+body.theme-tyrielsoren .row .btn-icon:active { transform: scale(.9) !important; }
+
+/* Textes posés sur le décor : ombre douce pour rester lisibles sur le ciel */
+body.theme-tyrielsoren .pg-head h2, body.theme-tyrielsoren .pg-head p, body.theme-tyrielsoren .settings-section-title, body.theme-tyrielsoren .msg, body.theme-tyrielsoren .pg-head-aside {
+  text-shadow: 0 1px 2px rgba(10, 14, 32, .9), 0 0 14px rgba(10, 14, 32, .75), 0 0 28px rgba(10, 14, 32, .5) !important;
+}
+body.theme-tyrielsoren .pg-head p { color: #f1e6f2 !important; }
+body.theme-tyrielsoren .settings-section-title { color: var(--ts-pink) !important; }
+
+/* Cartes de la Boutique / Collection */
+body.theme-tyrielsoren .theme-card, body.theme-tyrielsoren .shop-card, body.theme-tyrielsoren .collection-item-card, body.theme-tyrielsoren .avatar-pick-card, body.theme-tyrielsoren .console-vitrine-card {
+  border-radius: 18px !important; border-color: rgba(255, 226, 200, .16) !important;
+}
+
+/* --- Onglets du haut : papier washi crème qui glisse --- */
+body.theme-tyrielsoren .seg { background: rgba(18, 24, 46, .66) !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255, 226, 200, .16) !important; border-radius: 999px !important; }
+body.theme-tyrielsoren .seg::before { background: linear-gradient(160deg, #fff6ea, #f4dccb) !important; border-radius: 999px !important; box-shadow: 0 4px 14px -4px rgba(255, 190, 150, .65) !important; transition: transform .5s cubic-bezier(.2, .9, .25, 1.15) !important; }
+body.theme-tyrielsoren .seg-btn { border-radius: 999px !important; font-family: 'Zen Maru Gothic', sans-serif !important; font-weight: 700 !important; transition: color .3s ease !important; }
+body.theme-tyrielsoren .seg-btn[aria-selected="true"] { color: #4a2a34 !important; text-shadow: none !important; }
+body.theme-tyrielsoren .seg-btn[aria-selected="true"] .ic { color: #d9628a !important; }
+
+/* --- Barre du bas : fleur de sakura sur l'onglet actif, éclosion au survol --- */
+body.theme-tyrielsoren .bottom-nav {
+  background: linear-gradient(180deg, rgba(22, 30, 56, .9), rgba(14, 20, 38, .97)) !important;
+  box-shadow: 0 -1px 0 rgba(255, 226, 200, .18), 0 -16px 30px -18px rgba(247, 168, 192, .55) !important;
+}
+body.theme-tyrielsoren .bottom-nav .nav-item { isolation: isolate; }
+body.theme-tyrielsoren .bottom-nav .nav-item span { font-family: 'Zen Maru Gothic', sans-serif !important; font-weight: 700 !important; letter-spacing: .8px !important; }
+body.theme-tyrielsoren .bottom-nav .nav-item svg { transition: transform .5s cubic-bezier(.2, .9, .25, 1.3), stroke .3s ease !important; }
+body.theme-tyrielsoren .bottom-nav .nav-item.active { color: var(--ts-pink) !important; }
+body.theme-tyrielsoren .bottom-nav .nav-item.active svg { filter: drop-shadow(0 0 7px rgba(247, 168, 192, .7)) !important; }
+body.theme-tyrielsoren .bottom-nav .nav-item.active::before {
+  width: 18px !important; height: 18px !important; top: -9px !important; border-radius: 0 !important; box-shadow: none !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='%23ffc2d4'%3E %3Cellipse cx='0' cy='-6' rx='4.2' ry='6'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(288)'/%3E%3C/g%3E %3Ccircle r='2.4' fill='%23ffe8a3'/%3E%3C/svg%3E") center / contain no-repeat !important;
+  filter: drop-shadow(0 0 6px rgba(247, 168, 192, .9)); animation: tsSpin 12s linear infinite;
+}
+body.theme-tyrielsoren .bottom-nav .nav-item::after {
+  content: ""; position: absolute; z-index: -1; top: 50%; left: 50%; width: 46px; height: 46px; margin: -33px 0 0 -23px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg fill='%23ffc2d4'%3E %3Cellipse cx='0' cy='-6' rx='4.2' ry='6'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-6' rx='4.2' ry='6' transform='rotate(288)'/%3E%3C/g%3E %3Ccircle r='2.4' fill='%23ffe8a3'/%3E%3C/svg%3E") center / contain no-repeat; pointer-events: none;
+  opacity: 0; transform: scale(.2) rotate(-80deg); transition: opacity .4s ease, transform .6s cubic-bezier(.2, .9, .25, 1.35);
+}
+body.theme-tyrielsoren .bottom-nav .nav-item:active::after { opacity: .4; transform: scale(1.05) rotate(0); }
+@media (hover: hover) {
+  body.theme-tyrielsoren .bottom-nav .nav-item:hover { color: var(--ts-cream) !important; }
+  body.theme-tyrielsoren .bottom-nav .nav-item:hover::after { opacity: .55; transform: scale(1) rotate(0); filter: drop-shadow(0 0 8px rgba(247, 168, 192, .9)); }
+  body.theme-tyrielsoren .bottom-nav .nav-item:hover svg { stroke: var(--ts-pink) !important; animation: tsLeaf 1.8s ease-in-out infinite; }
+  body.theme-tyrielsoren .bottom-nav .nav-item:hover span { color: var(--ts-cream); text-shadow: 0 0 10px rgba(247, 168, 192, .7); }
+  body.theme-tyrielsoren .seg-btn:not([aria-selected="true"]):hover { color: var(--ts-pink) !important; }
+  body.theme-tyrielsoren .seg-btn:hover .ic { animation: tsLeaf 1.8s ease-in-out infinite; }
+  body.theme-tyrielsoren .row:hover, body.theme-tyrielsoren .grid-card:hover {
+    transform: translateY(-3px) !important; border-color: rgba(247, 168, 192, .5) !important;
+    box-shadow: 0 18px 34px -16px rgba(255, 170, 120, .5), 0 0 0 1px rgba(247, 168, 192, .18), inset 0 1px 0 rgba(255, 240, 225, .12) !important;
+  }
+  body.theme-tyrielsoren .row:hover::after, body.theme-tyrielsoren .grid-card:hover::after { opacity: 1; transform: scale(1) rotate(0); }
+  body.theme-tyrielsoren .row .btn-icon:hover { transform: translateY(-2px) rotate(-5deg); background: rgba(255, 243, 226, .16) !important; }
+  body.theme-tyrielsoren .row .btn-icon.add:hover { background: linear-gradient(160deg, #ffd9e5, #f7a8c0) !important; }
+}
+@media (min-width: 900px) {
+  body.theme-tyrielsoren .bottom-nav .nav-item { border-radius: 999px !important; border-color: rgba(255, 226, 200, .14) !important; background: rgba(255, 243, 226, .04) !important; }
+  body.theme-tyrielsoren .bottom-nav .nav-item.active { background: linear-gradient(160deg, #fff6ea, #f4dccb) !important; color: #4a2a34 !important; border-color: transparent !important; box-shadow: 0 6px 18px -6px rgba(255, 190, 150, .6) !important; }
+  body.theme-tyrielsoren .bottom-nav .nav-item.active svg { stroke: #d9628a !important; filter: none !important; }
+  body.theme-tyrielsoren .bottom-nav .nav-item::after { left: 34px; margin-top: -23px; }
+  body.theme-tyrielsoren .bottom-nav .nav-item:hover { transform: translateX(4px) !important; }
+}
+@keyframes tsLeaf { 0%, 100% { transform: translateY(-2px) rotate(-7deg); } 50% { transform: translateY(-5px) rotate(7deg); } }
+@keyframes tsSpin { to { transform: rotate(360deg); } }
+
+/* --- Calques animés créés par le JS --- */
+.ts-decor, .ts-front { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.ts-decor { z-index: -1; }
+.ts-front { z-index: 55; }
+@media (min-width: 900px) { .ts-decor, .ts-front { left: 280px; } }
+
+/* Brume : bancs de nuages bas qui se baladent (2 derrière les cartes, 1 devant) */
+.ts-mist {
+  position: absolute; left: 0; width: 200%; background-repeat: repeat-x; background-size: 50% 100%; will-change: transform;
+  background-image:
+    radial-gradient(ellipse 26% 44% at 20% 60%, rgba(255, 248, 244, .8), transparent 70%),
+    radial-gradient(ellipse 22% 36% at 50% 46%, rgba(238, 236, 255, .7), transparent 70%),
+    radial-gradient(ellipse 28% 42% at 78% 62%, rgba(255, 242, 240, .75), transparent 70%);
+  animation: tsMist var(--md, 80s) linear infinite;
+}
+.ts-mist.m1 { bottom: 8vh; height: 30vh; opacity: .6; --md: 95s; }
+.ts-mist.m2 { bottom: 30vh; height: 24vh; opacity: .35; --md: 140s; animation-direction: reverse; }
+.ts-mist.m3 { bottom: -6vh; height: 32vh; opacity: .42; --md: 60s; }
+@keyframes tsMist { 0% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-25%, -2.2vh, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+/* Lucioles */
+.ts-fly {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff6b8;
+  box-shadow: 0 0 6px 2px rgba(255, 230, 120, .85), 0 0 16px 5px rgba(255, 210, 90, .35);
+  animation: tsFly var(--d) ease-in-out infinite alternate, tsGlow var(--g) ease-in-out infinite;
+}
+@keyframes tsFly { 0% { transform: translate(0, 0); } 33% { transform: translate(var(--x1), var(--y1)); } 66% { transform: translate(var(--x2), var(--y2)); } 100% { transform: translate(var(--x3), var(--y3)); } }
+@keyframes tsGlow { 0%, 100% { opacity: .1; } 50% { opacity: 1; } }
+
+/* Écriture verticale « La maison de Tyriel et Soren » + sceau 兄弟 */
+.ts-tate {
+  position: absolute; left: 4px; top: 200px; writing-mode: vertical-rl;
+  font-family: 'Kaisei Decol', 'Zen Maru Gothic', serif; font-size: 12px; letter-spacing: 6px;
+  color: rgba(255, 243, 226, .55); text-shadow: 0 0 10px rgba(247, 168, 192, .45);
+}
+.ts-hanko {
+  position: absolute; right: 6px; bottom: calc(84px + env(safe-area-inset-bottom)); padding: 5px 3px; writing-mode: vertical-rl;
+  font-family: 'Kaisei Decol', serif; font-weight: 700; font-size: 13px; line-height: 1; color: #fff1e6;
+  background: #c8372d; border-radius: 4px; box-shadow: inset 0 0 0 1.5px rgba(255, 240, 230, .55), 0 2px 8px rgba(0, 0, 0, .3);
+  transform: rotate(4deg); opacity: .9;
+}
+@media (min-width: 900px) { .ts-tate { left: 14px; font-size: 14px; } .ts-hanko { right: 18px; bottom: 24px; font-size: 16px; } }
+
+/* Pétales de sakura qui tombent en tourbillonnant */
+.ts-petal { position: absolute; top: -30px; left: var(--x); width: var(--s); height: calc(var(--s) * .7); animation: tsFall var(--d) linear forwards; will-change: transform; }
+.ts-petal i { display: block; width: 100%; height: 100%; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 14'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff0f4'/%3E%3Cstop offset='.55' stop-color='%23f9b3c8'/%3E%3Cstop offset='1' stop-color='%23e98aa8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M1 7 C4 1 12 0 19 3.6 L16.4 7 L19 10.4 C12 14 4 13 1 7 Z' fill='url(%23p)'/%3E%3Cpath d='M3 7 C8 6 12 6.5 15 7' stroke='%23e27c9e' stroke-width='.6' fill='none' opacity='.5'/%3E%3C/svg%3E") center / contain no-repeat; animation: tsTumble var(--t) ease-in-out infinite; }
+@keyframes tsFall { 0% { transform: translate3d(0, 0, 0); opacity: 0; } 8% { opacity: 1; } 50% { transform: translate3d(calc(var(--w) * .4), 50vh, 0); } 90% { opacity: .9; } 100% { transform: translate3d(var(--w), calc(100vh + 40px), 0); opacity: 0; } }
+@keyframes tsTumble { 0% { transform: rotate3d(1, .5, .2, 0deg); } 50% { transform: rotate3d(.4, 1, .3, 200deg); } 100% { transform: rotate3d(1, .5, .2, 360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-mist, .ts-fly, .ts-petal, .ts-petal i, .arc-coin, .arc-coin i, .arc-hud .ins { animation: none !important; }
+  body.theme-arcadecabinet .sticky-header-container::after, body.theme-arcadecabinet .day::before, body.theme-tyrielsoren .day::before { animation: none !important; }
+}
+
 /* ====================================================================
    28. REFONTE PRO — fonds dessinés, thèmes classiques adoucis, boutons
        de page (sets), cartes de sets en Boutique, scores en direct
@@ -6785,7 +7204,10 @@ const UNIQUE_THEMES_DATA = {
   goldgrimoire: { name: "Grimoire Doré", price: 250, rank: "Légendaire", desc: "Cercle de runes, enluminures d'or et parchemin ancien.", cls: "theme-goldgrimoire", bar: "#14100a", acc: "#d4af37" },
   noel: { name: "Noël Joyeux", price: 250, rank: "Légendaire", desc: "Sapins enneigés, étoile dorée et rouge de fête.", cls: "theme-noel", bar: "#0c1c14", acc: "#ef4444" },
   halloween: { name: "Halloween Horror", price: 300, rank: "Légendaire", desc: "Lune de sang, arbre mort, chauves-souris et brume.", cls: "theme-halloween", bar: "#050303", acc: "#dc2626" },
+  arcade_cabinet: { name: "Arcade Cabinet", price: 1000, rank: "Légendaire", desc: "Salle d'arcade des années 90 : moquette cosmique fluo, bornes allumées, néons et pluie de jetons d'or.", cls: "theme-arcadecabinet", bar: "#07030f", acc: "#ff2d95" },
+  tyrielsoren: { name: "Tyriel & Soren", price: 1000, rank: "Légendaire", desc: "Un soir de printemps à la campagne : maison en bois, cerisiers en fleurs, brume vagabonde et lucioles. La maison des deux frères.", cls: "theme-tyrielsoren", bar: "#16213b", acc: "#f7a8c0" }
 };
+
 // Toutes les classes possibles (y compris l'ancienne « theme-deathnote »)
 const UNIQUE_THEME_CLASSES = [...new Set(Object.values(UNIQUE_THEMES_DATA).map((t) => t.cls).concat("theme-deathnote"))];
 
@@ -7180,6 +7602,7 @@ function playThemeSound(th) {
 // =====================================================================
 
 // ▸ stopUniqueEffects : arrête TOUTES les animations des thèmes collector
+// ▸ stopUniqueEffects : arrête TOUTES les animations des thèmes collector
 function stopUniqueEffects() {
   if (typeof toggleShinigamiTheme === "function") toggleShinigamiTheme(false);
   if (typeof stopCyberLeaves === "function") stopCyberLeaves();
@@ -7189,7 +7612,12 @@ function stopUniqueEffects() {
   if (typeof stopNichirinPetals === "function") stopNichirinPetals();
   if (typeof stopHalloweenParticles === "function") stopHalloweenParticles();
   if (typeof stopNoelParticles === "function") stopNoelParticles();
+  
+  // 🕹️ C'est ici qu'on ajoute la fonction pour l'Arcade Cabinet !
+  if (typeof stopArcadeCabinetParticles === "function") stopArcadeCabinetParticles();
+  if (typeof stopTyrielSorenParticles === "function") stopTyrielSorenParticles();
 }
+
 
 // ▸ clearUniqueTheme : enlève le thème collector actif (classes, décor, animations, couleur de barre)
 function clearUniqueTheme() {
@@ -7212,6 +7640,8 @@ const THEME_FONTS = {
   goldgrimoire: "Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700",
   noel: "Mountains+of+Christmas:wght@700",
   halloween: "Creepster",
+  arcade_cabinet: "Press+Start+2P",
+  tyrielsoren: "Zen+Maru+Gothic:wght@500;700;900&family=Kaisei+Decol:wght@700",
 };
 function loadThemeFont(id) {
   const fam = THEME_FONTS[id];
@@ -7245,7 +7675,7 @@ function applyUniqueTheme(id) {
   if (meta) meta.content = t.bar;
 
   // Animations : désactivées si l'iPhone demande « Réduire les animations »
-  let reduce = false;
+let reduce = false;
   try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
   if (id === "shinigamiquill") { if (typeof toggleShinigamiTheme === "function") toggleShinigamiTheme(true, reduce); }
   if (reduce) return;
@@ -7256,6 +7686,8 @@ function applyUniqueTheme(id) {
   else if (id === "nichirin") initNichirinPetals();
   else if (id === "halloween") initHalloweenParticles();
   else if (id === "noel") initNoelParticles();
+  else if (id === "arcade_cabinet") initArcadeCabinetParticles();
+  else if (id === "tyrielsoren") initTyrielSorenParticles();
 }
 
 // ▸ restoreUniqueTheme : au démarrage, remet le thème collector choisi (avant, il disparaissait à chaque relance)
@@ -7364,6 +7796,144 @@ function applyBgStyle(bg) {
     cartridgesBg.style.display = (bg === "cartridges" && !isRetroActive) ? "grid" : "none";
   }
 }
+
+// =====================================================================
+// TYRIEL & SOREN — brume, lucioles, pétales de sakura et coups de vent
+// =====================================================================
+let tsPetalTimer = null, tsGustTimer = null, tsLayers = [];
+
+function tsSpawnPetal(front, gust) {
+  if (!front || !front.isConnected) return;
+  if (front.querySelectorAll(".ts-petal").length > (gust ? 46 : 26)) return;
+  const p = document.createElement("div");
+  p.className = "ts-petal";
+  const dur = gust ? 3.6 + Math.random() * 2.2 : 9 + Math.random() * 7;
+  p.style.setProperty("--x", (gust ? -15 + Math.random() * 70 : -10 + Math.random() * 105) + "vw");
+  p.style.setProperty("--s", (9 + Math.random() * 9).toFixed(1) + "px");
+  p.style.setProperty("--d", dur.toFixed(1) + "s");
+  p.style.setProperty("--w", (gust ? 55 + Math.random() * 45 : 10 + Math.random() * 28) + "vw");
+  p.style.setProperty("--t", (2.4 + Math.random() * 3).toFixed(1) + "s");
+  if (gust) p.style.animationDelay = (Math.random() * 1.2).toFixed(2) + "s";
+  p.innerHTML = "<i></i>";
+  front.appendChild(p);
+  setTimeout(() => p.remove(), (dur + 1.5) * 1000);
+}
+
+function initTyrielSorenParticles() {
+  try {
+    stopTyrielSorenParticles();
+    if (!document.body.classList.contains("theme-tyrielsoren")) return;
+
+    // Calque arrière (derrière les cartes) : brume, lucioles, écriture verticale, sceau
+    const decor = document.createElement("div");
+    decor.className = "ts-decor";
+    decor.setAttribute("aria-hidden", "true");
+    let flies = "";
+    for (let i = 0; i < 14; i++) {
+      const r = (a) => ((Math.random() - 0.5) * a).toFixed(0) + "px";
+      flies += `<span class="ts-fly" style="left:${(4 + Math.random() * 92).toFixed(1)}%;bottom:${(10 + Math.random() * 38).toFixed(1)}%;--d:${(7 + Math.random() * 7).toFixed(1)}s;--g:${(1.8 + Math.random() * 2.6).toFixed(1)}s;--x1:${r(80)};--y1:${r(60)};--x2:${r(120)};--y2:${r(80)};--x3:${r(90)};--y3:${r(70)};animation-delay:-${(Math.random() * 6).toFixed(1)}s"></span>`;
+    }
+    decor.innerHTML = `<div class="ts-mist m2"></div><div class="ts-mist m1"></div>${flies}<div class="ts-tate">ティリエルとソレンの家</div><div class="ts-hanko">兄弟</div>`;
+
+    // Calque avant (au-dessus des cartes, ne bloque aucun clic) : brume basse + pétales
+    const front = document.createElement("div");
+    front.className = "ts-front";
+    front.setAttribute("aria-hidden", "true");
+    front.innerHTML = `<div class="ts-mist m3"></div>`;
+
+    document.body.append(decor, front);
+    tsLayers = [decor, front];
+
+    for (let i = 0; i < 7; i++) setTimeout(() => tsSpawnPetal(front, false), i * 260);
+    tsPetalTimer = setInterval(() => {
+      if (!document.body.classList.contains("theme-tyrielsoren")) return stopTyrielSorenParticles();
+      if (document.hidden) return;
+      tsSpawnPetal(front, false);
+    }, 650);
+
+    // Un coup de vent de temps en temps : une bourrasque de pétales
+    const gust = () => {
+      if (!document.body.classList.contains("theme-tyrielsoren")) return;
+      if (!document.hidden) for (let i = 0; i < 14; i++) tsSpawnPetal(front, true);
+      tsGustTimer = setTimeout(gust, 14000 + Math.random() * 9000);
+    };
+    tsGustTimer = setTimeout(gust, 6000);
+  } catch (err) {
+    console.error("Erreur initialisation Tyriel & Soren:", err);
+  }
+}
+
+function stopTyrielSorenParticles() {
+  clearInterval(tsPetalTimer); tsPetalTimer = null;
+  clearTimeout(tsGustTimer); tsGustTimer = null;
+  tsLayers.forEach((el) => el.remove());
+  tsLayers = [];
+  document.querySelectorAll(".ts-decor, .ts-front").forEach((el) => el.remove());
+}
+
+
+// =====================================================================
+// ARCADE CABINET — pluie de jetons pixel + HUD « INSERT COIN »
+// =====================================================================
+let arcadeCoinsInterval = null, arcadeLayers = [];
+
+function arcadeSpawnCoin(layer, burst) {
+  if (!layer || !layer.isConnected) return;
+  if (layer.childElementCount > (burst ? 40 : 14)) return;
+  const c = document.createElement("div");
+  c.className = "arc-coin";
+  const dur = burst ? 1.5 + Math.random() * 1.3 : 3.4 + Math.random() * 2.6;
+  c.style.left = (2 + Math.random() * 94).toFixed(1) + "%";
+  c.style.setProperty("--s", [14, 18, 22, 26][Math.floor(Math.random() * 4)] + "px");
+  c.style.setProperty("--d", dur.toFixed(2) + "s");
+  c.style.setProperty("--sway", ((Math.random() - 0.5) * 70).toFixed(0) + "px");
+  c.style.setProperty("--spin", (0.45 + Math.random() * 0.5).toFixed(2) + "s");
+  if (burst) c.style.animationDelay = (Math.random() * 0.9).toFixed(2) + "s";
+  c.innerHTML = "<i></i>";
+  layer.appendChild(c);
+  setTimeout(() => c.remove(), (dur + 1.2) * 1000);
+}
+
+function initArcadeCabinetParticles() {
+  try {
+    stopArcadeCabinetParticles();
+    if (!document.body.classList.contains("theme-arcadecabinet")) return;
+
+    // HUD de borne (derrière les cartes)
+    const hud = document.createElement("div");
+    hud.className = "arc-hud";
+    hud.setAttribute("aria-hidden", "true");
+    const coins = (typeof userCoins === "number" ? userCoins : 0);
+    hud.innerHTML = `<div><b>1UP</b><span>${String(coins * 10).padStart(6, "0")}</span></div><span class="ins">INSERT COIN</span><div><b>HI-SCORE</b><span>999990</span></div>`;
+
+    // Calque des jetons (au-dessus des cartes, ne bloque aucun clic)
+    const layer = document.createElement("div");
+    layer.className = "arc-coin-layer";
+    layer.setAttribute("aria-hidden", "true");
+
+    document.body.append(hud, layer);
+    arcadeLayers = [hud, layer];
+
+    // JACKPOT ! une pluie de pièces à l'activation, puis une pluie douce
+    for (let i = 0; i < 24; i++) arcadeSpawnCoin(layer, true);
+    arcadeCoinsInterval = setInterval(() => {
+      if (!document.body.classList.contains("theme-arcadecabinet")) return stopArcadeCabinetParticles();
+      if (document.hidden) return;
+      arcadeSpawnCoin(layer, false);
+    }, 520);
+  } catch (err) {
+    console.error("Erreur Arcade Cabinet:", err);
+  }
+}
+
+function stopArcadeCabinetParticles() {
+  clearInterval(arcadeCoinsInterval); arcadeCoinsInterval = null;
+  arcadeLayers.forEach((el) => el.remove());
+  arcadeLayers = [];
+  document.querySelectorAll(".arc-coin-layer, .arc-hud, .arcade-coin-particle, .arcade-cabinet-bg-frame, .arcade-side-decor").forEach((el) => el.remove());
+}
+
+
 // ▸ initNoelParticles : génère une douce tempête de neige scintillante
 let noelInterval = null;
 
