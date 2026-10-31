@@ -2,6 +2,22 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script>
+/* Garde-fou : si un mini-jeu est introuvable sur le serveur, l'hébergeur renvoie cette page
+   (index.html) DANS la borne. Sans ce garde-fou, une 2e copie de l'app démarrait dans le jeu
+   (écran d'intro) et réécrivait les réglages (thème Game Boy au retour…). On s'arrête net. */
+(function () {
+  var inFrame = false; try { inFrame = window.self !== window.top; } catch (e) { inFrame = true; }
+  if (!inFrame) return;
+  var appParent = false; try { appParent = !!(window.frameElement && window.frameElement.closest(".game-overlay")); } catch (e) {}
+  if (!appParent) return;
+  try { window.parent.postMessage({ type: "cartridge:missing", url: location.href }, "*"); } catch (e) {}
+  try { window.stop(); } catch (e) {}
+  document.write('<body style="margin:0;background:#07080c;color:#eef0f6;font:600 15px system-ui;display:grid;place-items:center;height:100vh;text-align:center;padding:20px">Jeu introuvable sur le serveur.</body>');
+  document.close();
+  throw new Error("cartridge: mini-jeu introuvable");
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#111318" id="themeMeta">
 <meta name="mobile-web-app-capable" content="yes">
@@ -6189,6 +6205,23 @@ body.theme-shinigamiquill .player-badge { font-size: 12px !important; padding: 0
 body[data-unique] .cov, body[data-unique] .grid-cov, body[data-unique] .big, body[data-unique] .collection-item-card img { filter: none !important; }
 /* Thème collector actif : aucune trame / filtre Game Boy ne peut rester par-dessus */
 html:has(> body[data-unique])::before { content: none !important; display: none !important; }
+
+/* ===== patch 2026-10-31c : Shinigami Quill allégé (page noire iOS/Android à la 2e fiche) =====
+   Le fond avec bruit SVG (feTurbulence), les ombres + drop-shadow sur chaque carte et le flou
+   de la fiche faisaient exploser la mémoire du téléphone à chaque ouverture / fermeture. */
+body.theme-shinigamiquill { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><text x='50' y='80' font-family='serif' font-size='13' fill='%23ffffff' opacity='0.08' transform='rotate(-8 50 80)'>How to Use It, XLV</text><text x='320' y='160' font-family='serif' font-size='11' fill='%23ffffff' opacity='0.07' transform='rotate(12 320 160)'>The human whose name is written in this note shall die.</text><text x='80' y='320' font-family='serif' font-size='12' fill='%23ffffff' opacity='0.07' transform='rotate(-5 80 320)'>This note shall not take effect unless the writer has the person's face in their mind...</text><text x='350' y='450' font-family='serif' font-size='13' fill='%23ffffff' opacity='0.08' transform='rotate(6 350 450)'>If the cause of death is not specified, the person will simply die of a heart attack.</text><text x='120' y='530' font-family='serif' font-size='11' fill='%23ffffff' opacity='0.07' transform='rotate(-10 120 530)'>Shinigami eyes: the ability to see people's names and lifespans.</text></svg>") !important; background-blend-mode: normal !important; }
+body.theme-shinigamiquill .shop-card, body.theme-shinigamiquill .theme-card, body.theme-shinigamiquill .collection-item-card,
+body.theme-shinigamiquill .avatar-pick-card, body.theme-shinigamiquill .row, body.theme-shinigamiquill .grid-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .8) !important; transition: border-color .2s, transform .2s !important;
+}
+body.theme-shinigamiquill .shop-card::before, body.theme-shinigamiquill .theme-card::before,
+body.theme-shinigamiquill .collection-item-card::before, body.theme-shinigamiquill .avatar-pick-card::before { filter: none !important; }
+body.theme-shinigamiquill .sheet-hero::before { filter: none !important; opacity: .18 !important; transform: none !important; inset: 0 !important; }
+body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked::after { animation: none !important; display: none !important; }
+@media (hover: none), (pointer: coarse) {
+  /* Téléphone : flou de la fiche plus léger pour tous les thèmes */
+  .sheet-hero::before { filter: blur(14px) saturate(1.2) !important; inset: -20px !important; }
+}
 </style>
 </head>
 <body>
@@ -9320,10 +9353,19 @@ function renderReviews(data, it) {
 }
 
 // ▸ closeSheet : ferme la fiche du jeu
+let _sheetFreeT = null;
 function closeSheet() {
-  $("#sheet").classList.remove("on");
-  delete $("#panel").dataset.gameId;
+  const sh = $("#sheet"), pn = $("#panel");
+  if (!sh || !pn) return;
+  const wasOpen = sh.classList.contains("on");
+  sh.classList.remove("on");
+  delete pn.dataset.gameId;
+  pn.style.transform = ""; pn.style.transition = "";
   unlockBackground(); // tout de suite (avant un éventuel « retour en haut » de la navigation)
+  // Libère la fiche (jaquette, fond flouté…) : sur téléphone, les fiches gardées en mémoire
+  // finissaient par faire planter la page (écran noir) au bout de 2 ou 3 fiches
+  clearTimeout(_sheetFreeT);
+  if (wasOpen) _sheetFreeT = setTimeout(() => { if (!sh.classList.contains("on")) pn.replaceChildren(); }, 450);
 }
 
 // ▸ addToCalendar : télécharge un fichier .ics pour le calendrier
@@ -13322,6 +13364,11 @@ window.addEventListener("message", (e) => {
     const best = CXScores.bestFor(cur.name);
     CXArcade.send({ type: "cartridge:init", best: Number.isFinite(best) ? best : 0 });
   } else if (d.type === "cartridge:close") CXArcade.close();
+  else if (d.type === "cartridge:missing") {
+    const file = String(cur.iframe.getAttribute("src") || "").split("?")[0];
+    CXArcade.close();
+    showRetroAlert("Jeu introuvable", `Le fichier « ${esc(file)} » n'est pas sur le serveur (ou son nom est différent). Mets-le à côté d'index.html, avec exactement ce nom.`, true);
+  }
   else if (d.type === "cartridge:gameover") {
     const res = CXRewards.onGameOver(d.id || cur.g.id || cur.name, d.score, d.stats || {});
     CXArcade.send({ type: "cartridge:reward", coins: res.coins, capped: res.capped, missions: res.missions });
