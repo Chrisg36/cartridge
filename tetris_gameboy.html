@@ -115,7 +115,7 @@ body.crt-on .screen .crt::after {
 /* ---------- Écrans superposés (titre, pause, fin) ---------- */
 .ov {
   position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 12px; padding: 16px; text-align: center; background: rgba(4, 5, 9, .84); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  gap: 12px; padding: 16px; text-align: center; background: rgba(4, 5, 9, .9); /* pas de flou : le canvas animé dessous le faisait recalculer à chaque image */
   font-family: var(--px); overflow-y: auto;
 }
 .ov[hidden] { display: none; }
@@ -347,7 +347,9 @@ body.touch .keys { display: none !important; }
     const aw = Math.max(50, st.clientWidth - pad), ah = Math.max(50, st.clientHeight - pad);
     const s = Math.min(aw / G.W, ah / G.H);
     const cw = Math.floor(G.W * s), ch = Math.floor(G.H * s);
-    dpr = Math.min(3, window.devicePixelRatio || 1);
+    // Résolution interne plafonnée à 1,5× : le rendu pixel reste net (image-rendering: pixelated)
+    // et la mémoire du canvas est divisée par 4 sur les écrans 3× (vieux iPhone : moins de fermetures d'onglet)
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
     canvas.style.width = cw + "px"; canvas.style.height = ch + "px";
     canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
     CX.scale = s;
@@ -676,6 +678,8 @@ body.touch .keys { display: none !important; }
     if (fsOK()) { $("#hbFull").hidden = false; $("#hbFull").onclick = toggleFull; }
     document.addEventListener("fullscreenchange", fsIcon); document.addEventListener("webkitfullscreenchange", fsIcon);
     document.addEventListener("visibilitychange", () => { if (document.hidden) pause(true); });
+    // Fermeture de la borne : on libère la puce son tout de suite (Safari la garde sinon)
+    window.addEventListener("pagehide", () => { try { if (ac && ac.close) ac.close(); } catch (e) {} ac = null; });
     window.addEventListener("blur", () => pause(true));
     window.addEventListener("resize", fit);
     if (window.ResizeObserver) new ResizeObserver(fit).observe($(".st"));
