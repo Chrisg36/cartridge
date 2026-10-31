@@ -18,6 +18,68 @@
   throw new Error("cartridge: mini-jeu introuvable");
 })();
 </script>
+<script>
+/* =====================================================================
+   00. STOCKAGE SÉCURISÉ & NETTOYAGE DE LA COLLECTION (chargé en premier)
+   - Navigation privée stricte / cookies bloqués : localStorage peut être
+     inaccessible → on bascule sur un stockage en mémoire (l'app démarre quand même).
+   - Stockage plein (QuotaExceededError) : setItem ne fait plus planter le script.
+   - cxSafeSet / cxSafeGetJSON : helpers à utiliser dans le nouveau code.
+   - cxCleanCollection : écarte les cartes orphelines / corrompues / en double.
+   ===================================================================== */
+(function () {
+  var mem = {};
+  var memStore = {
+    getItem: function (k) { k = String(k); return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+    setItem: function (k, v) { mem[String(k)] = String(v); },
+    removeItem: function (k) { delete mem[String(k)]; },
+    clear: function () { mem = {}; },
+    key: function (i) { return Object.keys(mem)[i] || null; },
+    get length() { return Object.keys(mem).length; }
+  };
+  var usable = false;
+  try { var t = "__cx_test__"; window.localStorage.setItem(t, "1"); window.localStorage.removeItem(t); usable = true; } catch (e) {}
+  if (!usable) {
+    try { Object.defineProperty(window, "localStorage", { value: memStore, configurable: true }); } catch (e) {}
+  } else {
+    // Toutes les écritures existantes (70+ appels) deviennent sûres d'un coup
+    try {
+      var nativeSet = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (k, v) {
+        try { return nativeSet.call(this, k, v); }
+        catch (e) { window.cxStorageFull = true; try { console.warn("Cartridge : stockage plein, « " + k + " » non enregistré", e); } catch (_) {} }
+      };
+    } catch (e) {}
+  }
+  window.cxSafeSet = function (k, v) {
+    try { localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v)); return !window.cxStorageFull; } catch (e) { return false; }
+  };
+  window.cxSafeGetJSON = function (k, def) {
+    try { var v = localStorage.getItem(k); if (v == null || v === "") return def; var p = JSON.parse(v); return p == null ? def : p; } catch (e) { return def; }
+  };
+  var IGDB = "https://images.igdb.com/igdb/image/upload/t_cover_big/";
+  window.cxCleanCollection = function (list) {
+    if (!Array.isArray(list)) return [];
+    var seen = {}, out = [];
+    for (var i = 0; i < list.length; i++) {
+      var c = list[i];
+      if (!c || typeof c !== "object") continue;
+      var id = Number(c.id), name = typeof c.name === "string" ? c.name.trim() : "";
+      if (!(id > 0) || Math.floor(id) !== id || !name || seen[id]) continue; // orpheline, corrompue ou doublon
+      seen[id] = 1;
+      var cover = typeof c.cover === "string" ? c.cover.trim() : "";
+      // Les cartes revenues du cloud n'ont que le code de l'image (« co1abc ») : on refait l'adresse complète
+      if (cover && !/^https?:\/\//i.test(cover)) cover = /^[A-Za-z0-9_]{1,35}$/.test(cover) ? IGDB + cover + ".jpg" : "";
+      if (cover && !/^https:\/\/[^\s"'()<>\\]+$/i.test(cover)) cover = ""; // adresse douteuse : pas d'image
+      var card = {};
+      for (var k in c) if (Object.prototype.hasOwnProperty.call(c, k)) card[k] = c[k];
+      card.id = id; card.name = name.slice(0, 120); card.cover = cover;
+      out.push(card);
+    }
+    return out;
+  };
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#111318" id="themeMeta">
 <meta name="mobile-web-app-capable" content="yes">
@@ -6538,6 +6600,102 @@ body.theme-shinigamiquill.bg-locked::before, body.theme-shinigamiquill.bg-locked
   .cx-msg-fab.has-unread .cx-fab-ring, .cx-msg-fab.has-unread > .ic, .cx-msg-fab.is-bump { animation: none !important; }
 }
 </style>
+<style id="cx-perf-mobile">
+/* =====================================================================
+   99. PERFORMANCES MOBILES & ANCIENS APPAREILS (bloc écrit en dernier :
+       il l'emporte sur les règles précédentes, sans les supprimer)
+   ===================================================================== */
+
+/* 1) Plus aucun flou sur <main> : il recalculait un blur(12px) sur ~40 000 px de haut */
+main { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* 2) Plus de flou sur les éléments répétés ou qui défilent (cartes, lignes, jours, boutons
+      favori, pastilles…) : un fond semi-opaque donne le même rendu pour un coût quasi nul.
+      Un seul flou par carte × des centaines de cartes = chute sous 15 i/s sur un vieux GPU. */
+.grid-card, .row, .day, .seg, .grid-fav-btn, .player-banner-stat-pill,
+.theme-preview .tp-bar, .tp-tyrielsoren .tp-row, .theme-preview .cx-ts-listen,
+.cx-set-rank, .cx-stage, .cx-hud, .cx-hud-rival, .cart-toast, .sheet-x, .pack-x, .game-quit,
+.cartridge-modal-overlay, .cx-msg-banner {
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+.grid-fav-btn { background: rgba(0, 0, 0, .72); }
+.cartridge-modal-overlay { background-color: rgba(8, 9, 14, .82); }
+body.theme-tyrielsoren .grid-card, body.theme-tyrielsoren .day { background-color: rgba(18, 24, 46, .88) !important; }
+html[data-cx-scene="gamecube"] .row, html[data-cx-scene="gamecube"] .grid-card { background-color: rgba(21, 18, 46, .9) !important; }
+
+/* 3) Téléphone (≤ 768 px) : en-têtes collants plus fins et flou limité à 8 px */
+@media (max-width: 768px) {
+  .sticky-header-container {
+    -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important;
+    background: rgba(15, 15, 20, .9) !important;
+    background: color-mix(in srgb, var(--bg) 94%, transparent) !important;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+    padding-bottom: 6px !important;
+  }
+  /* bandeau décoratif « magazine » des pages : masqué sur téléphone (≈ 30 px gagnés) */
+  .sticky-header-container .magazine-edition-banner { display: none !important; }
+  .sticky-header-container .header-top { min-height: 0 !important; margin-bottom: 4px !important; }
+  /* En-tête de la messagerie : compact, jamais par-dessus le fil */
+  .cx-msg-head { min-height: 52px; padding-top: max(6px, env(safe-area-inset-top)); padding-bottom: 6px; }
+}
+
+/* 4) Barre du bas : toujours ancrée en bas sur téléphone/tablette (≤ 899 px),
+      jamais étirée vers le haut, avec la place de la barre d'accueil de l'iPhone */
+@media (max-width: 899px) {
+  .bottom-nav {
+    top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
+    height: calc(60px + env(safe-area-inset-bottom, 0px)) !important; max-height: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    flex-direction: row !important;
+    -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important;
+  }
+}
+
+/* 5) Barre latérale PC : flou réduit (fond déjà presque opaque) */
+@media (min-width: 900px) {
+  .bottom-nav { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+}
+
+/* 6) Vieux navigateurs sans flou : fond plein lisible au lieu d'un fond transparent */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .sticky-header-container, .bottom-nav, #sheet { background: rgba(15, 15, 20, .96) !important; }
+}
+
+/* 7) Anciens iPhone (iOS < 16.2) et vieux Android : « color-mix » n'existe pas, les fonds qui
+      l'utilisent devenaient transparents. On redonne des fonds pleins aux zones clés. */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .bottom-nav { background: rgba(15, 15, 20, .96) !important; border-top: 1px solid rgba(255, 255, 255, .12) !important; }
+  .sticky-header-container { background: rgba(15, 15, 20, .94) !important; }
+  .cx-msg-chat { background: var(--card, #181b22); }
+  .grid-card, .row, .day { background-color: var(--card, #181b22); }
+  .bottom-nav .nav-item.active svg { filter: none; }
+}
+
+/* 8) Booster animé : accélération matérielle ciblée, seulement pendant l'animation
+      (pas sur toute la page ni sur les fenêtres : la mémoire vidéo des vieux téléphones est limitée,
+      et un transform sur une fenêtre casserait le positionnement de ses éléments « fixed ») */
+.pack-fullscreen-overlay .pack-big.pack-animating { will-change: transform; }
+
+/* 9) Pendant une partie en plein écran, la page derrière n'est plus dessinée */
+html:has(.game-overlay) main, html:has(.game-overlay) .bottom-nav { visibility: hidden; }
+
+/* 10) Défilement : pas de « rebond » qui fait défiler la page derrière une liste */
+.cx-msg-scroll, .cx-shelves, .cx-vit-filters { overscroll-behavior: contain; }
+
+/* 11) Témoin de sauvegarde cloud non synchronisée (discret, touche = réessayer) */
+#cxSyncBadge {
+  position: fixed; z-index: 9000; right: 10px; bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(251, 191, 36, .55);
+  background: rgba(20, 16, 6, .92); color: #fcd34d; font: 700 11px/1.2 var(--font, system-ui, sans-serif);
+  letter-spacing: .2px; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, .4); opacity: .92;
+}
+#cxSyncBadge[data-reason="busy"] { border-color: rgba(148, 163, 184, .5); color: #cbd5e1; background: rgba(15, 17, 24, .9); }
+@media (min-width: 900px) { #cxSyncBadge { bottom: 16px; right: 16px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-fullscreen-overlay .pack-big.pack-animating { will-change: auto; }
+}
+</style>
 </head>
 <body>
 
@@ -7780,8 +7938,10 @@ const RETRO_ICONS = {
 // =====================================================================
 // 03. ÉTAT DE L'APP — variables lues dans le stockage du téléphone
 // =====================================================================
+// Lectures protégées : une valeur corrompue ne bloque plus le démarrage de toute l'app
 let userCoins = parseInt(localStorage.getItem("userCoins") || "100", 10);
-let myCollection = JSON.parse(localStorage.getItem("myCollection") || "[]");
+if (!Number.isFinite(userCoins) || userCoins < 0) userCoins = 100;
+let myCollection = cxCleanCollection(cxSafeGetJSON("myCollection", []));
 let lastDailyClaim = localStorage.getItem("lastDailyClaim") || "";
 let currentLang = "fr";
 try { currentLang = localStorage.getItem("lang") || "fr"; } catch (e) {}
@@ -7804,7 +7964,8 @@ let searchResults = null;
 const cache = {};
 let theme = "dark";
 try { theme = localStorage.getItem("theme") || "dark"; } catch (e) {}
-let gameScores = JSON.parse(localStorage.getItem("gameScores") || "[]");
+let gameScores = cxSafeGetJSON("gameScores", []);
+if (!Array.isArray(gameScores)) gameScores = [];
 let currentBg = localStorage.getItem("bgStyle") || "cartridges";
 let searchTimeout;
 
@@ -11055,7 +11216,15 @@ function mergeUnlocks(u) {
 function collectSaveData() {
   return {
     userCoins,
-    myCollection,
+    // Version compacte pour le cloud (le Worker ne garde que ces champs) : le résumé, les dates de
+    // sortie… restent dans le téléphone. Envoi 10 à 30 fois plus léger qu'avant.
+    myCollection: cxCleanCollection(myCollection).map((c) => {
+      const m = String(c.cover || "").match(/\/([A-Za-z0-9_]+)\.(jpg|png|webp)$/);
+      const o = { id: c.id, name: c.name, cover: m ? m[1] : "", rarity: c.rarity || "common" };
+      if (c.category) o.category = c.category;
+      if (typeof c.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(c.date)) o.date = c.date;
+      return o;
+    }),
     favorites: favorites.map(Number).filter(Number.isInteger),
     gameScores,
     theme,
@@ -11067,7 +11236,11 @@ function collectSaveData() {
 function applyServerData(d) {
   if (!d || typeof d !== "object") return;
   if (Number.isFinite(d.userCoins)) userCoins = d.userCoins;
-  if (Array.isArray(d.myCollection)) myCollection = d.myCollection;
+  if (Array.isArray(d.myCollection)) {
+    // Cartes du compte, nettoyées ; si le téléphone a déjà la fiche complète d'un jeu, on la garde
+    const localById = new Map(cxCleanCollection(myCollection).map((c) => [c.id, c]));
+    myCollection = cxCleanCollection(d.myCollection).map((s) => (localById.has(s.id) ? { ...localById.get(s.id), ...s, cover: s.cover || localById.get(s.id).cover } : s));
+  }
   if (Array.isArray(d.favorites)) favorites = d.favorites;
   if (Array.isArray(d.gameScores)) gameScores = d.gameScores;
   try {
@@ -11092,10 +11265,14 @@ function applyServerData(d) {
 }
 
 // ▸ cloudPost : envoie une requête POST au Worker et lit la réponse JSON
-async function cloudPost(path, body, token) {
+//   keepalive : la requête part même si l'app passe en arrière-plan (limité à 64 Ko par le navigateur)
+async function cloudPost(path, body, token, { keepalive = false } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = "Bearer " + token;
-  const res = await fetch(API + path, { method: "POST", headers, body: JSON.stringify(body) });
+  const payload = JSON.stringify(body);
+  const opts = { method: "POST", headers, body: payload };
+  if (keepalive && payload.length < 60000) opts.keepalive = true;
+  const res = await fetch(API + path, opts);
   let json = {};
   try { json = await res.json(); } catch (e) {}
   return { ok: res.ok, status: res.status, json };
@@ -11129,26 +11306,117 @@ function cloudLogout() {
 }
 
 // ▸ cloudSave : envoie la progression au Worker (silent = sans message si tout va bien)
-async function cloudSave({ silent = true } = {}) {
+//   Les appels rapprochés (boosters ouverts à la chaîne, fins de parties…) sont regroupés :
+//   - un seul envoi à la fois (verrou), jamais deux requêtes en même temps ;
+//   - attente de 1,5 s pour regrouper les actions, et 3,5 s minimum entre deux envois
+//     (le Worker refuse les sauvegardes à moins de 3 s d'intervalle : code 429) ;
+//   - si l'envoi échoue (hors ligne, serveur occupé), « pendingCloudSync » est noté et
+//     la synchro repart toute seule au retour du réseau.
+const CLOUD_PENDING_KEY = "pendingCloudSync";
+const CLOUD_DEBOUNCE = 1500, CLOUD_MIN_GAP = 3500;
+const cloudQ = { running: false, again: false, timer: 0, waiters: [], last: 0, loud: false, retryTimer: 0 };
+
+function cloudSave({ silent = true, immediate = false } = {}) {
+  return new Promise((resolve) => {
+    if (!getCloudToken() || !cloudReady()) return resolve(false);
+    cloudQ.waiters.push(resolve);
+    if (!silent) cloudQ.loud = true;
+    if (cloudQ.running) { cloudQ.again = true; return; } // sera envoyé juste après l'envoi en cours
+    clearTimeout(cloudQ.timer);
+    const wait = Math.max(immediate || !silent ? 0 : CLOUD_DEBOUNCE, cloudQ.last + CLOUD_MIN_GAP - Date.now());
+    cloudQ.timer = setTimeout(cloudFlush, Math.max(0, wait));
+  });
+}
+
+async function cloudFlush() {
+  if (cloudQ.running) { cloudQ.again = true; return; }
+  cloudQ.running = true;
+  const waiters = cloudQ.waiters.splice(0), loud = cloudQ.loud;
+  cloudQ.loud = false;
+  let ok = false;
+  try { ok = await cloudSaveNow(!loud); } catch (e) { ok = false; }
+  cloudQ.running = false;
+  cloudQ.last = Date.now();
+  waiters.forEach((w) => w(ok));
+  if (cloudQ.again || cloudQ.waiters.length) {
+    cloudQ.again = false;
+    clearTimeout(cloudQ.timer);
+    cloudQ.timer = setTimeout(cloudFlush, CLOUD_MIN_GAP);
+  }
+}
+
+// Envoi réel (une seule requête). Renvoie vrai si la sauvegarde est enregistrée.
+async function cloudSaveNow(silent, keepalive = false) {
   const token = getCloudToken();
   if (!token || !cloudReady()) return false;
   const data = collectSaveData();
   const snapshot = JSON.stringify(data);
+  let r;
   try {
-    const r = await cloudPost("/api/save", { data }, token);
-    if (r.status === 401) {
-      cloudLogout();
-      showRetroAlert("Session expirée", "Reconnecte-toi dans Profil pour continuer à sauvegarder sur le cloud.", true);
-      return false;
-    }
-    if (!r.ok) throw new Error(r.json.error || "Erreur " + r.status);
-    lastCloudSnapshot = snapshot;
-    if (!silent) showToast("Progression sauvegardée sur le cloud", "cloud");
-    return true;
+    r = await cloudPost("/api/save", { data }, token, { keepalive });
   } catch (e) {
-    if (!silent) showRetroAlert("Sauvegarde impossible", esc(e.message), true);
+    // Pas de réseau (ou serveur injoignable) : on retentera au retour de la connexion
+    cloudMarkPending("offline");
+    if (!silent) showRetroAlert("Hors ligne", "Pas de connexion pour l'instant. Ta progression est gardée sur l'appareil et sera envoyée dès le retour du réseau.", true);
     return false;
   }
+  if (r.status === 401) {
+    cloudLogout();
+    cloudClearPending();
+    showRetroAlert("Session expirée", "Reconnecte-toi dans Profil pour continuer à sauvegarder sur le cloud.", true);
+    return false;
+  }
+  if (r.status === 429) {
+    // Sauvegarde trop rapprochée de la précédente : simple nouvel essai quelques secondes plus tard
+    cloudMarkPending("busy");
+    clearTimeout(cloudQ.retryTimer);
+    cloudQ.retryTimer = setTimeout(() => cloudSave(), ((r.json && r.json.retryAfter) || 3) * 1000 + 800);
+    return false;
+  }
+  if (r.status === 413) {
+    cloudMarkPending("error");
+    showRetroAlert("Sauvegarde trop lourde", "Ta progression dépasse la limite de 1 Mo du serveur. Elle reste gardée sur l'appareil.", true);
+    return false;
+  }
+  if (!r.ok) {
+    // 503 (base indisponible) ou autre panne : nouvel essai automatique dans 30 s
+    cloudMarkPending("error");
+    clearTimeout(cloudQ.retryTimer);
+    cloudQ.retryTimer = setTimeout(() => cloudSave(), 30000);
+    if (!silent) showRetroAlert("Sauvegarde impossible", esc((r.json && r.json.error) || "Erreur " + r.status) + "<br><small>Nouvel essai automatique dans 30 s.</small>", true);
+    return false;
+  }
+  lastCloudSnapshot = snapshot;
+  cloudClearPending();
+  if (!silent) showToast("Progression sauvegardée sur le cloud", "cloud");
+  return true;
+}
+
+// ▸ Témoin discret de désynchronisation (petite pastille, touche = réessayer)
+function cloudMarkPending(reason) {
+  try { localStorage.setItem(CLOUD_PENDING_KEY, "true"); } catch (e) {}
+  cloudSyncBadge(reason);
+}
+function cloudClearPending() {
+  try { localStorage.removeItem(CLOUD_PENDING_KEY); } catch (e) {}
+  cloudSyncBadge(null);
+}
+function cloudIsPending() {
+  try { return localStorage.getItem(CLOUD_PENDING_KEY) === "true"; } catch (e) { return false; }
+}
+function cloudSyncBadge(reason) {
+  let b = document.getElementById("cxSyncBadge");
+  if (!reason || !isLoggedIn()) { if (b) b.remove(); return; }
+  if (!b) {
+    b = document.createElement("button");
+    b.id = "cxSyncBadge";
+    b.type = "button";
+    b.addEventListener("click", () => cloudSave({ silent: false, immediate: true }));
+    document.body.append(b);
+  }
+  b.dataset.reason = reason;
+  b.textContent = reason === "offline" ? "☁ Hors ligne · non synchronisé" : reason === "busy" ? "☁ Synchronisation…" : "☁ Non synchronisé · réessayer";
+  b.setAttribute("aria-label", b.textContent);
 }
 
 // ▸ cloudRecover : change le mot de passe grâce à la réponse secrète
@@ -11160,14 +11428,27 @@ async function cloudRecover(username, answer, newPassword) {
 
 // ▸ startCloudAutoSave : sauvegarde auto toutes les 30 s (si quelque chose a changé) et à la fermeture
 function startCloudAutoSave() {
+  if (startCloudAutoSave.started) return; // jamais deux minuteries en parallèle
+  startCloudAutoSave.started = true;
   lastCloudSnapshot = JSON.stringify(collectSaveData());
-  const saveIfChanged = () => {
-    if (isLoggedIn() && JSON.stringify(collectSaveData()) !== lastCloudSnapshot) cloudSave();
-  };
-  setInterval(saveIfChanged, 30000);
+  const changed = () => isLoggedIn() && JSON.stringify(collectSaveData()) !== lastCloudSnapshot;
+  setInterval(() => { if (!document.hidden && (changed() || cloudIsPending())) cloudSave(); }, 30000);
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") saveIfChanged();
+    // L'app passe en arrière-plan : envoi direct (pas d'attente), qui survit à la mise en veille
+    if (document.visibilityState === "hidden" && changed() && !cloudQ.running && Date.now() - cloudQ.last > CLOUD_MIN_GAP) {
+      clearTimeout(cloudQ.timer);
+      cloudQ.running = true;
+      cloudSaveNow(true, true).catch(() => false).then((ok) => {
+        cloudQ.running = false; cloudQ.last = Date.now();
+        if (cloudQ.again || cloudQ.waiters.length) { cloudQ.again = false; cloudQ.timer = setTimeout(cloudFlush, CLOUD_MIN_GAP); }
+      });
+    }
   });
+  // Retour du réseau : on renvoie ce qui était en attente
+  window.addEventListener("online", () => { if (isLoggedIn() && (cloudIsPending() || changed())) cloudSave({ immediate: true }); });
+  window.addEventListener("offline", () => { if (isLoggedIn() && changed()) cloudSyncBadge("offline"); });
+  // Une synchro était restée en attente à la dernière fermeture : on la relance
+  if (isLoggedIn() && cloudIsPending()) setTimeout(() => cloudSave({ immediate: true }), 2500);
 }
 
 // ▸ buildAccountSection : bloc « Espace Joueur » de l'onglet Compte (connexion, création, déconnexion)
@@ -11236,7 +11517,8 @@ function buildAccountSection(container) {
     logoutBtn.style.cssText = "margin:0; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4);";
     logoutBtn.onclick = async () => {
       playThemeSound(theme);
-      await cloudSave();
+      await cloudSave({ immediate: true });
+      cloudClearPending();
       cloudLogout();
       openSettingsMainPage(1);
       showRetroAlert("Déconnexion", "Vous êtes déconnecté. Vos données restent sur cet appareil.");
@@ -11440,7 +11722,7 @@ function importCartridgeSave() {
       try {
         const data = JSON.parse(event.target.result);
         if (Number.isFinite(data.userCoins) && data.userCoins >= 0) userCoins = Math.floor(data.userCoins);
-        if (Array.isArray(data.myCollection)) myCollection = data.myCollection;
+        if (Array.isArray(data.myCollection)) myCollection = cxCleanCollection(data.myCollection); // fichier externe : nettoyé
         if (Array.isArray(data.favorites)) favorites = data.favorites.filter((x) => Number.isInteger(x));
         
         localStorage.setItem("userCoins", userCoins);
@@ -13140,7 +13422,9 @@ function cxRarityOf(item) {
 }
 
 function cxRenderVitrine(box) {
-  const items = Array.isArray(myCollection) ? myCollection : [];
+  // Cartes orphelines / corrompues (sans numéro ou sans nom) écartées avant l'affichage.
+  // Les noms sont posés avec textContent (fonction el) : pas d'injection HTML possible.
+  const items = cxCleanCollection(myCollection);
   const counts = { legendary: 0, epic: 0, rare: 0, common: 0 };
   items.forEach((it) => counts[cxRarityOf(it)]++);
 
@@ -13716,6 +14000,12 @@ const CXArcade = {
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
     playThemeSound(theme);
     CXScores.end();
+    // Nettoyage complet de la borne : on décharge d'abord la page du jeu (about:blank) pour que
+    // Safari libère tout de suite ses boucles requestAnimationFrame, écouteurs clavier, son et
+    // mémoire du canvas, puis on retire le cadre. Évite les fuites après plusieurs parties.
+    try { cur.iframe.contentWindow && cur.iframe.contentWindow.postMessage({ type: "cartridge:pause" }, "*"); } catch (e) {}
+    try { cur.iframe.src = "about:blank"; } catch (e) {}
+    try { cur.iframe.remove(); } catch (e) {}
     cur.ov.remove();
     unlockBackground();
     const page = document.getElementById("arcadeMainPage");
