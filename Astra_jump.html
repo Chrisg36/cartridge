@@ -337,6 +337,10 @@ $('menuBtn').onclick = toMenu; $('quitBtn').onclick = toMenu;
 function refreshBest() { $('bestMenu').textContent = best ? `RECORD : ${best} m` : ''; }
 refreshBest();
 document.addEventListener('visibilitychange', () => { if (document.hidden && state === STATE.PLAYING) togglePause(); });
+// Dialogue avec l'app Cartridge (borne d'arcade) : prêt, fin de partie (pièces + missions), pause
+function cxPost(m) { try { if (window.parent !== window) window.parent.postMessage(m, '*'); } catch (e) {} }
+addEventListener('message', (e) => { const d = e.data; if (d && d.type === 'cartridge:pause' && state === STATE.PLAYING) togglePause(); });
+cxPost({ type: 'cartridge:ready', game: 'Astra Jump', id: 'astra' });
 
 // ------------------------------------------------------------------ EFFETS
 function burst(x, y, n, colors, speed = 4, grav = 0.08) {
@@ -358,6 +362,8 @@ function gameOver() {
   if (isRecord) { best = alt; try { localStorage.setItem('astra_best', best); } catch (e) {} }
   $('sAlt').textContent = alt + ' m'; $('sGem').textContent = crystals; $('sKill').textContent = kills; $('sScore').textContent = score;
   show('newRecord', isRecord);
+  cxPost({ type: 'cartridge:score', game: 'Astra Jump', score });
+  cxPost({ type: 'cartridge:gameover', game: 'Astra Jump', id: 'astra', score, stats: { altitude: alt, crystals, kills } });
   setTimeout(() => { show('over', true); show('hud', false); show('controls', false); }, 650);
 }
 
@@ -410,10 +416,9 @@ function update() {
     for (const p of platforms) {
       if (p.broken) continue;
       if (player.x + player.width > p.x && player.x < p.x + p.width && player.y + player.height >= p.y && player.y + player.height <= p.y + p.height + player.vy) {
-        if (p.type === 'fragile') {
-          p.broken = true; sfx.crack(); shake = 3;
-          for (let i = 0; i < 6; i++) particles.push({ x: p.x + i * p.width / 6, y: p.y, vx: rnd(-1, 1), vy: rnd(-1, 1), life: 40, max: 40, color: i % 2 ? '#78716c' : '#a8a29e', size: 4, grav: 0.25 });
-        } else {
+        {
+          // Plateforme fragile : elle tient ~0,7 s (le temps de ressauter), tremble puis s'effondre
+          if (p.type === 'fragile' && !p.crack) { p.crack = 1; sfx.crack(); }
           const landingSpeed = player.vy;
           player.y = p.y - player.height; player.vy = 0; player.grounded = true; player.currentPlatform = p;
           if (!player.wasGrounded && landingSpeed > 2) { player.squishX = 1.3; player.squishY = 0.75; burst(player.x + 8, p.y, 6, ['#c4b5fd', '#ede9fe'], 2.2, 0.02); }
@@ -431,6 +436,11 @@ function update() {
 
   for (const p of platforms) {
     if (p.squash > 0) p.squash--;
+    if (p.type === 'fragile' && p.crack && !p.broken && ++p.crack >= FRAGILE_TIME) {
+      p.broken = true; sfx.crack(); shake = 3;
+      if (player.currentPlatform === p) { player.grounded = false; player.currentPlatform = null; }
+      for (let i = 0; i < 6; i++) particles.push({ x: p.x + i * p.width / 6, y: p.y, vx: rnd(-1, 1), vy: rnd(-1, 1), life: 40, max: 40, color: i % 2 ? '#78716c' : '#a8a29e', size: 4, grav: 0.25 });
+    }
     if (p.type === 'moving') {
       p.x += p.vx;
       if (p.x <= 5 || p.x + p.width >= V_WIDTH - 5) p.vx *= -1;
@@ -537,6 +547,7 @@ function drawBackground() {
   shooting = shooting.filter((s) => s.life > 0);
 }
 
+const FRAGILE_TIME = 42; // images à 60 i/s avant l'effondrement (≈ 0,7 s)
 const PLAT_STYLE = {
   normal: { top: '#c084fc', body: '#6d28d9', dark: '#3b0764', dot: '#e9d5ff' },
   moving: { top: '#67e8f9', body: '#0e7490', dark: '#083344', dot: '#ecfeff' },
@@ -544,7 +555,10 @@ const PLAT_STYLE = {
   spring: { top: '#f9a8d4', body: '#db2777', dark: '#831843', dot: '#fff' },
 };
 function drawPlatform(p) {
-  const s = PLAT_STYLE[p.type], x = Math.round(p.x), y = Math.round(p.y), w = p.width, h = p.height;
+  const s = PLAT_STYLE[p.type], w = p.width, h = p.height;
+  // Fragile qui craque : elle tremble de plus en plus fort
+  const jitter = p.type === 'fragile' && p.crack ? Math.round(rnd(-1, 1) * (1 + 2 * p.crack / FRAGILE_TIME)) : 0;
+  const x = Math.round(p.x) + jitter, y = Math.round(p.y);
   // Ombre portée
   ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(x + 3, y + h, w - 6, 3);
   // Corps en blocs
@@ -567,6 +581,8 @@ function drawPlatform(p) {
   } else if (p.type === 'fragile') {
     ctx.fillStyle = '#292524';
     ctx.fillRect(x + w * .3, y + 3, 1, 5); ctx.fillRect(x + w * .3 + 1, y + 7, 3, 1); ctx.fillRect(x + w * .65, y + 2, 1, 6); ctx.fillRect(x + w * .65 - 3, y + 8, 3, 1);
+    if (p.crack > FRAGILE_TIME * 0.4) { ctx.fillRect(x + w * .15, y + 2, 1, 7); ctx.fillRect(x + w * .48, y + 1, 1, 9); ctx.fillRect(x + w * .82, y + 3, 1, 6); }
+    if (p.crack) { ctx.fillStyle = `rgba(239,68,68,${0.15 + 0.35 * p.crack / FRAGILE_TIME})`; ctx.fillRect(x, y, w, h); }
   } else if (p.type === 'spring') {
     const sq = p.squash > 0 ? 3 : 0;
     ctx.fillStyle = '#9ca3af'; for (let i = 0; i < 3; i++) ctx.fillRect(x + w / 2 - 6, y - 6 + sq + i * 2, 12, 1);
