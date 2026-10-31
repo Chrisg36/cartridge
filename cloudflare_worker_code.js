@@ -1016,7 +1016,8 @@ async function msgConv(env, convId, uid) {
 }
 
 // av = avatar pixel choisi dans la Boutique (lu dans la sauvegarde du joueur)
-const MSG_COLS = "m.id, m.conv_id AS conv, m.user_id AS uid, u.display_name AS name, json_extract(u.data, '$.unlocks.avatar') AS av, m.body, m.created_at AS at";
+const MSG_AV = (t) => `CASE WHEN json_valid(${t}.data) THEN json_extract(${t}.data, '$.unlocks.avatar') END`;
+const MSG_COLS = `m.id, m.conv_id AS conv, m.user_id AS uid, u.display_name AS name, ${MSG_AV("u")} AS av, m.body, m.created_at AS at`;
 
 async function handleMsg(action, request, env) {
   await ensureMsgTables(env);
@@ -1049,7 +1050,7 @@ async function handleMsg(action, request, env) {
   if (action === "convs") {
     const { results } = await env.DB.prepare(
       `SELECT c.id, c.kind, c.last_id, c.last_at,
-              o.id AS other_id, o.display_name AS other, json_extract(o.data, '$.unlocks.avatar') AS other_av,
+              o.id AS other_id, o.display_name AS other, ${MSG_AV("o")} AS other_av,
               p.seen AS other_seen,
               lm.body AS last_body, lm.user_id AS last_uid,
               (SELECT COUNT(*) FROM (SELECT 1 FROM messages m WHERE m.conv_id = c.id AND m.id > COALESCE(r.last_read, 0) AND m.user_id != ?1
@@ -1075,6 +1076,19 @@ async function handleMsg(action, request, env) {
         last: c.last_body ? { body: String(c.last_body).slice(0, 80), mine: c.last_uid === me.id } : null,
       })),
     });
+  }
+
+  // Annuaire des joueurs : en ligne d'abord, puis les derniers venus (pour se retrouver sans taper le pseudo exact)
+  if (action === "players") {
+    const q = String(body.q || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 20);
+    const { results } = await env.DB.prepare(
+      `SELECT u.id, u.display_name AS name, ${MSG_AV("u")} AS av, p.seen
+       FROM users u LEFT JOIN msg_presence p ON p.user_id = u.id
+       WHERE u.id != ?1 AND u.id NOT IN (SELECT blocked_id FROM msg_blocks WHERE user_id = ?1)
+         AND (?2 = '' OR u.name_lower LIKE ?2)
+       ORDER BY COALESCE(p.seen, 0) DESC, u.updated_at DESC LIMIT 60`
+    ).bind(me.id, q ? "%" + q + "%" : "").all();
+    return jsonRes({ players: results.map((u) => ({ id: u.id, name: u.name, av: u.av || "", seen: u.seen || 0, online: !!(u.seen && t - u.seen < MSG_ONLINE) })), now: t });
   }
 
   if (action === "history") {
@@ -1152,6 +1166,12 @@ async function handleMsg(action, request, env) {
 }
 
 async function handleApi(path, request, env) {
+  // Vérification rapide dans un navigateur : ouvre https://<ton-worker>/api/msg/ping
+  if (path === "/api/msg/ping") {
+    if (!env.DB) return jsonRes({ ok: false, error: "binding DB manquant" }, 500);
+    try { await ensureMsgTables(env); const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM messages").first(); return jsonRes({ ok: true, messagerie: "prête", messages: n.n }); }
+    catch (e) { return jsonRes({ ok: false, error: String(e && e.message || e).slice(0, 200) }, 500); }
+  }
   if (request.method !== "POST") return jsonRes({ error: "Méthode non autorisée." }, 405);
   if (!env.DB) return jsonRes({ error: "Base de données non reliée au Worker (binding DB manquant)." }, 500);
   try {
