@@ -17416,10 +17416,13 @@ const CXK7 = (() => {
   });
   audio.addEventListener("error", () => {
     if (!audio.getAttribute("src")) return;
+    const failed = TRACKS[idx].f;
     setPlayingUI(false);
+    loadedIdx = -1; // le prochain appui sur ▶ retente le chargement
     if (!errorShown) {
       errorShown = true;
-      try { showToast("Musique introuvable : mets le dossier « musique » à côté de index.html", "xCircle"); } catch (e) {}
+      setTimeout(() => (errorShown = false), 8000);
+      try { showToast("Musique introuvable : musique/" + failed, "xCircle"); } catch (e) {}
     }
   });
   window.addEventListener("pagehide", () => { if (loadedIdx === idx) set("k7Time", audio.currentTime || 0); });
