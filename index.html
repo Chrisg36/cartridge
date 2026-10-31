@@ -17013,7 +17013,9 @@ body.k7-bar-on { padding-bottom: calc(75px + 72px + env(safe-area-inset-bottom))
 <script>
 const CXK7 = (() => {
   // ▸ Dossier des musiques (relatif à index.html)
-  const BASE = "musique/";
+  // Si les pistes ne sont pas dans « musique/ », la K7 les cherche à côté de index.html
+  const BASES = ["musique/", ""];
+  let baseI = 0;
   // ▸ Liste des morceaux : fichier, titre FR, titre japonais, durée (secondes)
   const TRACKS = [
     { f: "00-cartridge.mp3",              t: "Cartridge",                           j: "カートリッジ · Main Theme",             d: 182 },
@@ -17260,7 +17262,7 @@ const CXK7 = (() => {
   function ensureLoaded() {
     if (loadedIdx === idx) return;
     loadedIdx = idx;
-    audio.src = BASE + TRACKS[idx].f;
+    audio.src = BASES[baseI] + TRACKS[idx].f;
     audio.preload = "auto";
     const at = resumeAt;
     if (at > 1) {
@@ -17417,12 +17419,15 @@ const CXK7 = (() => {
   audio.addEventListener("error", () => {
     if (!audio.getAttribute("src")) return;
     const failed = TRACKS[idx].f;
-    setPlayingUI(false);
     loadedIdx = -1; // le prochain appui sur ▶ retente le chargement
+    // Essaie l'autre emplacement avant d'afficher une erreur
+    if (baseI < BASES.length - 1) { baseI++; play(); return; }
+    baseI = 0;
+    setPlayingUI(false);
     if (!errorShown) {
       errorShown = true;
       setTimeout(() => (errorShown = false), 8000);
-      try { showToast("Musique introuvable : musique/" + failed, "xCircle"); } catch (e) {}
+      try { showToast("Musique introuvable : " + failed, "xCircle"); } catch (e) {}
     }
   });
   window.addEventListener("pagehide", () => { if (loadedIdx === idx) set("k7Time", audio.currentTime || 0); });
