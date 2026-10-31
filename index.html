@@ -13207,7 +13207,14 @@ function cxRenderVitrine(box) {
           it.title = item.name || "";
           it.style.setProperty("--rc", RARITY_STYLE[rar].color);
           const glass = el("span", "cx-case-glass" + (rar === "legendary" || item.category === "supreme_retro" ? " card-holo-effect" : ""));
-          const img = el("img"); img.src = item.cover; img.alt = item.name || ""; img.loading = "lazy";
+          
+          const img = el("img");
+          img.src = item.cover && item.cover.startsWith("http")
+            ? item.cover
+            : (item.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${item.cover}.jpg` : "");
+          img.alt = item.name || "";
+          img.loading = "lazy";
+
           glass.append(img, el("span", "cx-case-shine"));
           it.append(glass);
           if (rar !== "common") it.append(el("span", "cx-case-jewel", RARITY_STYLE[rar].label));
