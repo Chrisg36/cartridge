@@ -6185,6 +6185,9 @@ body.theme-shinigamiquill .sticky-header-container { backdrop-filter: none !impo
 body.theme-shinigamiquill .header-currency-badge { font-size: 12px !important; padding: 0 12px !important; min-height: 34px !important; }
 body.theme-shinigamiquill .player-badge { font-size: 12px !important; padding: 0 12px !important; }
 </style>
+<style id="patch-2026-10-31b">
+body[data-unique] .cov, body[data-unique] .grid-cov, body[data-unique] .big, body[data-unique] .collection-item-card img { filter: none !important; }
+</style>
 </head>
 <body>
 
@@ -7714,7 +7717,11 @@ function clearUniqueTheme() {
   const meta = document.getElementById("themeMeta");
   if (meta && typeof THEMES !== "undefined" && THEMES[theme]) meta.content = THEMES[theme][1];
   // On remet le décor du thème de base (ex. console rétro) quand on retire un thème collector
-  if (typeof applyBgStyle === "function") { let bg = "cartridges"; try { bg = localStorage.getItem("bgStyle") || bg; } catch (e) {} setTimeout(() => { if (!document.body.dataset.unique) applyBgStyle(bg); }, 0); }
+  setTimeout(() => {
+    if (document.body.dataset.unique) return;
+    if (document.documentElement.dataset.theme !== theme && typeof applyTheme === "function") theme = applyTheme(theme, { keepUnique: true });
+    else if (typeof applyBgStyle === "function") { let bg = "cartridges"; try { bg = localStorage.getItem("bgStyle") || bg; } catch (e) {} applyBgStyle(bg); }
+  }, 0);
 }
 
 // ▸ loadThemeFont : charge la police d'affichage d'un thème collector (une seule fois, à la demande)
@@ -7752,6 +7759,14 @@ function applyUniqueTheme(id) {
   document.body.dataset.unique = id;
   delete document.documentElement.dataset.cxScene;
   const cxLayer = document.getElementById("cxBg"); if (cxLayer) cxLayer.classList.add("is-off");
+  // Le thème collector remplace complètement le thème de base (console rétro, Game Boy…)
+  document.documentElement.dataset.theme = "dark";
+  document.documentElement.style.setProperty("--pattern", "none");
+  const arrow = (d) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+  const pb = document.getElementById("prev"), nb = document.getElementById("next");
+  if (pb) { pb.innerHTML = arrow("M15 6l-6 6 6 6"); pb.style.fontFamily = ""; }
+  if (nb) { nb.innerHTML = arrow("M9 6l6 6-6 6"); nb.style.fontFamily = ""; }
+  document.querySelectorAll(".cov, .grid-cov, .big, .collection-item-card img").forEach((img) => { img.style.filter = ""; img.style.border = ""; });
 
   // Décor illustré propre au thème (derrière l'interface, ne gêne aucun clic)
   const scenery = document.createElement("div");
@@ -12343,6 +12358,8 @@ const CX_ARCADE_GAMES = [
   { name: "Space Invaders", url: "space_invaders.html", fg: "#FF7A45", scr: "#05060a", ic: "invader" },
   { name: "Tetris", url: "tetris_gameboy.html", fg: "#9bbc0f", scr: "#0f380f", ic: "blocks" },
   { name: "Snake", url: "snake_nokia.html", fg: "#9bbc0f", scr: "#0f380f", ic: "snake" },
+  { name: "Astra Jump", url: "Astra_jump.html", fg: "#f472b6", scr: "#0b0418", ic: "star" },
+  { name: "Tyriel & Soren", url: "TyrielSoren.html", fg: "#5a92dc", scr: "#0b1530", ic: "trophy" },
 ];
 
 const CXScores = {
@@ -13034,6 +13051,8 @@ const CX_PX = {
   invaders: { c: ["#39ff88", "#ff5bd1"], m: ["00100000100", "00010001000", "00111111100", "01101110110", "11111111111", "10111111101", "10100000101", "00011011000"] },
   tetris: { c: ["#c45bff", "#25f4ff"], m: ["11100022", "01000022", "00000000", "22220111", "00000010"] },
   snake: { c: ["#43523d", "#43523d"], m: ["0000000000000", "0111111110000", "0100000010020", "0100000011100", "0111100000000"] },
+  astra: { c: ["#a78bfa", "#22d3ee"], m: ["000010000", "000111000", "001111100", "011222110", "011222110", "001111100", "011111110", "010000010"] },
+  tyrielsoren: { c: ["#5a92dc", "#7bb56e"], m: ["0111000222000", "1111101222220", "1111101222220", "0111000222000", "0101000020200"] },
 };
 const CX_GAMES = [
   { id: "pacman", name: "Pac-Man", url: "pacman_arcade.html", tag: "Labyrinthe · 4 fantômes", color: "#ffd21f", scr: "#000", div: 250 },
@@ -13041,6 +13060,8 @@ const CX_GAMES = [
   { id: "tetris", name: "Tetris", url: "tetris_gameboy.html", tag: "Réserve · pièce fantôme", color: "#c45bff", scr: "#05060c", div: 300 },
   { id: "pong", name: "Pong", url: "pong_arcade.html", tag: "Duel contre l'IA", color: "#39ff88", scr: "#03060a", div: 150 },
   { id: "snake", name: "Snake", url: "snake_nokia.html", tag: "Hommage Nokia 3310", color: "#7dff9a", scr: "#c7f0d8", fg: "#43523d", div: 15 },
+  { id: "astra", name: "Astra Jump", url: "Astra_jump.html", tag: "Grimpe vers les étoiles", color: "#f472b6", scr: "#0b0418", div: 60 },
+  { id: "tyrielsoren", name: "Tyriel & Soren", url: "TyrielSoren.html", tag: "Plateforme · 6 niveaux + boss", color: "#5a92dc", scr: "#0b1530", div: 600 },
 ];
 const cxGame = (idOrName) => CX_GAMES.find((g) => g.id === idOrName || CXScores.same(g.name, idOrName));
 
@@ -13072,6 +13093,9 @@ const CX_MISSIONS = [
   { id: "tet_5k", game: "tetris", text: "Fais 5 000 pts à Tetris", reward: 25, test: (s) => s.score >= 5000 },
   { id: "snk_20", game: "snake", text: "Atteins une longueur de 20 à Snake", reward: 20, test: (s) => s.length >= 20 },
   { id: "snk_300", game: "snake", text: "Fais 300 pts à Snake", reward: 25, test: (s) => s.score >= 300 },
+  { id: "astra_500", game: "astra", text: "Monte à 500 m dans Astra Jump", reward: 25, test: (s) => (s.altitude || 0) >= 500 },
+  { id: "ts_lvl2", game: "tyrielsoren", text: "Termine le niveau 1-1 de Tyriel & Soren", reward: 30, test: (s) => (s.level || 0) >= 2 },
+  { id: "ts_5k", game: "tyrielsoren", text: "Fais 5 000 pts à Tyriel & Soren", reward: 25, test: (s) => s.score >= 5000 },
   { id: "any_3", game: "any", text: "Joue 3 parties aujourd'hui", reward: 15, test: (s, R) => R.gamesToday >= 3 },
   { id: "any_mix", game: "any", text: "Joue à 3 bornes différentes", reward: 20, test: (s, R) => (R.gamesSet || []).length >= 3 },
 ];
@@ -13447,7 +13471,7 @@ function renderArcadeMainPage(tab = 0) {
 
   function showScores() {
     displayBox.replaceChildren();
-    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake" }[g.id] })), openGame);
+    cxRenderScores(displayBox, showScores, CX_GAMES.map((g) => ({ ...g, fg: g.color, ic: { pacman: "invader", invaders: "invader", tetris: "blocks", pong: "pong", snake: "snake", astra: "star", tyrielsoren: "trophy" }[g.id] })), openGame);
   }
 
   contentArea.append(tabs.el, displayBox);
